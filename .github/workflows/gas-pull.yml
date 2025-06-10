@@ -26,5 +26,5 @@ jobs:
 
       - name: Pull latest GAS code
         run: |
-          cd my-gas-project
+          cd moodle-true-false-quiz-validator/
           clasp pull
