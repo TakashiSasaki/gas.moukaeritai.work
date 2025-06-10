@@ -1,0 +1,30 @@
+name: Sync from GAS
+
+on:
+  schedule:
+    - cron: '0 3 * * *' # 毎日03:00（UTC）に実行（日本時間で12:00）
+  workflow_dispatch:
+
+jobs:
+  pull:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install clasp
+        run: npm install -g @google/clasp
+
+      - name: Restore clasp credentials
+        run: |
+          echo '${{ secrets.CLASPRC_JSON }}' > ~/.clasprc.json
+
+      - name: Pull latest GAS code
+        run: |
+          cd my-gas-project
+          clasp pull
