@@ -1,0 +1,562 @@
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // DOM Elements
+    const xmlPasteArea = document.getElementById('xmlPasteArea');
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    const processButton = document.getElementById('processButton');
+    const resultsTableBody = document.querySelector('#resultsTable tbody');
+    const errorMessagesDiv = document.getElementById('errorMessages');
+    const loadingDiv = document.getElementById('loading');
+    
+    const copyJsonButton = document.getElementById('copyJsonButton');
+    const previewJsonButton = document.getElementById('previewJsonButton');
+    const inferWithGeminiButton = document.getElementById('inferWithGeminiButton');
+    const showInferenceOptionsButton = document.getElementById('showInferenceOptionsButton');
+    const inferenceOptionsContainer = document.getElementById('inferenceOptionsContainer');
+    
+    const geminiModelSelect = document.getElementById('geminiModelSelect'); 
+    
+    const temperatureSelect = document.getElementById('temperatureSelect');
+    const topKSelect = document.getElementById('topKSelect');
+    const topPSelect = document.getElementById('topPSelect');
+
+    const actionFeedback = document.getElementById('actionFeedback');
+
+    const jsonPreviewModal = document.getElementById('jsonPreviewModal');
+    const closeModalButton = document.getElementById('closeModalButton');
+    const jsonPreviewContent = document.getElementById('jsonPreviewContent');
+
+    const inputHelpButton = document.getElementById('inputHelpButton');
+    const inputHelpModal = document.getElementById('inputHelpModal');
+    const closeInputHelpModalButton = document.getElementById('closeInputHelpModalButton');
+    
+    const loadSampleXmlButton = document.getElementById('loadSampleXmlButton');
+    
+    const explanationColumnHelpButton = document.getElementById('explanationColumnHelpButton');
+    const explanationColumnHelpModal = document.getElementById('explanationColumnHelpModal');
+    const closeExplanationColumnHelpModalButton = document.getElementById('closeExplanationColumnHelpModalButton');
+
+
+    // Global state variables
+    let xmlStringContent = null;
+    // Stores {question_number, question_title, question_text, moodle_answer_for_explanation}
+    let extractedQuestionsForCopy = []; 
+    
+    const localStorageKeyXmlInput = 'moodleXmlChecker_xmlInput';
+
+    // --- Initialize Text Area from localStorage on Page Load ---
+    const storedXmlInput = localStorage.getItem(localStorageKeyXmlInput);
+    if (storedXmlInput) {
+        xmlPasteArea.value = storedXmlInput;
+        xmlStringContent = storedXmlInput; 
+    }
+
+    // --- Utility Functions for Input and Errors ---
+    function clearError() {
+        errorMessagesDiv.textContent = '';
+        errorMessagesDiv.style.display = 'none';
+    }
+
+    function resetDropZoneText() {
+        dropZone.textContent = 'ここにXMLファイルをドラッグ＆ドロップ';
+    }
+
+    function updateXmlContent(newContent) {
+        xmlStringContent = newContent;
+        xmlPasteArea.value = newContent;
+        localStorage.setItem(localStorageKeyXmlInput, newContent); 
+        // Reset other input methods when content is updated programmatically (e.g., sample load, file load)
+        resetDropZoneText();
+        if (fileInput.value) { 
+            fileInput.value = '';
+        }
+        clearError();
+    }
+
+    function handleFile(file, sourceType) {
+        if (file.type === 'text/xml' || file.name.endsWith('.xml')) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                updateXmlContent(e.target.result); 
+                if (sourceType === 'drop') {
+                    dropZone.textContent = `ファイル: ${file.name}`;
+                }
+            };
+            reader.onerror = () => {
+                displayError('ファイルの読み込みに失敗しました。');
+                updateXmlContent(''); 
+                if (sourceType === 'drop') resetDropZoneText();
+            };
+            reader.readAsText(file);
+        } else {
+            displayError('XMLファイルを選択してください。');
+            if (sourceType === 'file') fileInput.value = '';
+            if (sourceType === 'drop') resetDropZoneText();
+        }
+    }
+
+    // --- Event Listeners for XML Input ---
+    xmlPasteArea.addEventListener('input', () => {
+        // Only update internal state and localStorage on direct input,
+        // don't reset other input fields as user might be editing.
+        xmlStringContent = xmlPasteArea.value;
+        localStorage.setItem(localStorageKeyXmlInput, xmlStringContent);
+        clearError();
+    });
+
+    dropZone.addEventListener('dragover', (event) => { event.preventDefault(); dropZone.classList.add('dragover'); });
+    dropZone.addEventListener('dragleave', () => { dropZone.classList.remove('dragover'); });
+    dropZone.addEventListener('drop', (event) => {
+        event.preventDefault();
+        dropZone.classList.remove('dragover');
+        const files = event.dataTransfer.files;
+        if (files.length > 0) handleFile(files[0], 'drop');
+    });
+
+    fileInput.addEventListener('change', (event) => {
+        const file = event.target.files[0];
+        if (file) handleFile(file, 'file');
+    });
+    
+    // Load Sample XML Button Event Listener
+    loadSampleXmlButton.addEventListener('click', () => {
+        loadSampleXmlButton.disabled = true;
+        loadSampleXmlButton.textContent = '読込中...';
+        showActionFeedback('サンプルXMLを読み込んでいます...', false, true);
+
+        google.script.run
+            .withSuccessHandler(function(sampleXmlText) {
+                updateXmlContent(sampleXmlText); // This will set textarea, xmlStringContent, and save to localStorage
+                showActionFeedback('サンプルXMLを読み込みました。');
+                loadSampleXmlButton.disabled = false;
+                loadSampleXmlButton.textContent = 'サンプル読込';
+            })
+            .withFailureHandler(function(error) {
+                displayError(`サンプルXMLの読み込みに失敗しました: ${error.message}`);
+                showActionFeedback('サンプルXMLの読み込みに失敗しました。', true);
+                loadSampleXmlButton.disabled = false;
+                loadSampleXmlButton.textContent = 'サンプル読込';
+                console.error("Error loading sample XML: ", error);
+            })
+            .getSampleXml(); // Assuming getSampleXml is the server-side function name
+    });
+
+
+    // --- "問題文の抽出" (Process XML) Button ---
+    processButton.addEventListener('click', async () => {
+        xmlStringContent = xmlPasteArea.value; 
+        localStorage.setItem(localStorageKeyXmlInput, xmlStringContent); 
+
+        if (!xmlStringContent || xmlStringContent.trim() === '') {
+            displayError('XMLデータが提供されていません。'); return;
+        }
+        clearResultsAndFeedback();
+        loadingDiv.style.display = 'block';
+        extractedQuestionsForCopy = [];
+
+        try {
+            const parser = new DOMParser();
+            const xmlDoc = parser.parseFromString(xmlStringContent, "text/xml");
+            const parsingError = xmlDoc.getElementsByTagName("parsererror");
+            if (parsingError.length > 0) { displayError(`XMLの解析に失敗: ${parsingError[0].textContent}`); return; }
+
+            const questions = xmlDoc.querySelectorAll('question[type="truefalse"]');
+            if (questions.length === 0) { displayError('Moodle XML内に true/false 形式の問題が見つかりませんでした。'); return; }
+
+            let currentProcessingQuestionNumber = 1;
+            questions.forEach(questionNode => {
+                const titleNode = questionNode.querySelector('name text');
+                const questionTextNode = questionNode.querySelector('questiontext text');
+                let title = titleNode ? titleNode.textContent.trim() : 'タイトルなし';
+                let questionText = questionTextNode ? questionTextNode.textContent.trim() : '問題文なし';
+                questionText = questionText.replace(/<[^>]+>/g, '').replace(/\n+/g, ' ').trim();
+
+                let moodleAnswer = null;
+                let isMoodleAnswerValid = false;
+                const answerNodes = questionNode.querySelectorAll('answer');
+                answerNodes.forEach(ansNode => {
+                    if (ansNode.getAttribute('fraction') === '100') {
+                        const answerTextNode = ansNode.querySelector('text');
+                        if (answerTextNode) {
+                            moodleAnswer = answerTextNode.textContent.trim().toLowerCase();
+                            if (moodleAnswer === 'true' || moodleAnswer === 'false') isMoodleAnswerValid = true;
+                        }
+                    }
+                });
+                
+                extractedQuestionsForCopy.push({
+                    "question_number": currentProcessingQuestionNumber,
+                    "question_title": title,
+                    "question_text": questionText,
+                    "moodle_answer_for_explanation": moodleAnswer 
+                });
+
+                addResultToTable(currentProcessingQuestionNumber, title, questionText, moodleAnswer || 'N/A', "---", "---", !isMoodleAnswerValid && moodleAnswer !== null);
+                currentProcessingQuestionNumber++;
+            });
+
+            if (extractedQuestionsForCopy.length > 0) {
+                copyJsonButton.style.display = 'inline-block';
+                previewJsonButton.style.display = 'inline-block';
+                inferWithGeminiButton.style.display = 'inline-block';
+                showInferenceOptionsButton.style.display = 'inline-block';
+            }
+        } catch (error) { displayError(`処理中にエラー: ${error.message}`); console.error("Processing error:", error); }
+        finally { loadingDiv.style.display = 'none'; }
+    });
+
+    // --- Action Buttons (Copy, Preview, Infer with Gemini, Show Options) ---
+    showInferenceOptionsButton.addEventListener('click', () => {
+        if (inferenceOptionsContainer.style.display === 'none' || inferenceOptionsContainer.style.display === '') {
+            inferenceOptionsContainer.style.display = 'block';
+            showInferenceOptionsButton.textContent = 'オプションを隠す';
+        } else {
+            inferenceOptionsContainer.style.display = 'none';
+            showInferenceOptionsButton.textContent = '推論オプション設定';
+        }
+    });
+
+    copyJsonButton.addEventListener('click', () => {
+        if (extractedQuestionsForCopy.length === 0) { showActionFeedback('コピーするデータがありません。', true); return; }
+        const dataToCopy = extractedQuestionsForCopy.map(q => ({
+            question_number: q.question_number,
+            question_title: q.question_title,
+            question_text: q.question_text
+        }));
+        const jsonString = JSON.stringify(dataToCopy, null, 2);
+        navigator.clipboard.writeText(jsonString)
+            .then(() => showActionFeedback('クリップボードにコピーしました！'))
+            .catch(err => { showActionFeedback('コピーに失敗しました。', true); console.error('Clipboard copy failed: ', err); });
+    });
+
+    previewJsonButton.addEventListener('click', () => {
+        if (extractedQuestionsForCopy.length === 0) { alert('プレビューするデータがありません。'); return; }
+        const dataToPreview = extractedQuestionsForCopy.map(q => ({
+            question_number: q.question_number,
+            question_title: q.question_title,
+            question_text: q.question_text
+        }));
+        jsonPreviewContent.textContent = JSON.stringify(dataToPreview, null, 2);
+        jsonPreviewModal.style.display = 'block';
+    });
+
+    inferWithGeminiButton.addEventListener('click', () => {
+        if (extractedQuestionsForCopy.length === 0) { showActionFeedback('推論する質問データがありません。', true); return; }
+        const selectedModel = geminiModelSelect.value;
+        if (!selectedModel) { showActionFeedback('推論に使用するGeminiモデルを選択してください。', true); return; }
+
+        const userGenConfig = {
+            temperature: parseFloat(temperatureSelect.value),
+            topK: parseInt(topKSelect.value),
+            topP: parseFloat(topPSelect.value)
+        };
+
+        const questionsForInference = extractedQuestionsForCopy.map(q => ({
+            question_number: q.question_number,
+            question_title: q.question_title,
+            question_text: q.question_text
+        }));
+
+        showActionFeedback(`Gemini (${selectedModel}, T:${userGenConfig.temperature}, K:${userGenConfig.topK}, P:${userGenConfig.topP}) に問い合わせ中...`, false, true);
+        setActionsUIDisabled(true);
+
+        google.script.run
+            .withSuccessHandler(function(responseObject) {
+                setActionsUIDisabled(false);
+                if (!responseObject || typeof responseObject.results === 'undefined' || typeof responseObject.duration === 'undefined') {
+                    showActionFeedback(`Gemini (${selectedModel}) から予期しない形式の応答がありました。`, true);
+                    resetGeminiCellsOnError(); console.error("Unexpected response structure from server:", responseObject); return;
+                }
+                const resultsFromGemini = responseObject.results;
+                const duration = responseObject.duration;
+
+                if (!resultsFromGemini || resultsFromGemini.length === 0) {
+                    showActionFeedback(`Gemini (${selectedModel}) から有効な推論結果が得られませんでした。(処理時間: ${duration.toFixed(2)}秒)`, true);
+                    resetGeminiCellsOnError(); return;
+                }
+
+                resultsFromGemini.forEach(geminiResult => {
+                    const qNum = geminiResult.question_number;
+                    const geminiAnswerBool = (typeof geminiResult.answer_by_gemini === 'boolean') ? geminiResult.answer_by_gemini : null;
+                    const row = resultsTableBody.querySelector(`tr[data-question-number="${qNum}"]`);
+                    if (row && row.cells.length > 6) { 
+                        const moodleAnswerStr = row.cells[3].textContent.toLowerCase();
+                        
+                        const explanationCell = row.cells[6];
+                        explanationCell.innerHTML = ''; 
+                        if (moodleAnswerStr === 'true' || moodleAnswerStr === 'false') {
+                            const genExButton = document.createElement('button');
+                            genExButton.className = 'generate-explanation-button';
+                            genExButton.dataset.questionNumber = qNum;
+                            genExButton.textContent = '✨解説生成';
+                            explanationCell.appendChild(genExButton);
+                        } else {
+                            explanationCell.textContent = '---';
+                        }
+
+                        if (geminiAnswerBool !== null) {
+                            row.cells[4].textContent = geminiAnswerBool.toString(); 
+                            if (moodleAnswerStr === 'true' || moodleAnswerStr === 'false') {
+                                const isMatch = moodleAnswerStr === geminiAnswerBool.toString();
+                                row.cells[5].textContent = isMatch ? '一致' : '不一致';
+                                row.cells[5].className = isMatch ? 'match-true' : 'match-false';
+                            } else { row.cells[5].textContent = '比較不可'; row.cells[5].className = ''; }
+                        } else {
+                            row.cells[4].textContent = '型エラー'; row.cells[5].textContent = '---'; row.cells[5].className = '';
+                            console.warn(`Gemini answer for Q#${qNum} is not a boolean:`, geminiResult.answer_by_gemini);
+                        }
+                    } else { console.warn(`Table row for Q#${qNum} not found or incomplete for explanation reset.`); }
+                });
+                showActionFeedback(`Gemini (${selectedModel}, T:${userGenConfig.temperature}, K:${userGenConfig.topK}, P:${userGenConfig.topP}) 推論完了。(処理時間: ${duration.toFixed(2)}秒)`);
+            })
+            .withFailureHandler(function(error) {
+                setActionsUIDisabled(false);
+                showActionFeedback(`Gemini (${selectedModel}) 推論エラー: ${error.message}`, true);
+                console.error(`Error calling getGeminiAnswersForQuiz with model ${selectedModel}: `, error);
+                resetGeminiCellsOnError();
+            })
+            .getGeminiAnswersForQuiz(questionsForInference, selectedModel, userGenConfig);
+    });
+    
+    // --- Event Delegation for "Generate Explanation" and "Copy Markdown" Buttons ---
+    resultsTableBody.addEventListener('click', function(event) {
+        // --- Generate Explanation Button Click ---
+        if (event.target.classList.contains('generate-explanation-button')) {
+            const button = event.target;
+            const questionNumber = parseInt(button.dataset.questionNumber);
+            const row = button.closest('tr');
+            const explanationCell = row.cells[6]; 
+
+            const questionData = extractedQuestionsForCopy.find(q => q.question_number === questionNumber);
+            if (!questionData) {
+                explanationCell.innerHTML = '<span style="color:red;">エラー: 問題データが見つかりません。</span>';
+                return;
+            }
+
+            const questionText = questionData.question_text;
+            const moodleAnswer = questionData.moodle_answer_for_explanation;
+            const geminiInferredAnswerFromTable = row.cells[4].textContent.trim().toLowerCase();
+
+            if (moodleAnswer !== 'true' && moodleAnswer !== 'false') {
+                explanationCell.innerHTML = '<span style="color:orange;">Moodleの正解が不明なため解説を生成できません。</span>';
+                return;
+            }
+
+            let geminiInferredAnswerForPrompt = geminiInferredAnswerFromTable;
+            if (geminiInferredAnswerFromTable !== 'true' && geminiInferredAnswerFromTable !== 'false') {
+                geminiInferredAnswerForPrompt = moodleAnswer; 
+            }
+
+            const selectedModel = geminiModelSelect.value;
+            const userGenConfig = {
+                temperature: parseFloat(temperatureSelect.value),
+                topK: parseInt(topKSelect.value),
+                topP: parseFloat(topPSelect.value)
+            };
+
+            button.disabled = true;
+            button.textContent = '生成中...';
+            explanationCell.innerHTML = '<span>解説を生成しています...</span>';
+
+            google.script.run
+                .withSuccessHandler(function(response) {
+                    // button.style.display = 'none'; 
+                    if (response && response.explanation) {
+                        let markdownText = response.explanation;
+                        markdownText = markdownText.replace(/(\r\n|\r|\n)(\s*(\r\n|\r|\n))+/g, '\n\n');
+                        markdownText = markdownText.trim();
+
+                        const htmlExplanation = marked.parse(markdownText, { breaks: true, gfm: true });
+
+                        const explanationContentDiv = document.createElement('div');
+                        explanationContentDiv.className = 'explanation-content markdown-body';
+                        explanationContentDiv.innerHTML = htmlExplanation;
+                        explanationContentDiv.dataset.markdownText = markdownText; 
+
+                        explanationCell.innerHTML = ''; 
+                        explanationCell.appendChild(explanationContentDiv);
+
+                        const copyMdButton = document.createElement('button');
+                        copyMdButton.className = 'copy-markdown-button';
+                        copyMdButton.title = '解説マークダウンをコピー';
+                        copyMdButton.textContent = 'MDコピー';
+                        explanationContentDiv.appendChild(copyMdButton);
+
+                        showActionFeedback(`解説生成完了 (モデル: ${selectedModel}, ${response.duration.toFixed(2)}秒)`);
+                        button.remove(); 
+                    } else {
+                        explanationCell.innerHTML = '<span style="color:red;">解説の生成に失敗しました。</span>';
+                        showActionFeedback(`解説の生成に失敗 (モデル: ${selectedModel})`, true);
+                        button.disabled = false; 
+                        button.textContent = '✨解説生成';
+                        explanationCell.innerHTML = ''; 
+                        explanationCell.appendChild(button); 
+                        const errorSpan = document.createElement('span');
+                        errorSpan.style.color = 'red';
+                        errorSpan.textContent = ' 解説の生成に失敗しました。';
+                        explanationCell.appendChild(errorSpan);
+                    }
+                })
+                .withFailureHandler(function(error) {
+                    button.disabled = false;
+                    button.textContent = '✨解説生成';
+                    explanationCell.innerHTML = `<span style="color:red;">解説生成エラー: ${error.message}</span>`;
+                    showActionFeedback(`解説生成エラー (モデル: ${selectedModel}): ${error.message}`, true);
+                    console.error("Error generating explanation: ", error);
+                })
+                .getExplanationForQuestion(questionText, moodleAnswer, geminiInferredAnswerForPrompt, selectedModel, userGenConfig);
+        }
+        // --- Copy Markdown Button Click ---
+        else if (event.target.classList.contains('copy-markdown-button')) {
+            const copyButton = event.target;
+            const explanationContentDiv = copyButton.closest('.explanation-content');
+            if (explanationContentDiv && explanationContentDiv.dataset.markdownText) {
+                const markdownToCopy = explanationContentDiv.dataset.markdownText;
+                navigator.clipboard.writeText(markdownToCopy)
+                    .then(() => {
+                        showActionFeedback('マークダウンをコピーしました！');
+                        const originalText = copyButton.textContent;
+                        copyButton.textContent = 'コピー完了!';
+                        setTimeout(() => { copyButton.textContent = originalText; }, 2000);
+                    })
+                    .catch(err => {
+                        showActionFeedback('マークダウンのコピーに失敗しました。', true);
+                        console.error('Failed to copy markdown: ', err);
+                    });
+            } else {
+                showActionFeedback('コピー対象のマークダウンが見つかりません。', true);
+            }
+        }
+    });
+
+
+    // --- Helper function to disable/enable UI elements during API call ---
+    function setActionsUIDisabled(disabled) {
+        inferWithGeminiButton.disabled = disabled;
+        inferWithGeminiButton.textContent = disabled ? '推論中...' : 'Geminiで回答を推論';
+        copyJsonButton.disabled = disabled;
+        previewJsonButton.disabled = disabled;
+        geminiModelSelect.disabled = disabled;
+        temperatureSelect.disabled = disabled;
+        topKSelect.disabled = disabled;
+        topPSelect.disabled = disabled;
+        showInferenceOptionsButton.disabled = disabled;
+        loadSampleXmlButton.disabled = disabled;
+    }
+    
+    function resetGeminiCellsOnError() {
+        resultsTableBody.querySelectorAll('tr').forEach(row => {
+            if (row.cells.length > 5) {
+                row.cells[4].textContent = 'エラー';
+                row.cells[5].textContent = '---';
+                row.cells[5].className = '';
+            }
+            if (row.cells.length > 6) {
+                 const explanationCell = row.cells[6];
+                 explanationCell.innerHTML = ''; 
+                 const button = document.createElement('button');
+                 button.className = 'generate-explanation-button';
+                 if (row.dataset.questionNumber) { 
+                    button.dataset.questionNumber = row.dataset.questionNumber;
+                 }
+                 button.textContent = '✨解説生成';
+                 explanationCell.appendChild(button);
+            }
+        });
+    }
+
+    // --- Modal Logic (JSON Preview and Input Help) ---
+    closeModalButton.addEventListener('click', () => { jsonPreviewModal.style.display = 'none'; });
+    closeInputHelpModalButton.addEventListener('click', () => { inputHelpModal.style.display = 'none'; });
+    
+    if (explanationColumnHelpButton && explanationColumnHelpModal && closeExplanationColumnHelpModalButton) {
+        explanationColumnHelpButton.addEventListener('click', () => {
+            explanationColumnHelpModal.style.display = 'block';
+        });
+        closeExplanationColumnHelpModalButton.addEventListener('click', () => {
+            explanationColumnHelpModal.style.display = 'none';
+        });
+    }
+
+
+    window.addEventListener('click', (event) => {
+        if (event.target === jsonPreviewModal) jsonPreviewModal.style.display = 'none';
+        if (event.target === inputHelpModal) inputHelpModal.style.display = 'none';
+        if (explanationColumnHelpModal && event.target === explanationColumnHelpModal) { 
+            explanationColumnHelpModal.style.display = 'none';
+        }
+    });
+
+    inputHelpButton.addEventListener('click', () => { inputHelpModal.style.display = 'block'; });
+
+    // --- Table and Feedback Utility Functions ---
+    function addResultToTable(num, title, questionText, moodleAnswer, geminiAnswerPlaceholder, matchStatusPlaceholder, isMoodleWarning) {
+        const row = resultsTableBody.insertRow();
+        row.setAttribute('data-question-number', num);
+
+        row.insertCell().textContent = num;
+        row.insertCell().textContent = title;
+        
+        const questionTextCell = row.insertCell();
+        questionTextCell.textContent = questionText;
+        questionTextCell.style.whiteSpace = 'pre-wrap';
+
+        const moodleCell = row.insertCell();
+        moodleCell.textContent = moodleAnswer;
+        if (isMoodleWarning && moodleAnswer !== 'N/A') {
+             moodleCell.style.color = 'orange';
+             moodleCell.title = 'Moodleの正解がtrue/false以外、または見つかりませんでした';
+        }
+
+        row.insertCell().textContent = geminiAnswerPlaceholder;
+        row.insertCell().textContent = matchStatusPlaceholder;
+        
+        const explanationCell = row.insertCell();
+        if (moodleAnswer === 'true' || moodleAnswer === 'false') {
+            const button = document.createElement('button');
+            button.className = 'generate-explanation-button';
+            button.dataset.questionNumber = num;
+            button.textContent = '✨解説生成';
+            explanationCell.appendChild(button);
+        } else {
+            explanationCell.textContent = '---';
+        }
+    }
+
+    function clearResultsAndFeedback() {
+        resultsTableBody.innerHTML = '';
+        clearError();
+        copyJsonButton.style.display = 'none';
+        previewJsonButton.style.display = 'none';
+        
+        inferWithGeminiButton.style.display = 'none';
+        showInferenceOptionsButton.style.display = 'none';
+        inferenceOptionsContainer.style.display = 'none';
+        if(showInferenceOptionsButton) showInferenceOptionsButton.textContent = '推論オプション設定';
+
+        actionFeedback.textContent = '';
+        extractedQuestionsForCopy = [];
+        if (jsonPreviewModal) jsonPreviewModal.style.display = 'none';
+        if (inputHelpModal) inputHelpModal.style.display = 'none'; 
+        if (explanationColumnHelpModal) explanationColumnHelpModal.style.display = 'none';
+        setActionsUIDisabled(false); 
+    }
+    
+    function displayError(message) {
+        errorMessagesDiv.textContent = message;
+        errorMessagesDiv.style.display = 'block';
+        loadingDiv.style.display = 'none';
+    }
+
+    function showActionFeedback(message, isError = false, persistent = false) {
+        actionFeedback.textContent = message;
+        actionFeedback.style.color = isError ? 'red' : 'green';
+        if (!persistent) {
+            setTimeout(() => { 
+                if (actionFeedback.textContent === message) actionFeedback.textContent = ''; 
+            }, 3000);
+        }
+    }
+});
+</script>
