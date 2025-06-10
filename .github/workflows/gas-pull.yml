@@ -11,6 +11,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+        with:
+          persist-credentials: true  # git push 用の認証情報を保持
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -28,3 +30,16 @@ jobs:
         run: |
           cd moodle-true-false-quiz-validator/
           clasp pull
+
+      - name: Commit & Push changes if any
+        run: |
+          cd moodle-true-false-quiz-validator/
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if [ -n "$(git status --porcelain)" ]; then
+            git add .
+            git commit -m "chore: daily sync GAS → GitHub"
+            git push
+          else
+            echo "No changes detected, skipping commit"
+          fi
