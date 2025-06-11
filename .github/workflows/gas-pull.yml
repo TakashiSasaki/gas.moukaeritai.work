@@ -34,10 +34,13 @@ jobs:
         run: |
           echo '${{ secrets.CLASPRC_JSON }}' > ~/.clasprc.json
 
-      - name: Pull both projects
-        run: |
-          clasp pull --rootDir=moodle-true-false-quiz-validator
-          clasp pull --rootDir=moodle-multichoice-question-validator
+      - name: Pull true/false quiz
+        working-directory: moodle-true-false-quiz-validator
+        run: clasp pull
+
+      - name: Pull multiple-choice quiz
+        working-directory: moodle-multichoice-question-validator
+        run: clasp pull
 
       - name: Commit & Push changes if any
         run: |
