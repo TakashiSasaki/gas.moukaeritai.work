@@ -41,13 +41,17 @@ jobs:
         working-directory: moodle-multichoice-question-validator
         run: clasp pull
 
+      - name: Pull show-google-tasks
+        working-directory: show-google-tasks
+        run: clasp pull
+
       - name: Commit & Push changes if any
         run: |
           cd $GITHUB_WORKSPACE
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           if [ -n "$(git status --porcelain)" ]; then
-            git add moodle-true-false-quiz-validator/ moodle-multichoice-question-validator/
+            git add moodle-true-false-quiz-validator/ moodle-multichoice-question-validator/ show-google-tasks/
             git commit -m "chore: daily sync GAS → gas-pull"
             git push origin gas-pull
           else
