@@ -1,25 +1,24 @@
 name: Sync from GAS
 
-# GITHUB_TOKEN に書き込み権限を付与
+# Ensure GITHUB_TOKEN can write to the repo
 permissions:
   contents: write
 
 on:
   schedule:
-    - cron: '0 3 * * *' # 毎日03:00（UTC）に実行（日本時間で12:00）
+    - cron: '0 3 * * *'  # Run daily at 03:00 UTC (12:00 JST)
   workflow_dispatch:
 
 jobs:
   pull:
-    if: github.ref == 'refs/heads/gas-pull'
     runs-on: ubuntu-latest
     steps:
-      # gas-pull ブランチをチェックアウト
+      # Always check out the gas-pull branch, never main
       - name: Checkout gas-pull branch
         uses: actions/checkout@v3
         with:
           ref: gas-pull
-          persist-credentials: true  # GITHUB_TOKEN を保持して push に使う
+          persist-credentials: true
           fetch-depth: 0
 
       - name: Set up Node.js
@@ -36,19 +35,17 @@ jobs:
 
       - name: Pull both projects
         run: |
-          clasp pull --rootDir=moodle-true-false-quiz-validator
-          clasp pull --rootDir=moodle-multichoice-question-validator
+          cd moodle-true-false-quiz-validator
+          clasp pull
+          cd ../moodle-multichoice-question-validator
+          clasp pull
 
       - name: Commit & Push changes if any
         run: |
-          # リポジトリルートに戻る
           cd $GITHUB_WORKSPACE
-
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-
           if [ -n "$(git status --porcelain)" ]; then
-            # 変更のあるサブディレクトリをまとめて add
             git add moodle-true-false-quiz-validator/ moodle-multichoice-question-validator/
             git commit -m "chore: daily sync GAS → gas-pull"
             git push origin gas-pull
