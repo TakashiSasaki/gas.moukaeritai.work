@@ -171,9 +171,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 const questionTextNode = questionNode.querySelector('questiontext text');
 
                 const title = questionNameNode ? cleanText(questionNameNode.innerHTML) : `問題 ${index + 1}`;
-                // Store both raw HTML and cleaned text for question text
-                const rawQuestionHtml = questionTextNode ? questionTextNode.innerHTML : '';
-                const questionText = cleanText(rawQuestionHtml);
+
+                let rawQuestionHtml = questionTextNode ? questionTextNode.innerHTML : '';
+                rawQuestionHtml = rawQuestionHtml.replace(/]]>\s*$/, '').trim(); // Clean CDATA artifact
+                const questionText = cleanText(rawQuestionHtml, true); // Plain text for Gemini
+                const questionHtmlForDisplay = rawQuestionHtml; // HTML for display
 
                 const choices = [];
                 let moodleCorrectAnswerText = null;
@@ -182,17 +184,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 answerNodes.forEach(ansNode => {
                     const fraction = ansNode.getAttribute('fraction');
                     const choiceTextNode = ansNode.querySelector('text');
-                    const rawChoiceHtml = choiceTextNode ? choiceTextNode.innerHTML : '';
-                    const choiceText = cleanText(rawChoiceHtml);
+
+                    let rawChoiceHtml = choiceTextNode ? choiceTextNode.innerHTML : '';
+                    rawChoiceHtml = rawChoiceHtml.replace(/]]>\s*$/, '').trim(); // Clean CDATA artifact
+                    const choiceText = cleanText(rawChoiceHtml, true); // Plain text for Gemini
+                    const choiceHtmlForDisplay = rawChoiceHtml; // HTML for display
 
                     choices.push({
-                        text: choiceText,
+                        text: choiceText, // Plain text for processing & Gemini
                         fraction: fraction,
-                        html_text: rawChoiceHtml
+                        html_text: choiceHtmlForDisplay // HTML for display potentially
                     });
 
-                    if (fraction === "100" || (answerNodes.length === 1 && fraction === "1")) { // Handle single answer with fraction "1"
-                        moodleCorrectAnswerText = choiceText;
+                    if (fraction === "100" || (answerNodes.length === 1 && fraction === "1")) {
+                        moodleCorrectAnswerText = choiceText; // Store the plain text version of the correct answer
                     }
                 });
 
@@ -216,15 +221,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     id: `q_${index}_${new Date().getTime()}`, // Unique ID
                     number: index + 1,
                     title: title,
-                    text: questionText,
-                    html_text: rawQuestionHtml,
+                    text: questionText, // Plain text for Gemini
+                    html_text: questionHtmlForDisplay, // HTML for display
                     question_raw_xml: new XMLSerializer().serializeToString(questionNode),
                     type: 'multichoice',
-                    choices: choices,
-                    moodleAnswer: moodleCorrectAnswerText // This is the TEXT of the correct answer
+                    choices: choices, // choices array now contains plain text `text` and `html_text`
+                    moodleAnswer: moodleCorrectAnswerText // Plain text correct answer
                 });
 
-                // Add to table, moodleAnswer is text, or 'N/A' if not found
+                // Add to table, moodleAnswer is text, or '特定不能' if not found. Display uses plain text.
                 addResultToTable(index + 1, title, questionText, moodleCorrectAnswerText || '特定不能', "---", "---", !moodleCorrectAnswerText);
             });
 
