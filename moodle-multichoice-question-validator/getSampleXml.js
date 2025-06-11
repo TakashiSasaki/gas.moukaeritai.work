@@ -1,4 +1,127 @@
-function getSampleXml() {
+/**
+ * Returns a sample Moodle XML string for multiple-choice questions.
+ * @return {string} Sample Moodle XML.
+ */
+function getSampleMultichoiceXml() {
   return `<?xml version="1.0" encoding="UTF-8"?>
-<quiz><question type="truefalse"><name><text>1</text></name><questiontext format="html"><text><![CDATA[データ・AIの利活用に際しての法整備や倫理的課題への対応などは、技術の発展とともに十分になされている。]]></text></questiontext><defaultgrade>1.0000000</defaultgrade><penalty>0.3333333</penalty><hidden>0</hidden><answer fraction="100"><text>false</text><feedback format="html"><text><![CDATA[データ・AIの利活用に関する法整備や倫理的課題への対応は、技術の発展に追いついていないのが現状である。]]></text></feedback></answer><answer fraction="0"><text>true</text><feedback format="html"><text><![CDATA[データ・AIの利活用に関する法整備や倫理的課題への対応は、技術の発展に追いついていないのが現状である。]]></text></feedback></answer></question><question type="truefalse"><name><text>2</text></name><questiontext format="html"><text><![CDATA[データ・AIの利活用における課題はデジタル技術についての専門的なことが主であるので、一般利用者への留意点は特にない。]]></text></questiontext><defaultgrade>1.0000000</defaultgrade><penalty>0.3333333</penalty><hidden>0</hidden><answer fraction="100"><text>false</text><feedback format="html"><text><![CDATA[データ・AIの利活用における課題は専門的なことだけではなく、一般利用者も留意すべき点がある。]]></text></feedback></answer><answer fraction="0"><text>true</text><feedback format="html"><text><![CDATA[データ・AIの利活用における課題は専門的なことだけではなく、一般利用者も留意すべき点がある。]]></text></feedback></answer></question><question type="truefalse"><name><text>3</text></name><questiontext format="html"><text><![CDATA[AIのような新しい技術の利活用においては、それを受け入れる社会基盤も同時に整備することが重要である。]]></text></questiontext><defaultgrade>1.0000000</defaultgrade><penalty>0.3333333</penalty><hidden>0</hidden><answer fraction="100"><text>true</text><feedback format="html"><text><![CDATA[新しい技術の利活用においては、それを受け入れる社会基盤の整備が不可欠である。]]></text></feedback></answer><answer fraction="0"><text>false</text><feedback format="html"><text><![CDATA[新しい技術の利活用においては、それを受け入れる社会基盤の整備が不可欠である。]]></text></feedback></answer></question><question type="truefalse"><name><text>4</text></name><questiontext format="html"><text><![CDATA[ELSIとは、データ・AIの利活用に特化した「倫理的・法的・社会的な課題」をまとめたものである。]]></text></questiontext><defaultgrade>1.0000000</defaultgrade><penalty>0.3333333</penalty><hidden>0</hidden><answer fraction="100"><text>false</text><feedback format="html"><text><![CDATA[ELSIは、技術の利用によって生じる倫理的、法的、社会的な課題を包括的に扱う概念である。]]></text></feedback></answer><answer fraction="0"><text>true</text><feedback format="html"><text><![CDATA[ELSIは、技術の利用によって生じる倫理的、法的、社会的な課題を包括的に扱う概念である。]]></text></feedback></answer></question><question type="truefalse"><name><text>5</text></name><questiontext format="html"><text><![CDATA[社会的に広く利用されているAIは「機械学習」によるもので、大量のデータに基づいて予測を出力する仕組みである。]]></text></questiontext><defaultgrade>1.0000000</defaultgrade><penalty>0.3333333</penalty><hidden>0</hidden><answer fraction="100"><text>true</text><feedback format="html"><text><![CDATA[社会的に広く利用されているAIは機械学習によるもので、大量のデータに基づいて予測を出力する仕組みである。]]></text></feedback></answer><answer fraction="0"><text>false</text><feedback format="html"><text><![CDATA[社会的に広く利用されているAIは機械学習によるもので、大量のデータに基づいて予測を出力する仕組みである。]]></text></feedback></answer></question><question type="truefalse"><name><text>6</text></name><questiontext format="html"><text><![CDATA[AIは非常に賢く、もととなる学習データに誤りや偏りがあっても正しい回答を出力できる。]]></text></questiontext><defaultgrade>1.0000000</defaultgrade><penalty>0.3333333</penalty><hidden>0</hidden><answer fraction="100"><text>false</text><feedback format="html"><text><![CDATA[AIは学習データに誤りや偏りがあると、誤った回答を出力する可能性がある。]]></text></feedback></answer><answer fraction="0"><text>true</text><feedback format="html"><text><![CDATA[AIは学習データに誤りや偏りがあると、誤った回答を出力する可能性がある。]]></text></feedback></answer></question><question type="truefalse"><name><text>7</text></name><questiontext format="html"><text><![CDATA[インターネット上で動く検索サイトは、入力キーワードなどの行動に関するデータも自動収集している。]]></text></questiontext><defaultgrade>1.0000000</defaultgrade><penalty>0.3333333</penalty><hidden>0</hidden><answer fraction="100"><text>true</text><feedback format="html"><text><![CDATA[インターネット上で動く検索サイトは、入力キーワードなどの行動に関するデータを自動収集している。]]></text></feedback></answer><answer fraction="0"><text>false</text><feedback format="html"><text><![CDATA[インターネット上で動く検索サイトは、入力キーワードなどの行動に関するデータを自動収集している。]]></text></feedback></answer></question><question type="truefalse"><name><text>8</text></name><questiontext format="html"><text><![CDATA[スマートスピーカーはAIとは無関係な仕組みの機械であり、予め決められた音声命令に対してのみ作動する。]]></text></questiontext><defaultgrade>1.0000000</defaultgrade><penalty>0.3333333</penalty><hidden>0</hidden><answer fraction="100"><text>false</text><feedback format="html"><text><![CDATA[スマートスピーカーはAIを活用しており、音声命令に基づいて様々な機能を提供する。]]></text></feedback></answer><answer fraction="0"><text>true</text><feedback format="html"><text><![CDATA[スマートスピーカーはAIを活用しており、音声命令に基づいて様々な機能を提供する。]]></text></feedback></answer></question><question type="truefalse"><name><text>9</text></name><questiontext format="html"><text><![CDATA[スマートフォンは携帯できるインターネット端末として、日常生活のみならず業務における利便性が高い。]]></text></questiontext><defaultgrade>1.0000000</defaultgrade><penalty>0.3333333</penalty><hidden>0</hidden><answer fraction="100"><text>true</text><feedback format="html"><text><![CDATA[スマートフォンは携帯できるインターネット端末として、日常生活のみならず業務における利便性が高い。]]></text></feedback></answer><answer fraction="0"><text>false</text><feedback format="html"><text><![CDATA[スマートフォンは携帯できるインターネット端末として、日常生活のみならず業務における利便性が高い。]]></text></feedback></answer></question><question type="truefalse"><name><text>10</text></name><questiontext format="html"><text><![CDATA[パソコンにおける情報セキュリティー上の留意点は、スマートフォンには当てはまらないので気にしなくてよい。]]></text></questiontext><defaultgrade>1.0000000</defaultgrade><penalty>0.3333333</penalty><hidden>0</hidden><answer fraction="100"><text>false</text><feedback format="html"><text><![CDATA[スマートフォンもパソコンと同様に、情報セキュリティー上の留意点に注意する必要がある。]]></text></feedback></answer><answer fraction="0"><text>true</text><feedback format="html"><text><![CDATA[スマートフォンもパソコンと同様に、情報セキュリティー上の留意点に注意する必要がある。]]></text></feedback></answer></question><question type="truefalse"><name><text>11</text></name><questiontext format="html"><text><![CDATA[急な案件のために大量のデータが必要な場合には、例外的に許可なく取得してよい。]]></text></questiontext><defaultgrade>1.0000000</defaultgrade><penalty>0.3333333</penalty><hidden>0</hidden><answer fraction="100"><text>false</text><feedback format="html"><text><![CDATA[データの取得と利用は、関連法規や組織のルールを遵守して行う必要がある。]]></text></feedback></answer><answer fraction="0"><text>true</text><feedback format="html"><text><![CDATA[データの取得と利用は、関連法規や組織のルールを遵守して行う必要がある。]]></text></feedback></answer></question><question type="truefalse"><name><text>12</text></name><questiontext format="html"><text><![CDATA[データの収集は目的に合わせて適切に行わないと、人権侵害などの大きな問題に発展することがある。]]></text></questiontext><defaultgrade>1.0000000</defaultgrade><penalty>0.3333333</penalty><hidden>0</hidden><answer fraction="100"><text>true</text><feedback format="html"><text><![CDATA[データの収集は目的に合わせて適切に行わないと、人権侵害などの大きな問題に発展することがある。]]></text></feedback></answer><answer fraction="0"><text>false</text><feedback format="html"><text><![CDATA[データの収集は目的に合わせて適切に行わないと、人権侵害などの大きな問題に発展することがある。]]></text></feedback></answer></question><question type="truefalse"><name><text>13</text></name><questiontext format="html"><text><![CDATA[収集したデータは取得者に権限があるため、目的外使用や第三者への無断提供を行っても法で罰せられることはない。]]></text></questiontext><defaultgrade>1.0000000</defaultgrade><penalty>0.3333333</penalty><hidden>0</hidden><answer fraction="100"><text>false</text><feedback format="html"><text><![CDATA[収集したデータは、関連法規や組織のルールに沿って利用する必要があり、目的外使用や第三者への無断提供は禁止されている。]]></text></feedback></answer><answer fraction="0"><text>true</text><feedback format="html"><text><![CDATA[収集したデータは、関連法規や組織のルールに沿って利用する必要があり、目的外使用や第三者への無断提供は禁止されている。]]></text></feedback></answer></question><question type="truefalse"><name><text>14</text></name><questiontext format="html"><text><![CDATA[収集したデータはルールに沿って厳重に管理すべきであるが、万が一漏洩した場合でも謝れば許してもらえる。]]></text></questiontext><defaultgrade>1.0000000</defaultgrade><penalty>0.3333333</penalty><hidden>0</hidden><answer fraction="100"><text>false</text><feedback format="html"><text><![CDATA[データ漏洩は、社会的な信用を失墜させる重大な問題であり、謝罪だけでは済まされない場合がある。]]></text></feedback></answer><answer fraction="0"><text>true</text><feedback format="html"><text><![CDATA[データ漏洩は、社会的な信用を失墜させる重大な問題であり、謝罪だけでは済まされない場合がある。]]></text></feedback></answer></question><question type="truefalse"><name><text>15</text></name><questiontext format="html"><text><![CDATA[収集したデータに不都合があった場合には、上手に改ざんした上で利活用するのが賢い方法である。]]></text></questiontext><defaultgrade>1.0000000</defaultgrade><penalty>0.3333333</penalty><hidden>0</hidden><answer fraction="100"><text>false</text><feedback format="html"><text><![CDATA[データの改ざんは、法的責任を問われるだけでなく、倫理的にも許されない行為である。]]></text></feedback></answer><answer fraction="0"><text>true</text><feedback format="html"><text><![CDATA[データの改ざんは、法的責任を問われるだけでなく、倫理的にも許されない行為である。]]></text></feedback></answer></question><question type="truefalse"><name><text>16</text></name><questiontext format="html"><text><![CDATA[パソコンやスマートフォンの利用履歴も個人情報になり得るので注意が必要である。]]></text></questiontext><defaultgrade>1.0000000</defaultgrade><penalty>0.3333333</penalty><hidden>0</hidden><answer fraction="100"><text>true</text><feedback format="html"><text><![CDATA[パソコンやスマートフォンの利用履歴も、個人を特定できる情報となり得るため、注意が必要である。]]></text></feedback></answer><answer fraction="0"><text>false</text><feedback format="html"><text><![CDATA[パソコンやスマートフォンの利用履歴も、個人を特定できる情報となり得るため、注意が必要である。]]></text></feedback></answer></question><question type="truefalse"><name><text>17</text></name><questiontext format="html"><text><![CDATA[インターネットにおけるデータ収集には悪意あるケースもあるので注意せよ、と言われても利用者としてはなすすべがない。]]></text></questiontext><defaultgrade>1.0000000</defaultgrade><penalty>0.3333333</penalty><hidden>0</hidden><answer fraction="100"><text>false</text><feedback format="html"><text><![CDATA[インターネットにおけるデータ収集には、利用者側で対策できることもある。]]></text></feedback></answer><answer fraction="0"><text>true</text><feedback format="html"><text><![CDATA[インターネットにおけるデータ収集には、利用者側で対策できることもある。]]></text></feedback></answer></question><question type="truefalse"><name><text>18</text></name><questiontext format="html"><text><![CDATA[インターネットやAIに限らず、データの収集・管理、提供については注意を払うことが望ましい。]]></text></questiontext><defaultgrade>1.0000000</defaultgrade><penalty>0.3333333</penalty><hidden>0</hidden><answer fraction="100"><text>true</text><feedback format="html"><text><![CDATA[データの収集・管理、提供については、インターネットやAIに限らず、常に注意を払うことが重要である。]]></text></feedback></answer><answer fraction="0"><text>false</text><feedback format="html"><text><![CDATA[データの収集・管理、提供については、インターネットやAIに限らず、常に注意を払うことが重要である。]]></text></feedback></answer></question></quiz>`
+<quiz>
+<!-- question: 0  -->
+  <question type="category">
+    <category>
+      <text>$course$/top/第4章-コンピュータ</text>
+    </category>
+    <info format="html">
+      <text></text>
+    </info>
+    <idnumber></idnumber>
+  </question>
+
+<!-- question: 1049371  -->
+  <question type="multichoice">
+    <name>
+      <text>NC4-01-01</text>
+    </name>
+    <questiontext format="html">
+      <text><![CDATA[<p>「コンピュータの五大機能」に<strong>含まれない</strong>機能を選択してください。</p>]]></text>
+    </questiontext>
+    <generalfeedback format="html">
+      <text></text>
+    </generalfeedback>
+    <defaultgrade>2.0000000</defaultgrade>
+    <penalty>0.0000000</penalty>
+    <hidden>0</hidden>
+    <idnumber></idnumber>
+    <single>true</single>
+    <shuffleanswers>true</shuffleanswers>
+    <answernumbering>ABCD</answernumbering>
+    <showstandardinstruction>1</showstandardinstruction>
+    <correctfeedback format="moodle_auto_format">
+      <text></text>
+    </correctfeedback>
+    <partiallycorrectfeedback format="moodle_auto_format">
+      <text></text>
+    </partiallycorrectfeedback>
+    <incorrectfeedback format="moodle_auto_format">
+      <text></text>
+    </incorrectfeedback>
+    <answer fraction="100" format="moodle_auto_format">
+      <text>通信機能（LAN部分）</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="0" format="moodle_auto_format">
+      <text>記憶機能（メモリ部分）</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="0" format="moodle_auto_format">
+      <text>入力機能、出力機能（コンピュータの入出力装置部分）</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="0" format="moodle_auto_format">
+      <text>演算機能、制御機能（CPU部分）</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+  </question>
+
+<!-- question: 1049372  -->
+  <question type="multichoice">
+    <name>
+      <text>NC4-01-02</text>
+    </name>
+    <questiontext format="html">
+      <text><![CDATA[<p>「コンピュータの五大機能」に<strong>含まれない</strong>機能を選択してください。</p>]]></text>
+    </questiontext>
+    <generalfeedback format="html">
+      <text></text>
+    </generalfeedback>
+    <defaultgrade>2.0000000</defaultgrade>
+    <penalty>0.0000000</penalty>
+    <hidden>0</hidden>
+    <idnumber></idnumber>
+    <single>true</single>
+    <shuffleanswers>true</shuffleanswers>
+    <answernumbering>ABCD</answernumbering>
+    <showstandardinstruction>1</showstandardinstruction>
+    <correctfeedback format="moodle_auto_format">
+      <text></text>
+    </correctfeedback>
+    <partiallycorrectfeedback format="moodle_auto_format">
+      <text></text>
+    </partiallycorrectfeedback>
+    <incorrectfeedback format="moodle_auto_format">
+      <text></text>
+    </incorrectfeedback>
+    <answer fraction="0" format="moodle_auto_format">
+      <text>記憶機能（メモリ部分）</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="100" format="moodle_auto_format">
+      <text>グラフィックス（ユーザインターフェース）</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="0" format="moodle_auto_format">
+      <text>入力機能、出力機能（コンピュータの入出力装置部分）</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="0" format="moodle_auto_format">
+      <text>演算機能、制御機能（CPU部分）</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+  </question>
+</quiz>`;
 }
