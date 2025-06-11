@@ -49,13 +49,21 @@ jobs:
         working-directory: document-saver
         run: clasp pull
 
+      - name: Pull ime-dictionary-aggregator
+        working-directory: ime-dictionary-aggregator
+        run: clasp pull
+
+      - name: Pull ime-dictionary-library
+        working-directory: ime-dictionary-library
+        run: clasp pull
+
       - name: Commit & Push changes if any
         run: |
           cd $GITHUB_WORKSPACE
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           if [ -n "$(git status --porcelain)" ]; then
-            git add moodle-true-false-quiz-validator/ moodle-multichoice-question-validator/ show-google-tasks/ document-saver/
+            git add moodle-true-false-quiz-validator/ moodle-multichoice-question-validator/ show-google-tasks/ document-saver/ ime-dictionary-aggregator/ ime-dictionary-library/
             git commit -m "chore: daily sync GAS → gas-pull"
             git push origin gas-pull
           else
