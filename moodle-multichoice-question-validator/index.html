@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moodle 多肢選択問題チェッカー</title>
+    <?!= HtmlService.createHtmlOutputFromFile('main_styles').getContent(); ?>
+    <?!= HtmlService.createHtmlOutputFromFile('input_styles').getContent(); ?>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Moodle 多肢選択問題チェッカー</h1>
+
+        <div class="input-section">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 15px;">
+                <h2>1. 問題の入力</h2>
+                <button id="inputHelpButton" class="help-button">？</button>
+            </div>
+            <div class="input-methods">
+                <div class="input-method">
+                    <h3>XMLファイルをドロップ</h3>
+                    <div id="dropZone" class="drop-zone">ここにXMLファイルをドラッグ＆ドロップ</div>
+                </div>
+
+                <div class="input-method">
+                    <h3>ローカルファイルを選択</h3>
+                    <input type="file" id="fileInput" accept=".xml">
+                </div>
+
+                <div class="input-method">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                        <h3>XML文書をペースト</h3>
+                        <button id="loadSampleXmlButton" class="action-button" style="padding: 5px 10px; font-size: 0.9em;">サンプル読込</button>
+                    </div>
+                    <textarea id="xmlPasteArea" rows="10" placeholder="ここにMoodle XMLをペーストしてください"></textarea>
+                </div>
+            </div>
+            <div class="main-actions-controls" style="margin-top: 20px; display: flex; align-items: center; flex-wrap: wrap; gap: 10px;">
+                <button id="processButton" class="button-primary">問題文の抽出</button>
+                <button id="inferWithGeminiButton" class="button-primary" style="display:none;">Geminiで回答を推論</button>
+                <button id="showInferenceOptionsButton" class="action-button" style="display:none; margin-left: 5px;">推論オプション設定</button>
+            </div>
+
+            <div id="inferenceOptionsContainer" class="inference-options-box" style="display:none;">
+                <p id="inferenceOptionsNote" class="options-note">通常はこれらの設定を変更する必要はありません。</p>
+                <div class="options-grid">
+                    <div>
+                        <label for="geminiModelSelect" id="geminiModelSelectLabel" class="parameter-label">モデル:</label>
+                        <select id="geminiModelSelect" class="styled-select">
+                            <option value="gemini-1.5-flash-8b">Gemini 1.5 Flash 8B</option>
+                            <option value="gemini-1.5-flash-latest">Gemini 1.5 Flash (Latest)</option>
+                            <option value="gemini-1.5-pro-latest">Gemini 1.5 Pro (Latest)</option>
+                            <option value="gemini-2.0-flash-lite">Gemini 2.0 Flash Lite</option>
+                            <option value="gemini-2.0-flash" selected>Gemini 2.0 Flash</option>
+                            <option value="gemini-2.5-flash-preview-04-17">Gemini 2.5 Flash Preview 04-17</option>
+                            <option value="gemini-2.5-flash-preview-05-20">Gemini 2.5 Flash Preview 05-20</option>
+                            <option value="gemini-2.5-pro-preview-05-06">Gemini 2.5 Pro Preview 05-06</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="temperatureSelect" id="temperatureLabel" class="parameter-label">Temp:</label>
+                        <select id="temperatureSelect" class="parameter-select">
+                            <option value="0.5">0.5</option>
+                            <option value="0.6">0.6</option>
+                            <option value="0.7" selected>0.7</option>
+                            <option value="0.8">0.8</option>
+                            <option value="0.9">0.9</option>
+                            <option value="1.0">1.0</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="topKSelect" id="topKLabel" class="parameter-label">TopK:</label>
+                        <select id="topKSelect" class="parameter-select">
+                            <option value="10" selected>10</option>
+                            <option value="20">20</option>
+                            <option value="30">30</option>
+                            <option value="40">40</option>
+                            <option value="50">50</option>
+                            <option value="60">60</option>
+                            <option value="64">64</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="topPSelect" id="topPLabel" class="parameter-label">TopP:</label>
+                        <select id="topPSelect" class="parameter-select">
+                            <option value="0.5">0.5</option>
+                            <option value="0.6">0.6</option>
+                            <option value="0.7" selected>0.7</option>
+                            <option value="0.8">0.8</option>
+                            <option value="0.9">0.9</option>
+                            <option value="0.95">0.95</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="output-section">
+             <h2>2. 抽出結果と推論</h2>
+            <div id="loading" style="display:none;">処理中...</div>
+            <table id="resultsTable">
+                <thead>
+                    <tr>
+                        <th>No.</th>
+                        <th>問題タイトル</th>
+                        <th>問題文</th>
+                        <th>Moodleの正解選択肢</th>
+                        <th>Geminiの推論選択肢</th>
+                        <th>一致</th>
+                        <th>Geminiによる解説 <button id="explanationColumnHelpButton" class="help-button-inline">？</button></th> </tr>
+                </thead>
+                <tbody>
+                    </tbody>
+            </table>
+            <div id="errorMessages" class="error"></div>
+            <div class="other-action-buttons" style="margin-top: 15px; display: flex; align-items: center; flex-wrap: wrap; gap: 10px;">
+                <button id="copyJsonButton" class="action-button" style="display:none;">問題セットのJSONをクリップボードにコピー</button>
+                <button id="previewJsonButton" class="action-button" style="display:none;">JSONプレビュー</button>
+                <span id="actionFeedback" style="color: green;"></span>
+            </div>
+        </div>
+        <footer class="app-footer">
+            <p>&copy; 2025 <span class="footer-separator">·</span> Developed by <a href="https://x.com/TakashiSasaki" target="_blank" rel="noopener noreferrer">Takashi Sasaki</a></p>
+        </footer>
+
+    </div> <div id="jsonPreviewModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <span class="close-button" id="closeModalButton">&times;</span>
+            <h2>JSONプレビュー</h2>
+            <pre id="jsonPreviewContent"></pre>
+        </div>
+    </div>
+
+    <div id="inputHelpModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <span class="close-button" id="closeInputHelpModalButton">&times;</span>
+            <h3>問題の入力方法 (多肢選択)</h3>
+            <p>このツールでは、Moodle XML形式の多肢選択問題セットを以下のいずれかの方法で入力できます。</p>
+            <ul style="margin-top: 10px; margin-bottom: 15px; padding-left: 20px;">
+                <li style="margin-bottom: 8px;"><strong>XMLファイルをドロップ:</strong><br>指定のエリアにXMLファイルをドラッグ＆ドロップしてください。</li>
+                <li style="margin-bottom: 8px;"><strong>ファイルをアップロード:</strong><br>「ファイルを選択」ボタンからPC内のXMLファイルを選択し、アップロードしてください。</li>
+                <li style="margin-bottom: 8px;"><strong>XML文書をペースト:</strong><br>Moodle XML形式のテキストをコピーし、指定のテキストエリアに直接貼り付けてください。</li>
+            </ul>
+            <h4>【対応するXMLファイルについて】</h4>
+            <ul style="margin-top: 10px; margin-bottom: 15px; padding-left: 20px;">
+                <li style="margin-bottom: 8px;">Moodleで作成された「多肢選択問題 (multiple choice question)」を1問以上含んでいる必要があります。</li>
+                <li>Moodleの問題バンク機能でエクスポートしたXMLファイルなどが利用できます。</li>
+            </ul>
+            <h4>【入力後の操作】</h4>
+            <p>問題セットの入力が完了したら、「問題文の抽出」ボタンをクリックしてください。<br>問題セットから各問題のタイトル、問題文、Moodleでの正解が抽出されて表に表示され、Geminiによる解答推論の準備が整います。</p>
+        </div>
+    </div>
+
+    <div id="explanationColumnHelpModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <span class="close-button" id="closeExplanationColumnHelpModalButton">&times;</span>
+            <h3>「Geminiによる解説」について (多肢選択)</h3>
+            <p>各問題の「✨解説生成」ボタンをクリックすると (多肢選択)、Gemini APIを利用して解説文を生成します。</p>
+            <ul style="margin-top: 10px; margin-bottom: 15px; padding-left: 20px;">
+                <li style="margin-bottom: 8px;">基本的には、問題文とMoodleで正解とされている選択肢に基づいて、その選択肢がなぜ正しいのかを説明します。他の選択肢がなぜ誤りなのかについても触れることがあります。</li>
+                <li>「Geminiで回答を推論」機能によってGeminiの推論結果が既に表示されており、かつその推論結果がMoodleの正解と異なる場合には、なぜその違いが生じたのか（問題文の解釈、AIの誤解しやすい点など）を考察する解説を試みます。</li>
+            </ul>
+            <p>解説はマークダウン形式で生成され、表示されます。生成された解説の元となったマークダウンテキストは、解説表示エリアの右下にある「MDコピー」ボタンからクリップボードにコピーできます。</p>
+        </div>
+    </div>
+
+
+    <?!= HtmlService.createHtmlOutputFromFile('script').getContent(); ?>
+</body>
+</html>
