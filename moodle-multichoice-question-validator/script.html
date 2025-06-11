@@ -27,6 +27,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeModalButton = document.getElementById('closeModalButton');
     const jsonPreviewContent = document.getElementById('jsonPreviewContent');
 
+    const masterCheckbox = document.getElementById('masterCheckbox'); // Added for master checkbox
+
     const inputHelpButton = document.getElementById('inputHelpButton');
     const inputHelpModal = document.getElementById('inputHelpModal');
     const closeInputHelpModalButton = document.getElementById('closeInputHelpModalButton');
@@ -276,7 +278,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     previewJsonButton.addEventListener('click', () => {
         if (questionsData.length === 0) { alert('プレビューするデータがありません。'); return; }
-         const dataToPreview = questionsData.map(q => ({
+        const dataToPreview = questionsData.map(q => ({
             question_number: q.number,
             question_title: q.title,
             question_text: q.text,
@@ -289,7 +291,31 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     inferWithGeminiButton.addEventListener('click', () => {
-        if (questionsData.length === 0) { showActionFeedback('推論する質問データがありません。', true); return; }
+        // Filter questions based on checkboxes
+        const selectedQuestionIds = [];
+        document.querySelectorAll('.question-checkbox:checked').forEach(checkbox => {
+            selectedQuestionIds.push(checkbox.getAttribute('data-question-id'));
+        });
+
+        if (selectedQuestionIds.length === 0) {
+            showActionFeedback('検証する問題が選択されていません。表の左端のチェックボックスで問題を選択してください。', true, true); // Persistent message
+            // Optional: Clear parts of the table or keep them as is. For now, just show message.
+            // resultsTableBody.innerHTML = ''; // Clears all rows
+            // errorMessagesDiv.textContent = '検証する問題が選択されていません。'; // Already handled by showActionFeedback
+            // loadingDiv.style.display = 'none';
+            // inferWithGeminiButton.disabled = false; // Should be handled by setActionsUIDisabled
+            // copyJsonButton.style.display = 'none';
+            // previewJsonButton.style.display = 'none';
+            return;
+        }
+
+        const filteredQuestions = questionsData.filter(q => selectedQuestionIds.includes(q.id.toString()));
+
+        if (filteredQuestions.length === 0) { // Should not happen if selectedQuestionIds.length > 0 and questionsData is populated
+            showActionFeedback('選択された問題に該当するデータが見つかりませんでした。', true);
+            return;
+        }
+
         const selectedModel = geminiModelSelect.value;
         if (!selectedModel) { showActionFeedback('推論に使用するGeminiモデルを選択してください。', true); return; }
 
@@ -299,16 +325,28 @@ document.addEventListener('DOMContentLoaded', () => {
             topP: parseFloat(topPSelect.value)
         };
 
-        // Prepare data for gemini.js: getGeminiAnswersForQuiz
-        // It expects question_text and an array of choice texts.
-        const questionsForInference = questionsData.map(q => ({
-            question_number: q.number,
+        // Use filteredQuestions to prepare data for Gemini
+        const questionsForInference = filteredQuestions.map(q => ({
+            question_number: q.number, // Gemini.js uses this to map results back
             question_title: q.title,
-            question_text: q.text, // Already cleaned text
-            choices: q.choices.map(c => ({ text: c.text })) // Only text needed for Gemini prompt
+            question_text: q.text,
+            choices: q.choices.map(c => ({ text: c.text }))
         }));
 
-        showActionFeedback(`Gemini (${selectedModel}, T:${userGenConfig.temperature}, K:${userGenConfig.topK}, P:${userGenConfig.topP}) に多肢選択問題の解答を問い合わせ中...`, false, true);
+        // Update UI only for selected rows
+        filteredQuestions.forEach(q => {
+            const row = resultsTableBody.querySelector(`tr[data-question-id="${q.id}"]`);
+            if (row) {
+                if(row.cells[4]) row.cells[4].textContent = '推論中...';
+                if(row.cells[5]) row.cells[5].textContent = '---';
+                if(row.cells[5]) row.cells[5].className = '';
+                // Clear previous explanation if any
+                if(row.cells[6]) row.cells[6].innerHTML = '---';
+            }
+        });
+
+
+        showActionFeedback(`Gemini (${selectedModel}, T:${userGenConfig.temperature}, K:${userGenConfig.topK}, P:${userGenConfig.topP}) に選択された ${filteredQuestions.length}件の多肢選択問題の解答を問い合わせ中...`, false, true);
         setActionsUIDisabled(true);
 
         google.script.run
@@ -316,36 +354,45 @@ document.addEventListener('DOMContentLoaded', () => {
                 setActionsUIDisabled(false);
                 if (!responseObject || typeof responseObject.results === 'undefined' || typeof responseObject.duration === 'undefined') {
                     showActionFeedback(`Gemini (${selectedModel}) から予期しない形式の応答がありました。`, true);
-                    resetGeminiCellsOnError(); console.error("Unexpected response structure from server:", responseObject); return;
+                    resetGeminiCellsOnError(filteredQuestions.map(q => q.id.toString())); // Pass selected IDs to reset only those
+                    console.error("Unexpected response structure from server:", responseObject); return;
                 }
                 const resultsFromGemini = responseObject.results;
                 const duration = responseObject.duration;
 
                 if (!resultsFromGemini || resultsFromGemini.length === 0) {
                     showActionFeedback(`Gemini (${selectedModel}) から有効な推論結果が得られませんでした。(処理時間: ${duration.toFixed(2)}秒)`, true);
-                    resetGeminiCellsOnError(); return;
+                    resetGeminiCellsOnError(filteredQuestions.map(q => q.id.toString())); // Pass selected IDs
+                    return;
                 }
 
                 resultsFromGemini.forEach(geminiResult => {
-                    const qNum = geminiResult.question_number;
-                    const geminiAnswerText = geminiResult.answer_by_gemini; // This is now a string (the choice text)
+                    const qNum = geminiResult.question_number; // This is the original number passed
+                    // Find the question in filteredQuestions first to get its unique ID
+                    const processedQuestion = filteredQuestions.find(fq => fq.number === qNum);
+                    if (!processedQuestion) {
+                        console.warn(`Received Gemini result for question number ${qNum}, but it was not in the filtered list.`);
+                        return;
+                    }
+                    const questionId = processedQuestion.id;
+                    const geminiAnswerText = geminiResult.answer_by_gemini;
 
-                    const questionEntry = questionsData.find(q => q.number === qNum);
+                    const questionEntry = questionsData.find(q => q.id === questionId); // Update main data store
                     if (questionEntry) {
-                        questionEntry.geminiAnswer = geminiAnswerText; // Store Gemini's answer text
+                        questionEntry.geminiAnswer = geminiAnswerText;
                     }
 
-                    const row = resultsTableBody.querySelector(`tr[data-question-number="${qNum}"]`);
+                    const row = resultsTableBody.querySelector(`tr[data-question-id="${questionId}"]`);
                     if (row && row.cells.length > 6) {
-                        const moodleAnswerText = questionEntry ? questionEntry.moodleAnswer : row.cells[3].textContent; // text from data or table
+                        const moodleAnswerText = questionEntry ? questionEntry.moodleAnswer : row.cells[3].textContent;
 
                         const explanationCell = row.cells[6];
                         explanationCell.innerHTML = '';
-                        // Enable explanation if Moodle answer is valid (not "特定不能")
                         if (moodleAnswerText && moodleAnswerText !== '特定不能') {
                             const genExButton = document.createElement('button');
                             genExButton.className = 'generate-explanation-button';
-                            genExButton.dataset.questionNumber = qNum;
+                            // Link explanation button to unique ID instead of number if it makes sense, but number is used by other parts
+                            genExButton.dataset.questionNumber = qNum; // Keep using number for consistency with explanation retrieval
                             genExButton.textContent = '✨解説生成';
                             explanationCell.appendChild(genExButton);
                         } else {
@@ -366,19 +413,19 @@ document.addEventListener('DOMContentLoaded', () => {
                             row.cells[4].textContent = '取得エラー';
                             row.cells[5].textContent = '---';
                             row.cells[5].className = '';
-                            console.warn(`Gemini answer for Q#${qNum} is not a valid string:`, geminiAnswerText);
+                            console.warn(`Gemini answer for Q#${qNum} (ID: ${questionId}) is not a valid string:`, geminiAnswerText);
                         }
-                    } else { console.warn(`Table row for Q#${qNum} not found or incomplete for explanation reset.`); }
+                    } else { console.warn(`Table row for Q ID ${questionId} (Num ${qNum}) not found or incomplete.`); }
                 });
-                showActionFeedback(`Gemini (${selectedModel}, T:${userGenConfig.temperature}, K:${userGenConfig.topK}, P:${userGenConfig.topP}) 推論完了。(処理時間: ${duration.toFixed(2)}秒)`);
+                showActionFeedback(`Gemini (${selectedModel}, T:${userGenConfig.temperature}, K:${userGenConfig.topK}, P:${userGenConfig.topP}) ${resultsFromGemini.length}件の推論完了。(処理時間: ${duration.toFixed(2)}秒)`);
             })
             .withFailureHandler(function(error) {
                 setActionsUIDisabled(false);
                 showActionFeedback(`Gemini (${selectedModel}) 推論エラー: ${error.message}`, true);
                 console.error(`Error calling getGeminiAnswersForQuiz with model ${selectedModel}: `, error);
-                resetGeminiCellsOnError();
+                resetGeminiCellsOnError(filteredQuestions.map(q => q.id.toString())); // Pass selected IDs
             })
-            .getGeminiAnswersForQuiz(questionsForInference, selectedModel, userGenConfig); // Server-side function
+            .getGeminiAnswersForQuiz(questionsForInference, selectedModel, userGenConfig);
     });
 
     // --- Event Delegation for "Generate Explanation" and "Copy Markdown" Buttons ---
@@ -522,23 +569,35 @@ document.addEventListener('DOMContentLoaded', () => {
         loadSampleXmlButton.disabled = disabled;
     }
 
-    function resetGeminiCellsOnError() {
-        resultsTableBody.querySelectorAll('tr').forEach(row => {
+    function resetGeminiCellsOnError(questionIdsToReset = null) {
+        const rowsToUpdate = questionIdsToReset
+            ? Array.from(questionIdsToReset).map(id => resultsTableBody.querySelector(`tr[data-question-id="${id}"]`)).filter(row => row)
+            : resultsTableBody.querySelectorAll('tr');
+
+        rowsToUpdate.forEach(row => {
             if (row.cells.length > 5) {
-                row.cells[4].textContent = 'エラー';
-                row.cells[5].textContent = '---';
+                row.cells[4].textContent = 'エラー'; // Gemini Answer Cell
+                row.cells[5].textContent = '---';   // Match Cell
                 row.cells[5].className = '';
             }
-            if (row.cells.length > 6) {
+            if (row.cells.length > 6) { // Explanation cell
                  const explanationCell = row.cells[6];
-                 explanationCell.innerHTML = '';
+                 explanationCell.innerHTML = ''; // Clear previous content
                  const button = document.createElement('button');
                  button.className = 'generate-explanation-button';
-                 if (row.dataset.questionNumber) {
-                    button.dataset.questionNumber = row.dataset.questionNumber;
+                 // Ensure data-question-number is on the row for the button to pick up
+                 const qNum = row.dataset.questionNumber || (questionsData.find(q => q.id === row.dataset.questionId) || {}).number;
+                 if (qNum) {
+                    button.dataset.questionNumber = qNum;
                  }
                  button.textContent = '✨解説生成';
-                 explanationCell.appendChild(button);
+                 // Re-enable explanation button only if Moodle answer is valid
+                 const questionEntry = questionsData.find(q => q.id === row.dataset.questionId);
+                 if (questionEntry && questionEntry.moodleAnswer && questionEntry.moodleAnswer !== '特定不能') {
+                    explanationCell.appendChild(button);
+                 } else {
+                    explanationCell.textContent = '---';
+                 }
             }
         });
     }
@@ -570,9 +629,22 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Table and Feedback Utility Functions ---
     function addResultToTable(num, title, questionText, moodleAnswerText, geminiAnswerPlaceholder, matchStatusPlaceholder, isMoodleWarning) {
         const row = resultsTableBody.insertRow();
-        row.setAttribute('data-question-number', num); // Store question number for later reference
+        // Assuming 'num' is the question.number, and we have access to question.id from questionsData
+        const questionEntry = questionsData.find(q => q.number === num);
+        const questionId = questionEntry ? questionEntry.id : `q_fallback_${num}`;
+        row.setAttribute('data-question-id', questionId); // Store unique question ID for checkbox logic
+        row.setAttribute('data-question-number', num);
 
-        row.insertCell().textContent = num;
+
+        const numberCell = row.insertCell();
+        const questionCheckbox = document.createElement('input');
+        questionCheckbox.type = 'checkbox';
+        questionCheckbox.classList.add('question-checkbox');
+        questionCheckbox.setAttribute('data-question-id', questionId);
+        numberCell.appendChild(questionCheckbox);
+        numberCell.append(` ${num}`); // Add space then number
+
+
         row.insertCell().textContent = title;
 
         const questionTextCell = row.insertCell();
@@ -620,6 +692,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         actionFeedback.textContent = '';
         questionsData = []; // Reset main data store
+
+        if (masterCheckbox) { // Reset master checkbox state
+            masterCheckbox.checked = false;
+            masterCheckbox.indeterminate = false;
+        }
+
         if (jsonPreviewModal) jsonPreviewModal.style.display = 'none';
         if (inputHelpModal) inputHelpModal.style.display = 'none';
         if (explanationColumnHelpModal) explanationColumnHelpModal.style.display = 'none';
@@ -641,5 +719,41 @@ document.addEventListener('DOMContentLoaded', () => {
             }, 3000);
         }
     }
+
+    // --- Checkbox Logic ---
+    if (masterCheckbox) {
+        masterCheckbox.addEventListener('change', function() {
+            this.indeterminate = false; // Clear indeterminate state on explicit click
+            const questionCheckboxes = document.querySelectorAll('.question-checkbox');
+            questionCheckboxes.forEach(checkbox => {
+                checkbox.checked = this.checked;
+            });
+        });
+    }
+
+    if (resultsTableBody) {
+        resultsTableBody.addEventListener('change', function(event) {
+            if (event.target.classList.contains('question-checkbox')) {
+                const allQuestionCheckboxes = document.querySelectorAll('.question-checkbox');
+                if (masterCheckbox) { // Ensure masterCheckbox exists
+                    const allChecked = Array.from(allQuestionCheckboxes).every(cb => cb.checked);
+                    const someChecked = Array.from(allQuestionCheckboxes).some(cb => cb.checked);
+
+                    if (allChecked) {
+                        masterCheckbox.checked = true;
+                        masterCheckbox.indeterminate = false;
+                    } else if (someChecked) {
+                        masterCheckbox.checked = false;
+                        masterCheckbox.indeterminate = true;
+                    } else {
+                        masterCheckbox.checked = false;
+                        masterCheckbox.indeterminate = false;
+                    }
+                }
+            }
+        });
+    }
+    // --- End Checkbox Logic ---
+
 });
 </script>
