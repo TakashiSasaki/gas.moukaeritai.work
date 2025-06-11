@@ -11,6 +11,7 @@ on:
 
 jobs:
   pull:
+    if: github.ref == 'refs/heads/gas-pull'
     runs-on: ubuntu-latest
     steps:
       # gas-pull ブランチをチェックアウト
