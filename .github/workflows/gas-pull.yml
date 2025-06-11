@@ -34,25 +34,23 @@ jobs:
         run: |
           echo '${{ secrets.CLASPRC_JSON }}' > ~/.clasprc.json
 
-      - name: Pull latest GAS code
+      - name: Pull both projects
         run: |
-          cd moodle-true-false-quiz-validator/
-          clasp pull
-
-      - name: Pull latest GAS code
-        run: |
-          cd moodle-multichoice-question-validator/
-          clasp pull
+          clasp pull --rootDir=moodle-true-false-quiz-validator
+          clasp pull --rootDir=moodle-multichoice-question-validator
 
       - name: Commit & Push changes if any
         run: |
-          cd moodle-true-false-quiz-validator/
+          # リポジトリルートに戻る
+          cd $GITHUB_WORKSPACE
+
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+
           if [ -n "$(git status --porcelain)" ]; then
-            git add .
+            # 変更のあるサブディレクトリをまとめて add
+            git add moodle-true-false-quiz-validator/ moodle-multichoice-question-validator/
             git commit -m "chore: daily sync GAS → gas-pull"
-            # gas-pull ブランチにプッシュ
             git push origin gas-pull
           else
             echo "No changes detected, skipping commit"
