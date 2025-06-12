@@ -49,7 +49,7 @@ jobs:
             echo "changed=false" >> $GITHUB_OUTPUT
           fi
 
-      - name: Commit and push projects.json to gas-pull branch
+      - name: Commit and push clasp-list.txt to gas-pull branch
         if: steps.check-changed.outputs.changed == 'true'
         run: |
           git config --global user.name "github-actions[bot]"
