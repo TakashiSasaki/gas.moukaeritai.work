@@ -1,0 +1,62 @@
+name: Update Apps Script Projects List
+
+on:
+  schedule:
+    # 1時間おきに実行（例: 0分, 60分, 120分...）
+    - cron: '0 * * * *'
+  # 手動実行も可能にする
+  workflow_dispatch:
+
+jobs:
+  update-list:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # リポジトリへの書き込み権限を許可
+
+    steps:
+      - name: Checkout gas-pull branch
+        uses: actions/checkout@v4
+        with:
+          ref: gas-pull # 必ず gas-pull ブランチをチェックアウト
+          # gas-pull ブランチが存在しない場合でもエラーにならないように設定
+          # fetch-depth: 0 はすべてのブランチと履歴を取得
+          # fetch-depth: 1 は最新コミットのみを取得
+          # ブランチが存在しない場合は fetch-depth: 1 を試します。
+          fetch-depth: 1
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20' # 使用するNode.jsのバージョン
+
+      - name: Install clasp
+        run: npm install -g clasp
+
+      - name: Authenticate clasp
+        env:
+          CLASP_ACCESS_TOKEN: ${{ secrets.CLASP_ACCESS_TOKEN }}
+        run: |
+          clasp login --no-browser --token "$CLASP_ACCESS_TOKEN"
+
+      - name: Get Apps Script Projects List
+        run: |
+          clasp list --json > projects.json
+
+      - name: Check if projects.json changed
+        id: check-changed
+        run: |
+          if ! git diff --exit-code projects.json; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Commit and push projects.json to gas-pull branch
+        if: steps.check-changed.outputs.changed == 'true'
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add projects.json
+          git commit -m "Update Apps Script projects list"
+          # gas-pull ブランチに強制プッシュ
+          git push origin gas-pull --force
