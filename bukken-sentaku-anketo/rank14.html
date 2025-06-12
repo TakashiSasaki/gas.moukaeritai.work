@@ -1,0 +1,110 @@
+<section id="rank14">
+   <h3>Q.　以下の仮想の物件のなかから、あなたにとって<div0>1番</div0>望ましい物件と<br />
+   　　<div0>2番目</div0>に望ましい物件を1つずつ選んでください。
+   </h3>
+   <br />   
+   <table border="1" width="75%" height="200">
+      <tr><td width="150" height="80" align="center"></td>
+         <td width="150" height="80" align="center">
+            <select name="順位" id="rank141" onchange="recordrank14(this)">
+               <option value="0">順位</option>
+               <option value="1">1位</option>
+               <option value="2">2位</option>
+            </select>
+         </td>
+         <td width="150" height="80" align="center">
+            <select name="順位" id="rank142" onchange="recordrank14(this)">
+               <option value="0">順位</option>
+               <option value="1">1位</option>
+               <option value="2">2位</option>
+            </select>
+         </td>
+         <td width="150" height="80" align="center">
+            <select name="順位" id="rank143" onchange="recordrank14(this)">
+               <option value="0">順位</option>
+               <option value="1">1位</option>
+               <option value="2">2位</option>
+            </select>
+         </td>
+         <td width="150" height="80" align="center">
+            <select name="順位" id="rank144" onchange="recordrank14(this)">
+               <option value="0">順位</option>
+               <option value="1">1位</option>
+               <option value="2">2位</option>
+            </select>
+         </td>
+         <td width="150" height="80" align="center">
+            <select name="順位" id="rank145" onchange="recordrank14(this)">
+               <option value="0">順位</option>
+               <option value="1">1位</option>
+               <option value="2">2位</option>
+            </select>
+         </td>
+         <td width="150" height="80" align="center">
+            <select name="順位" id="rank146" onchange="recordrank14(this)">
+               <option value="0">順位</option>
+               <option value="1">1位</option>
+               <option value="2">2位</option>
+            </select>
+         </td>
+         <td width="150" height="80" align="center">
+            <select name="順位" id="rank147" onchange="recordrank14(this)">
+               <option value="0">順位</option>
+               <option value="1">1位</option>
+               <option value="2">2位</option>
+            </select>
+         </td>
+         <td width="150" height="80" align="center">
+            <select name="順位" id="rank148" onchange="recordrank14(this)">
+               <option value="0">順位</option>
+               <option value="1">1位</option>
+               <option value="2">2位</option>
+            </select>
+         </td>
+      </tr>
+      <?!=getNm()?><?!=getTr("cc12"); ?>
+   </table>
+   <br clear="all"><br />
+   <hr>
+   <button onclick="show_rank23();">次へ</button>
+   <hr>
+</section>
+<script>
+function show_rank23() {
+	var values = [];
+	values[0] = document.getElementById("rank141").value;
+	values[1] = document.getElementById("rank142").value;
+	values[2] = document.getElementById("rank143").value;
+	values[3] = document.getElementById("rank144").value;
+	values[4] = document.getElementById("rank145").value;
+	values[5] = document.getElementById("rank146").value;
+    values[6] = document.getElementById("rank147").value;
+	values[7] = document.getElementById("rank148").value;    
+	var counts = [0, 0, 0];
+	for (var i in values) {
+		counts[values[i]] += 1;
+	}
+	if (!(counts[1] === 1 && counts[2] === counts[1])){
+		alert("重複している，または順位が入力されていません。");
+		return;
+    }
+//    alert("ありがとうございました");
+	end_rank14 = (new Date()).getTime();
+	var sections = document.getElementsByTagName("section");
+	for (var i = 0; i < sections.length; ++i) {
+		sections[i].style.display = "none";
+	}
+	document.getElementById("rank23").style.display = "block";
+}
+
+function recordrank14(element) {
+	//       var start_time = start_time;            //誰が
+	var click_time = (new Date()).getTime(); //いつ
+	var element_value = element.value; //値
+	var element_id = element.id; //チェック状態
+	google.script.run.withFailureHandler(function () {
+    }).withSuccessHandler(function () {
+    }).recordrank14(start_time, end_best13, click_time, element_id, element_value);
+  }
+recordrank14(element);
+</script>

@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <base target="_top">
+  <style>
+    input {
+      min-width: 60em;
+      margin-left: 1em;
+    }
+
+    label {
+      display: inline-block;
+    }
+    textarea {
+      width: 99%;
+      height: 5em;
+    }
+    label video {
+      position: absolute;
+      top: 0px;
+      left: 0px;
+    }
+  </style>
+  <script>
+    function dq(selector){
+      return document.querySelector(selector);
+    }//dq
+  </script>
+</head>
+
+<body>
+  <p>
+    PublicWebCache Release 1.3.20240306
+  </p>
+  <fieldset>
+    <legend id="pathInfo"><?=pathInfo?></legend>
+    <label>description<textarea id="description"></textarea></label>
+    <button id="save">save</button>
+    <label>video<video id="video" width="320" height="240" autoplay></video></label>
+    <button id="startbutton">カメラ起動</button>
+    <button id="stopCamera">カメラ停止</button>
+    <button id="focusButton">フォーカス</button>
+    <button id="captureImage">撮影</button>
+    <label>canvas<canvas id="canvas" width="320" height="240"></canvas></label>
+    <textarea id="dataUri"></textarea>
+  </fieldset>
+  <script type="module">
+    let mediaStream = null;
+
+    window.addEventListener("load", (loadEvent) => {
+        dq("#save").addEventListener('click', clickEvent => {
+            fetch(dq("#execUrl").value + "?" + new URLSearchParams({
+                key: dq("#pathInfo").textContent
+            }), {
+                method: "POST",
+                headers: {
+                    "Content-Type": "text/plain"
+                },
+                body: dq("#description").value
+            }).then(response => response.text()).catch(e => null);
+        });
+
+        if (dq("#pathInfo").textContent) {
+            dq("#key").value = dq("#pathInfo").textContent;
+            dq("#key2").value = dq("#pathInfo").textContent;
+        }
+
+        dq("#startbutton").addEventListener("click", clickEvent => {
+            const video = document.getElementById('video');
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                navigator.mediaDevices.getUserMedia({
+                        video: true
+                    })
+                    .then(function(stream) {
+                        mediaStream = stream; // メディアストリームを保持
+                        video.srcObject = stream;
+                        video.play();
+                    })
+                    .catch(function(err) {
+                        console.log("カメラのアクセスに失敗しました: ", err);
+                    });
+            }
+        });
+
+        dq("#stopCamera").addEventListener("click", clickEvent => {
+            if (mediaStream) {
+                mediaStream.getTracks().forEach(track => track.stop());
+                mediaStream = null;
+            }
+        });
+
+        dq("#captureImage").addEventListener("click", clickEvent => {
+            const canvas = document.getElementById('canvas');
+            const video = document.getElementById('video');
+            const context = canvas.getContext('2d');
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            const dataURI = canvas.toDataURL('image/jpeg');
+            dq("#dataUri").value = dataURI;
+        });
+
+        dq("#focusButton").addEventListener("click", clickEvent => {
+            const video = dq("#video").srcObject.getTracks().forEach(track => {
+                track.applyConstraints({
+                        video: {
+                            advanced: [{
+                                focusMode: "continuous"
+                            }]
+                        }
+                    }).then(() => console.log("焦点調節成功"))
+                    .catch(err => console.log("焦点調節失敗", err));
+            });
+        });
+    });
+</script>
+
+  <fieldset>
+    <legend>Endpoints</legend>
+    <label>URL<input id="execUrl" value="<?=PropertiesService.getScriptProperties().getProperty('URL')?>" readonly></label>
+    <label>URL<input id="devUrl" value="<?=ScriptApp.getService().getUrl()?>" readonly></label>
+  </fieldset>
+  <fieldset>
+    <legend>By HTTPS</legend>
+    <label>key<input id="key"></label>
+    <label>type<input id="type"></label>
+    <label>content<input id="content"></label>
+    <label>fetch mode<input id="mode" list="modeList"></label>
+    <datalist id="modeList">
+      <option value="no-cors" />
+      <option value="cors" />
+      <option value="same-origin" />
+      <option value="navigate"/>
+    </datalist>
+    <label>status<input id="status"></label>
+    <label>error<input id="error"></label>
+    <button id="post">post by fetch</button>
+    <button id="get">get by fetch</button>
+    <label>response<input id="response" readonly></label>
+  </fieldset>
+
+
+
+  <script>
+    const execUrl = dq('#execUrl').value;
+    const devUrl = dq('#devUrl').value;
+
+    window.addEventListener("load", (loadEvent) => {
+      dq("#post").addEventListener("click", (clickEvent) => {
+        dq("#error").value = 'posting....';
+        fetch(execUrl + '?' + new URLSearchParams({
+            key: dq('#key').value,
+          }), {
+            method: 'POST',
+            headers: {
+              'Content-Type': dq('#type').value,
+            },
+            body: new Blob([dq('#content').value], {
+              type: dq('#type').value
+            }),
+            mode: dq("#mode").value,
+            redirect: "follow"
+          })
+          .then(response => {
+            dq('#error').value = null;
+            dq("#status").value = response.status;
+            dq("#type").value = response.headers.get('Content-Type');
+            return response.text();
+          })
+          .then(oldContent => {
+            dq('#content').value = oldContent;
+          })
+          .catch(error => {
+            dq('#error').value = error;
+          });
+      }); //clickEvent
+
+      dq("#get").addEventListener("click", (clickEvent) => {
+        dq("#error").value = 'getting ...';
+        fetch(execUrl + '?' + new URLSearchParams({
+            key: dq('#key').value,
+          }), {
+            /*mode: 'same-origin',*/
+            redirect: "follow"
+          })
+          .then(response => {
+            dq('#error').value = null;
+            dq("#status").value = response.status;
+            dq("#type").value = response.headers.get('Content-Type');
+            return response.text();
+          })
+          .then(currentContent => {
+            dq('#content').value = currentContent;
+          })
+          .catch(error => {
+            dq('#error').value = error;
+          });
+      }); //clickEvent
+    }); //loadEvent
+  </script>
+
+  <fieldset>
+    <legend>By google.script.run</legend>
+    <label>key<input id='key2'></label>
+    <label>type<input id='type2'></label>
+    <label>content<input id='content2'></label>
+    <button id='getByRun'>get by google.script.run</button>
+    <button id='putByRun'>put by google.script.run</button>
+  </fieldset>
+
+  <script>
+    window.addEventListener('load', (loadEvent) => {
+      dq('#getByRun').addEventListener('click', (clickEvent) => {
+        google.script.run.withSuccessHandler(old => {
+          dq('#type2').value = old[0];
+          dq('#content2').value = old[1];
+          //setTimeout(() => clickEvent.target.dispatchEvent(new MouseEvent('click')), 10000);
+        }).withFailureHandler((e) => {
+          dq('#type2').value = null;
+          dq('#content2').value = e;
+          //setTimeout(() => clickEvent.target.dispatchEvent(new MouseEvent('click')), 10000);
+        }).getContent(dq('#key2').value);
+      }); //addEventListener
+
+      dq('#putByRun').addEventListener('click', (clickEvent) => {
+        google.script.run.withSuccessHandler(old => {
+          dq('#type2').value = old[0];
+          dq('#content2').value = old[1];
+        }).withFailureHandler((e) => {
+          dq('#type2').value = null;
+          dq('#content2').value = e;
+        }).putContent(dq('#key2').value, dq('#type2').value, dq('#content2').value);
+      }); //clickEvent
+    }); //loadEvent
+  </script>
+</body>
+
+</html>

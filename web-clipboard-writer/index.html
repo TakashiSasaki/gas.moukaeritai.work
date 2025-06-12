@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <link rel="stylesheet" 
+      href="https://cdnjs.cloudflare.com/ajax/libs/mini.css/3.0.1/mini-default.min.css">
+    <style>
+      div.field  {display:flex}
+      div input {flex-grow: 2;}
+      div textarea {flex-grow: 1;}
+      textarea {height: 7em;}
+    </style>
+    <?!=Html.persistentFormStyle()?>
+  </head>
+  <body>
+    <script>
+      function updateActionUrl(){
+        var salt = document.querySelector("#salt").value;
+        var key = document.querySelector("#key").value;
+        var useKey = document.querySelector("#useKey").checked;
+        var email = document.querySelector("#email").value;
+        var date = document.querySelector("#date").value;
+        var useDate = document.querySelector("#useDate").checked;
+        var niUri = document.querySelector("#niUri").value;
+        var useNiUri = document.querySelector("#useNiUri").checked;
+      
+        if(useNiUri===true) {
+          var actionUrl = '<?!=baseUrl?>';
+          actionUrl += "?contentType=text/html";
+          actionUrl += "&niUri=" + niUri;
+        } else {
+          var actionUrl = '<?!=baseUrl?>';
+          actionUrl += "?contentType=text/html";
+          actionUrl += "&salt=" + salt;
+          actionUrl += "&email=" + email;
+          if(useDate) {
+            actionUrl += "&date=" + date;
+          }//if useDate
+        }//if useNiUri
+        
+        if(useKey){
+          actionUrl += "&key=" + key;
+        }//if useKey
+        
+        document.querySelector("#actionUrl").value = actionUrl;
+        //document.querySelector("#actionUrl").dispatchEvent(new Event("change"));
+        document.form.action = actionUrl;
+        document.querySelector("#get").href=actionUrl;
+      }//updateActionUrl
+    </script>
+    <script>
+      function updateTagUri(){
+        console.log("index.html/updateTagUri");
+        var salt = document.querySelector("#salt").value;
+        console.log("index.html/updateTagUri/salt = " + salt);
+        var email = document.querySelector("#email").value;
+        console.log("index.html/updateTagUri/emai = " + email);
+        var useDate = document.querySelector("#useDate").checked;
+        console.log("index.html/useDate = " + useDate);
+        var date = document.querySelector("#date").value;
+        console.log("index.html/date = " + date);
+        if(useDate !== true) date = ((new Date()).getYear()+1900).toString();
+        console.log("index.html/run/buildTagUri");
+        google.script.run.withSuccessHandler(function(tagUri){
+          console.log("index.html/buildTagUri : succeeded");
+          document.querySelector("#tagUri").value = tagUri;
+          setTimeout(function(){
+            document.querySelector("#tagUri").dispatchEvent(new Event("change"));
+          },1);
+        }).withFailureHandler(e => console.log("index.html/buildTagUri : " + e))
+        .buildTagUri(salt, email, date);
+      }//updateTagUri
+    </script>
+    <script>
+      function updateNiUri(){
+        var tagUri = document.querySelector("#tagUri").value;
+        google.script.run.withSuccessHandler(function(niUri){
+          document.querySelector("#niUri").value = niUri;
+          setTimeout(function(){
+            document.querySelector("#niUri").dispatchEvent(new Event("change"));
+          },1);
+        }).computeNiUri(tagUri);
+      }//updateNiUri
+    </script>
+    <h1><?=PropertiesService.getScriptProperties().getProperty("title");?></h1>
+    <p>
+      Web Clipboard is a temporary key-value store with non-authenticated
+      write operation and authenticated read operation built on Google Apps Script.
+      This is the writer page to put key-value pair with a salt and an email address.
+      You can get it back at the reader page with the same salt and the authentication
+      by Google Account of the same email address.
+    </p>
+    <fieldset>
+      <div class="field">
+        <label>Reader requires Google account 
+        <input value="https://bit.ly/WebClipboardReader" readonly="1">
+        <a href="https://bit.ly/WebClipboardReader" class="button" target="reader">Open Reader page</a></label>
+      </div>
+      <div class="field">
+        <label>Writer (this page)
+        <input value="https://bit.ly/WebClipboardWriter" readonly="1"><a href="https://bit.ly/WebClipboardWriter"
+          target="writer" class="button">Reload Writer page</a></label>
+      </div>
+    </fieldset>
+    <form method="post" name="form" enctype="text/plain">
+      <div class="field">
+        <label>actionUrl</label>
+        <textarea id="actionUrl" class="persistentForm" readonly="1"></textarea>
+      </div>
+      <fieldset>
+        <div class="field">
+          <label>salt</label>
+          <input type="text" id="salt" class="persistentForm" onchange="updateTagUri();">
+        </div>
+        <div class="field">
+          <label>email</label>
+          <input type="text" id="email" class="persistentForm" onchange="updateTagUri();">
+        </div>
+        <div class="field">
+          <label>date</label>
+          <input type="checkbox" id="useDate" class="persistentForm" checked="true" onchange="updateTagUri();">
+          <input type="text" id="date" class="persistentForm" onchange="updateTagUri();">
+        </div>
+        <div class="field">
+          <label>Tag URI</label>
+          <input type="text" id="tagUri" class="persistentForm" readonly="1" onchange="updateNiUri()">
+        </div>
+        <div class="field">
+          <label>NI URI</label>
+          <input type="checkbox" id="useNiUri" class="persistentForm" onchange="updateActionUrl()">
+          <input type="text" id="niUri" class="persistentForm" readonly="1" onchange="updateActionUrl()">
+        </div>
+      </fieldset>
+      <fieldset>
+        <div class="field">
+          <label>key</label>
+          <input type="checkbox" id="useKey" class="persistentForm" checked="true" onchange="updateActionUrl();">
+          <input type="text" id="key" class="persistentForm" onchange="updateActionUrl();">
+        </div>
+        <div class="field">
+          <label>value</label>
+          <textarea id="value" name="value" class="persistentForm"></textarea>
+        </div>
+      </fieldset>
+      <div>
+        <button type="submit" formmethod="POST">POST</button> 
+        method is used to put the key-value pair with the salt and the email.
+        As this page uses standard web form, the posted data will be like "value=hello".
+      </div>
+      <div>
+        <a class="button" id="get">GET</a> method is used to get the list of keys with the salt and the email. 
+        Values is available at the reader page which requires authentication.
+      </div>
+    </form>
+    <? if (typeof responseObject !== "undefined") {?>
+    <div class="field">
+      <label>Last responseObject</label>
+      <textarea readonly="1"><?=JSON.stringify(responseObject)?></textarea>
+    </div>
+    <? } ?>
+    <div>
+      <?!=PropertiesService.getScriptProperties().getProperty("twitter")?>
+    </div>
+    <?!=Html.persistentFormScript()?>
+  </body>
+</html>

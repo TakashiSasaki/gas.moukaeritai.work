@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <style>
+      textarea {width: 95%; height: 10em}
+      #sha1 {width: 40em}
+    </style>
+  </head>
+  <body>
+    <?!=GasOAuthLibrary.getAuthorizationButton("authorize")?>
+    <?=GasOAuthLibrary.getAuthorizationUrl()?>
+    <div>
+      <label>owner <input id="owner" placeholder="user name" onchange="save(this)" onfocus="load(this)"/></label>
+      <label>repository name <input id="repo" placeholder="repository name" onchange="save(this)" onfocus="load(this)"/></label>
+      <label>branch <input id="branch" placeholder="master" onchange="save(this)" onfocus="load(this)"/></label>
+      <label>commitSha <input id="commitSha" onchange="save(this)" onfocus="load(this)"/></label>
+      <label>treeSha <input id="treeSha" placeholder="95c88c5e87c3390674ef39d2ac8410b025994bfb" onchange="save(this)" onfocus="load(this)"/></label>
+    </div>
+    <div><textarea readonly></textarea>
+      <button onclick="getReposJsonString(this)">getReposJsonString</button>
+      <button onclick="getReposNames(this)">getReposNames</button>
+      <button onclick="getBranchesJsonString(this)">getBranchesJsonString</button>
+      <button onclick="getBranchesNames(this)">getBranchesNames</button>
+      <button onclick="getBranchJsonString(this)">getBranchJsonString</button>
+      <button onclick="getCommitSha(this)">getCommitSha</button>
+      <button onclick="getTreeSha(this)">getTreeSha</button>
+      <button onclick="getTreeJsonString(this)">getTreeJsonString</button>
+      <button onclick="getPaths(this)">getPaths</button>
+      <button onclick="getFeedsJsonString(this)">getFeedsJsonString</button>
+      <button onclick="getUserName(this)">getUserName</button>
+    </div>
+    <script>
+      function getReposJsonString(button){
+        var textarea = button.parentElement.firstChild;   
+        textarea.value = "running getReposJsonString ..";
+        google.script.run.withSuccessHandler(function(x){
+          textarea.value = x;
+        }).getReposJsonString(localStorage.getItem("owner"));
+      }
+      function getReposNames(button){
+        var textarea = button.parentElement.firstChild;      
+        textarea.value = "running getReposNames ..";
+        google.script.run.withSuccessHandler(function(x){
+          textarea.value = JSON.stringify(x);
+        }).getReposNames(localStorage.getItem("owner"));
+      }
+      function getBranchesJsonString(button){
+        var textarea = button.parentElement.firstChild;      
+        textarea.value = "running getBranchesJsonString ..";
+        google.script.run.withSuccessHandler(function(x){
+          textarea.value = x;
+        }).getBranchesJsonString(localStorage.getItem("owner"), localStorage.getItem("repo"));
+      }
+      function getBranchesNames(button){
+        var textarea = button.parentElement.firstChild;
+        textarea.value = "running getBranchesNames ..";
+        google.script.run.withSuccessHandler(function(x){
+          textarea.value = JSON.stringify(x);
+        }).getBranchesNames(localStorage.getItem("owner"), localStorage.getItem("repo"));
+      }
+      function getBranchJsonString(button){
+        var textarea = button.parentElement.firstChild;
+        textarea.value = "running getBranchJsonString ..";
+        google.script.run.withSuccessHandler(function(x){
+          textarea.value = x;
+        }).getBranchJsonString(localStorage.getItem("owner"), localStorage.getItem("repo"), localStorage.getItem("branch"));
+      }
+      function getCommitSha(button){
+        var textarea = button.parentElement.firstChild;   
+        textarea.value = "running getCommitSha ..";
+        google.script.run.withSuccessHandler(function(x){
+          textarea.value = x;
+          var input = document.getElementById("commitSha");
+          input.value = x;
+          save(input);
+        }).getCommitSha(localStorage.getItem("owner"), localStorage.getItem("repo"), localStorage.getItem("branch"));
+      }
+      function getTreeSha(button){
+        var textarea = button.parentElement.firstChild;      
+        textarea.value = "running getTreeSha ..";
+        google.script.run.withSuccessHandler(function(x){
+          textarea.value = x;
+          var input = document.getElementById("treeSha");
+          input.value = x;
+          save(input);
+        }).getTreeSha(localStorage.getItem("owner"), localStorage.getItem("repo"), localStorage.getItem("branch"));
+      }
+      function getTreeJsonString(button){
+        var textarea = button.parentElement.firstChild;      
+        textarea.value = "running getTreeJsonString ..";
+        google.script.run.withSuccessHandler(function(x){
+          textarea.value = x;
+        }).getTreeJsonString(localStorage.getItem("owner"), localStorage.getItem("repo"), localStorage.getItem("branch"));
+      }
+      function getPaths(button){
+        var textarea = button.parentElement.firstChild; 
+        textarea.value = "running getPaths ..";
+        google.script.run.withSuccessHandler(function(x){
+          textarea.value = JSON.stringify(x);
+        }).getPaths(localStorage.getItem("owner"), localStorage.getItem("repo"), localStorage.getItem("treeSha"));
+      }
+      function getFeedsJsonString(button){
+        var textarea = button.parentElement.firstChild;      
+        textarea.value = "running getFeedsJsonString ..";
+        google.script.run.withSuccessHandler(function(x){
+          textarea.value = x;
+        }).getFeedsJsonString();
+      }
+      function getUserName(button){
+        var textarea = button.parentElement.firstChild;
+        textarea.value = "running getUserName ..";
+        google.script.run.withSuccessHandler(function(x){
+          textarea.value = x;
+        }).getUserName();
+      }
+      function load(input){
+        input.value = localStorage.getItem(input.id);
+      }
+      function save(input){
+        localStorage.setItem(input.id, input.value);
+      }
+    </script>
+  </body>
+</html>

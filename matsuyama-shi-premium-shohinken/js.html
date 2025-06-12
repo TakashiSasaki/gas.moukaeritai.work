@@ -1,0 +1,40 @@
+<script src="//maps.googleapis.com/maps/api/js?sensor=true"></script>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<script>
+$(function() {
+  $("#button1").on("click", here);
+  $("#button2").on("click", address);
+  $("a.twitter-tweet").on("click", function(){$("div.twitter-tweet").show(); return false;});
+  var a = localStorage.address;
+  $("#address").val(a);
+});
+
+function here() {
+    navigator.geolocation.getCurrentPosition(function(x) {
+        var lat = x.coords.latitude;
+        var lng = x.coords.longitude;
+        var url = "https://www.google.com/fusiontables/embedviz?q=select+col1+from+1cRTH9zPAFeNnr6Lbz3NRGWErdxrkrlugBjrZqtcK&viz=MAP&h=false&t=1&z=17&l=col1&y=2&tmplt=3&hml=GEOCODABLE" + "&lat=" + lat + "&lng=" + lng;
+        window.open(url);
+        $("div.twitter-tweet").show();
+    }, function() {});
+}
+
+function address(){
+  var geocoder = new google.maps.Geocoder();
+  var a = $("#address").val();
+  localStorage.address = a;
+  geocoder.geocode({'address': a}, function(results, status) {
+    if (status === google.maps.GeocoderStatus.OK) {
+      var latlng = results[0].geometry.location;
+      var lat = latlng.lat();
+      var lng = latlng.lng();
+      var url = "https://www.google.com/fusiontables/embedviz?q=select+col1+from+1cRTH9zPAFeNnr6Lbz3NRGWErdxrkrlugBjrZqtcK&viz=MAP&h=false&t=1&z=17&l=col1&y=2&tmplt=3&hml=GEOCODABLE" + "&lat=" + lat + "&lng=" + lng;
+      window.open(url);
+      $("div.twitter-tweet").show();
+    } else {
+      alert("住所が見つかりません");
+    }
+  });
+}
+</script>

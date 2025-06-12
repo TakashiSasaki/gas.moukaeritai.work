@@ -1,0 +1,25 @@
+<script>
+function getPlayerPage(){
+  var url = "http://" + $("#host_part").val() + "/filelist.php?mode=play&rec_id=20160414_165000_27_51";
+  alert(url);
+  $.ajax({
+    url: url
+  });
+}
+
+function openPlayerPage(){
+  var url = "http://" + $("#host_part").val() + "/filelist.php?mode=play&rec_id=20160414_165000_27_51";
+  alert(url);
+  window.open(url);
+}
+
+function saveHostPart(){
+  var host_part = $("#host_part").val();
+  alert(host_part);
+  google.script.run.saveHostPart(host_part);
+}
+
+</script>
+
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>

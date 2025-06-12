@@ -1,0 +1,3 @@
+function onInstall(e){
+  onOpen();
+}

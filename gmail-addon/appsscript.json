@@ -1,0 +1,22 @@
+{
+  "timeZone": "Asia/Tokyo",
+  "dependencies": {
+    "enabledAdvancedServices": [{
+      "userSymbol": "Gmail",
+      "serviceId": "gmail",
+      "version": "v1"
+    }],
+    "libraries": [{
+      "userSymbol": "SpreadsheetAddon",
+      "libraryId": "1LSYokZ_LmtIkXv-URsN99givIHlIkDNHwQjkLAo6JkzwLvsbagpdbTaE",
+      "version": "24",
+      "developmentMode": true
+    }, {
+      "userSymbol": "AddonHelper",
+      "libraryId": "1ryBTdV-IJH57QxJefgX334JWuJ7KHLjpT43v45VAqwAmFSKqkXkMFnAY",
+      "version": "3",
+      "developmentMode": true
+    }]
+  },
+  "exceptionLogging": "STACKDRIVER"
+}

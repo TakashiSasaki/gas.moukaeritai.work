@@ -1,0 +1,78 @@
+<script>
+setTimeout(function() {
+  document.querySelectorAll("input[type='text'].persistentForm").forEach(function(inputElement) {
+    inputElement.addEventListener("change", function(event) {
+      var key = event.target.id;
+      var value = event.target.value;
+      window.localStorage.setItem(key, value);
+    }, true);
+    inputElement.addEventListener("load", function(event) {
+      console.log(event.target.type);
+      var key = event.target.id;
+      var value = window.localStorage.getItem(key);
+      event.target.value = value;
+    });
+  });
+  document.querySelectorAll("textarea.persistentForm").forEach(function(textArea) {
+    textArea.addEventListener("change", function(event) {
+      var key = event.target.id;
+      var value = event.target.value;
+      window.localStorage.setItem(key, value);
+    }, true);
+    textArea.addEventListener("load", function(event) {
+      var key = event.target.id;
+      var value = window.localStorage.getItem(key);
+      event.target.value = value;
+    });
+  });
+  document.querySelectorAll("input[type='checkbox'].persistentForm").forEach(function(checkbox) {
+    checkbox.addEventListener("change", function(event) {
+      var key = event.target.id;
+      var value = event.target.checked;
+      window.localStorage.setItem(key, value);
+    }, true);
+    checkbox.addEventListener("load", function(event) {
+      var key = event.target.id;
+      var value = window.localStorage.getItem(key);
+      event.target.checked = (value === "true" ? true : false);
+    });
+  });
+}, 10);
+
+setTimeout(function() {
+  document.querySelectorAll("input[type='text'].persistentForm").forEach(function(textInput) {
+    setTimeout(function(){
+      textInput.dispatchEvent(new Event('load'));
+    }, 1);
+  });
+  document.querySelectorAll("textarea.persistentForm").forEach(function(textArea) {
+    setTimeout(function(){
+      textArea.dispatchEvent(new Event('load'));
+    }, 1);
+  });
+  document.querySelectorAll("input[type='checkbox'].persistentForm").forEach(function(checkbox) {
+    setTimeout(function(){
+      checkbox.dispatchEvent(new Event('load'));
+    }, 1);
+  });
+}, 11);
+
+
+setTimeout(function() {
+  document.querySelectorAll("input[type='text'].persistentForm").forEach(function(textInput) {
+    setTimeout(function(){
+      textInput.dispatchEvent(new Event('change'));
+    }, 1);
+  });
+  document.querySelectorAll("textarea.persistentForm").forEach(function(textArea) {
+    setTimeout(function(){
+      textArea.dispatchEvent(new Event('change'));
+    }, 1);
+  });
+  document.querySelectorAll("input[type='checkbox'].persistentForm").forEach(function(checkbox) {
+    setTimeout(function(){
+      checkbox.dispatchEvent(new Event('change'));
+    }, 1);
+  });
+}, 12);
+</script>

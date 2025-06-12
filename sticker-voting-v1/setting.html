@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <base target="_top">
+  <!--<style>
+    body label {
+      display: block;
+    }
+
+    input,
+    select {
+      min-width: 50em;
+      max-width: 90%;
+    }
+  </style>-->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
+</head>
+
+<body clsss="container grid">
+  <h1>Sticker Voting v1 設定画面</h1>
+  <p>スプレッドシートに新たにシートを作成するなどした場合にはブラウザのリロード機能で更新してください。</p>
+  <label>実効ユーザー
+    <input value="<?= Session.getActiveUser().getEmail()?>" readonly>
+  </label>
+  <label>スプレッドシートID
+    <input id="ssIdInput" readonly>
+  </label>
+  <label>スプレッドシートのURL
+    <input id="ssUrlInput" readonly>
+  </abel>
+  <label>Sticker Voting 設定画面のURL
+    <input id="settingUrlInput" readonly value="<?= ScriptApp.getService().getUrl() ?>">
+  </label>
+  <label>Sticker Voting 投票画面のURL
+    <input id="votingUrlInput" readonly>
+  </label>
+
+  <label>シート名選択<select id="sheetNames"></select></label>
+  <label>Sheet Name<input id="sheetName"></label>
+  <div>
+    <a href="https://twitter.com/TakashiSasaki">Takashi SASAKI sasaki.takashi.mg@ehime-u.ac.jp</a>
+  </div>
+  <script>
+    const ssUrlInput = document.querySelector("input#ssUrlInput");
+    const ssIdInput = document.querySelector("input#ssIdInput");
+  </script>
+
+  <script type="module">
+    window.addEventListener("load", ()=>{
+      document.querySelector("#sheetNames").addEventListener("change", e=>{
+        if(e.target.value) {
+          const input = document.querySelector("#sheetName");
+          if(input){
+            input.value = e.target.value;
+          }//if
+        }//if
+      });
+    });
+
+    window.addEventListener("load", ()=>{
+      refreshSpreadsheetUrl();
+      refreshSpreadsheetId();
+      updateOptions();
+    });
+
+    function refreshSpreadsheetUrl(){
+      ssUrlInput.value = "refreshing ..";
+      google.script.run.withSuccessHandler(x=>{
+        ssUrlInput.value = x;
+      }).withFailureHandler(e=>{
+        ssUrlInput.value = e;
+      }).getSpreadsheetUrl();
+    }//updateSpreadsheetUrl
+
+    function refreshSpreadsheetId(){
+      ssIdInput.value = "refreshing ..";
+      google.script.run.withSuccessHandler(x=>{
+        ssIdInput.value = x;
+      }).withFailureHandler(e=>{
+        ssIdInput.value = e;
+      }).getSpreadsheetId();
+    }//updateSpreadsheetId
+
+    function updateOptions(){
+      const select = document.querySelector("#sheetNames");
+      select.options.length = 0;
+      google.script.run.withSuccessHandler((sheetNames)=>{
+        const blankOption = document.createElement("option");
+        blankOption.text = "";
+        blankOption.value = "";
+        select.appendChild(blankOption);
+
+        for(var i=0; i<sheetNames.length; ++i){
+          const option = document.createElement("option");
+          option.text = sheetNames[i];
+          option.value = sheetNames[i];
+          select.appendChild(option);
+        }//for
+      }).getSheetNames();
+    }//updateOptions
+  </script>
+</body>
+
+</html>

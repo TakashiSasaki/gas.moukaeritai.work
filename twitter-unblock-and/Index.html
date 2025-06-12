@@ -1,0 +1,145 @@
+<!-- File: Index.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    .state-display {
+      margin-bottom: 20px;
+      padding: 10px;
+      border: 1px solid #ddd;
+      background-color: #f9f9f9;
+    }
+    .profile-display, .blocked-users-display {
+      margin-top: 20px;
+      padding: 10px;
+      border: 1px solid #ddd;
+      background-color: #f1f1f1;
+    }
+    .action-btn {
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: background-color 0.3s;
+    }
+    .action-btn:hover {
+      background-color: #0056b3;
+    }
+    .loading {
+      display: none;
+      margin-top: 10px;
+      font-size: 14px;
+      color: #555;
+    }
+    .error-message {
+      color: red;
+      font-weight: bold;
+    }
+    .profile-picture {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+    }
+  </style>
+</head>
+<body>
+  <h1>Twitter API Interaction</h1>
+  
+  <div class="state-display">
+    <h2>OAuth1 State</h2>
+    <p>Authorization State: <span id="authorization-state">Loading...</span></p>
+    <button class="action-btn" onclick="displayOAuthState()">Refresh OAuth State</button>
+    <button class="action-btn" onclick="startAuthorization()">Authorize with Twitter</button>
+  </div>
+
+  <button class="action-btn" onclick="fetchUserProfile()">Get User Profile</button>
+  <button class="action-btn" onclick="fetchBlockedUsers()">Get Blocked Users</button>
+
+  <p class="loading" id="loading-text">Processing request...</p>
+
+  <div class="profile-display" id="profile-display">
+    <!-- User profile will be displayed here -->
+  </div>
+
+  <div class="blocked-users-display" id="blocked-users-display">
+    <!-- Blocked users list will be displayed here -->
+  </div>
+
+  <script>
+    // Fetch and display the OAuth state
+    function displayOAuthState() {
+      google.script.run
+        .withSuccessHandler(function(state) {
+          document.getElementById('authorization-state').textContent = state || 'Unknown';
+        })
+        .withFailureHandler(function(error) {
+          console.error('Error fetching OAuth state:', error.message);
+          document.getElementById('authorization-state').textContent = 'Failed to fetch state';
+        })
+        .getOAuthState();
+    }
+
+    // Start the OAuth authorization sequence
+    function startAuthorization() {
+      document.getElementById('loading-text').style.display = 'block';
+      google.script.run.withSuccessHandler(function(url) {
+        document.getElementById('loading-text').style.display = 'none';
+        window.location.href = url; // 元のページから直接遷移
+      }).startAuthorization();
+    }
+
+    // Fetch user profile using the access token
+    function fetchUserProfile() {
+      document.getElementById('loading-text').style.display = 'block';
+      google.script.run.withSuccessHandler(displayProfile).withFailureHandler(displayError).fetchUserProfile();
+    }
+
+    // Display the user profile
+    function displayProfile(profile) {
+      document.getElementById('loading-text').style.display = 'none';
+      const profileDisplay = document.getElementById('profile-display');
+      profileDisplay.innerHTML = `
+        <h2>User Profile</h2>
+        <img src="https://twitter.com/${profile.username}/profile_image" class="profile-picture" alt="Profile Picture">
+        <p>Name: ${profile.name}</p>
+        <p>Username: ${profile.username}</p>
+        <p>Description: ${profile.description}</p>
+      `;
+    }
+
+    // Fetch blocked users list
+    function fetchBlockedUsers() {
+      document.getElementById('loading-text').style.display = 'block';
+      google.script.run.withSuccessHandler(displayBlockedUsers).withFailureHandler(displayError).fetchBlockedUsers();
+    }
+
+    // Display the blocked users list
+    function displayBlockedUsers(users) {
+      document.getElementById('loading-text').style.display = 'none';
+      const blockedUsersDisplay = document.getElementById('blocked-users-display');
+      if (users.length > 0) {
+        blockedUsersDisplay.innerHTML = `<h2>Blocked Users</h2><ul>${users.map(user => `<li>${user.name} (@${user.screen_name})</li>`).join('')}</ul>`;
+      } else {
+        blockedUsersDisplay.innerHTML = '<p>No blocked users found.</p>';
+      }
+    }
+
+    // Display an error message if fetching fails
+    function displayError(error) {
+      document.getElementById('loading-text').style.display = 'none';
+      const profileDisplay = document.getElementById('profile-display');
+      profileDisplay.innerHTML = `<p class="error-message">Failed to fetch data: ${error.message}</p>`;
+    }
+
+    // Initial OAuth state display on page load
+    displayOAuthState();
+  </script>
+</body>
+</html>

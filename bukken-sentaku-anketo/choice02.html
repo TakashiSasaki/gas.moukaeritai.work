@@ -1,0 +1,43 @@
+<section id="choice02">
+  <h3>Q.　以下の仮想の物件のなかから、あなたにとって最も望ましい物件を1つだけお選びください。
+  </h3>
+   <br />  
+   <table border="1" width="75%" height="200" id="cablec02">
+      <tr>
+         <td width="150" height="80" align="center"><input type="radio" class="geomsize" name="ルート" value="1" onclick="recordchoice02(this)"></td>
+         <td width="150" height="80" align="center"><input type="radio" class="geomsize" name="ルート" value="2" onclick="recordchoice02(this)"></td>
+         <td width="150" height="80" align="center"><input type="radio" class="geomsize" name="ルート" value="3" onclick="recordchoice02(this)"></td>
+         <td width="150" height="80" align="center"><input type="radio" class="geomsize" name="ルート" value="4" onclick="recordchoice02(this)"></td>
+         <td width="150" height="80" align="center"><input type="radio" class="geomsize" name="ルート" value="5" onclick="recordchoice02(this)"></td>
+         <td width="150" height="80" align="center"><input type="radio" class="geomsize" name="ルート" value="6" onclick="recordchoice02(this)"></td>
+         </tr>
+      <?!=getTr("cc02"); ?>
+   </table>
+   <br clear="all"><br />
+   <hr>
+   <button onclick="show_rest02();">次へ</button>
+   <hr>
+<script>
+function show_rest02() {
+
+	end_choice02 = (new Date()).getTime();
+	var sections = document.getElementsByTagName("section");
+	for (var i = 0; i < sections.length; ++i) {
+		sections[i].style.display = "none";
+	}
+	document.getElementById("rest02").style.display = "block";
+}
+
+function recordchoice02(element) {
+	//       var start_time = start_time;            //誰が
+	var click_time = (new Date()).getTime(); //いつ
+	//var element_id = element.id; //何を
+	var element_value = element.value; //値
+	var element_checked = element.checked; //チェック状態
+	google.script.run.withFailureHandler(function () {
+    }).withSuccessHandler(function () {
+    }).recordchoice02(start_time, end_best01, click_time, "choice02", element_value, element_checked);
+}
+recordchoice02(element);
+</script>
+</section>

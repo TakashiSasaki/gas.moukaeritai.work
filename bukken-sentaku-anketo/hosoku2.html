@@ -1,0 +1,28 @@
+<section id="hosoku2">
+  <hr>
+  <h3>次に、仮想の物件に対する好みをお伺いします。 
+    <br />
+    <br />なお、ご記入にあたっては以下の点に注意してください。 
+    <br />
+    <br />●仮に1回生に戻った場合を考え、そこから4年間住むことを想定してください 
+    <br />●物件の費用負担（親が家賃を支払っているなど）は現状と同じであるとします 
+    <br />●提示された情報以外の内容は、すべて同一のものとします 
+    <br />
+    <br />まずは調査に慣れて頂くために、練習問題を7問用意しています。 
+    <br />「次へ」を押し、回答に進んでください。 
+    <br />
+  </h3>
+  <hr>
+  <button onclick="show_pchoice();">次へ</button>
+  <hr>
+  <script>
+     function show_pchoice(){
+       var sections = document.getElementsByTagName("section");
+       start_pchoice = (new Date()).getTime();
+       for(var i=0; i<sections.length; ++i) {
+         sections[i].style.display="none";
+       }
+       document.getElementById("pchoice").style.display="block";
+     }
+   </script>
+</section>

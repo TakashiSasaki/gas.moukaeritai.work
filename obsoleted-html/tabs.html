@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"  crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js" crossorigin="anonymous"></script>  
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" crossorigin="anonymous"></script>        
+    <? if(header) { ?>
+      <?!=header.getContent();?>
+    <? } ?>
+    <style>
+      iframe.fullpage {
+        width: 100vw;
+        height: 95vh;
+        border: 0px;
+        margin: 0px;
+        padding: 0px;
+      }
+    </style>
+  </head>
+  <body>
+    <ul class="nav nav-tabs">
+      <? for(var i=0; i<htmlOutputs.length; ++i) { ?>
+      <li class="nav-item">
+        <a class="nav-link bg-primary" data-toggle="tab" href="#tab<?=i?>"><?=htmlOutputs[i].getTitle()?></a>
+      </li>      
+      <? } ?>
+    </ul>
+    <div class="tab-content">
+      <? for(var i=0; i<htmlOutputs.length; ++i) { ?>
+        <div class="tab-pane" id="tab<?=i?>">
+        <?!= htmlOutputs[i].getContent()?>
+        </div>
+      <? } ?>
+    </div>
+    <script>
+    $(function (){
+      var href = localStorage.getItem("active_tab");
+      if(!href) {
+        href = "tab0";
+      }
+      $('a[href="' + href + '"]').tab('show');
+      $("a.nav-link").on("show", function(a){
+        var href = a.target.getAttribute('href');
+        localStorage.setItem("active_tab", href);
+      });
+      $("a.nav-link").on("click", function(a){
+        var href = a.target.getAttribute('href');
+        localStorage.setItem("active_tab", href);
+      });
+    }());    
+    </script>
+  </body>
+</html>

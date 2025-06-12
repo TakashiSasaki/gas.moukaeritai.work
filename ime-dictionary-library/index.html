@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <!-- Filename : index.html -->
+  <base target="_top">
+  <style>
+    /* Basic page styling */
+    body {
+      font-family: sans-serif;
+      padding: 20px;
+    }
+
+    textarea {
+      width: 100%;
+      height: 100px;
+    }
+
+    /* Output container with copy button */
+    #output-container {
+      position: relative;
+      margin-top: 10px;
+    }
+
+    pre {
+      margin: 0;
+    }
+
+    /* Copy button styles */
+    #copyButton {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      font-size: 12px;
+      padding: 5px 10px;
+      cursor: pointer;
+    }
+
+    /* Collapsible panel styling */
+    .panel {
+      margin-top: 20px;
+      border: 1px solid #aaa;
+    }
+
+    .panel-header {
+      background: #e0e0ff;
+      padding: 8px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .panel-header span.label {
+      font-weight: bold;
+    }
+
+    /* The panel-content shows full content when expanded,
+       and shows approximately 5 lines using the line-clamp method when collapsed */
+    .panel-content {
+      padding: 10px;
+      background: #fff;
+    }
+
+    .panel-content.collapsed pre {
+      display: -webkit-box;
+      -webkit-line-clamp: 5;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    /* Button styling adjustments */
+    .panel-header button {
+      margin-left: 10px;
+      padding: 5px 8px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+  <h2>ImeDictionary library Test Page</h2>
+  <p>
+    This is a test page for ImeDictionary, a Google Apps Script library that analyzes TSV files typical for IME user dictionaries using Gemini and outputs nicely formatted JSON.
+  </p>
+
+  <!-- API selector -->
+  <label>
+    Select API:
+    <select id="apiSelector">
+      <option value="gemma">Gemma 3</option>
+      <option value="gemini">Gemini 2.0 Flash</option>
+    </select>
+  </label>
+  <br><br>
+
+  <!-- User input area -->
+  <textarea id="userInput" placeholder="Please paste the TSV for the IME user dictionary."></textarea>
+  <br><br>
+
+  <!-- Collapsible panel for the intermediate state -->
+  <div class="panel" id="intermediate-panel">
+    <div class="panel-header" onclick="togglePanel('intermediate')">
+      <span id="intermediateLabel" class="label">Intermediate State</span>
+      <!-- Generate Intermediate State button placed next to the label -->
+      <button id="generateIntermediateButton" onclick="event.stopPropagation(); createIntermediate();">Generate Intermediate State</button>
+      <span id="intermediateCount"></span>
+      <span id="toggle-intermediate">Expand</span>
+    </div>
+    <!-- Allow panel-content click to toggle -->
+    <div class="panel-content collapsed" id="intermediateContent" onclick="togglePanel('intermediate')">
+      <pre id="intermediateOutput"></pre>
+    </div>
+  </div>
+
+  <!-- Collapsible panel for the final output -->
+  <div class="panel" id="output-panel">
+    <div class="panel-header" onclick="togglePanel('output')">
+      <span id="finalOutputLabel" class="label">Final Output</span>
+      <!-- Generate final output button placed next to the label -->
+      <button id="generateFinalOutputButton" onclick="event.stopPropagation(); callAPI();">Generate Final Output</button>
+      <span id="finalOutputCount"></span>
+      <span id="toggle-output">Expand</span>
+    </div>
+    <!-- Allow panel-content click to toggle -->
+    <div class="panel-content collapsed" id="finalOutputContent" onclick="togglePanel('output')">
+      <div id="output-container">
+        <!-- Prevent toggle when clicking the copy button -->
+        <button id="copyButton" onclick="event.stopPropagation(); copyOutput();">Copy</button>
+        <pre id="output"></pre>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Auto-generate intermediate state when user input loses focus.
+    document.getElementById('userInput').addEventListener('blur', function() {
+      createIntermediate();
+    });
+
+    // Toggle function: add or remove "collapsed" class on panel-content and change toggle text.
+    function togglePanel(panel) {
+      let content, toggleText;
+      if (panel === 'intermediate') {
+        content = document.getElementById('intermediateContent');
+        toggleText = document.getElementById('toggle-intermediate');
+      } else if (panel === 'output') {
+        content = document.getElementById('finalOutputContent');
+        toggleText = document.getElementById('toggle-output');
+      }
+      if (content.classList.contains('collapsed')) {
+        content.classList.remove('collapsed');
+        toggleText.innerText = "Collapse";
+      } else {
+        content.classList.add('collapsed');
+        toggleText.innerText = "Expand";
+      }
+    }
+
+    function createIntermediate() {
+      const userInput = document.getElementById('userInput').value;
+      const button = document.getElementById('generateIntermediateButton');
+      // Show progress
+      button.disabled = true;
+      button.innerText = "Processing...";
+      google.script.run.withSuccessHandler(function(intermediate) {
+          document.getElementById('intermediateOutput').innerText = JSON.stringify(intermediate, null, 2);
+          document.getElementById('intermediateCount').innerText = " (" + intermediate.length + " items)";
+          button.disabled = false;
+          button.innerText = "Generate Intermediate State";
+        })
+        .withFailureHandler(function(error) {
+          document.getElementById('intermediateOutput').innerText = 'Error: ' + error.message;
+          button.disabled = false;
+          button.innerText = "Generate Intermediate State";
+        })
+        ._extractTable(userInput);
+    }
+
+    // Function to call the selected API and display final entries array
+    function callAPI() {
+      const userInput = document.getElementById('userInput').value;
+      const selectedApi = document.getElementById('apiSelector').value;
+      document.getElementById('output').innerText = 'Submitting...';
+      const button = document.getElementById('generateFinalOutputButton');
+      button.disabled = true;
+      button.innerText = "Processing...";
+
+      const runner = google.script.run
+        .withSuccessHandler(function(entries) {
+          document.getElementById('output').innerText = JSON.stringify(entries, null, 2);
+          if (Array.isArray(entries)) {
+            document.getElementById('finalOutputCount').innerText = " (" + entries.length + " items)";
+          } else {
+            document.getElementById('finalOutputCount').innerText = "";
+          }
+          button.disabled = false;
+          button.innerText = "Generate Final Output";
+        })
+        .withFailureHandler(function(error) {
+          document.getElementById('output').innerText = 'Error: ' + error.message;
+          button.disabled = false;
+          button.innerText = "Generate Final Output";
+        });
+
+      // Dynamically call gemma or gemini
+      if (selectedApi === 'gemma') {
+        runner.gemma(userInput);
+      } else {
+        runner.gemini(userInput);
+      }
+    }
+
+    // Function to copy final output text to clipboard
+    function copyOutput() {
+      const output = document.getElementById('output').innerText;
+      navigator.clipboard.writeText(output).then(() => {
+        const button = document.getElementById('copyButton');
+        button.innerText = 'Copied';
+        setTimeout(() => { button.innerText = 'Copy'; }, 1500);
+      }).catch(err => {
+        alert('Failed to copy: ' + err);
+      });
+    }
+  </script>
+
+</body>
+
+</html>

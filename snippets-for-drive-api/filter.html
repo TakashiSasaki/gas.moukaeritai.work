@@ -1,0 +1,79 @@
+<div class="SnippetsForDriveApp">
+   <div>
+      <label>a part of file name 
+      <input onkeyup="isClientStateDirty=true;checkForState();" id="fileNameInput">
+      </label>
+   </div>
+   <div id="filesTable"></div>
+   <button onclick="onChooseButtonClicked();">Choose this file</button>
+   <textarea readonly="1" id="xmlTextArea"></textarea>
+</div>
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script>
+google.charts.load('current', {
+  'packages': ['table']
+});
+var data;
+var table;
+google.charts.setOnLoadCallback(function () {
+  data = new google.visualization.DataTable();
+  data.addColumn("string", "fileName");
+  data.addColumn("string", "fileId");
+  data.addColumn("string", "date");
+  data.addColumn("string", "parents");
+  table = new google.visualization.Table(document.getElementById("filesTable"));
+});
+</script>
+<script>
+var isWaitingForDispatch = false;
+var isWaitingForResponse = false;
+var isClientStateDirty = false;
+
+function checkForState() {
+  if (isClientStateDirty === false) return;
+  if (isWaitingForDispatch === true) return;
+  if (isWaitingForResponse === true) {
+    setTimeout(checkForState, 200);
+    return;
+  }
+  isWaitingForDispatch = true;
+  setTimeout(runServerFunction, 500);
+} //checkForState
+
+function runServerFunction() {
+  isWaitingForDispatch = false;
+  isWaitingForResponse = true;
+  isClientStateDirty = false;
+  google.script.run.withSuccessHandler(function (x) {
+    console.log(x);
+    isWaitingForResponse = false;
+    if (x === null) return;
+    data.removeRows(0, data.getNumberOfRows());
+    for (var i = 0; i < Math.min(10, x.length); ++i) {
+      data.addRow([x[i][0], x[i][1], x[i][2], Object.toString(x[i][3])]);
+    } //for
+    table.draw(data);
+  }).withFailureHandler(function (e) {
+    console.log(e);
+    isWaitingForResponse = false;
+  }).getFileIdsByMatchingTitle(document.querySelector("#fileNameInput").value, 10);
+} //runServerFunction
+
+
+function onChooseButtonClicked(e) {
+  var selection = table.getSelection();
+  var row = selection[0].row;
+  var fileId = data.getValue(row, 1);
+  console.log(fileId);
+  return;
+  var tdName = e.currentTarget;
+  var fileId = tdName.fileId;
+  google.script.run.withSuccessHandler(function (x) {
+    var textarea = document.getElementById("xmlTextArea");
+    textarea.value = x;
+  }).withFailureHandler(function (e) {
+    alert(e);
+  }).onFileClicked(fileId);
+}//onChooseButtonClicked
+
+</script>

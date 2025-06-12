@@ -1,0 +1,16 @@
+<html>
+  <head>
+  </head>
+  <body>
+  <p>Authorization URL : <a href="<?=authorizationUrl?>" target="blank"><?=authorizationUrl?></a><p>
+  <p>Access Token : <?= PropertiesService.getUserProperties().getProperty("accessToken"); ?></p>
+  <p>Refresh Token : <?= PropertiesService.getUserProperties().getProperty("refreshToken"); ?></p>
+  <p>Expires at : <?= PropertiesService.getUserProperties().getProperty("expiresAt"); ?></p>
+  <p>Working spreadsheet ID : <?= PropertiesService.getUserProperties().getProperty("spreadsheetId"); ?></p>
+  <p>Active spreadsheet ID : <?= PropertiesService.getUserProperties().getProperty("activeSpreadsheetId"); ?></p>
+  <button onclick="setSpreadsheetId()">Set the active spreadsheet to the working spreadsheet</button>
+  <script>
+  google.script.run.withSuccessHandler(function(){}).withFailureHandler(function(){}).setSpreadsheetId();
+  </script>
+  </body>
+</html>

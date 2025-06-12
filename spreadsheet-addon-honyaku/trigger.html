@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <?!= HtmlService.createTemplateFromFile("common").evaluate().getContent();?>
+  </head>
+  <body>
+    <div class="box">
+      <div>Script ID
+        <input type="text" name="scriptId" onchange="save(this)" onmouseover="load(this)">
+      </div>
+    </div>
+
+    <div class="box">
+      <button onclick="run(this).getTriggerBuilder()">getTriggerBuilder</button>
+      <button onclick="run(this).deleteTriggers()">deleteTriggers</button>
+    </div>
+    <div class="box">
+      <div>
+        <input type="text" name="onEditTriggerFunctionName" onchange="save(this)" onmouseover="load(this)" placeholder="onEditTriggerFunctionName">
+        <button onclick="run(this).setOnEditTrigger(load('spreadsheetId'), load('onEditTriggerFunctionName'))">setOnEditTrigger</button>
+      </div>
+    </div>
+    <div class="box">
+      <textarea onclick="run(this).getUserTriggersJson(load('spreadsheetId'))" placeholder="Click to get user triggers"
+      ochange="save(this)" onfocus="load(this)"></textarea>
+    </div>
+    <div class="box">User triggers
+      <input type="text" name="userTriggerFunctionName" onchange="save(this)" onfocus="load(this)">
+    </div>
+    <div class="box">Project triggers
+      <textarea onclick="run(this).getProjectTriggersJson()" placeholder="Click to get project triggers"
+      onchange="save(this)" onfocus="load(this)"></textarea>
+    </div>
+  </body>
+</html>

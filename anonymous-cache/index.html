@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <base target="_top">
+  <style>
+    textarea {
+      width: 99%;
+    }
+    input {
+      width: 99%;
+    }
+    </style>
+</head>
+
+<body>
+  <input readonly id="execUrl" value="https://script.google.com/macros/s/AKfycbyL3vFAkI0XR-twChqbOvsOfVWA1nQQxiFm_rk0NhXfIT-FjyRy0VeDD7er0SodwfldBA/exec">
+  <input readonly id="devUrl" value="https://script.google.com/macros/s/AKfycbz0Gdc-3RJT_UwZgieI-nMLWcHXflCQWDZQzGagCoY3/dev">
+    index.html
+  <input id="pathInfo">
+  <input id="queryString">
+  <button>doGet</button>
+  <textarea id="requestUrl"></textarea>
+  <textarea id="response" readonly></textarea>
+  <input id="status" readonly>
+  <script>
+    window.addEventListener("load", (loadEvent) => {
+    document.querySelector("button").addEventListener("click", async (clickEvent) => {
+      const baseUrl = document.getElementById("execUrl").value;
+      const pathInfo = document.getElementById("pathInfo").value;
+      const queryString = document.getElementById("queryString").value;
+
+      // 完全なURLを構築
+      const fullUrl = baseUrl + (pathInfo ? "/" + pathInfo : "") + (queryString ? "?" + queryString : "");
+      document.getElementById("requestUrl").value = fullUrl;
+
+      try {
+        // fetch関数によるリクエスト
+        const response = await fetch(fullUrl, {mode:"no-cors"});
+        const text = await response.text();
+
+        // 結果をテキストエリアに表示
+        document.querySelector("#status").value = `ステータス: ${response.status}`;
+        document.querySelector("#response").value = text;
+      } catch (error) {
+        // エラー時の処理
+        document.querySelector("#response").value = "エラーが発生しました: " + error;
+      }
+    });
+  });
+  </script>
+
+</body>
+
+</html>

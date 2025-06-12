@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <style>
+    table {border-style:solid; border-collapse:collapse}
+    td {border-style:solid; border-collapse:collapse; border-width: 1px}
+    textarea {width:98%; height:10em}
+    .color1 {background-color: #11aa55}
+    .color2 {background-color: #22bb66}
+    .color3 {background-color: #33cc77}
+    .color4 {background-color: #44dd88}
+    .color5 {background-color: #55ee99}
+    .color6 {background-color: #6611aa}
+    .color7 {background-color: #7722bb}
+    .color8 {background-color: #8833cc}
+    .color9 {background-color: #9944dd}
+    .colora {background-color: #aa55ee}
+    .colorb {background-color: #bb6611}
+    .colorc {background-color: #cc7722}
+    .colord {background-color: #dd8833}
+    .colore {background-color: #ee9944}
+    </style>
+  </head>
+  <body>
+    <a href="https://script.google.com/macros/s/AKfycbyT2wk0k1QsrkICaKiXsu1pYbh0mgKqAW8jz_3yfEHx/dev?base64Alphabet">base64Alphabet</a>
+    <a href="https://script.google.com/macros/s/AKfycbyT2wk0k1QsrkICaKiXsu1pYbh0mgKqAW8jz_3yfEHx/dev?base64XorTable">base64XorTable</a>
+    <a href="https://script.google.com/macros/s/AKfycbyT2wk0k1QsrkICaKiXsu1pYbh0mgKqAW8jz_3yfEHx/dev?base64WebSafeXorTable">base64WebSafeXorTable</a>
+    <h1>XOR</h1>
+    <table>
+    <? for(i in xorTable) { ?>
+      <tr>
+      <? for(j in xorTable[i]) {?>
+        <td class="color<?=productTable[i][j]; ?>">
+        (<?=i?>,<?=j?>)=<?=xorTable[i][j]; ?>
+        </td>
+      <? } ?>
+      </tr>
+    <? } ?>
+    </table>
+    <h2>XOR Table in JSON</h2>
+    <textarea readonly>xorTable = <?=JSON.stringify(xorTable)?></textarea>
+    <h1>Product</h1>
+    <table>
+    <? for(i in productTable) { ?>
+      <tr>
+      <? for(j in productTable[i]) {?>
+        <td class="color<?=productTable[i][j]; ?>">
+        (<?=i?>,<?=j?>)=<?=productTable[i][j]; ?>
+        </td>
+      <? } ?>
+      </tr>
+    <? } ?>
+    </table>
+    <h2>Product Table in JSON</h2>
+    <textarea readonly>productTable = <?=JSON.stringify(productTable)?></textarea>
+  </body>
+</html>

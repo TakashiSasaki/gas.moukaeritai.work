@@ -1,0 +1,12 @@
+{
+  "timeZone": "Asia/Tokyo",
+  "dependencies": {
+    "libraries": [{
+      "userSymbol": "Table",
+      "libraryId": "145HOZDGMnvmYoPGYsN--JfNWQtotCDYFYLeSh-dPm-VQxx9sVlWE64um",
+      "version": "3",
+      "developmentMode": true
+    }]
+  },
+  "exceptionLogging": "STACKDRIVER"
+}

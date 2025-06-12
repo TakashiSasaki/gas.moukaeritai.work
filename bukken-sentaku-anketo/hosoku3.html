@@ -1,0 +1,32 @@
+<section id="hosoku3">
+  <hr>
+  <h3>練習問題は終了です。
+    <br />
+    <br />
+    <br />次のページより、本調査を行います。
+    <br />
+    <br />本調査として同様の問題を40問程度伺います。
+    <br />ただし、途中で休憩を取りますので、休憩画面が出てくるまでは、休憩を取らずに回答を続けてください。
+    <br />
+    <br />
+    <br />なお、ご記入にあたっては、「再読み」ボタンや「戻る」ボタンをクリックしないようにご注意ください。 
+    <br />
+    <br />また、回答中に何か不明な点やトラブルが生じた場合には、すぐに最寄りの調査員にお知らせください。 
+    <br />
+    <br />それでは、準備ができましたら、次へをクリックして本調査を開始してください。 
+    <br />
+  </h3>
+  <hr>
+  <button onclick="show_best41()">次へ</button>
+  <hr>
+  <script>
+     function show_best41(){
+       var sections = document.getElementsByTagName("section");
+       end_hosoku3 = (new Date()).getTime();
+       for(var i=0; i<sections.length; ++i) {
+         sections[i].style.display="none";
+       }
+       document.getElementById("best41").style.display="block";
+     }
+   </script>
+</section>

@@ -1,0 +1,17 @@
+{
+  "timeZone": "Asia/Tokyo",
+  "dependencies": {
+    "libraries": [{
+      "userSymbol": "PublishedFormParser",
+      "libraryId": "1fc66EogeAcmTnLLgk76XMjKqG7rbYH7tXSN5yRA66tLoSWL85QvuvbLR",
+      "version": "6",
+      "developmentMode": true
+    }]
+  },
+  "webapp": {
+    "access": "ANYONE_ANONYMOUS",
+    "executeAs": "USER_DEPLOYING"
+  },
+  "exceptionLogging": "STACKDRIVER",
+  "runtimeVersion": "V8"
+}

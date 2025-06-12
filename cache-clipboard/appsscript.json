@@ -1,0 +1,16 @@
+{
+  "timeZone": "Asia/Tokyo",
+  "dependencies": {
+    "libraries": [{
+      "userSymbol": "CacheHelper",
+      "libraryId": "1NYN_AoEoGoZIOKurCE2dSWFMzpBTeZFczQ-q_F4d-mvQ2XK6rdtz3Zev",
+      "version": "66",
+      "developmentMode": true
+    }]
+  },
+  "webapp": {
+    "access": "ANYONE",
+    "executeAs": "USER_ACCESSING"
+  },
+  "exceptionLogging": "STACKDRIVER"
+}

@@ -1,0 +1,16 @@
+{
+  "timeZone": "Asia/Tokyo",
+  "dependencies": {
+    "libraries": [{
+      "userSymbol": "FilePicker",
+      "libraryId": "13LSMt2i9zJj3Bg0rE1bw2Rr1p3WRJM8WogMlr5FZCcyejMQyFEAtCy45",
+      "version": "40"
+    }]
+  },
+  "webapp": {
+    "access": "ANYONE_ANONYMOUS",
+    "executeAs": "USER_DEPLOYING"
+  },
+  "exceptionLogging": "STACKDRIVER",
+  "runtimeVersion": "V8"
+}

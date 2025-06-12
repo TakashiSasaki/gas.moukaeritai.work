@@ -1,0 +1,31 @@
+{
+  "timeZone": "Asia/Tokyo",
+  "exceptionLogging": "STACKDRIVER",
+  "runtimeVersion": "V8",
+  "oauthScopes": [
+    "https://www.googleapis.com/auth/script.external_request",
+    "https://www.googleapis.com/auth/drive.metadata.readonly",
+    "https://www.googleapis.com/auth/drive.addons.metadata.readonly",
+    "https://www.googleapis.com/auth/script.locale",
+    "https://www.googleapis.com/auth/drive.readonly"
+  ],
+  "urlFetchWhitelist": [
+    "https://www.googleapis.com/drive/v3/files"
+  ],
+  "addOns": {
+    "common": {
+      "name": "DriveMetaViewer",
+      "logoUrl": "https://i.gyazo.com/275563f7aaacb571867ccb1b7ce2e385.png",
+      "useLocaleFromApp": true
+    },
+    "drive": {
+      "onItemsSelectedTrigger": {
+        "runFunction": "onDriveItemsSelected"
+      }
+    }
+  },
+  "webapp": {
+    "executeAs": "USER_ACCESSING",
+    "access": "ANYONE"
+  }
+}

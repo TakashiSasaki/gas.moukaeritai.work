@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <base target="_top">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/pure-min.css">
+
+</head>
+
+<body>
+  <div>
+    <label>current URL<a id="currentUrlA"></a></label>
+  </div>
+  <div>
+    <label>exec URL<a id="execUrlA"></a></label>
+  </div>
+  <div>
+    <label>dev URL<a id="devUrlA"></a></label>
+  </div>
+
+  <div>
+    <button id="doPostButton">
+      doPost by fetch API
+    </button>
+  </div>
+  <div>
+    <button id="doGetButton">
+        doGet
+      </button>
+  </div>
+
+  <script defer>
+    const currentUrlA = document.querySelector("a#currentUrlA");
+    const execUrlA = document.querySelector("a#execUrlA");
+    const devUrlA = document.querySelector("a#devUrlA");
+    const doPostButton = document.querySelector("button#doPostButton");
+    const doGetButton = document.querySelector("button#doGetButton");
+    const currentUrl = "<?= ScriptApp.getService().getUrl(); ?>"
+    const devUrl = "https://script.google.com/macros/s/AKfycbwkbqxXue9rtkbXxS-b6XhDwlNQ8M57yzAvCkv-pKir/dev";
+    const execUrl = "https://script.google.com/macros/s/AKfycbwOR48gyJaPmrkdD5d2H007MYun7brScO8qZeuRNn6-8RpL25MTdUjKsjcVJnT6OaMtRA/exec";
+  </script>
+
+  <script type="module">
+    currentUrlA.setAttribute("href", currentUrl);
+    currentUrlA.innerText = currentUrl;
+    execUrlA.setAttribute("href", execUrl);
+    execUrlA.innerText = execUrl;
+    devUrlA.setAttribute("href", devUrl);
+    devUrlA.innerText = devUrl;
+  </script>
+
+  <script type="module">
+    doPostButton.onclick = (e)=>{
+      fetch(execUrl, {
+        method: "POST",
+        mode: "no-cors",
+        redirect: "follow",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          email: "test@example.com",
+          valueString: "***valueString***"
+        })
+      })
+      .then(response => response.json())
+      .then(x => console.log(x))
+      .catch(e =>console.log("catch", e));
+    };
+  </script>
+
+  <script type="module">
+    doGetButton.onclick = (e)=>{
+      fetch(execUrl, {
+        mode: "same-origin"
+      })
+      .then(x => console.log(x))
+      .catch(e =>console.log("catch", e));
+    };
+  </script>
+
+</body>
+
+</html>

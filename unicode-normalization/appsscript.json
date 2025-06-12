@@ -1,0 +1,21 @@
+{
+  "timeZone": "Asia/Tokyo",
+  "dependencies": {
+    "libraries": [{
+      "userSymbol": "SpreadsheetLibrary",
+      "libraryId": "1LSYokZ_LmtIkXv-URsN99givIHlIkDNHwQjkLAo6JkzwLvsbagpdbTaE",
+      "version": "4",
+      "developmentMode": true
+    }, {
+      "userSymbol": "HtmlTemplateLibrary",
+      "libraryId": "1XB8G6BUwfRJsR9KyHOaEX8F1D2k3hmP0tB5Zec6cKoXNwx4hA4turlAj",
+      "version": "31",
+      "developmentMode": true
+    }]
+  },
+  "webapp": {
+    "access": "ANYONE",
+    "executeAs": "USER_ACCESSING"
+  },
+  "exceptionLogging": "STACKDRIVER"
+}

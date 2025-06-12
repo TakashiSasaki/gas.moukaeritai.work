@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <base target="_top">
+  <style>
+    textarea {
+      width: 90%;
+      height: 5em;
+    }
+
+    input {
+      width: 90%;
+    }
+  </style>
+</head>
+
+<body>
+  <h1></h1>
+  <h1>Redirected data</h1>
+  <?=JSON.stringify(catchedData)?>
+  <h2>Authorization code</h2>
+  <?=code?>
+  <h1>Exchanged data</h1>
+  <p>The authorization code above has been exchanged to the access token.</p>
+  <textarea readonly><?=CacheService.getUserCache().get("exchangedData")?></textarea>
+  <h2>access_token</h2>
+  <?=CacheService.getUserCache().get("access_token");?>
+  <h2>
+</body>
+
+</html>

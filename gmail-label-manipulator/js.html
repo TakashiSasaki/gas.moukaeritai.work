@@ -1,0 +1,14 @@
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script>
+  $("#setSpreadsheet").on("click", function(){
+    var spreadsheetUrl = $("#spreadsheetUrl")[0].value;
+    google.script.run
+    .withSuccessHandler(function(){
+      alert("spreadsheet is set");
+    })
+    .withFailureHandler(function(){
+      alert("failed to determine spreadsheet");
+    })
+    .setSpreadsheet(spreadsheetUrl);
+  });
+</script>

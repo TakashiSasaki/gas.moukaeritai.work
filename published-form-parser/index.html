@@ -1,0 +1,17 @@
+<div>
+<h1>active_user</h1>
+<?=active_user?>
+<h1>effective_user</h1>
+<?=effective_user?>
+    <form action="upload.php" method="post" enctype="multipart/form-data">
+        <input type="file" name="capture" accept="image/*;capture=camera" />
+        <input type="file" name="capture" accept="image/*" capture="camera" />
+        <input type="submit" value="Upload" />
+    </form>
+    <div><?=json_string?></div>
+    <image src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg=="/>
+    </div>
+<form action="<?=PropertiesService.getScriptProperties().getProperty('WEB_APP_URL_DEV')?>" method="POST">
+  <input name="a" value="b">
+  <input type="submit">
+</form>
