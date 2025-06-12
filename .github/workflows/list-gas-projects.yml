@@ -32,20 +32,18 @@ jobs:
       - name: Install clasp
         run: npm install -g clasp
 
-      - name: Authenticate clasp
-        env:
-          CLASP_ACCESS_TOKEN: ${{ secrets.CLASP_ACCESS_TOKEN }}
+      - name: Restore clasp credentials
         run: |
-          clasp login --no-browser --token "$CLASP_ACCESS_TOKEN"
+          echo '${{ secrets.CLASPRC_JSON }}' > ~/.clasprc.json
 
       - name: Get Apps Script Projects List
         run: |
-          clasp list --json > projects.json
+          clasp list > clasp-list.txt
 
-      - name: Check if projects.json changed
+      - name: Check if clasp-list.txt changed
         id: check-changed
         run: |
-          if ! git diff --exit-code projects.json; then
+          if ! git diff --exit-code clasp-list.txt; then
             echo "changed=true" >> $GITHUB_OUTPUT
           else
             echo "changed=false" >> $GITHUB_OUTPUT
@@ -56,7 +54,7 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add projects.json
+          git add clasp-list.txt
           git commit -m "Update Apps Script projects list"
           # gas-pull ブランチに強制プッシュ
           git push origin gas-pull --force
