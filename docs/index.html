@@ -10,11 +10,67 @@
     <div class="container">
         <div class="card">
             <h2>moodle-multichoice-question-validator</h2>
+            <p><strong>概要:</strong> Moodle多肢選択問題XMLのバリデーター (Webアプリ)。</p>
+            <p><strong>appsscript.json:</strong></p>
+            <ul>
+                <li>Webアプリ: access: ANYONE_ANONYMOUS, executeAs: USER_DEPLOYING</li>
+                <li>OAuthスコープ: なし</li>
+            </ul>
+            <p><strong>認証の要否 (エンドユーザー):</strong> 不要</p>
+            <p><strong>備考:</strong> appsscript.jsonでは、認証なしで誰でもアクセス可能なWebアプリとして設定されています。</p>
             <a href="#" class="button">Open Validator</a>
         </div>
         <div class="card">
             <h2>moodle-true-false-quiz-validator</h2>
+            <p><strong>概要:</strong> Moodle T/F問題XMLのバリデーター (Webアプリ)。</p>
+            <p><strong>appsscript.json:</strong></p>
+            <ul>
+                <li>Webアプリ: access: ANYONE_ANONYMOUS, executeAs: USER_DEPLOYING</li>
+                <li>OAuthスコープ: なし</li>
+            </ul>
+            <p><strong>認証の要否 (エンドユーザー):</strong> 不要</p>
+            <p><strong>備考:</strong> appsscript.jsonでは、認証なしで誰でもアクセス可能なWebアプリとして設定されています。</p>
             <a href="#" class="button">Open Validator</a>
+        </div>
+        <div class="card">
+            <h2>document-saver</h2>
+            <p><strong>概要:</strong> GoogleドキュメントをDriveの指定フォルダに保存するGoogle Apps Scriptです。</p>
+            <p><strong>appsscript.json:</strong></p>
+            <ul>
+                <li>Webアプリ: access: ANYONE_ANONYMOUS, executeAs: USER_DEPLOYING</li>
+                <li>OAuthスコープ: https://www.googleapis.com/auth/drive, https://www.googleapis.com/auth/documents</li>
+            </ul>
+            <p><strong>認証の要否 (エンドユーザー):</strong> 不要 (開発者による事前承認は必要)</p>
+            <p><strong>備考:</strong> appsscript.jsonには明示的なスコープ記述はありませんが、機能的にDriveとDocumentsへのアクセス権が必要です。</p>
+            <a href="../document-saver/README.md" class="button">READMEを見る</a>
+        </div>
+        <div class="card">
+            <h2>ime-dictionary-aggregator</h2>
+            <p><strong>概要:</strong> 複数のIME辞書を単一のファイルに集約します。</p>
+            <p><strong>appsscript.json:</strong> 存在しません。</p>
+            <p><strong>認証の要否 (エンドユーザー):</strong> 不明 (おそらく不要)</p>
+            <p><strong>備考:</strong> appsscript.json が存在しません。ローカル実行スクリプトの可能性があります。</p>
+            <a href="../ime-dictionary-aggregator/README.md" class="button">READMEを見る</a>
+        </div>
+        <div class="card">
+            <h2>ime-dictionary-library</h2>
+            <p><strong>概要:</strong> IME辞書を扱うためのライブラリです。</p>
+            <p><strong>appsscript.json:</strong> 存在しません。</p>
+            <p><strong>認証の要否 (エンドユーザー):</strong> 不明 (おそらく不要)</p>
+            <p><strong>備考:</strong> appsscript.json が存在しません。ライブラリプロジェクトの可能性があります。</p>
+            <a href="../ime-dictionary-library/README.md" class="button">READMEを見る</a>
+        </div>
+        <div class="card">
+            <h2>show-google-tasks</h2>
+            <p><strong>概要:</strong> Google TasksをWebアプリに表示します。</p>
+            <p><strong>appsscript.json:</strong></p>
+            <ul>
+                <li>アドバンストサービス: Tasks</li>
+                <li>OAuthスコープ: https://www.googleapis.com/auth/tasks, https://www.googleapis.com/auth/tasks.readonly</li>
+            </ul>
+            <p><strong>認証の要否 (エンドユーザー):</strong> 必要</p>
+            <p><strong>備考:</strong> Google Tasks API を使用するため、ユーザー認証と関連スコープの承認が必要です。</p>
+            <a href="../show-google-tasks/README.md" class="button">READMEを見る</a>
         </div>
     </div>
 </body>
