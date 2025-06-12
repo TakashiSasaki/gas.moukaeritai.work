@@ -57,13 +57,401 @@ jobs:
         working-directory: ime-dictionary-library
         run: clasp pull
 
+      - name: Pull markdown2google-docs
+        working-directory: markdown2google-docs
+        run: clasp pull
+
+      - name: Pull drive-meta-viewer
+        working-directory: drive-meta-viewer
+        run: clasp pull
+
+      - name: Pull doc-image-resizer
+        working-directory: doc-image-resizer
+        run: clasp pull
+
+      - name: Pull published-form-parser
+        working-directory: published-form-parser
+        run: clasp pull
+
+      - name: Pull layout-library
+        working-directory: layout-library
+        run: clasp pull
+
+      - name: Pull javascript-proxy
+        working-directory: javascript-proxy
+        run: clasp pull
+
+      - name: Pull markdown-in-sheet
+        working-directory: markdown-in-sheet
+        run: clasp pull
+
+      - name: Pull bukken-sentaku-anketo
+        working-directory: bukken-sentaku-anketo
+        run: clasp pull
+
+      - name: Pull google-apps-script
+        working-directory: google-apps-script
+        run: clasp pull
+
+      - name: Pull google-cloud-vision
+        working-directory: google-cloud-vision
+        run: clasp pull
+
+      - name: Pull csv-parser
+        working-directory: csv-parser
+        run: clasp pull
+
+      - name: Pull obsoleted-html
+        working-directory: obsoleted-html
+        run: clasp pull
+
+      - name: Pull google-nihongo-ime-dictionary-utils
+        working-directory: google-nihongo-ime-dictionary-utils
+        run: clasp pull
+
+      - name: Pull my-progress-strip
+        working-directory: my-progress-strip
+        run: clasp pull
+
+      - name: Pull gas-library-viewer
+        working-directory: gas-library-viewer
+        run: clasp pull
+
+      - name: Pull html
+        working-directory: html
+        run: clasp pull
+
+      - name: Pull spreadsheet-utility
+        working-directory: spreadsheet-utility
+        run: clasp pull
+
+      - name: Pull hash-wrapper
+        working-directory: hash-wrapper
+        run: clasp pull
+
+      - name: Pull get-fragment-part-of-url
+        working-directory: get-fragment-part-of-url
+        run: clasp pull
+
+      - name: Pull spreadsheet-addon-honyaku
+        working-directory: spreadsheet-addon-honyaku
+        run: clasp pull
+
+      - name: Pull hash
+        working-directory: hash
+        run: clasp pull
+
+      - name: Pull spreadsheet-helper
+        working-directory: spreadsheet-helper
+        run: clasp pull
+
+      - name: Pull hello-jwt
+        working-directory: hello-jwt
+        run: clasp pull
+
+      - name: Pull js-doc
+        working-directory: js-doc
+        run: clasp pull
+
+      - name: Pull automate-flows
+        working-directory: automate-flows
+        run: clasp pull
+
+      - name: Pull kakaku-library
+        working-directory: kakaku-library
+        run: clasp pull
+
+      - name: Pull send-to-kindle
+        working-directory: send-to-kindle
+        run: clasp pull
+
+      - name: Pull gas-oauth-library
+        working-directory: gas-oauth-library
+        run: clasp pull
+
+      - name: Pull snippets-for-drive-api
+        working-directory: snippets-for-drive-api
+        run: clasp pull
+
+      - name: Pull matsuyama-shi-premium-shohinken
+        working-directory: matsuyama-shi-premium-shohinken
+        run: clasp pull
+
+      - name: Pull arecx-no-star-hyoji-ni-horyu
+        working-directory: arecx-no-star-hyoji-ni-horyu
+        run: clasp pull
+
+      - name: Pull file-chooser
+        working-directory: file-chooser
+        run: clasp pull
+
+      - name: Pull sheet-helper
+        working-directory: sheet-helper
+        run: clasp pull
+
+      - name: Pull download-items-from
+        working-directory: download-items-from
+        run: clasp pull
+
+      - name: Pull twitter-unblock-and
+        working-directory: twitter-unblock-and
+        run: clasp pull
+
+      - name: Pull untitled-project-1
+        working-directory: untitled-project-1
+        run: clasp pull
+
+      - name: Pull google-drive-no-ichiran
+        working-directory: google-drive-no-ichiran
+        run: clasp pull
+
+      - name: Pull uuid-generator
+        working-directory: uuid-generator
+        run: clasp pull
+
+      - name: Pull base32
+        working-directory: base32
+        run: clasp pull
+
+      - name: Pull public-web-cache
+        working-directory: public-web-cache
+        run: clasp pull
+
+      - name: Pull echo
+        working-directory: echo
+        run: clasp pull
+
+      - name: Pull notion-page-title-editor
+        working-directory: notion-page-title-editor
+        run: clasp pull
+
+      - name: Pull gpt-with-memopad
+        working-directory: gpt-with-memopad
+        run: clasp pull
+
+      - name: Pull anonymous-cache
+        working-directory: anonymous-cache
+        run: clasp pull
+
+      - name: Pull untitled-project-2
+        working-directory: untitled-project-2
+        run: clasp pull
+
+      - name: Pull just-cache
+        working-directory: just-cache
+        run: clasp pull
+
+      - name: Pull url-bookmark-parser
+        working-directory: url-bookmark-parser
+        run: clasp pull
+
+      - name: Pull content-service-test
+        working-directory: content-service-test
+        run: clasp pull
+
+      - name: Pull google-colaboratory
+        working-directory: google-colaboratory
+        run: clasp pull
+
+      - name: Pull public-script-cache
+        working-directory: public-script-cache
+        run: clasp pull
+
+      - name: Pull copy-of-public-script-cache
+        working-directory: copy-of-public-script-cache
+        run: clasp pull
+
+      - name: Pull pocket-to-sheets
+        working-directory: pocket-to-sheets
+        run: clasp pull
+
+      - name: Pull sticker-voting-v1
+        working-directory: sticker-voting-v1
+        run: clasp pull
+
+      - name: Pull chat-gpt-archives
+        working-directory: chat-gpt-archives
+        run: clasp pull
+
+      - name: Pull kanjo-bunseki
+        working-directory: kanjo-bunseki
+        run: clasp pull
+
+      - name: Pull web-clipboard
+        working-directory: web-clipboard
+        run: clasp pull
+
+      - name: Pull string-ex
+        working-directory: string-ex
+        run: clasp pull
+
+      - name: Pull gmail-search-sheets
+        working-directory: gmail-search-sheets
+        run: clasp pull
+
+      - name: Pull snippets
+        working-directory: snippets
+        run: clasp pull
+
+      - name: Pull google-takeout-file
+        working-directory: google-takeout-file
+        run: clasp pull
+
+      - name: Pull untitled-project-3
+        working-directory: untitled-project-3
+        run: clasp pull
+
+      - name: Pull slack-playground
+        working-directory: slack-playground
+        run: clasp pull
+
+      - name: Pull understanding-third
+        working-directory: understanding-third
+        run: clasp pull
+
+      - name: Pull docs-headings-addon
+        working-directory: docs-headings-addon
+        run: clasp pull
+
+      - name: Pull glitch-projects
+        working-directory: glitch-projects
+        run: clasp pull
+
+      - name: Pull google-keep-to-google
+        working-directory: google-keep-to-google
+        run: clasp pull
+
+      - name: Pull form-addon
+        working-directory: form-addon
+        run: clasp pull
+
+      - name: Pull string-utility-library
+        working-directory: string-utility-library
+        run: clasp pull
+
+      - name: Pull table
+        working-directory: table
+        run: clasp pull
+
+      - name: Pull objects-sheet
+        working-directory: objects-sheet
+        run: clasp pull
+
+      - name: Pull google-cloud-resource
+        working-directory: google-cloud-resource
+        run: clasp pull
+
+      - name: Pull snippets-for-gmail
+        working-directory: snippets-for-gmail
+        run: clasp pull
+
+      - name: Pull hotp
+        working-directory: hotp
+        run: clasp pull
+
+      - name: Pull uri
+        working-directory: uri
+        run: clasp pull
+
+      - name: Pull snippets-for-spreadsheet
+        working-directory: snippets-for-spreadsheet
+        run: clasp pull
+
+      - name: Pull addon-helper
+        working-directory: addon-helper
+        run: clasp pull
+
+      - name: Pull string-utility
+        working-directory: string-utility
+        run: clasp pull
+
+      - name: Pull outlook-web-app-folder
+        working-directory: outlook-web-app-folder
+        run: clasp pull
+
+      - name: Pull web-clipboard-writer
+        working-directory: web-clipboard-writer
+        run: clasp pull
+
+      - name: Pull assert
+        working-directory: assert
+        run: clasp pull
+
+      - name: Pull web-clipboard-reader
+        working-directory: web-clipboard-reader
+        run: clasp pull
+
+      - name: Pull is
+        working-directory: is
+        run: clasp pull
+
+      - name: Pull datastore
+        working-directory: datastore
+        run: clasp pull
+
+      - name: Pull mozilla-pdf-js
+        working-directory: mozilla-pdf-js
+        run: clasp pull
+
+      - name: Pull random
+        working-directory: random
+        run: clasp pull
+
+      - name: Pull str
+        working-directory: str
+        run: clasp pull
+
+      - name: Pull sha1
+        working-directory: sha1
+        run: clasp pull
+
+      - name: Pull gmail-thread-table
+        working-directory: gmail-thread-table
+        run: clasp pull
+
+      - name: Pull json-table
+        working-directory: json-table
+        run: clasp pull
+
+      - name: Pull gmail-label-manipulator
+        working-directory: gmail-label-manipulator
+        run: clasp pull
+
+      - name: Pull cache-clipboard
+        working-directory: cache-clipboard
+        run: clasp pull
+
+      - name: Pull gmail-addon
+        working-directory: gmail-addon
+        run: clasp pull
+
+      - name: Pull kenqweb2-to-researchmap
+        working-directory: kenqweb2-to-researchmap
+        run: clasp pull
+
+      - name: Pull github-repository
+        working-directory: github-repository
+        run: clasp pull
+
+      - name: Pull xor
+        working-directory: xor
+        run: clasp pull
+
+      - name: Pull script-cache
+        working-directory: script-cache
+        run: clasp pull
+
+      - name: Pull unicode-normalization
+        working-directory: unicode-normalization
+        run: clasp pull
+
       - name: Commit & Push changes if any
         run: |
           cd $GITHUB_WORKSPACE
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           if [ -n "$(git status --porcelain)" ]; then
-            git add moodle-true-false-quiz-validator/ moodle-multichoice-question-validator/ show-google-tasks/ document-saver/ ime-dictionary-aggregator/ ime-dictionary-library/
+            git add moodle-true-false-quiz-validator/ moodle-multichoice-question-validator/ show-google-tasks/ document-saver/ ime-dictionary-aggregator/ ime-dictionary-library/ markdown2google-docs/ drive-meta-viewer/ doc-image-resizer/ published-form-parser/ layout-library/ javascript-proxy/ markdown-in-sheet/ bukken-sentaku-anketo/ google-apps-script/ google-cloud-vision/ csv-parser/ obsoleted-html/ google-nihongo-ime-dictionary-utils/ my-progress-strip/ gas-library-viewer/ html/ spreadsheet-utility/ hash-wrapper/ get-fragment-part-of-url/ spreadsheet-addon-honyaku/ hash/ spreadsheet-helper/ hello-jwt/ js-doc/ automate-flows/ kakaku-library/ send-to-kindle/ gas-oauth-library/ snippets-for-drive-api/ matsuyama-shi-premium-shohinken/ arecx-no-star-hyoji-ni-horyu/ file-chooser/ sheet-helper/ download-items-from/ twitter-unblock-and/ untitled-project-1/ google-drive-no-ichiran/ uuid-generator/ base32/ public-web-cache/ echo/ notion-page-title-editor/ gpt-with-memopad/ anonymous-cache/ untitled-project-2/ just-cache/ url-bookmark-parser/ content-service-test/ google-colaboratory/ public-script-cache/ copy-of-public-script-cache/ pocket-to-sheets/ sticker-voting-v1/ chat-gpt-archives/ kanjo-bunseki/ web-clipboard/ string-ex/ gmail-search-sheets/ snippets/ google-takeout-file/ untitled-project-3/ slack-playground/ understanding-third/ docs-headings-addon/ glitch-projects/ google-keep-to-google/ form-addon/ string-utility-library/ table/ objects-sheet/ google-cloud-resource/ snippets-for-gmail/ hotp/ uri/ snippets-for-spreadsheet/ addon-helper/ string-utility/ outlook-web-app-folder/ web-clipboard-writer/ assert/ web-clipboard-reader/ is/ datastore/ mozilla-pdf-js/ random/ str/ sha1/ gmail-thread-table/ json-table/ gmail-label-manipulator/ cache-clipboard/ gmail-addon/ kenqweb2-to-researchmap/ github-repository/ xor/ script-cache/ unicode-normalization/
             git commit -m "chore: daily sync GAS → gas-pull"
             git push origin gas-pull
           else
