@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <?!=HtmlService.createHtmlOutputFromFile("common").getContent();?>
+  </head>
+  <body>
+    <div class="box">
+      <span>gviz URL</span>
+      <p><label><a href="https://developers.google.com/chart/interactive/docs/querylanguage" target="_blank">query</a> <input onchange="save(this);" name="query" onfocus="load(this)" placeholder="SELECT *"></label></p>
+      <p><label>headers <input onchange="save(this);" name="headers" onfocus="load(this)" placeholder="col1,col2,col3"></label></p>
+      <textarea onclick="showGvizUrl(this)" placeholder="click here to get gviz URL" readonly="1"></textarea>
+    </div>
+    <div class="box">
+      <p>Header 
+        <button onclick="run(this).setHeader(load('headerJson'))">set</button>
+      </p>
+      <textarea onchange="save(this)" onmouseover="load(this)" name="headerJson" placeholder="['h1','h2','h3']"
+        ondblclick="run(this).getHeader()"></textarea>
+    </div>
+    <div class="box">
+      <button onclick="run(this).renewTable(load('objectsJson'))">renew</button>
+      <button onclick="run(this).clearTable()">clear</button>
+      <textarea onchange="save(this)" onmouseover="load(this)" name="objectsJson" placeholder="[{'a':1},{'b':2}]"></textarea>
+    </div>
+    <script>
+      function showGvizUrl(element){
+        google.script.run.withSuccessHandler(function(gvizUrl){
+          element.value = gvizUrl;
+        }).getGvizUrl(localStorage.getItem("query"), localStorage.getItem("headers"));
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <link rel="stylesheet" href="https://gitcdn.link/repo/Chalarangelo/mini.css/master/dist/mini-default.min.css" />
+  </head>
+  <body>
+    <div class="box">
+      <span>adjust width of all columns</span>
+      <div>
+        <input ondblclick="adjustWidth(this)" placeholder="max width" onchange="save(this)" onfocus="load(this)" name="maxWidth" type="text">
+        <button onclick="adjustWidth(onload(this))" name="maxWidth">adjust</button>
+      </div>
+    </div>
+    <div class="box">
+      <label><button onclick="swapValuesAndNotes()">Swap values and notes</button></label>
+    </div>
+    <div class="box">Values of the range
+      <p><button onclick="copyValues()" tabindex="11">copy</button>
+         <button onclick="pasteValues()" tabindex="12">paste</button>
+         <button onclick="appendValues()" tabindex="13">append</button>
+      </p>
+      <textarea id="valuesJson" name="valuesJson" onchange="save(this)" onfocus="load(this)" tabindex="10"></textarea>
+    </div>
+
+
+    <div class="box">
+      <button onclick="google.script.run.trimSheet()">Trim columns and rows out of data range</button>
+    </div>
+    <div class="box">
+      <p>Fill blank cells in selected range
+        <button onclick="google.script.run.fillBlankCells(load(this))" name="fillValue" tabindex="2">fill</button>
+      </p>
+      <input onchange="save(this)" name="fillValue" onfocus="load(this)" tabindex="1">
+    </div>
+    <div class="box">
+      <p>Fill blank cells</p>
+      <button onclick="google.script.run.fillBlankCellsByRightColumn()">by values in the right column (□←■)</button>
+      <button onclick="google.script.run.fillBlankCellsByLeftColumn()">by values in the left column (■→□)</button>
+    </div>
+    <div class="box">
+      <div>
+        Move row
+        <input onchange="save(this)" name="sourceRow" placeholder="row (optional)" type="text">
+        <button onclick="run(this).moveToTop(load(this))" name="sourceRow">to the top</button>
+      </div>
+    </div>
+    <div class="box">
+      <div>
+        Move column
+        <input onchange="save(this)" name="sourceColumn" placeholder="column (optional)" type="text">
+        <button onclick="run(this).moveToLeftmost(load(this));" name="sourceColumn">to the leftmost</button>
+      </div>
+    </div>
+    <div class="box">
+      <button onclick="run(this).moveToLeftTop();">Move current row and column to top-left</button>
+    </div>
+    <div class="box">
+      <button onclick="run(this).twoInLeft();">Two in left</button>
+    </div>
+
+    <script>
+    function adjustWidth(element){
+      google.script.run.adjustWidth(element.value);
+    }
+    function swapValuesAndNotes(){
+      google.script.run.swapValuesAndNotes();
+    }
+    function copyValues(){
+      var textarea = document.getElementById("valuesJson");
+      google.script.run
+      .withSuccessHandler(function(valuesJson){
+        textarea.value = valuesJson;
+        save(textarea);
+      }).getValuesAsJson();
+    }
+    function pasteValues(){
+      var valuesJson = document.getElementById("valuesJson").value;
+      google.script.run.setValuesAsJson(valuesJson);
+    }
+    function appendValues(){
+      var valuesJson = document.getElementById("valuesJson").value;
+      google.script.run.appendValuesAsJson(valuesJson);
+    }
+    </script>
+  </body>
+</html>

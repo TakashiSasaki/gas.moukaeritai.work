@@ -1,0 +1,45 @@
+<html>
+  <head>
+    <?!= include("css.html"); ?>
+    <title>Gmail Label Manipulator</title>
+  </head>
+  <body>
+    <input placeholder="spreadsheet url" id="spreadsheetUrl" />
+    <input type="button" value="set" id="setSpreadSheet"/>
+    <div>
+      Target spreadsheet ID
+      <input placeholder="spreadsheet id" id="spreadsheetId" readonly="true" value="<?= getSpreadsheetIdString(); ?>"/>
+    </div>
+    <div><?= getNow()?></div>
+    <input type="button" value="countThreadsByQueryString" onclick="google.script.run.countThreadsByQueryString();"/>
+    <input type="button" value="getLastMessageDateByQueryString" onclick="google.script.run.getLastMessageDateByQueryString();"/>
+    <input type="button" value="addLabelByQueryString" onclick="google.script.run.addLabelByQueryString();"/>
+    <input type="button" value="removeLabelByQueryString" onclick="google.script.run.removeLabelByQueryString();"/>
+    
+    
+    <div class="panel">
+      Gmailのラベルを選択領域の左上から下方向に並べる。
+      <input type="button" value="writeGmailLabelNames" onclick="google.script.run.writeGmailLabelNames();"/>
+    </div>
+
+    <div class="panel">
+      選択したセルの文字列でラベルを作成する。
+      <input type="button" value="createLabel" onclick="google.script.run.createLabel();"/>
+    </div>
+
+    <div class="panel">
+      最左列のセルの文字列をラベル名とみなし、スレッド数を最右列に格納する。
+      <input type="button" value="countThreadsByLabelName" onclick="google.script.run.countThreadsByLabelName()"/>
+    </div>
+    
+    <div class="panel">
+      最左列のセルの文字列をラベル名とみなし、最右列のセルの数値が0の場合にラベルを削除する。
+      <input type="button" value="deleteUserLabelsByName" onclick="google.script.run.deleteUserLabelsByName()"/>
+    </div>
+
+    <input type="button" value="renameLabel" onclick="google.script.run.renameLabel();"/>
+    <input type="button" value="addLabelByLabel" onClick="google.script.run.addLabelByLabel();"/>
+  
+    <?!= include("js.html"); ?>
+  </body>
+</html>

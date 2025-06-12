@@ -1,0 +1,17 @@
+{
+  "timeZone": "Asia/Tokyo",
+  "dependencies": {
+    "libraries": [{
+      "userSymbol": "GasMarkdownToHtml",
+      "libraryId": "1LKF9GU4JyjmsJY6weQQXgo3VOMhB6pvfXg0ZvoL17az7EQQER7klkkV-",
+      "version": "4",
+      "developmentMode": true
+    }]
+  },
+  "webapp": {
+    "access": "ANYONE",
+    "executeAs": "USER_ACCESSING"
+  },
+  "exceptionLogging": "STACKDRIVER",
+  "runtimeVersion": "V8"
+}

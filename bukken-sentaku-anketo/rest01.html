@@ -1,0 +1,32 @@
+<section id="rest01">
+  <hr>
+  <h3>
+    <br />これで本調査の1/4が終わりましたのでいったん休憩をとります。
+    <br />
+    <br />休憩中は他のウェブページを閲覧するなどの操作は絶対にしないでください。
+    <br />
+    <br />休憩がすみましたら、「次へ」をクリックして回答を再開してください。
+ 
+  </h3>
+  <hr>
+  <button onclick="show_best04();recordrest01(this);">次へ</button>
+  <hr>
+  <script>
+     function show_best04(){
+       end_rest01=(new Date()).getTime();
+       var sections = document.getElementsByTagName("section");
+       for(var i=0; i<sections.length; ++i) {
+         sections[i].style.display="none";
+       }
+       document.getElementById("best04").style.display="block";
+    } 
+     function recordrest01(element){
+       var click_time = (new Date()).getTime();  //いつ
+       var element_value = element.value;        //値
+       var element_checked = element.checked;    //チェック状態
+       google.script.run.withFailureHandler(function(){
+       }).withSuccessHandler(function(){
+       }).recordrest01(start_time, end_best33, click_time, "rest01");
+     } recordrest01(element);
+   </script>
+</section>

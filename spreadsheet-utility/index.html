@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">    
+  </head>
+  <body>
+    <div class="container">
+      <textarea><?=JSON.stringify(parameter)?></textarea>
+      <div class="row">
+        <div class="col-md-12">
+          <div id="history">
+        </div>
+      </div>
+      </div>
+    </div>
+    <button class="btn" onclick="drawHistory()">draw table</button>
+    <script src="https://www.gstatic.com/charts/loader.js"></script>
+    <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha256-/SIrNqv8h6QGKDuNoLGA4iret+kyesCkHGzVUUV0shc=" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <script>
+      google.charts.load('current', {'packages':['table']});
+      function drawHistory(){
+        //var history = JSON.parse(localStorage.getItem("history");
+        var history = [["a", "b"], ["c", "d"]];
+        var initializer = {
+          "cols": ((function(){
+            var cols = [];
+            cols.push({"id":"spreadsheet_name", "label":"spreadsheet", "type": "string"});
+            cols.push({"id":"spreadsheet_id", "label": "sheet", "type":"string"});
+            return cols;
+          })()),
+          "rows": ((function(){
+            var rows = [];
+            for(var i=0; i<history.length; ++i){
+              rows.push({"c":[{ "v": history[i][0]}, {"v": history[i][1]} ]});
+            }
+            return rows;
+          })())
+        };
+        var data_table = new google.visualization.DataTable(initializer);
+        var table = new google.visualization.Table(document.getElementById("history"));
+        table.draw(data_table);
+      }
+    </script>
+  </body>
+</html>

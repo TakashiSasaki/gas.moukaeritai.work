@@ -1,0 +1,88 @@
+<section id="best43">
+   <h3>Q.　以下の仮想の物件のなかから、あなたにとって望ましい物件を<div0>最大3つ</div0>選んでチェックしてください。</h3>
+     <br />     
+     
+   <table border="1" width="75%" height="200" id="table43" >
+   <tr><td width="150" height="80" align="center"></td>
+         <td width="150" height="80" align="center"><input type="checkbox" class="geomsize" value="1" id="best431" onclick="recordbest43(this);cnt43();"></td>
+         <td width="150" height="80" align="center"><input type="checkbox" class="geomsize" value="2" id="best432" onclick="recordbest43(this);cnt43();"></td>
+         <td width="150" height="80" align="center"><input type="checkbox" class="geomsize" value="3" id="best433" onclick="recordbest43(this);cnt43();"></td>
+         <td width="150" height="80" align="center"><input type="checkbox" class="geomsize" value="4" id="best434" onclick="recordbest43(this);cnt43();"></td>
+         <td width="150" height="80" align="center"><input type="checkbox" class="geomsize" value="5" id="best435" onclick="recordbest43(this);cnt43();"></td>
+         <td width="150" height="80" align="center"><input type="checkbox" class="geomsize" value="6" id="best436" onclick="recordbest43(this);cnt43();"></td>
+         <td width="150" height="80" align="center"><input type="checkbox" class="geomsize" value="7" id="best437" onclick="recordbest43(this);cnt43();"></td>
+         <td width="150" height="80" align="center"><input type="checkbox" class="geomsize" value="8" id="best438" onclick="recordbest43(this);cnt43();"></td>
+  </tr>
+   <?!=getNm()?><?!=getTr("cc43"); ?>        
+   </table>
+   <br /> 
+   <div id="Box43">チェックを入れてください。</div>
+   <style>
+   div0 { color:red; } 
+      
+   </style>
+   <br clear="all"><br />
+   <hr>
+   <button onclick="show_rank32();">次へ</button>
+   <hr>
+   <script>
+   function cnt43() {
+   var Myobj = document.getElementById("table43"); // id名が "ptable00"内のオブジェクトを Myobj に格納
+   var Mytag = Myobj.getElementsByTagName("input"); // Myobj 内の "input"タグ要素を格納
+   var chksuu = 0; //チェックの数のカウンタ
+　　　for (var i = 0; i < Mytag.length; i ++) { //Mytag.length; チェックボックスの数
+　　　　　if (Mytag[i].checked == true) { //checked == trueであればチェック有り
+　　　　　　　　chksuu ++; // trueであれば １ずつ加算します
+　　　　　　　　　　　}
+　　　　　}
+　　　　　      msg = "チェックの数は " + chksuu + "個です";
+              document.getElementById("Box43").innerHTML=msg; // メッセージを"tBox"に書き込みます
+    }
+
+    function show_rank32() {
+	var tableElement = document.getElementById("table43");
+	var row = tableElement.rows[0];
+	var cells = row.cells;
+	var trueCount = 0;
+	for (var i in cells) {
+		var cell = cells[i];
+		if (cell === undefined || cell === null) {
+			continue;
+		}
+		if (cell.children === undefined || cell.children === null) {
+			continue;
+		}
+		var inputElement = cell.children[0];
+		if (inputElement === undefined || inputElement === null) {
+			continue;
+		}
+		if (inputElement.checked) {
+			trueCount += 1;
+		}
+	} 
+	if (trueCount == 0) {
+	   alert("チェックされていません。");  
+	} else if (trueCount >= 4){
+		alert("4個以上選ばれています。");
+    }else{
+		//ここに次のページへの遷移のためのコードを書く
+       var sections = document.getElementsByTagName("section");
+       end_best43=(new Date()).getTime();
+       for(var i=0; i<sections.length; ++i) {
+       sections[i].style.display="none";
+       }
+       document.getElementById("rank32").style.display="block";                
+     }
+	}
+     function recordbest43(element){
+//       var start_time = start_time;            //誰が
+       var click_time = (new Date()).getTime();  //いつ
+       var element_value = element.value;        //値
+       var element_checked = element.checked;    //チェック状態
+       google.script.run.withFailureHandler(function(){
+       }).withSuccessHandler(function(){
+       }).recordbest43(start_time, end_rank24, click_time, "best43", element_value, element_checked);
+     } recordbest43(element);
+
+   </script>
+</section>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <base target="_top">
+  <style>
+    textarea {
+      width: 90%;
+      height: 5em;
+    }
+
+    input {
+      width: 90%;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Effective User</h1>
+  <?=Session.getEffectiveUser().getEmail()?>
+  <h1>Web App URL</h1>
+  <?=ScriptApp.getService().getUrl()?>
+  <h1>access_token</h1>
+  If you have already obtained access_token and it has not been expired yet,
+  you do not have to authorize this web app again.
+  <div>
+    <input readonly value="<?=CacheService.getUserCache().get('access_token')?>"/>
+  </div>
+  <?!buildAuthorizationUrl()?>
+  <h1>Authorization URL</h1>
+  <textarea readonly>
+        <?=CacheService.getUserCache().get('authorizationUrl')?>
+  </textarea>
+  <div>
+    <a href="<?= CacheService.getUserCache().get('authorizationUrl')?>">
+      Authorize</a>
+  </div>
+</body>
+
+</html>

@@ -1,0 +1,43 @@
+<section id="choice01">
+  <h3>Q.　以下の仮想の物件のなかから、あなたにとって最も望ましい物件を1つだけお選びください。
+  </h3>
+   <br />  
+   <table border="1" width="75%" height="200" id="tablec01" >
+      <tr>
+         <td width="150" height="80" align="center"><input type="radio" class="geomsize" name="choice001" value="1" id="choice011" onclick="recordchoice01(this)"></td>
+         <td width="150" height="80" align="center"><input type="radio" class="geomsize" name="choice001" value="2" id="choice012" onclick="recordchoice01(this)"></td>
+         <td width="150" height="80" align="center"><input type="radio" class="geomsize" name="choice001" value="3" id="choice013" onclick="recordchoice01(this)"></td>
+         <td width="150" height="80" align="center"><input type="radio" class="geomsize" name="choice001" value="4" id="choice014" onclick="recordchoice01(this)"></td>
+         <td width="150" height="80" align="center"><input type="radio" class="geomsize" name="choice001" value="5" id="choice015" onclick="recordchoice01(this)"></td>
+         <td width="150" height="80" align="center"><input type="radio" class="geomsize" name="choice001" value="6" id="choice016" onclick="recordchoice01(this)"></td>
+         </tr>
+      <?!=getTr("cc01"); ?>
+   </table>
+   <br clear="all"><br />
+   <hr>
+   <button onclick="show_best02();">次へ</button>
+   <hr>
+<script>
+function show_best02() {
+
+	end_choice01 = (new Date()).getTime();
+	var sections = document.getElementsByTagName("section");
+	for (var i = 0; i < sections.length; ++i) {
+		sections[i].style.display = "none";
+	}
+	document.getElementById("best02").style.display = "block";
+}
+
+function recordchoice01(element) {
+	//       var start_time = start_time;            //誰が
+	var click_time = (new Date()).getTime(); //いつ
+	//var element_id = element.id; //何を
+	var element_value = element.value; //値
+	var element_checked = element.checked; //チェック状態
+	google.script.run.withFailureHandler(function () {
+    }).withSuccessHandler(function () {
+    }).recordchoice01(start_time, end_best24, click_time, "choice01", element_value, element_checked);
+}
+recordchoice01(element);
+</script>
+</section>

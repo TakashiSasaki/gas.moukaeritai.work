@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <base target="_top">
+  <style>
+    textarea {
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    #cellContent {
+      height: 10em;
+    }
+
+    label {
+      display: block;
+    }
+
+    input {
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    fieldset {
+      margin-top: 0.5em;
+    }
+
+    a {
+      display: inline-block;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      max-width: 80%;
+    }
+
+    #colabUrl {
+      background: azure;
+    }
+
+    #cellContentUrl {
+      background: honeydew;
+    }
+  </style>
+</head>
+
+<body>
+  <fieldset>
+    <legend>Paste link to the cell of Google Colab notebook</legend>
+    <textarea id="colabUrl"></textarea>
+  </fieldset>
+
+  <fieldset>
+    <legend>Extracted file ID and cell ID</legend>
+    <label>fileId <input id="fileId" readonly></label>
+    <label>scrollTo <input id="scrollTo" readonly></label>
+  </fieldset>
+
+  <fieldset>
+    <legend>Here is the link to get the cell content</legend>
+    <label>URL of this form 
+      <button onclick="copy(this)">copy it to the clipboard</button>
+      <textarea id="execUrl" readonly><?=execUrl()?></textarea>
+    </label>
+    <label>downloadLink (requires OAuth token)
+      <button onclick="copy(this)">copy it to the clipboard</button>
+      <textarea id="downloadLink" readonly></textarea>
+    </label>
+    <label>webContentLink
+      <button onclick="copy(this)">copy it to the clipboard</button>
+      <textarea id="webContentLink" readonly></textarea>
+    </label>
+    <label>URL to get cell content 
+      <button onclick="copy(this)">copy it to the clipboard</button>
+      <a target="_blank" href="">open it</a>
+      <textarea id="cellContentUrl" readonly></textarea> 
+    </lalbel>
+    <label>Actual cell content
+      <button onclick="copy(this)">copy it to the clipboard</button>
+      <textarea id="cellContent" readonly></textarea>
+    </label>
+  </fieldset>
+  <script>
+    window.addEventListener("load", loadEvent =>{
+      document.querySelector("textarea").addEventListener("change", changeEvent=>{
+        const value = changeEvent.target.value;
+        const fileId = value.match(/drive\/([a-zA-Z0-9_-]+)/)[1];
+        const scrollTo = value.match(/scrollTo=(.+?)&/)[1];
+        document.querySelector("#fileId").value = fileId;
+        document.querySelector("#scrollTo").value = scrollTo;
+        const cellContentUrl = document.querySelector("#execUrl").value + "?fileId=" + fileId + "&scrollTo=" + scrollTo;
+        document.querySelector("#cellContentUrl").value = cellContentUrl;
+        document.querySelector("#cellContentUrl")
+          .parentNode.querySelector("a")
+          .setAttribute("href", cellContentUrl);
+        google.script.run.withSuccessHandler(downloadLink=>{
+          document.querySelector("#downloadLink").value = downloadLink;
+        }).downloadLink(fileId);
+        google.script.run.withSuccessHandler(webContentLink=>{
+          document.querySelector("#webContentLink").value = webContentLink;
+        }).webContentLink(fileId);
+        fetch(document.querySelector("#cellContentUrl").value)
+          .then(response=>response.text())
+          .then(text=>{
+            document.querySelector("#cellContent").value = text;
+          });
+      });
+      google.script.run.withSuccessHandler(exampleColabUrl=>{
+        const textarea = document.querySelector("#colabUrl");
+        textarea.value = exampleColabUrl;
+        textarea.dispatchEvent(new Event("change"));
+      }).exampleColabUrl();
+    });
+
+    function copy(button){
+      button.parentNode.querySelector("textarea").select();
+      document.execCommand('copy');
+    }
+  </script>
+  <fieldset>
+    <legend>For development work (not for you)</legend>
+    <a href="<?=devUrl()?>">
+      <?=devUrl()?>
+    </a>
+    <a href="<?=execUrl()?>">
+      <?=execUrl()?>
+    </a>
+    <a href="<?=editUrl()?>">
+      <?=editUrl()?>
+    </a>
+  </fieldset>
+
+  <fieldset>
+    <legend>Me</legend>
+    <a href="https://twitter.com/TakashiSasaki">https://twitter.com/TakashiSasaki</a>
+  </fieldset>
+</body>
+
+</html>

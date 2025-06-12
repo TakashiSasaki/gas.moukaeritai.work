@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <base target="_top">
+
+  <style>
+    body {
+      margin: 0px;
+      padding: 0px;
+      box-sizing: border-box;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    div#mainDiv {
+      flex: 1;
+      overflow: hidden;
+      justify-content: center;
+      align-items: center;
+    }
+
+
+    svg#gridSvg {
+      position: absolute;
+      z-index: 0;
+      transform-origin: 0% 0%;
+    }
+
+    div#xLabel {
+      position: absolute;
+      z-index: 2;
+      width: 35vw;
+      font-size: 4vw;
+      top: 70vh;
+      right: 1vw;
+      text-align:right;
+      text-shadow: 2px 0 0 white, -2px 0 0 white, 0 2px 0 white, 0 -2px 0 white;
+    }
+
+    div#yLabel {
+      position: absolute;
+      z-index: 2;
+      width: 30vw;
+      font-size: 4vw;
+      top: 0px;
+      left: 8vw;
+      text-shadow: 2px 0 0 white, -2px 0 0 white, 0 2px 0 white, 0 -2px 0 white;
+    }
+
+    div#stickersDiv {
+      position: absolute;
+      z-index: 2;
+      //background-color: rgba(255, 255, 0, 0.5);
+      width: 100%;
+      height: 85%;
+    }
+
+    div#footerDiv {
+      display: flex;
+      justify-content: center;
+      width: 99%;
+      border-style: solid;
+      border-width: 1px;
+      z-index: 3;
+      background-color: white;
+    }
+
+    div#footerDiv .shape {
+      font-size: 10vh;
+      background-color: transparent;
+      z-index: 4;
+      border-style: solid;
+      border-width: 3px;
+      border-color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    div#stickersDiv div {
+      font-size: 4vh;
+      background-color: transparent;
+      z-index: 4;
+    }
+
+    @keyframes ants {
+      to {
+        border: 3px dotted black;
+      }
+
+      to {
+        border: 3px solid black;
+      }
+    }
+
+    .selected {
+      animation: ants 0.5s linear infinite;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="mainDiv">
+    <div id="stickersDiv"></div>
+    <?!= HtmlService.createHtmlOutputFromFile("gridSvg").getContent() ?>
+    <div id="xLabel">xLabel</div>
+    <div id="yLabel">yLabel</div>
+  </div>
+  <div id="footerDiv">
+    <div class="shape"></div>
+    <div class="shape"></div>
+    <div class="shape"></div>
+    <div class="shape"></div>
+    <div class="shape"></div>
+    <div class="shape"></div>
+    <div class="shape"></div>
+    <div class="shape"></div>
+    <div class="shape"></div>
+    <div class="shape"></div>
+  </div>
+  <script>
+    const footerDiv = document.querySelector("div#footerDiv");
+    const mainDiv = document.querySelector("div#mainDiv");
+    const stickersDiv = document.querySelector("div#stickersDiv");
+    let sheetName = "sheetName is unknown";
+  </script>
+  <script type="module">
+    window.addEventListener("load", (e)=>{
+      google.script.url.getLocation( l=>{
+        sheetName = l.parameter["sheetName"];
+        google.script.run.withSuccessHandler(shapes=>{
+          if(shapes && shapes.length >0){
+            const shapeDivs = document.querySelectorAll("div#footerDiv div.shape");
+            for(var i=0; i<shapeDivs.length; ++i){
+              const shapeDiv = shapeDivs[i];
+              if(!shapes[i]) continue;
+              shapeDiv.innerText = shapes[i];
+              shapeDiv.addEventListener("click",e =>{
+                if(newSticker){
+                  newSticker.remove();
+                  newSticker = null;
+                }
+                shapeDivs.forEach(x =>{
+                    x.classList.remove("selected");
+                });
+                shapeDiv.classList.add("selected");
+              });
+            }//for
+          }//if
+        }).getShapes(sheetName);
+        resizeGridSvg();
+        updateXyLabels();
+        setTimeout(updateStickers, 10);
+      });
+    });
+
+    window.addEventListener("load", e=>{
+      document.body.addEventListener("dblclick", e=>{
+        if (document.fullscreenElement) {
+          document.exitFullscreen();
+        } else {
+          document.body.requestFullscreen();
+        }
+        resizeGridSvg();
+        updateXyLabels();
+        setTimeout(updateStickers, 10);
+      });
+    });
+
+    function updateXyLabels(){
+      google.script.run.withSuccessHandler( xy =>{
+        document.querySelector("div#xLabel").innerText = xy[0];
+        document.querySelector("div#yLabel").innerText = xy[1];
+      }).getXyLabels(sheetName);
+    }//updateXyLabels
+
+
+    window.addEventListener("resize", e=>{
+      resizeGridSvg();
+      updateXyLabels();
+      setTimeout(updateStickers,10);
+    });
+
+    function resizeGridSvg(){
+      setTimeout(()=>{
+        const gridSvg = document.querySelector("svg#gridSvg");
+        console.log("gridSvg.clientHeight", gridSvg.clientHeight);
+        console.log("gridSvg.clientWidth", gridSvg.clientWidth);
+        console.log("stickersDiv.clientHeight", stickersDiv.clientHeight);
+        console.log("stickersDiv.clientWidth", stickersDiv.clientWidth);
+        const xScale = stickersDiv.clientWidth/gridSvg.clientWidth;
+        const yScale = stickersDiv.clientHeight/gridSvg.clientHeight;
+        gridSvg.style.transform=`scale(${xScale}, ${yScale})`;
+      }, 10);
+    }//resizeGridSvg
+
+    var newSticker = null;
+
+    window.addEventListener("load", (e)=>{
+      stickersDiv.addEventListener("mouseup", e=>{
+        const rect = stickersDiv.getBoundingClientRect();
+        const x = e.clientX - rect.left - newSticker.clientWidth / 2.0;
+        const y = (rect.height - (e.clientY - rect.top)) + newSticker.clientHeight / 2.0;
+        const xPercent = (x / rect.width) * 100.0;
+        const yPercent = (y / rect.height) * 100.0;
+        console.log(x,y,xPercent, yPercent);
+        recordSticker(xPercent, yPercent, newSticker.innerText);
+        const selectedDiv = document.querySelector("div#footerDiv div.shape.selected");
+        selectedDiv.classList.remove("selected");
+        newSticker = null;
+      });
+
+      stickersDiv.addEventListener("mousemove", e=>{
+
+        const selectedDiv = document.querySelector("div#footerDiv div.shape.selected");
+        //console.log(e);
+        if(!selectedDiv) return;
+        if(!newSticker){
+          newSticker = selectedDiv.cloneNode(true);
+          newSticker.style.position = "absolute";
+          newSticker.classList.remove("selected");
+          newSticker.style.zIndex = "5";
+          stickersDiv.appendChild(newSticker);
+        }
+        const rect = stickersDiv.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        newSticker.style.left = x - (newSticker.clientWidth/2) + "px";
+        newSticker.style.top = y - (newSticker.clientHeight/2) + "px";
+        console.log(newSticker.style.left, newSticker.style.top);
+      });
+
+      stickersDiv.addEventListener("blur", e=>{
+        if(newSticker){
+          newSticker.remove();
+          newSticker = null;
+        }
+      });
+      stickersDiv.addEventListener("focus", e=>{
+        if(newSticker){
+          newSticker.remove();
+          newSticker = null;
+        }
+      })
+    });
+
+    function recordSticker(xPercent,yPercent,stickerText){
+        google.script.run.withSuccessHandler( ()=>{
+          setTimeout(updateStickers, 10);
+        }).recordSticker(sheetName, xPercent, yPercent, stickerText);
+    }//recordSticker
+
+    let updateStickersOngoing = false;
+
+    function updateStickers(){
+        google.script.run.withSuccessHandler(records=>{
+          stickersDiv.innerHTML = "";
+          console.log(stickersDiv.clientWidth, stickersDiv.clientHeight);
+          records.forEach( record=>{
+            console.log(record);
+            const recentStickerDiv = document.querySelector("div#footerDiv div.shape").cloneNode(true);
+            recentStickerDiv.style.position = "absolute";
+            recentStickerDiv.style.zIndex = 5;
+            const left = stickersDiv.clientWidth * record[0] / 100.0;
+            console.log(left);
+            recentStickerDiv.style.left = left - (recentStickerDiv.clientWidth / 2.0) + "px";
+            const top = stickersDiv.clientHeight * (100.0 - record[1])/100.0; 
+            console.log(top);
+            recentStickerDiv.style.top = top - (recentStickerDiv.clientHeight /2.0) + "px";
+            recentStickerDiv.innerText = record[2];
+            stickersDiv.appendChild(recentStickerDiv);
+          });
+        }).getRecentStickers(sheetName);
+    }//updateStickers
+
+  </script>
+</body>
+
+</html>

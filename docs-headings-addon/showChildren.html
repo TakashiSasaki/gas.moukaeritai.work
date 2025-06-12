@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<base target="_top">
+	<?!= HtmlService.createHtmlOutputFromFile("css").getContent(); ?>
+</head>
+
+<body>
+	<span>Elements in the body</span>
+	<button onclick="showBodyChildren()">rescan</button>
+    
+	<div id="bodyChildren">
+	</div>
+  <div id="bodyChildToBeMovedNext"></div>
+	<script>
+window.addEventListener("load", showBodyChildren);
+
+function showBodyChildren() {
+
+  const div = document.querySelector("#bodyChildren");
+  while (div.firstChild) {
+    div.removeChild(div.firstChild);
+  } //for
+  div.style.display = "block";
+
+  google.script.run.withSuccessHandler(function(bodyChildren) {
+    const div = document.querySelector("#bodyChildren");
+    for (var i = 0; i < bodyChildren.length; ++i) {
+      const bodyChildDiv = document.createElement("DIV");
+      const bodyChild = bodyChildren[i];
+      if (bodyChild.level >= 1) {
+        bodyChildDiv.appendChild(createSpan(bodyChild, "leader"));
+        bodyChildDiv.appendChild(createSpan(bodyChild, "sNumbering"));
+        bodyChildDiv.appendChild(createSpan(bodyChild, "t"));
+        bodyChildDiv.dataset.level = bodyChild.level;
+        div.appendChild(bodyChildDiv);
+        continue;
+      } else {
+        const bodyChildSpan = document.createElement("SPAN");
+        bodyChildSpan.classList.add("paragraph");
+        bodyChildSpan.dataset["type"] = bodyChild.type;
+        bodyChildSpan.appendChild(createSpan(bodyChild, "nInlineImage"));
+        bodyChildSpan.appendChild(createSpan(bodyChild, "nListItem"));
+        bodyChildSpan.appendChild(createSpan(bodyChild, "nTable"));
+        bodyChildSpan.appendChild(createSpan(bodyChild, "nInlineDrawing"));
+        bodyChildSpan.appendChild(createSpan(bodyChild, "nText"));
+        bodyChildSpan.appendChild(createSpan(bodyChild, "nOther"));
+        bodyChildSpan.appendChild(createSpan(bodyChild, "nChildren"));
+        //bodyChildSpan.appendChild(createSpan(bodyChild, "groupByHeadingOrBlank"));
+        //bodyChildSpan.appendChild(createSpan(bodyChild, "groupByHeading"));
+        if (bodyChild.groupByHeadingOrBlank !== undefined) {
+          bodyChildSpan.classList.add("groupByHeadingOrBlank");
+          bodyChildSpan.dataset["groupByHeadingOrBlank"] = bodyChild.groupByHeadingOrBlank;
+        } else if (bodyChild.groupByHeading !== undefined) {
+          bodyChildSpan.classList.add("groupByHeading");
+          bodyChildSpan.dataset["groupByHeading"] = bodyChild.groupByHeading;
+        }
+        div.appendChild(bodyChildSpan);
+      }
+    } //for
+  }).scanBodyChildren();
+} //showBodyChildren
+
+function createSpan(heading, propertyName) {
+  const span = document.createElement("SPAN");
+  span.classList.add(propertyName);
+  span.innerText = heading[propertyName];
+  span.dataset[propertyName] = heading[propertyName];
+  return span;
+} //createSpan
+	</script>
+</body>
+
+</html>

@@ -1,0 +1,78 @@
+<section id="kojin">
+  <br />
+  <strong>はじめにあなたご自身のことについてお尋ねします。</strong>
+  <hr>
+  <h3>Q1.あなたの性別をお選びください。
+    <divk>※入力必須</divk>
+  </h3>
+  <input type="radio" name="性別" class="geomsize" value="1">男性 
+  <input type="radio" name="性別" class="geomsize" value="2">女性 
+  <hr>
+  <h3>Q2.あなたの年齢をご記入ください。
+    <divk>※入力必須</divk>
+  </h3>
+  <input type="text" name="年齢" id="age" style="width:200px;height:50px;">歳 
+  <hr>
+  <h3>Q3.あなたの学年をお選びください。
+    <divk>※入力必須</divk>
+  </h3>
+  <input type="radio" name="学年" class="geomsize" value="1">1回生 
+  <input type="radio" name="学年" class="geomsize" value="2">2回生 
+  <input type="radio" name="学年" class="geomsize" value="3">3回生 
+  <input type="radio" name="学年" class="geomsize" value="4">4回生 
+  <input type="radio" name="学年" class="geomsize" value="5">5回生以上 
+  <input type="radio" name="学年" class="geomsize" value="6">大学院生 
+  <hr>
+  <button onclick="record_kojin();show_hosoku2()">次へ</button>
+  <style>
+   divk { color:red; }
+   </style>
+  <script>
+     function record_kojin(){
+       google.script.run.recordKojin(
+         start_time,
+         document.querySelector('input[name="性別"]:checked').value,
+         document.querySelector('input[name="年齢"]').value,
+         document.querySelector('input[name="学年"]:checked').value
+         );
+     }
+
+     function show_hosoku2(){
+     var val = document.getElementsByName("年齢")[0];
+     if ( jsTrim( val.value ).length == 0 ) {
+alert( "年齢は入力必須です" );
+val.focus();
+return;
+}
+       var sections = document.getElementsByTagName("section");
+       for(var i=0; i<sections.length; ++i) {
+         sections[i].style.display="none";
+       }
+       document.getElementById("hosoku2").style.display="block";
+
+
+// 前後スペース削除(全角半角対応)
+function jsTrim(val) {
+var ret = val;
+ret = ret.replace( /^[\s]*/, "" );
+ret = ret.replace( /[\s]*$/, "" );
+return ret;
+}
+
+// 前スペース削除(全角半角対応)
+function jsLTrim(val) {
+var ret = val;
+ret = ret.replace( /^[\s]*/, "" );
+return ret;
+}
+// 後スペース削除(全角半角対応)
+function jsRTrim( val ) {
+var ret = val;
+ret = ret.replace( /^[\s]*/, "" );
+return ret;
+}
+}
+
+
+   </script>
+</section>

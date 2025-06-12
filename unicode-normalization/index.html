@@ -1,0 +1,208 @@
+<div>
+<button onclick="decompose('NFD', 0x0000, 0x0fff)">NFD 0x0000-</button>
+<button onclick="decompose('NFD', 0x1000, 0x1fff)">NFD 0x1000-</button>
+<button onclick="decompose('NFD', 0x2000, 0x2fff)">NFD 0x2000-</button>
+<button onclick="decompose('NFD', 0x3000, 0x3fff)">NFD 0x3000-</button>
+<button onclick="decompose('NFD', 0x4000, 0x4fff)">NFD 0x4000-</button>
+<button onclick="decompose('NFD', 0x5000, 0x5fff)">NFD 0x5000-</button>
+<button onclick="decompose('NFD', 0x6000, 0x6fff)">NFD 0x6000-</button>
+<button onclick="decompose('NFD', 0x7000, 0x7fff)">NFD 0x7000-</button>
+<button onclick="decompose('NFD', 0x8000, 0x8fff)">NFD 0x8000-</button>
+<button onclick="decompose('NFD', 0x9000, 0x9fff)">NFD 0x9000-</button>
+<button onclick="decompose('NFD', 0xa000, 0xafff)">NFD 0xa000-</button>
+<button onclick="decompose('NFD', 0xb000, 0xbfff)">NFD 0xb000-</button>
+<button onclick="decompose('NFD', 0xc000, 0xcfff)">NFD 0xc000-</button>
+<button onclick="decompose('NFD', 0xd000, 0xdfff)">NFD 0xd000-</button>
+<button onclick="decompose('NFD', 0xe000, 0xefff)">NFD 0xe000-</button>
+<button onclick="decompose('NFD', 0xf000, 0xffff)">NFD 0xf000-</button>
+</div>
+<div>
+<button onclick="decompose('NFKD', 0x0000, 0x0fff)">NFKD 0x0000-</button>
+<button onclick="decompose('NFKD', 0x1000, 0x1fff)">NFKD 0x1000-</button>
+<button onclick="decompose('NFKD', 0x2000, 0x2fff)">NFKD 0x2000-</button>
+<button onclick="decompose('NFKD', 0x3000, 0x3fff)">NFKD 0x3000-</button>
+<button onclick="decompose('NFKD', 0x4000, 0x4fff)">NFKD 0x4000-</button>
+<button onclick="decompose('NFKD', 0x5000, 0x5fff)">NFKD 0x5000-</button>
+<button onclick="decompose('NFKD', 0x6000, 0x6fff)">NFKD 0x6000-</button>
+<button onclick="decompose('NFKD', 0x7000, 0x7fff)">NFKD 0x7000-</button>
+<button onclick="decompose('NFKD', 0x8000, 0x8fff)">NFKD 0x8000-</button>
+<button onclick="decompose('NFKD', 0x9000, 0x9fff)">NFKD 0x9000-</button>
+<button onclick="decompose('NFKD', 0xa000, 0xafff)">NFKD 0xa000-</button>
+<button onclick="decompose('NFKD', 0xb000, 0xbfff)">NFKD 0xb000-</button>
+<button onclick="decompose('NFKD', 0xc000, 0xcfff)">NFKD 0xc000-</button>
+<button onclick="decompose('NFKD', 0xd000, 0xdfff)">NFKD 0xd000-</button>
+<button onclick="decompose('NFKD', 0xe000, 0xefff)">NFKD 0xe000-</button>
+<button onclick="decompose('NFKD', 0xf000, 0xffff)">NFKD 0xf000-</button>
+</div>
+<script>
+function decompose(normalization_type, start, end) {
+  var values = [["charCode", "uCharCode", "char", "uNormalizedCharCode", "normalizedChar"]];
+  for(var i=start; i<=end; ++i) {
+    var c = String.fromCharCode(i);
+    if(c.length === c.normalize(normalization_type).length) continue;
+    var x = [i, escape(c), "'"+c, escape(c.normalize(normalization_type)), "'"+c.normalize(normalization_type)];
+    values.push(x);
+  }
+  if(values.length === 1) return;
+  google.script.run.withFailureHandler(function(x){
+    alert("failed to write to the sheet. : " + x);
+  }).withSuccessHandler(function(x){
+    //alert("succeeded to write to the sheet. : " + x);
+  }).save(normalization_type + start/0x1000, values);
+}
+</script>
+
+<button onclick="nfd()">NFD</button>
+<script>
+function nfd() {
+  var values = [["codePoint", "char", "peChar", "nfd", "peNfd"]];
+  for(var i=0x00; i<=0xffff; ++i) {
+    if(0xac00 <= i && i <= 0xd7ff) continue;
+    if(0xd800 <= i && i <= 0xdbff) continue;
+    if(0xdc00 <= i && i <= 0xdfff) continue;
+    var codePoint = i;
+    var char = String.fromCharCode(i);
+    var peChar = escape(char);
+    var nfd = char.normalize("NFD");
+    var peNfd = escape(nfd);
+    if(char === nfd) continue;
+    var x = [codePoint, "'"+char, "'"+peChar, "'"+nfd, "'"+peNfd];
+    values.push(x);
+  }
+  google.script.run.withFailureHandler(function(x){
+    alert("failed to write to the sheet. : " + x);
+  }).withSuccessHandler(function(x){
+    //alert("succeeded to write to the sheet. : " + x);
+  }).save("NFD", values);
+}
+</script>
+
+<button onclick="nfdHangul()">NFD Hangul</button>
+<script>
+function nfdHangul() {
+  var values = [["codePoint", "char", "peChar", "nfd", "peNfd"]];
+  for(var i=0xac00; i<=0xd7ff; ++i) {
+    var codePoint = i;
+    var char = String.fromCharCode(i);
+    var peChar = escape(char);
+    var nfd = char.normalize("NFD");
+    var peNfd = escape(nfd);
+    if(char === nfd) continue;
+    var x = [codePoint, "'"+char, "'"+peChar, "'"+nfd, "'"+peNfd];
+    values.push(x);
+  }
+  google.script.run.withFailureHandler(function(x){
+    alert("failed to write to the sheet. : " + x);
+  }).withSuccessHandler(function(x){
+    //alert("succeeded to write to the sheet. : " + x);
+  }).save("NFD-KR", values);
+}
+</script>
+
+
+<button onclick="nfkd()">NFKD</button>
+<script>
+function nfkd() {
+  var values = [["codePoint", "char", "peChar", "nfkd", "peNfkd" ]];
+  for(var i=0x00; i<=0xffff; ++i) {
+    if(0xac00 <= i && i <= 0xd7ff) continue;
+    if(0xd800 <= i && i <= 0xdbff) continue;
+    if(0xdc00 <= i && i <= 0xdfff) continue;
+    var codePoint = i;
+    var char = String.fromCharCode(i);
+    var peChar = escape(char);
+    var nfkd = char.normalize("NFKD");
+    var peNfkd = escape(nfkd);
+    if(char === nfkd) continue;
+    var x = [codePoint, "'"+char, "'"+peChar, "'"+nfkd, "'"+peNfkd];
+    values.push(x);
+  }
+  google.script.run.withFailureHandler(function(x){
+    alert("failed to write to the sheet. : " + x);
+  }).withSuccessHandler(function(x){
+    //alert("succeeded to write to the sheet. : " + x);
+  }).save("NFKD", values);
+}
+</script>
+
+<button onclick="nfkdHangul()">NFKD Hangul</button>
+<script>
+function nfkdHangul() {
+  var values = [["codePoint", "char", "peChar", "nfkd", "peNfkd"]];
+  for(var i=0xac00; i<=0xd7ff; ++i) {
+    var codePoint = i;
+    var char = String.fromCharCode(i);
+    var peChar = escape(char);
+    var nfkd = char.normalize("NFKD");
+    var peNfkd = escape(nfkd);
+    if(char === nfkd) continue;
+    var x = [codePoint, "'"+char, "'"+peChar, "'"+nfkd, "'"+peNfkd];
+    values.push(x);
+  }
+  google.script.run.withFailureHandler(function(x){
+    alert("failed to write to the sheet. : " + x);
+  }).withSuccessHandler(function(x){
+    //alert("succeeded to write to the sheet. : " + x);
+  }).save("NFKD-KR", values);
+}
+</script>
+
+
+
+<button onclick="nfdSurrogate()">NFD of surrogate pairs</button>
+<script>
+function nfdSurrogate() {
+  var values = [["codePoint", "char", "peChar", "nfd", "peNfd"]];
+  for(var h=0xd800; h<=0xdbff; ++h) {
+    for(var l=0xdc00; l<=0xdfff; ++l) {
+      var codePoint = (h - 0xd800)*1024 + (l - 0xdc00) + 0x10000;
+      var char = String.fromCharCode(h) + String.fromCharCode(l);
+      var peChar = escape(char);
+      var nfd = char.normalize("NFD");
+      var peNfd = escape(nfd);
+      if(char === nfd) continue;
+      var x = [codePoint, "'"+char, "'"+peChar, "'"+nfd, "'"+peNfd];
+      values.push(x);
+    }
+  }
+  google.script.run.withFailureHandler(function(x){
+    alert("failed to write to the sheet. : " + x);
+  }).withSuccessHandler(function(x){
+    //alert("succeeded to write to the sheet. : " + x);
+  }).save("NFD-SP", values);
+}
+</script>
+
+<button onclick="nfkdSurrogate()">NFKD of surrogate pairs</button>
+<script>
+function nfkdSurrogate() {
+  var values = [["codePoint", "char", "peChar", "nfkd", "peNfkd"]];
+  for(var h=0xd800; h<=0xdbff; ++h) {
+    for(var l=0xdc00; l<=0xdfff; ++l) {
+      var codePoint = (h - 0xd800)*1024 + (l - 0xdc00) + 0x10000;
+      var char = String.fromCharCode(h) + String.fromCharCode(l);
+      var peChar = escape(char);
+      var nfkd = char.normalize("NFKD");
+      var peNfkd = escape(nfkd);
+      if(char === nfkd) continue;
+      var x = [codePoint, "'"+char, "'"+peChar, "'"+nfkd, "'"+peNfkd];
+      values.push(x);
+    }
+  }
+  google.script.run.withFailureHandler(function(x){
+    alert("failed to write to the sheet. : " + x);
+  }).withSuccessHandler(function(x){
+    //alert("succeeded to write to the sheet. : " + x);
+  }).save("NFKD-SP", values);
+}
+</script>
+
+
+<button onclick="deleteAllSheets()">
+delete all sheets
+</button>
+<script>
+function deleteAllSheets(){
+  google.script.run.deleteAllSheets();
+}
+</script>

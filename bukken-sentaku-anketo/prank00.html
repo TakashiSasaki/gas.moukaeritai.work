@@ -1,0 +1,120 @@
+<section id="prank00">
+   <h3>Q.　以下の仮想の物件を、あなたにとって望ましい順に選んでお答えください。<br />
+      　　なお、全ての物件に順位をお答えいただく必要はございません。
+   </h3>
+   <br />   
+   <table border="1" width="75%" height="200">
+      <tr>
+      <td width="150" height="80" align="center"></td>
+         <td width="150" height="80" align="center">
+            <select name="順位" id="prank001" onchange="recordPrank00(this)">
+               <option value="0">順位</option>
+               <option value="1">1位</option>
+               <option value="2">2位</option>
+               <option value="3">3位</option>
+               <option value="4">4位</option>
+               <option value="5">5位</option>
+               <option value="6">6位</option>
+            </select>
+         </td>
+         <td width="150" height="80" align="center">
+            <select name="順位" id="prank002" onchange="recordPrank00(this)">
+               <option value="0">順位</option>
+               <option value="1">1位</option>
+               <option value="2">2位</option>
+               <option value="3">3位</option>
+               <option value="4">4位</option>
+               <option value="5">5位</option>
+               <option value="6">6位</option>
+            </select>
+         </td>
+         <td width="150" height="80" align="center">
+            <select name="順位" id="prank003" onchange="recordPrank00(this)">
+               <option value="0">順位</option>
+               <option value="1">1位</option>
+               <option value="2">2位</option>
+               <option value="3">3位</option>
+               <option value="4">4位</option>
+               <option value="5">5位</option>
+               <option value="6">6位</option>
+            </select>
+         </td>
+         <td width="150" height="80" align="center">
+            <select name="順位" id="prank004" onchange="recordPrank00(this)">
+               <option value="0">順位</option>
+               <option value="1">1位</option>
+               <option value="2">2位</option>
+               <option value="3">3位</option>
+               <option value="4">4位</option>
+               <option value="5">5位</option>
+               <option value="6">6位</option>
+            </select>
+         </td>
+         <td width="150" height="80" align="center">
+            <select name="順位" id="prank005" onchange="recordPrank00(this)">
+               <option value="0">順位</option>
+               <option value="1">1位</option>
+               <option value="2">2位</option>
+               <option value="3">3位</option>
+               <option value="4">4位</option>
+               <option value="5">5位</option>
+               <option value="6">6位</option>
+            </select>
+         </td>
+         <td width="150" height="80" align="center">
+            <select name="順位" id="prank006" onchange="recordPrank00(this)">
+               <option value="0">順位</option>
+               <option value="1">1位</option>
+               <option value="2">2位</option>
+               <option value="3">3位</option>
+               <option value="4">4位</option>
+               <option value="5">5位</option>
+               <option value="6">6位</option>
+            </select>
+         </td>
+      </tr>
+     <?!=getNm()?> <?!=getTr("cc00"); ?>
+   </table>
+   <br clear="all"><br />
+   <hr>
+   <button id="button01" onclick="show_prank01();">次へ</button>
+   <hr>
+</section>
+<script>
+function show_prank01() {
+	var values = [];
+	values[0] = document.getElementById("prank001").value;
+	values[1] = document.getElementById("prank002").value;
+	values[2] = document.getElementById("prank003").value;
+	values[3] = document.getElementById("prank004").value;
+	values[4] = document.getElementById("prank005").value;
+	values[5] = document.getElementById("prank006").value;
+	var counts = [0, 0, 0, 0, 0, 0, 0];
+	for (var i in values) {
+		counts[values[i]] += 1;
+	}
+	if (!(counts[1]===1 && counts[2]<=counts[1] && counts[3]<=counts[2]&& counts[4]<=counts[3] && counts[5]<=counts[4] && counts[6]<=counts[5])){
+		alert("重複している，または順位が入力されていません。");
+		return;
+    }
+//    alert("ありがとうございました");
+	end_prank00 = (new Date()).getTime();
+	var sections = document.getElementsByTagName("section");
+	for (var i = 0; i < sections.length; ++i) {
+		sections[i].style.display = "none";
+	}
+	document.getElementById("prank01").style.display = "block";
+}
+
+function recordPrank00(element) {
+	//       var start_time = start_time;            //誰が
+	var click_time = (new Date()).getTime(); //いつ
+	var element_id = element.id; //何を
+	var element_value = element.value; //値
+	var element_checked = element.checked; //チェック状態
+	google.script.run.withFailureHandler(function () {
+    }).withSuccessHandler(function () {
+    }).recordPrank00(start_time, end_pchoice, click_time, element_id, element_value);
+  }
+recordPrank00(element);
+</script>

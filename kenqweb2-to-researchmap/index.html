@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <base target="_top">
+      <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+      <?!=HtmlService.createHtmlOutputFromFile("css").getContent()?>
+   </head>
+   <body>
+      <h1>kenqweb2 to researchmap CSV converter</h1><p>
+         This website ( <a href="https://goo.gl/93pYYo" id="shortUrl" target="_blank">https://goo.gl/93pYYo</a>  
+         <button onclick="copyUrl()" aria-label="Copy to clipboard" data-copied-hint="Copied!" type="button">
+         <?!=HtmlService.createHtmlOutputFromFile("svgCopyButton").getContent()?>
+         </button>)
+         is intended to provide the handy way to make CSV files for "Conference Activities &amp; Talks (講演・口頭発表等)" records
+         of researchmap ( <a href="http://researchmap.jp" target="_blank">http://researchmap.jp</a>
+         <?!=HtmlService.createHtmlOutputFromFile("svgExternalLink").getContent()?>)
+         from kenqweb2 "教員業績システム E06 学会発表等" sheet ( 
+         <a href="http://kenqweb2.office.ehime-u.ac.jp/" target="_blank">
+         http://kenqweb2.office.ehime-u.ac.jp/
+         <?!=HtmlService.createHtmlOutputFromFile("svgExternalLink").getContent()?> </a> ).
+         Please follow the six steps below.
+      </p>
+      <div class="step">
+         <h1>Step1</h1>
+         <p>Open <a href="http://kenqweb2.office.ehime-u.ac.jp/" target="_blank">kenqweb2
+         <?!=HtmlService.createHtmlOutputFromFile("svgExternalLink").getContent()?></a> and download your Excel book.</p>
+         <img src="https://lh3.googleusercontent.com/DiK9nit6G1978nmyVJtJhcJhWDXMuLwfpX2vdIjZJsjL_4Vp5AocqYv5GuMM9sjG1LDAlYvZUKfzMEkNV5vSkS9_JoEAZ-ShIPMvTKw3UG9SDO6GLk575wZrJgNrnAY3HjnBJV6BS4ZJGDX0xnO0E4AHFq9D85Lq4aVVoFnwiULnb0-Bye5mEZXyd2BTbNnTDkbhuVAB5PP5ST-szNqPUn8Qp1wgDjZPs4vVQSMXX_OitcSIDxW85k_-1qVXHlFo5jjKp8JvcJrC_2LRTkIMePq6wz9mZ1WMk5Ym11SJJRgdwBtsAi8Sijn4ESlediums3gdzaygpMWYk5hRpXcUtwdGlWZtXyx1J5jjy3WSFJ0L8A4H8VISSOSY2VKtD1iaNiCDlLOqKyueGUASQBSStDip2uCFOZpbE7nMydyl1_TtI85JYOuh80K1jfp_Jn4M6mswP3PsbOpqe1AsDw3xHVCurvKgqVauMi3Y76JiUZp9MXhCq7zGfxtLaECvVGqzwHV1Wr7s2x-OCiL9IPktpelomOt8Z_n_1HufyVU0aGoujK1N2TQRjRr65eBil4-y2AKrVt4edntugb82UuVDLuvv4O4pMLbovJt0a4yQ9wmftLFhg2CyafH_IBjGH2C7TlIH25Uw2tEpKNNfadb-iIxPj83Sezyd4NuR=w849-h412-no">
+      </div>
+      <div class="step">
+         <h1>Step2</h1>
+         <p>Open the Excel book and copy (Ctrl+C) the range E9:Q of the sheet E06 (学会発表等).</p>
+         <img src="https://lh3.googleusercontent.com/h9kfFPYDWcrhW2uqhS9uVwHLs_5eyRyB-ZV9P7CXgF2rST1O_ztc0BxE_92EUT3d3DqwjBcGZUmHt3k5l5n0zQvXHAJjcljf2wtAn2BVFiAPlwA-e97diI99VsaNismkBi71kn8nd9k5pEqgOrF1xjpvIwj2rBMByih7iNohXEbw8crNtt2Iyg5VJ9fdXSoPqi8yNDQIHQr9eygbMHKOg5NRcwHAwzdVQZkWSdLtg_aVe3-ZdYv5wekiOSHwEA57_t8LZ8pT2j8HhEaInuX2WCUexx_HTIsjmoIoRJmGiijHD8hoMPm6L8YRTGFa67-ufaskTnxJJud0Lx3VoBwGBszJibGQrPk29xObb_pBZ3MuJxGtDJ4t7T0ZZwfis6ZQUjD_9vLo3PhI-dLudtATvTVrva7z5Yla27u9xLSA4qPXOVODibZMYoQpS3LicGyHGbZA07O7UlFQRzRUpfFrxIEfJqtg-TDIQUr4wVWdJvfWYeu1oOKUlZwaJF9gKtoIcAJE37MXHQMBOk5TuhNWabcIYLbeo00F7KnKBypi90MCG01d8_lBJSskQ5GbkWsCmHaXTKBsKhz2cajz1LhbNiuWI_IlwEj9FK098o5O5QrhhrASjQTmzGV8Cde_UslIYveDuaOy0N-qzzGXu1OQ3gTCQuZ83jrgwj5U=w935-h834-no">
+      </div>
+      <div class="step">
+         <h1>Step3</h1>
+         <p>Paste (Ctrl+V) the range to the text area below.</p>
+         <textarea 
+         onChange="onChange(this)" onBlur="onChange(this)"
+         placeholder="Example
+            発表区分	単独／共同	演題・和文	演題・英文	データ区分	学内全発表者	学外全発表者	発表年	発表月	実績集計年度	国内／海外	学会名	備考・概要
+            1	2	構成分子の形状を利用したシクロファンの合成		【共著データ】	奥島　鉄雄【データ登録者】、森　重樹、宇野　英満	/沖　光脩・田川和成・安藤千恵・森　重樹・奥島鉄雄・宇野英満	2015	03	2014	1	日本化学会第95春季年会	船橋（日本大学理工学部船橋キャンパス）2015年3月26-29日（口頭A）
+            1	2	オキソカーボン酸とピロール誘導体の反応による近赤外色素の合成		【共著データ】	奥島　鉄雄【データ登録者】、森　重樹、宇野　英満	/上代一貴・北束政波・森　重樹・奥島鉄雄・宇野英満	2015	03	2014	1	日本化（以下略）"></textarea>
+      </div>
+      <div class="step">
+         <h1>Step4</h1>
+         <p>Review the following table</p>
+         <div>
+            <p>Japanese</p>
+            <div id="japaneseTable">
+            </div>
+         </div>
+         <div>
+            <p>English</p>
+            <div id="englishTable">
+            </div>
+         </div>
+      </div>
+      <div class="step">
+         <h1>Step5</h1>
+         <p>Download two CSV files</p>
+         <button onclick="window.open('<?=ScriptApp.getService().getUrl()?>?csvJapanese=1')">Download CSV file in Japanese (for researchmap)</button>
+         <button onclick="window.open('<?=ScriptApp.getService().getUrl()?>?csvEnglish=1')">Download CSV file in English (for researchmap)</button>
+         <button onclick="window.open('<?=ScriptApp.getService().getUrl()?>?csvJapanese=1&sjis=1')">Download CSV file in Japanese (for Excel)</button>
+         <button onclick="window.open('<?=ScriptApp.getService().getUrl()?>?csvEnglish=1&sjis=1')">Download CSV file in English (for Excel)</button>
+      </div>
+      <div class="step">
+         <h1>Step6</h1>
+         <p>
+            Import these files to <a href="https://researchmap.jp/" target="_blank">researchmap</a>
+            <?!=HtmlService.createHtmlOutputFromFile("svgExternalLink").getContent()?>
+         </p>
+         <img src="https://lh3.googleusercontent.com/2ips-9dDVZLWdn5LYFnpwcLX6Vwezl9wOkFGimyeeVZUyZcNUIS9fxWZqz2s9e4o6Ff5e2b8SIfIhhGP5pPwNvs3XOnWCq7hLwWh9tccFAzdwniv6edwQL9pNobSfcPdvOB9iymhfRBAW48UfAp-mbSIImighHhcezoNwIrhRZXYK3oxy6cVSrfHSbHIp1TEE5zrkyNrui7PSEisldo32xfoVvQbRazSpkvfn1Bn9o8EutVE0m9Zg6_tqLF9eOT5vCYObRklz9gb-8tuOHJ8l96VH5tqHoVxfAVSQ-gtHzRWww1wDwYNnVrCCT4A1QJB-QAehotSShNrb5hHI6X1NYEIM0Ki3I91NUWK5GLZ9ck_zM24NzydkMU5RgWUyQacwl6erDBXS-nqyKGMpLwC2R5LA5wKy3nQqmlQ42TXFiwKA3da_tDcOP4GjpQoOYojFdZDhqw_pjPscbK9TbO46E37M9f4eD7Dgv9H8EexNwi5gBp0ZUTU1PMFH0e6sn4c9Q9uGSGW4XmwMUL8w4zUgLxEGi0Cp5hR2yfel9LDZ32sY4Zg7I-DdVBcrW9Qdp0oOOqphWmwXDKBDMvCHXLtGogzOvSZiNTxZVa7rGpw6ZwKLAAKHUmSTj7isvIX6dbK-wET7rn-wIZ1nxlr0vPzCdjDCfICLPeN20eO=w676-h419-no">
+      </div>
+      <script>
+      
+        google.charts.load('current', {'packages':['table']});
+        
+        function copyUrl(){
+          var shortUrl = document.getElementById("shortUrl");
+          document.getSelection().selectAllChildren(shortUrl);
+          document.execCommand("copy");
+        }
+        function onChange(element){
+          google.script.run.withSuccessHandler(function(count){
+            google.script.run.withSuccessHandler(function(dataObject){
+              var dataTable = new google.visualization.DataTable(dataObject);
+              var dataView = new google.visualization.DataView(dataTable);
+              var englishTable = new google.visualization.Table(document.getElementById("englishTable"));
+              englishTable.draw(dataView);
+            }).withFailureHandler(function(e){
+              alert(e);
+            }).getDataObjectWithEnglishLabel();
+            google.script.run.withSuccessHandler(function(dataObject){
+              var dataTable = new google.visualization.DataTable(dataObject);
+              var dataView = new google.visualization.DataView(dataTable);
+              var japaneseTable = new google.visualization.Table(document.getElementById("japaneseTable"));
+              japaneseTable.draw(dataView);
+            }).withFailureHandler(function(e){
+              alert(e);
+            }).getDataObjectWithJapaneseLabel();
+          }).withFailureHandler(function(e){
+            alert(e);
+          }).cacheKenqwebRecords(element.value);
+        }
+      </script>
+      <script src="https://script.google.com/macros/s/AKfycbwu69ThF572u9fRQmN0CC8P6g0ymZ1gUtQWQRleNIBJSF1IKms/exec?CsvParser" async></script>
+   </body>
+</html>

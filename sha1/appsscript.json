@@ -1,0 +1,22 @@
+{
+  "timeZone": "Asia/Tokyo",
+  "dependencies": {
+    "libraries": [{
+      "userSymbol": "Assert_",
+      "libraryId": "10lJqYuurUoouFS-aPsPs4HU2s--Xkm5vTu7QVZH4HwcAZgtCDU6ZltQN",
+      "version": "15",
+      "developmentMode": true
+    }, {
+      "userSymbol": "Str",
+      "libraryId": "13sX98YHiFh-5eBWTAJtWR52SbdnCxaHzX3GXgt8zUU07ELz9ArLhlJvD",
+      "version": "8",
+      "developmentMode": true
+    }, {
+      "userSymbol": "Is_",
+      "libraryId": "1ovfzNY0BUREXY5Ky0eX1HZaz3VxEoq3wyjwZuYg4L6m8H83Rjb8Q1yhw",
+      "version": "9",
+      "developmentMode": true
+    }]
+  },
+  "exceptionLogging": "STACKDRIVER"
+}

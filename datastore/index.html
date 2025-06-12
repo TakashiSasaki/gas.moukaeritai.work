@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <link rel="stylesheet" 
+      href="https://cdnjs.cloudflare.com/ajax/libs/mini.css/3.0.1/mini-default.min.css">
+    <style>
+      div.field  {display:flex}
+      div input {flex-grow: 2;}
+      div textarea {flex-grow: 1;}
+      textarea {height: 7em;}
+      th {--universal-padding: 0px;}
+      td {--universal-padding: 0px;}
+    </style>
+  </head>
+  <body>
+    <label>Active User
+    <input readonly="1" value="<?=Session.getActiveUser().getEmail()?>">
+    </label>
+    <div><span>Spreadsheets</span>
+    <? for(var ssNumber=0; ssNumber<64; ++ssNumber) {?>
+    <a role="button" target="_blank" 
+          href="https://docs.google.com/spreadsheets/d/<?=PropertiesService.getUserProperties().getProperty("ss"+ ssNumber);?>/edit">
+          <?=ssNumber;?>
+    </a>
+    <? }//for?>
+    <a role="button" target="ss<?=ssNumber?>" 
+          href="https://docs.google.com/spreadsheets/d/<?=PropertiesService.getUserProperties().getProperty("ss64");?>/edit">
+          64 (Journal)
+    </a></div>
+  </body>
+</html>
+
+

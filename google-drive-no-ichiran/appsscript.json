@@ -1,0 +1,12 @@
+{
+  "timeZone": "Asia/Tokyo",
+  "dependencies": {
+    "libraries": [{
+      "userSymbol": "ScriptCatalog",
+      "libraryId": "1XxEVVxW1MQEZCQTg1RTDQW8KDMtUURz22SQmBfaS3xLr5OZ__MSnwlur",
+      "version": "14"
+    }]
+  },
+  "exceptionLogging": "STACKDRIVER",
+  "runtimeVersion": "V8"
+}

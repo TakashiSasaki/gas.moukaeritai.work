@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <style><!--
+    td { border-style: solid}
+    --></style>
+  </head>
+  <body>
+  <table>
+  <tr>
+    <th>flow_id</th>
+    <th>user_id</th>
+    <th>user_name</th>
+    <th>category_id</th>
+    <th>category_title</th>
+    <th>category_restricted</th>
+    <th>flow_title</th>
+    <th>flow_description</th>
+    <th>flow_ratings</th>
+    <th>featured</th>
+    <th>created</th>
+    <th>modified</th>
+    <th>uploadVersion</th>
+    <th>dataVersion</th>
+  </tr>
+  <? for (var i=0; i<flows.length; ++i) { ?>
+  <tr>
+    <td><?=flows[i].id?></td>
+    <td><?=flows[i].user.id?></td>
+    <td><?=flows[i].user.name?></td>
+    <td><?=flows[i].category.id?></td>
+    <td><?=flows[i].category.title?></td>
+    <td><?=flows[i].category.restricted?></td>
+    <td><?=flows[i].title?></td>
+    <td><?=flows[i].description?></td>
+    <td><?=flows[i].ratings?></td>
+    <td><?=flows[i].featured?></td>
+    <td><?=flows[i].created?></td>
+    <td><?=flows[i].modified?></td>
+    <td><?=flows[i].uploadVersion?></td>
+    <td><?=flows[i].dataVersion?></td>
+  </tr>
+  <? } ?>
+  </table>
+  </body>
+</html>
+
+

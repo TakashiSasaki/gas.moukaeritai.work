@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <style>
+      textarea {width: 90%; height:5em;}
+      h1{
+position: relative;
+background: #dfefff;
+box-shadow: 0px 0px 0px 5px #dfefff;
+border: dashed 2px white;
+padding: 0.2em 0.5em;
+color: #454545;
+}
+    </style>
+  </head>
+  <body>
+    <h1>Hash</h1>
+    <textarea onkeyup="computeSha1(this)"></textarea>
+    <h1>computeSha1Base64WebSafe</h1>
+    <p></p>
+    <h1>computeSha1Hex</h1>
+    <p></p>
+    <h1>computeSha1Uint8Array</h1>
+    <p></p>
+    <script>
+    var computing = 0;
+    function computeSha1(element){
+      computing += 3;
+      setTimeout(function(){
+        if(computing > 3) {
+          computing -= 3; 
+          return;
+        }
+        google.script.run.withSuccessHandler(function(sha1Base64WebSafe){
+          document.getElementsByTagName("p")[0].innerHTML=sha1Base64WebSafe;
+          computing -= 1;
+        }).withFailureHandler(function(){
+          computing -= 1;
+        }).computeSha1Base64WebSafe(element.value);
+        google.script.run.withSuccessHandler(function(sha1Hex){
+          document.getElementsByTagName("p")[1].innerHTML=sha1Hex;
+          computing -= 1;
+        }).withFailureHandler(function(){
+          computing -= 1;
+        }).computeSha1Hex(element.value);
+        google.script.run.withSuccessHandler(function(sha1Uint8Array){
+          document.getElementsByTagName("p")[2].innerHTML=sha1Uint8Array;
+          computing -= 1;
+        }).withFailureHandler(function(){
+          computing -= 1;
+        }).computeSha1Uint8Array(element.value);
+      }, 500);
+    }
+    </script>
+  </body>
+</html>
+
+

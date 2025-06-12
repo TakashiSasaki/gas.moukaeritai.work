@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <style>
+    table {border-collapse: collapse}
+    td {border-style:solid; border-width:1px}
+    </style>
+  </head>
+  <body>
+    <table>
+      <tr><th>value</th><th>base64</th><th>websafe</th></tr>
+      <? for(var i=0; i<256; ++i) { ?>
+      <tr>
+        <td><?=i?></td>
+        <td><?=Utilities.base64Encode([i>=128?i-256:i])?></td>
+        <td><?=Utilities.base64EncodeWebSafe([i>=128?i-256:i])?></td>
+      </tr>
+      <? }?>
+    </table>
+  </body>
+</html>
+
+

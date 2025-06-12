@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <base target="_top">
+      <style>
+         .title1, .body1 {
+         border: 2px solid rgb(127, 194, 239);
+         }
+         .title2, .body2 {
+         border: 2px solid rgb(214, 133, 176);
+         }
+         .title3, .body3 {
+         border: 2px solid rgb(219, 225, 89);
+         }
+         .tab-title {
+         border-bottom: none;
+         padding: .3em .5em;
+         border-radius: .3em .3em 0 0;
+         text-align: center;
+         display: table; 
+         }
+         .tab-body > div {
+         width: 100%;
+         height: 200px;
+         border-radius: 0 .3em .3em .3em;
+         padding: 1em;
+         }
+         /* radio non-display */
+         .container .radio {
+         display: none;
+         }
+         /* tabs position */
+         .container {
+         display: flex;
+         flex-wrap: wrap;
+         position: relative;
+         }
+         .container::after {
+         content: "";
+         width: 100%;
+         }
+         .container .tab-title {
+         position: relative;
+         border-bottom: 2px solid transparent;
+         top: 2px;
+         left: 2px;
+         }
+         .container .tab-title:hover {
+         cursor: pointer;
+         }
+         .container .tab-body {
+         order: 1;
+         }
+         /* tab's body init */
+         .add-control .tab-body > div {
+         display: none;
+         }
+         /* selected tab's color change */
+         .add-control .radio:checked + .tab-title {
+         color: #fff;
+         border-bottom-color: #fff;
+         }
+         .add-control #tab1:checked ~ .title1 {
+         background: rgba(127, 194, 239, .5);
+         }
+         .add-control #tab2:checked ~ .title2 {
+         background: rgba(214, 133, 176, .5);
+         }
+         .add-control #tab3:checked ~ .title3 {
+         background: rgba(219, 225, 89, .5);
+         }
+         /* tabs control */
+         .add-control #tab1:checked ~ .tab-body > .body1 {
+         display: block;
+         }
+         .add-control #tab2:checked ~ .tab-body > .body2 {
+         display: block;
+         }
+         .add-control #tab3:checked ~ .tab-body > .body3 {
+         display: block;
+         }
+      </style>
+   </head>
+   <body>
+      <div class="container add-control">
+         <input type="radio" id="tab1" class="radio" name="tab" checked="checked" ><label class="tab-title title1" for="tab1">tab1</label>
+         <input type="radio" id="tab2" class="radio" name="tab" ><label class="tab-title title2" for="tab2">tab2</label>
+         <input type="radio" id="tab3" class="radio" name="tab" ><label class="tab-title title3" for="tab3">tab3</label>
+         <div class="tab-body">
+            <div class="body1">
+            <?!=HtmlService.createTemplateFromFile("filter").evaluate().getContent()?>
+            </div>
+            <div class="body2">
+            <?!=HtmlService.createTemplateFromFile("info").evaluate().getContent()?>
+            </div>
+            <div class="body3">
+            </div>
+         </div>
+      </div>
+   </body>
+</html>

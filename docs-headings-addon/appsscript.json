@@ -1,0 +1,26 @@
+{
+  "timeZone": "Asia/Tokyo",
+  "oauthScopes": [
+    "https://www.googleapis.com/auth/script.container.ui",
+    "https://www.googleapis.com/auth/documents.currentonly",
+    "https://www.googleapis.com/auth/documents"
+  ],
+  "dependencies": {
+    "enabledAdvancedServices": [
+      {
+        "userSymbol": "Docs",
+        "version": "v1",
+        "serviceId": "docs"
+      }
+    ]
+  },
+  "exceptionLogging": "STACKDRIVER",
+  "runtimeVersion": "V8",
+  "addOns": {
+    "common": {
+      "name": "Docs Sort Add-on",
+      "logoUrl": "https://1.bp.blogspot.com/-xPEFG68z1CU/VwqZQUKSzLI/AAAAAAAAUbY/G2prHnMW45EHK6TxCnhzC7da-HPg9kQww/s1600/sort-docs-postpic.png"
+    },
+    "docs": {}
+  }
+}

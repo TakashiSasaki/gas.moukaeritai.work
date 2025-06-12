@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<base target="_top">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mini.css/3.0.1/mini-default.min.css">
+	<style>
+		textarea {
+			width: 99%;
+			min-width: 50em;
+			min-height: 15em;
+		}
+
+		label {
+			display: block
+		}
+
+		input {
+			min-width: 50em
+		}
+	</style>
+</head>
+
+<body>
+	<h1>Target</h1>
+	<label>Target spreadsheet ID <input readonly id="sheetId"></label>
+	<label>Target spreadsheet Name <input readonly id="spreadsheetName"></label>
+	<label>Target sheet name <input readonly id="sheetName"></label>
+	<button>Open Spreadsheet</button>
+	<h1>Append/Update/Clear</h1>
+	<textarea></textarea>
+	<div>
+		<button value="1" class="recall">recall 1</button>
+		<button value="1" class="save">save 1</button>
+		<button value="2" class="recall">recall 2</button>
+		<button value="2" class="save">save 2</button>
+		<button value="3" class="recall">recall 3</button>
+		<button value="3" class="save">save 3</button>
+		<button>Append</button>
+		<button>Update</button>
+		<button>Clear</button></div>
+	<script>
+		document.querySelectorAll("button")
+	</script>
+</body>
+
+</html>

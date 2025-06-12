@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+  </head>
+  <body>
+    <textarea onChange="detectEncodingAndAlert()" id="textarea"></textarea>
+  <?!=getCsvParser()?>
+  <script>
+    function detectEncodingAndAlert(){
+      var textarea = document.getElementById("textarea");
+      var text = textarea.value;
+      alert(JSON.stringify(CsvParser.csvDocument(text)));
+    }
+  </script>
+  </body>
+</html>

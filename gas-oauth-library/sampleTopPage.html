@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+  </head>
+  <body>
+    <a href="<?=getAuthorizationUrl()?>" target="_blank">authorize by a link</a>
+    <?!=getAuthorizationButton("authorize by a button")?>
+    <?!=GasMarkdownToHtml.getHtmlFromUrl("https://raw.githubusercontent.com/TakashiSasaki/GasOAuthLibrary/readme/README.md");?>
+  </body>
+</html>

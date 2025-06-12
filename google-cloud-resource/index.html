@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<base target="_top">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mini.css/3.0.1/mini-default.min.css">
+
+</head>
+
+<body>
+	<div>
+		<label>Authorization URL<a class="button" href="<?=getAuthorizationUrl()?>">authorization URL</a></label>
+	</div>
+	<div>
+		<label>Authorization Code
+	<input readonly value="<?=CacheService.getUserCache().get('code');?>"></label>
+	</div>
+	<div>
+		<label>Access Token
+	<input readonly value="<?=CacheService.getUserCache().get('access_token');?>"></label>
+	</div>
+	<div>
+		<label>Refresh Token
+	<input readonly value="<?=CacheService.getUserCache().get('refresh_token');?>"></label>
+	</div>
+</body>
+
+</html>

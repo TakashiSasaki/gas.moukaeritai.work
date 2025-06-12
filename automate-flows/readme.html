@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+  </head>
+  <body onload="onLoad()">
+    <p>
+       I, <a href="http://twitter.com/TakashiSasaki">Takashi SASAKI</a>, 
+       am a big fan of <a href="http://llamalab.com/automate/">Automate</a> 
+       which is an <a href="https://play.google.com/store/apps/details?id=com.llamalab.automate">Android app</a>
+       to make programs to automate various tasks on a smartphone. 
+       Its user interface is like flowchart drawing tool. 
+       Automate has a community to share ideas and flows created by its members. 
+       This page helps you to get a list of flows created by a certain user in Automate community. 
+       Put your/his/her user ID in the box and then you'll see links to the list of flows in various formats.
+       The URL of this page is <a href="https://goo.gl/fFzi4D">https://goo.gl/fFzi4D</a>. 
+       I tested this page by only Chrome 55 in Windows Desktop.
+    </p>
+    <fieldset>
+      <label>User ID <input id="user_id" onchange="updateUserId(this)" onkeyup="updateUserId(this)"></label>
+    </fieldset>
+    <fieldset>
+      <label>URL for HTML page <a id="url_html"></a></label>
+    </fieldset>
+    <fieldset>
+      <label>URL for JSON <input id="url_json" readonly size="120em"></label>
+    </fieldset>
+    <fieldset>
+      <label>URL for CSV <input id="url_csv" readonly size="120em"></label>
+    </fieldset>
+    <fieldset>
+      <label>URL for TSV <input id="url_tsv" readonly size="120em"></label>
+    </fieldset>
+    <p>
+      <a href="https://goo.gl/zihNxg">Here is a list of Automate community members.</a>
+      I apologize doing such dirty workaround, that is, 
+      attempting brute force accesses to the server. 
+      Actually, I carefully insert enough intervals not to make an impact on the server.
+      But it might have made trouble with Automate community service temporality.
+      I'm afraid of it. 
+      I promise I'll never make requests to find nicknames, except for supplementing missing members.
+    </p>
+    <script>
+      var base_url = "https://script.google.com/macros/s/AKfycbzUDeFsgQFl0Fts56wo67WVQhrR7_oXAf5yxmIM3gpo67CtF1pC/exec";
+      function updateUserId(input){
+        window.localStorage.setItem("user_id", input.value);
+        var url_html = document.getElementById("url_html");
+        var href = base_url + "?user_id=" + input.value;
+        url_html.setAttribute("href", href);
+        url_html.innerHTML=href;
+        var url_json = document.getElementById("url_json");
+        url_json.value = href + "&format=json";
+        var url_csv = document.getElementById("url_csv");
+        url_csv.value = href + "&format=csv";
+        var url_tsv = document.getElementById("url_tsv");
+        url_tsv.value = href + "&format=tsv";
+      }
+      
+      function onLoad(){
+        var user_id = document.getElementById("user_id");
+        user_id.value = window.localStorage.getItem("user_id");
+        updateUserId({"value": user_id.value});
+      }
+    </script>
+  </body>
+</html>
+
+

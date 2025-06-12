@@ -1,0 +1,260 @@
+<script>
+// Helper function to pad a row to the desired length.
+const padRowToLength = (row, length) => {
+  const newRow = row.slice(0, length);
+  while (newRow.length < length) {
+    newRow.push("");
+  }
+  return newRow;
+};
+
+let isRefreshing = false;
+let isProcessing = false;
+
+const refreshFiles = () => {
+  if (isRefreshing) return;
+  isRefreshing = true;
+  google.script.run
+    .withSuccessHandler(files => {
+      google.charts.setOnLoadCallback(() => {
+        const data = new google.visualization.DataTable();
+        data.addColumn('string', 'File Name in Google Drive');
+        data.addColumn('string', 'Creation Date');
+        data.addColumn('string', 'Parent Folder');
+        data.addColumn('number', 'Size (Bytes)');
+
+        const rows = files.map(file => [
+          `<a href=" ${file.url} " target="_blank">${file.name}</a>`,
+          file.createdDate,
+          file.parentFolder,
+          Number(file.size)
+        ]);
+        data.addRows(rows);
+        const table = new google.visualization.Table(document.getElementById('fileTable'));
+        table.draw(data, {
+          allowHtml: true,
+          showRowNumber: true,
+          width: '100%'
+        });
+      });
+      isRefreshing = false;
+      processFilesData();
+    })
+    .withFailureHandler(error => {
+      document.getElementById('fileTable').innerHTML = `<p>Error: ${error.message}</p>`;
+      isRefreshing = false;
+    })
+    .getFileList();
+};
+
+const processFilesData = () => {
+  if (isProcessing) return;
+  isProcessing = true;
+  document.getElementById('processResults').innerHTML = '<p>Processing files...</p>';
+  google.script.run
+    .withSuccessHandler(results => {
+      google.charts.setOnLoadCallback(() => {
+        const data = new google.visualization.DataTable();
+        data.addColumn('string', 'Container File');
+        data.addColumn('string', 'Dictionary File');
+        data.addColumn('number', 'Byte Count');
+        data.addColumn('number', 'Line Count');
+        data.addColumn('number', 'Tab-Containing Line Count');
+        data.addColumn('string', 'Error');
+        // Add preview checkbox column; inline onchange attribute is removed.
+        data.addColumn('string', 'Preview');
+
+        const rows = results.map(row => [
+          row.source,
+          row.processedFile,
+          row.byteCount ?? null,
+          row.lineCount ?? null,
+          row.tabLineCount ?? null,
+          row.error || '',
+          row.error
+            ? '-'
+            : `<input type="checkbox" class="previewCheckbox" data-fileid="${row.fileId}" data-processedfile="${row.processedFile}" data-tabcount="${row.tabLineCount}">`
+        ]);
+        data.addRows(rows);
+        const table = new google.visualization.Table(document.getElementById('processResults'));
+        table.draw(data, {
+          allowHtml: true,
+          showRowNumber: true,
+          width: '100%'
+        });
+      });
+      isProcessing = false;
+    })
+    .withFailureHandler(error => {
+      document.getElementById('processResults').innerHTML = `<p>Error: ${error.message}</p>`;
+      isProcessing = false;
+    })
+    .processFiles();
+};
+
+const toggleAnalysisJSON = () => {
+  const container = document.getElementById('analysisJSONContainer');
+  container.classList.toggle('collapsed');
+  container.classList.toggle('expanded');
+};
+
+// Global variable to store the aggregated preview rows
+let previewAggregatedRows = [];
+
+// Draws the Google Charts Table for the preview area using the aggregated 2D array rows.
+const drawPreviewTable = aggregatedRows => {
+  // Store the aggregatedRows globally so they can be used later
+  previewAggregatedRows = aggregatedRows;
+  document.getElementById('previewRowCount').innerText = "Preview Row Count: " + aggregatedRows.length;
+  google.charts.setOnLoadCallback(() => {
+    const data = new google.visualization.DataTable();
+    // Create fixed 6 columns labeled "1" to "6"
+    for (let i = 1; i <= 6; i++) {
+      data.addColumn('string', i.toString());
+    }
+    data.addRows(aggregatedRows);
+    const table = new google.visualization.Table(document.getElementById('previewArea'));
+    table.draw(data, {
+      allowHtml: false,
+      showRowNumber: true,
+      width: '100%'
+    });
+  });
+};
+
+// Update the sum of Tab-Containing Line Count for all checked rows.
+const updateTabCountSum = () => {
+  const checkboxes = document.querySelectorAll('.previewCheckbox:checked');
+  let sum = 0;
+  checkboxes.forEach(cb => {
+    const tabCount = parseInt(cb.getAttribute('data-tabcount'), 10);
+    if (!isNaN(tabCount)) sum += tabCount;
+  });
+  document.getElementById('tabCountSum').innerText = "Total Tab-Containing Lines: " + sum;
+};
+
+// This handler updates both the preview table and the tab count sum.
+const handleCheckboxChange = () => {
+  updatePreview();
+  updateTabCountSum();
+};
+
+// Helper function that calls previewFileTabs with retry logic on "Server is busy" error.
+const callPreviewFileTabs = (fileId, processedFile, onSuccess, onFailure) => {
+  google.script.run
+    .withSuccessHandler(onSuccess)
+    .withFailureHandler(error => {
+      if (error.message.indexOf("Server is busy") !== -1) {
+        setTimeout(() => {
+          callPreviewFileTabs(fileId, processedFile, onSuccess, onFailure);
+        }, 5000);
+      } else {
+        onFailure(error);
+      }
+    })
+    .previewFileTabs(fileId, processedFile);
+};
+
+// updatePreview() aggregates all returned 2D arrays from all checked files into one consolidated table.
+const updatePreview = () => {
+  const checkboxes = document.querySelectorAll('.previewCheckbox:checked');
+  const previewArea = document.getElementById('previewArea');
+  if (checkboxes.length === 0) {
+    previewArea.innerHTML = '';
+    document.getElementById('previewRowCount').innerText = "";
+    return;
+  }
+  document.getElementById('previewLoading').style.display = 'block';
+  let aggregatedRows = [];
+  let remaining = checkboxes.length;
+  checkboxes.forEach(cb => {
+    const fileId = cb.getAttribute('data-fileid');
+    const processedFile = cb.getAttribute('data-processedfile');
+    callPreviewFileTabs(fileId, processedFile, returned2DArray => {
+      returned2DArray.forEach(innerArray => {
+        aggregatedRows.push(padRowToLength(innerArray, 6));
+      });
+      remaining--;
+      if (remaining === 0) {
+        drawPreviewTable(aggregatedRows);
+        document.getElementById('previewLoading').style.display = 'none';
+      }
+    }, error => {
+      aggregatedRows.push([`Error for file ${processedFile}: ${error.message}`, "", "", "", "", ""]);
+      remaining--;
+      if (remaining === 0) {
+        drawPreviewTable(aggregatedRows);
+        document.getElementById('previewLoading').style.display = 'none';
+      }
+    });
+  });
+};
+
+const analyzeInput = () => {
+  // Instead of reading from innerText of previewArea,
+  // use JSON.stringify of the aggregated preview data.
+  const userInput = JSON.stringify(previewAggregatedRows);
+  document.getElementById('analysisResult').innerHTML = 'Analyzing...';
+  google.script.run
+    .withSuccessHandler(result => {
+      const jsonStr = JSON.stringify(result, null, 2);
+      const container = document.getElementById('analysisJSONContainer');
+      container.innerHTML = `<pre>${jsonStr}</pre>`;
+      google.charts.setOnLoadCallback(() => {
+        const data = new google.visualization.DataTable();
+        data.addColumn('number', '#');
+        data.addColumn('string', 'reading');
+        data.addColumn('string', 'word');
+        data.addColumn('string', 'partOfSpeech');
+        data.addColumn('string', 'locale');
+        data.addColumn('string', 'comment');
+        const rows = result.map((row, i) => [
+          i + 1,
+          row.reading || '',
+          row.word || '',
+          row.partOfSpeech || '',
+          row.locale || '',
+          row.comment || ''
+        ]);
+        data.addRows(rows);
+        const table = new google.visualization.Table(document.getElementById('analysisResult'));
+        table.draw(data, {
+          allowHtml: true,
+          showRowNumber: false,
+          width: '100%'
+        });
+      });
+    })
+    .withFailureHandler(error => {
+      document.getElementById('analysisResult').innerHTML = `Error: ${error.message}`;
+    })
+    .doGenerateImeDictionary(userInput);
+};
+
+
+// Attach event listeners using DOMContentLoaded.
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById('analyzeBtn').addEventListener('click', analyzeInput);
+  document.getElementById('analysisJSONContainer').addEventListener('click', toggleAnalysisJSON);
+  document.getElementById('processResults').addEventListener('change', event => {
+    if (event.target && event.target.matches('.previewCheckbox')) {
+      handleCheckboxChange();
+    }
+  });
+});
+
+window.onload = () => {
+  refreshFiles();
+};
+
+document.getElementById('copyPreviewBtn').addEventListener('click', () => {
+  if (previewAggregatedRows && previewAggregatedRows.length > 0) {
+    const jsonStr = JSON.stringify(previewAggregatedRows, null, 2);
+    navigator.clipboard.writeText(jsonStr)
+      .then(() => alert('Preview JSON copied to clipboard!'))
+      .catch(err => alert('Failed to copy: ' + err));
+  } else {
+    alert('No preview data available!');
+  }
+});
+</script>

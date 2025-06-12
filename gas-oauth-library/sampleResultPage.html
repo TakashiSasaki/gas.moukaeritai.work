@@ -1,0 +1,30 @@
+<h1>Who generates this page</h1>
+<p><?=Session.getTemporaryActiveUserKey()?></p>
+<h1>Who created authorization URL</h1>
+<p><?=temporary_active_user_key?></p>
+<h1>Client ID</h1>
+<p><?=client_id?></p>
+<!--
+<h1>Authorization Code</h1>
+<p><?=authorization_code?></p>
+-->
+<h1>Access Token</h1>
+<p><?=access_token?></p>
+<h1>Refresh Token</h1>
+<p><?=refresh_token?></p>
+<h1>Token Type</h1>
+<p><?=token_type?></p>
+<h1>Expires at</h1>
+<p><?=expires_at?></p>
+<!--
+<h1>Timestamp</h1>
+<p><?=timestamp?></p>
+<h1>Expires in</h1>
+<p><?=expires_in?></p>
+-->
+<script>
+  setTimeout(function(){
+    //google.script.host.close();
+    window.top.close();
+  }, 3000);
+</script>

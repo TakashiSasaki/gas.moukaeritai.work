@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <style>
+      table {border-collapse: collapse}
+      td {border-width: 1px; border-style: solid}
+      td.x {background-color: #ffeeff}
+      td.y {background-color: #eeffff}
+      td.z {background-color: #ffffee}
+      code {border: 1px}
+    </style>
+  </head>
+  <body>
+    <table>
+      <tr>
+        <?var base64WebSafeAlphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";?>
+        <td></td>
+        <?for(var i=0; i<64; ++i) { var x=base64WebSafeAlphabet.slice(i,i+1); if( x === undefined ) continue;?>
+          <td class="x"><?=x?></td>
+        <?}?>
+      </tr>
+        <?for(var i=0; i<64; ++i) { var y = base64WebSafeAlphabet.slice(i,i+1); if( y === undefined ) continue;?>
+          <tr><td class="y"><?=y?></td>
+          <? for(var j=0; j<64; ++j) { var x = base64WebSafeAlphabet.slice(j,j+1); if( x === undefined ) continue;?>
+            <td class="z"><?= base64WebSafeXorTable[x][y] === undefined ? "" : base64WebSafeXorTable[x][y] ?></td>
+          <?}?>
+          </tr>
+        <?}?>
+    </table>
+    <code><?=JSON.stringify(base64WebSafeXorTable, undefined, 4)?></code>
+  </body>
+</html>
+
+

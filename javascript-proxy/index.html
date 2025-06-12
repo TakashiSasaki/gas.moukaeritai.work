@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <style>
+    table { 
+      border-collapse: collapse;
+    }
+    td {
+      border-style: solid;
+      border-width: 1px
+    }
+    </style>
+  </head>
+  <body>
+    <h1>What's this</h1>
+    Javascript code in Github can't be used in browsers directly because its Content-Type is "text/plain" in raw mode.
+    This Google Apps Script web service fetches and emits them with "text/javascript" MIME type.
+    Fetched script will be cached for up to 21600 seconds (6 hours) if the size is smaller than 100KB approx.
+    <h1>How to use</h1>
+    <pre>
+&lt;script src="https://script.google.com/macros/s/AKfycbwu69ThF572u9fRQmN0CC8P6g0ymZ1gUtQWQRleNIBJSF1IKms/exec?Script Name" async&gt;&lt;/script&gt;
+    </pre>
+    <h1>Available script names</h1>
+    <table>
+    <tr><th>Script name</th><th>source URL</th></tr>
+    <? for (x in scripts) { ?>
+      <tr>
+      <td><?=x?></td>
+      <td><?=scripts[x]?></td>
+      </tr>
+    <? } ?>
+    </table>
+    <h1>Author</h1>
+    
+    <a href="https://twitter.com/TakashiSasaki">Takashi SASAKI</a>
+    <blockquote class="twitter-tweet" data-conversation="none" data-lang="ja"><p lang="und" dir="ltr"><a href="https://t.co/jZjUWHsWah">pic.twitter.com/jZjUWHsWah</a></p>&mdash; Takashi SASAKI 佐々木隆志 (@TakashiSasaki) <a href="https://twitter.com/TakashiSasaki/status/907867727175458816?ref_src=twsrc%5Etfw">2017年9月13日</a></blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+  </body>
+</html>
+
+

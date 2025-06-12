@@ -1,0 +1,56 @@
+<section id="pchoice">
+  <h3>Q.　以下の仮想の物件のなかから、あなたにとって最も望ましい物件を1つだけお選びください。
+    <br />　　なお、「家賃」 、「間取り」 、「築年数」 、「浴室・トイレ」以外の要因についてはすべて同じであるとします。
+  </h3>
+  <br />
+  <table border="1" width="75%" height="200" id="tablepc"><tr>
+  <td width="150" height="80" align="center"></td>
+      <td width="150" height="80" align="center">
+        <input type="radio" class="geomsize" name="pchoice" value="1" onclick="recordPchoice(this)">
+      </td>
+      <td width="150" height="80" align="center">
+        <input type="radio" class="geomsize" name="pchoice" value="2" onclick="recordPchoice(this)">
+      </td>
+      <td width="150" height="80" align="center">
+        <input type="radio" class="geomsize" name="pchoice" value="3" onclick="recordPchoice(this)">
+      </td>
+      <td width="150" height="80" align="center">
+        <input type="radio" class="geomsize" name="pchoice" value="4" onclick="recordPchoice(this)">
+      </td>
+      <td width="150" height="80" align="center">
+        <input type="radio" class="geomsize" name="pchoice" value="5" onclick="recordPchoice(this)">
+      </td>
+      <td width="150" height="80" align="center">
+        <input type="radio" class="geomsize" name="pchoice" value="6" onclick="recordPchoice(this)">
+      </td></tr>
+    <?!=getNm()?><?!=getTr("cc00")?>
+  </table>
+  <br clear="all">
+  <br />
+  <hr>
+  <button onclick="show_prank00()" id="button00">次へ</button>
+  <hr>
+  <script>
+function show_prank00() {
+	end_pchoice00 = (new Date()).getTime();
+	var sections = document.getElementsByTagName("section");
+	for (var i = 0; i < sections.length; ++i) {
+		sections[i].style.display = "none";
+	}
+	document.getElementById("prank00").style.display = "block";
+}
+    
+    
+function recordPchoice(element) {
+    //       var start_time = start_time;            //誰が
+	var click_time = (new Date()).getTime(); //いつ
+	//var element_id = element.id; //何を
+	var element_value = element.value; //値
+	var element_checked = element.checked; //チェック状態
+	google.script.run.withFailureHandler(function () {
+    }).withSuccessHandler(function () {
+    }).recordPchoice(start_time, start_pchoice, click_time,"pchoice",element_value,element_checked);
+}
+recordPchoice(element);
+</script>
+</section>

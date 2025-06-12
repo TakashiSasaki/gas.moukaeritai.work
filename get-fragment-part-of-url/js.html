@@ -1,0 +1,16 @@
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<script>
+  $(function(){
+    $("input[name='sandbox']").val(<?=sandbox?>);
+    $("input[name='hash']").val(location.hash);
+    $("input[name='host']").val(location.host);
+    $("input[name='hostname']").val(location.hostname);
+    $("input[name='href']").val(location.href);
+    $("input[name='pathname']").val(location.pathname);
+    $("input[name='port']").val(location.port);
+    $("input[name='protocol']").val(location.protocol);
+    $("input[name='search']").val(location.search);
+    $("input[name='referrer']").val(document.referrer);
+  });
+</script>

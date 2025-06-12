@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <title>Aggregate IME dictionaries in Google Drive</title>
+    <?!= HtmlService.createHtmlOutputFromFile("style").getContent(); ?>
+  </head>
+  <body>
+    <div id="stage1">
+      <div id="fileTable">
+        <p>Loading file list...</p>
+      </div>
+    </div>
+
+    <div id="stage2">
+      <div id="processResults">
+        <p>Processing files...</p>
+      </div>
+      <!-- New element for displaying the sum of Tab-Containing Line Count -->
+      <div id="tabCountSum" style="text-align: right; margin-top: 5px;"></div>
+    </div>
+
+    <div id="stage3">
+      <div id="previewLoading">Loading preview...</div>
+      <!-- The preview container now includes a row count element above the preview table -->
+      <div id="previewContainer">
+        <div id="previewRowCount" style="text-align: right; margin-bottom: 5px;"></div>
+        <div id="previewArea"></div>
+      </div>
+    </div>
+
+    <div id="stage4">
+      <h3>Analysis</h3>
+      <button id="analyzeBtn">Analyze Preview</button>
+      <!-- New Copy Preview JSON button placed next to Analyze Preview -->
+      <button id="copyPreviewBtn">Copy Preview JSON</button>
+      <div id="analysisResult"></div>
+      <!-- Removed inline onclick; event will be attached via JS -->
+      <div id="analysisJSONContainer" class="collapsible collapsed"></div>
+    </div>
+
+    <script src="https://www.gstatic.com/charts/loader.js"></script>
+    <script>
+      google.charts.load('current', {'packages':['table']});
+    </script>
+    <?!= HtmlService.createHtmlOutputFromFile("script").getContent(); ?>
+  </body>
+</html>

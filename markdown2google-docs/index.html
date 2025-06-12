@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <!-- Responsive viewport for mobile devices -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Markdown2Docs Live Preview</title>
+  <style>
+    /* Container for paste button (to replace the header) */
+    .paste-container {
+      text-align: center;
+      margin-top: 10px;
+      margin-bottom: 10px;
+    }
+
+    #pasteButton {
+      font-size: 16px;
+      padding: 10px 20px;
+      cursor: pointer;
+    }
+
+    /* Container for regenerate button and title input */
+    .title-container {
+      display: flex;
+      align-items: center;
+      margin-top: 10px;
+      margin-bottom: 10px;
+    }
+
+    /* Regenerate button styling (placed to the left) */
+    #regenerateTitleButton {
+      height: 30px;
+      margin-right: 5px;
+      font-size: 16px;
+      padding: 5px;
+      cursor: pointer;
+    }
+
+    #docTitle {
+      flex-grow: 1;
+      height: 30px;
+      font-size: 16px;
+      padding: 5px;
+    }
+
+    #markdownInput {
+      width: 100%;
+      height: 200px;
+      font-family: monospace;
+    }
+
+    /* Preview area with faint background color */
+    #preview {
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin-top: 10px;
+      background-color: #f0f8ff;
+      /* AliceBlue */
+    }
+
+    pre {
+      background: #f5f5f5;
+      padding: 10px;
+      overflow: auto;
+      font-family: "Courier New", monospace;
+    }
+
+    .display-math {
+      background: #e8f0fe;
+      padding: 5px;
+      margin: 10px 0;
+    }
+
+    .inline-math {
+      background: #e8f0fe;
+      padding: 2px 4px;
+    }
+
+    #saveButton {
+      margin-top: 10px;
+    }
+
+    #docLink {
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    /* QR Code container styling */
+    #qrCodeContainer {
+      text-align: center;
+      margin-top: 20px;
+      margin-bottom: 20px;
+    }
+
+    #qrcode {
+      display: inline-block;
+      /* これで中央寄せされやすくなる */
+    }
+
+    /* Footer styling */
+    footer {
+      margin-top: 40px;
+      font-size: 0.9em;
+      color: #555;
+      text-align: center;
+    }
+
+    footer hr {
+      margin-bottom: 10px;
+    }
+  </style>
+  <!-- MathJax Configuration: process both inline-math and display-math elements -->
+  <script>
+    window.MathJax = {
+        tex: {
+          inlineMath: [['$', '$'], ['\\(', '\\)']],
+          displayMath: [['$$', '$$'], ['\\[', '\\]']]
+        },
+        options: {
+          // Only process elements having inline-math or display-math in their class list
+          processHtmlClass: /(?:^| )(?:inline-math|display-math)(?: |$)/
+        },
+        svg: {
+          fontCache: 'global'
+        }
+      };
+  </script>
+  <!-- Load MathJax from CDN -->
+  <script type="text/javascript" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <!-- Load QRCode.js from CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+
+<body>
+  <!-- Paste Markdown Text button to replace the header -->
+  <div class="paste-container">
+    <button id="pasteButton" title="Paste Markdown Text">📋 Paste Markdown Text</button>
+  </div>
+
+  <!-- Markdown input area -->
+  <textarea id="markdownInput" placeholder="Paste your Markdown text here"></textarea>
+
+  <!-- Title container moved below the Markdown textarea -->
+  <div class="title-container">
+    <button id="regenerateTitleButton" title="Regenerate Title">🔄 Regenerate Title</button>
+    <input id="docTitle" type="text" placeholder="Enter document title (auto-generated if left blank)" />
+  </div>
+
+  <!-- Save button -->
+  <button id="saveButton">📄 Save as New Document</button>
+  <div id="docLink"></div>
+
+  <h3>Preview:</h3>
+  <div id="preview"></div>
+
+  <!-- QR Code for this page -->
+  <div id="qrCodeContainer">
+    <p>QR Code for this page:</p>
+    <div id="qrcode"></div>
+  </div>
+
+  <!-- Footer: Creator Information in English -->
+  <footer>
+    <hr>
+    <div>
+      Created by: <strong>Takashi Sasaki</strong><br>
+        Contact: <a href="https://x.com/TakashiSasaki" target="_blank">https://x.com/TakashiSasaki</a><br>
+        Year: 2025
+    </div>
+  </footer>
+
+  <script>
+    // Event listener for the paste button using the Clipboard API
+      document.getElementById("pasteButton").addEventListener("click", function () {
+        if (navigator.clipboard && navigator.clipboard.readText) {
+          navigator.clipboard.readText()
+            .then(text => {
+              document.getElementById("markdownInput").value = text;
+              // Trigger the input event so that the live preview is updated
+              document.getElementById("markdownInput").dispatchEvent(new Event("input"));
+            })
+            .catch(err => {
+              alert("Error reading clipboard contents: " + err);
+            });
+        } else {
+          alert("Clipboard paste is not available in this browser.");
+        }
+      });
+
+      // Live preview: update preview as markdown input changes
+      document.getElementById("markdownInput").addEventListener("input", function () {
+        const markdown = this.value;
+        const previewContainer = document.getElementById("preview");
+        previewContainer.innerHTML = "";
+        const contentFragment = parseMarkdownToDOM(markdown);
+        previewContainer.appendChild(contentFragment);
+        // Trigger MathJax typesetting only within the preview container
+        if (window.MathJax) {
+          MathJax.typesetPromise([previewContainer]);
+        }
+      });
+
+      // Auto-generate title when markdown input loses focus
+      document.getElementById("markdownInput").addEventListener("blur", autoFillTitle);
+
+      // Function to auto-fill title if empty and set UI to generating mode
+      function autoFillTitle() {
+        var titleInput = document.getElementById("docTitle");
+        if (titleInput.value.trim() === "") {
+          // Set generating mode: readonly with light pink background
+          titleInput.readOnly = true;
+          titleInput.style.backgroundColor = "#ffe6e6";
+          var markdown = document.getElementById("markdownInput").value;
+          google.script.run.withSuccessHandler(function(autoTitle) {
+            titleInput.value = autoTitle;
+            // Reset UI state
+            titleInput.readOnly = false;
+            titleInput.style.backgroundColor = "";
+          }).generateTitleFromMarkdown(markdown);
+        }
+      }
+
+      // Regenerate title when the regenerate button is clicked
+      document.getElementById("regenerateTitleButton").addEventListener("click", function () {
+        var titleInput = document.getElementById("docTitle");
+        // Set generating mode: readonly with light pink background
+        titleInput.readOnly = true;
+        titleInput.style.backgroundColor = "#ffe6e6";
+        var markdown = document.getElementById("markdownInput").value;
+        google.script.run.withSuccessHandler(function(autoTitle) {
+          titleInput.value = autoTitle;
+          // Reset UI state
+          titleInput.readOnly = false;
+          titleInput.style.backgroundColor = "";
+        }).generateTitleFromMarkdown(markdown);
+      });
+
+      // Save document as Google Docs
+      document.getElementById("saveButton").addEventListener("click", function () {
+        var markdown = document.getElementById("markdownInput").value;
+        var titleInput = document.getElementById("docTitle");
+        // If title is empty then generate one before saving
+        if (titleInput.value.trim() === "") {
+          titleInput.readOnly = true;
+          titleInput.style.backgroundColor = "#ffe6e6";
+          google.script.run.withSuccessHandler(function(autoTitle) {
+            titleInput.value = autoTitle;
+            // Reset UI state
+            titleInput.readOnly = false;
+            titleInput.style.backgroundColor = "";
+            saveDoc(markdown, autoTitle);
+          }).generateTitleFromMarkdown(markdown);
+        } else {
+          saveDoc(markdown, titleInput.value);
+        }
+      });
+
+      // Function to perform the document save
+      function saveDoc(markdown, title) {
+        var linkDiv = document.getElementById("docLink");
+        linkDiv.textContent = "📤 Saving...";
+        google.script.run.withSuccessHandler(function (url) {
+          linkDiv.innerHTML = `✅ Document created: <a href="${url}" target="_blank">${url}</a>`;
+        }).withFailureHandler(function (err) {
+          linkDiv.textContent = "❌ Error: " + err.message;
+        }).convertMarkdownAndCreateDoc(markdown, title);
+      }
+
+      // Function to parse Markdown into DOM nodes for preview
+      function parseMarkdownToDOM(markdown) {
+        var fragment = document.createDocumentFragment();
+        var lines = markdown.split("\n");
+        var inCodeBlock = false;
+        var codeBlockContent = [];
+        var currentList = null;
+
+        for (var i = 0; i < lines.length; i++) {
+          var line = lines[i];
+          var trimmedLine = line.trim();
+
+          if (trimmedLine.startsWith("```")) {
+            if (!inCodeBlock) {
+              inCodeBlock = true;
+              codeBlockContent = [];
+            } else {
+              inCodeBlock = false;
+              var pre = document.createElement("pre");
+              pre.textContent = codeBlockContent.join("\n");
+              fragment.appendChild(pre);
+            }
+            currentList = null;
+            continue;
+          }
+          if (inCodeBlock) {
+            codeBlockContent.push(line);
+            continue;
+          }
+          // Process display math delimited by $$ ... $$
+          if (trimmedLine.startsWith("$$") && trimmedLine.endsWith("$$") && trimmedLine.length > 4) {
+            var mathText = trimmedLine.substring(2, trimmedLine.length - 2).trim();
+            var mathDiv = document.createElement("div");
+            // Wrap display math with \[ and \] delimiters for MathJax rendering
+            mathDiv.className = "display-math";
+            mathDiv.textContent = "\\[ " + mathText + " \\]";
+            fragment.appendChild(mathDiv);
+            currentList = null;
+            continue;
+          }
+          if (trimmedLine.startsWith("#")) {
+            var headingLevel = trimmedLine.match(/^#+/)[0].length;
+            headingLevel = Math.min(Math.max(headingLevel, 1), 6);
+            var headingText = trimmedLine.replace(/^#+\s*/, '');
+            var heading = document.createElement("h" + headingLevel);
+            heading.appendChild(parseInlineMarkdown(headingText));
+            fragment.appendChild(heading);
+            currentList = null;
+            continue;
+          }
+          if (trimmedLine.match(/^\d+\.\s/) || trimmedLine.match(/^[-*]\s/)) {
+            var isNumbered = !!trimmedLine.match(/^\d+\.\s/);
+            var listItemText = trimmedLine.replace(isNumbered ? /^\d+\.\s+/ : /^[-*]\s+/, '');
+            if (currentList && currentList.tagName === (isNumbered ? "OL" : "UL")) {
+              // Reuse current list
+            } else {
+              currentList = document.createElement(isNumbered ? "OL" : "UL");
+              fragment.appendChild(currentList);
+            }
+            var li = document.createElement("li");
+            li.appendChild(parseInlineMarkdown(listItemText));
+            currentList.appendChild(li);
+            continue;
+          } else {
+            currentList = null;
+          }
+          if (trimmedLine !== "") {
+            var p = document.createElement("p");
+            p.appendChild(parseInlineMarkdown(line));
+            fragment.appendChild(p);
+          }
+        }
+        return fragment;
+      }
+
+      // Function to process inline Markdown formatting, including inline math
+      function parseInlineMarkdown(text) {
+        var container = document.createElement("span");
+        // Escape HTML entities
+        text = text.replace(/&/g, "&amp;")
+                   .replace(/</g, "&lt;")
+                   .replace(/>/g, "&gt;");
+        text = text
+          .replace(/`([^`]+)`/g, "<code>$1</code>")
+          .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
+          .replace(/\*([^*]+)\*/g, "<em>$1</em>")
+          .replace(/\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/g, '<a href="$2" target="_blank">$1</a>')
+          // Process inline math: wrap content with \( and \)
+          .replace(/\$([^$]+)\$/g, '<span class="inline-math">\\( $1 \\)</span>');
+        container.innerHTML = text;
+        return container;
+      }
+
+      // Generate QR code for this page using QRCode.js
+      function generateQRCode(url) {
+        // Clear existing code if any
+        var qrContainer = document.getElementById("qrcode");
+        qrContainer.innerHTML = "";
+        new QRCode(qrContainer, {
+          text: url,
+          width: 128,
+          height: 128
+        });
+      }
+
+      // Retrieve the published URL from server side and generate QR code
+      google.script.run.withSuccessHandler(function(url){
+        generateQRCode(url);
+      }).getAppUrl();
+  </script>
+</body>
+
+</html>

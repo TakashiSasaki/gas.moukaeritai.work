@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <?!=HtmlService.createTemplateFromFile("js").evaluate().getContent()?>
+  </head>
+  <body>
+    <div>
+      <table id="sheetList">
+      </table>
+    </div>
+    <script>
+      setTimeout(updateSheetList, 100);
+      
+      function updateSheetList(){
+        google.script.run.withSuccessHandler(function(sheets){
+          var table = document.getElementById("sheetList");
+          table.textContent = null;
+          for(var i=0; i<sheets.length; ++i){
+            var tr = document.createElement("tr");
+            var td = document.createElement("td");
+            var input = document.createElement("input");
+            input.value = sheets[i];
+            input.addEventListener("change", updateSheetName, false);
+            var button = document.createElement("button");
+            button.value = sheets[i];
+            button.addEventListener("click", reloadSheet, false);
+            button.innerText = "reload";
+            td.appendChild(input);
+            td.appendChild(button);
+            tr.appendChild(td);
+            table.appendChild(tr);
+          }
+        }).withFailureHandler(function(){
+        }).getSheetList();
+      }
+      
+      function updateSheetName(event){
+        var input = event.target;
+        var newSheetName = input.value;
+        var button = input.parentNode.getElementsByTagName("button")[0];
+        var oldSheetName = button.value;
+        google.script.run.withSuccessHandler(function(){
+          updateSheetList();
+        }).withFailureHandler(function(){
+          updateSheetList();
+        }).setSheetName(oldSheetName, newSheetName);
+      }
+      
+      function reloadSheet(event){
+        var button = event.target;
+        var sheetName = button.value;
+        google.script.run.withSuccessHandler(function(){
+          updateSheetList();
+        }).withFailureHandler(function(){
+          updateSheetList();
+        }).reloadSheet(sheetName);
+      }
+    </script>
+  </body>
+</html>

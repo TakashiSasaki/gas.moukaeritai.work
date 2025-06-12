@@ -1,0 +1,13 @@
+<script>
+  function fetchRequestToken(){
+google.script.run.withSuccessHandler(x=>{
+document.querySelector("#requestToken").value = x;
+google.script.run.withSuccessHandler(x=>{
+}).withFailureHandler(x=>{
+
+}).getAuthorizationUrl();
+}).withFailureHandler(x=>{
+document.querySelector("#requestToken").value = x;
+}).fetchRequestToken();
+}//fetchRequestToken
+</script>

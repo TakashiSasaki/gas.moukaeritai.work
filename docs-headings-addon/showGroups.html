@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<base target="_top">
+</head>
+
+<body>
+  <div></div>
+	<script>
+window.addEventListener("load", showGroups);
+function showGroups() {
+  google.script.run.withSuccessHandler(function(bodyChildren) {
+    const div = document.querySelector("body>div");
+    for (var i = 0; i < bodyChildren.length; ++i) {
+      div.innerText += JSON.stringify(bodyChildren[i]);
+    } //for
+  }).scanBodyChildren();
+} //showGroups
+	</script>
+</body>
+</html>

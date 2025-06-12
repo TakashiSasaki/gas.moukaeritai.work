@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <base target="_top">
+    <?!= HtmlService.createHtmlOutputFromFile("css").getContent(); ?>
+    </head>
+<body>
+<h1 panel>「愛顔のえひめ商品券」「まつやま幸せ実感商品券」取り扱い店舗</h1>
+<p>
+松山市のプレミアム商品券が使えるお店を現在地や指定した住所をもとに地図上で一覧することができます。
+店舗につけられたマーカーをタップすると店舗名が表示されます。
+スマートフォンでGoogleマップのアプリを起動する機能は現在調整中です。
+</p>
+
+<div class="panel panel1">
+<input type="button" value="現在地周辺のお店を探す" id="button1"/>
+</div>
+
+<div class="panel panel2">
+<label>住所<input id="address"/></label>
+<div><input type="button" value="住所を指定してお店を探す" id="button2"/></div>
+</div>
+
+<div class="panel">
+<div>このページのURLは <a href="https://goo.gl/ryAQ4c">https://goo.gl/ryAQ4c</a>です。</div>
+<div><img src="https://goo.gl/ryAQ4c.qr"/>
+<a href="https://twitter.com/share" class="twitter-share-button" data-url="https://goo.gl/ryAQ4c" data-text="松山市プレミアム商品券「愛顔のえひめ商品券」「まつやま幸せ実感商品券」取り扱い店舗店舗地図" data-dnt="true">Tweet</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+</div>
+<ul>
+<li>このウェブサイトは<a href="http://www.jemcci-gift.jp/shop_list.html" target="_blank">松山商工会議所のウェブサイト</a>に掲載の情報をもとに作成しています。</li>
+<li>このウェブサイトは<a href="https://www.facebook.com/cfdogo" target="_blank">Code for DOGO</a>の取り組みとして<span class="twitter-tweet"><a href="http://twitter.com/TakashiSasaki" target="_blank" class="twitter-tweet">@TakashiSasaki</a></span>が作成しました。</li>
+<li>Code for DOGOは<a href="http://aigid.jp/?page_id=1175" target="_blank">アーバンデータチャレンジ2015（UDC2015）</a>に参加しています。</li>
+<li>このウェブサイトはAndroid 4.4とGoogle Chromeの最新バージョンでのみテストしています。</li>
+<li>このウェブサイトのご利用により生じた不利益や損害については責任を負いかねます。</li>
+</ul>
+<div class="twitter-tweet">
+<blockquote class="twitter-tweet" lang="ja"><p lang="ja" dir="ltr">松山市でプレミアム商品券「愛顔のえひめ商品券」「まつやま幸せ実感商品券」の使えるお店を外出先で見つけるのが面倒っていう声があったので、地図上に表示するページを作ってみた。使用期限も近づいてるしね。（テストは殆どやってない）<a href="https://t.co/hbCHE0KpP6">https://t.co/hbCHE0KpP6</a></p>&mdash; Takashi SASAKI 佐々木隆志 (@TakashiSasaki) <a href="https://twitter.com/TakashiSasaki/status/647159830977777664">2015, 9月 24</a></blockquote>
+<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+</div>
+ <p>このページは<?=incrementCount()?>回表示されました</p>
+  </div>
+  <?!= HtmlService.createHtmlOutputFromFile("js").getContent(); ?>
+</body>
+</html>

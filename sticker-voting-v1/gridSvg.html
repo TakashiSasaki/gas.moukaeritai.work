@@ -1,0 +1,25 @@
+<svg id="gridSvg" opacity="0.9" width="300" height="300" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <pattern id="grid" width="42.857142857142854" height="42.857142857142854" patternUnits="userSpaceOnUse">
+            <rect x="42.857142857142854" y="42.857142857142854" width="42.857142857142854" height="42.857142857142854" fill="url(#innerGrid)" />
+            <pattern id="innerGrid" patternUnits="userSpaceOnUse" width="42.857142857142854" height="42.857142857142854">
+                <path d="M 0 100% L 100% 100% M 100% 0 L 100% 100%" stroke="gray" stroke-width="2" stroke-dasharray="4,4" />
+            </pattern>
+        </pattern>
+        <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+            <path d="M0,0 L0,6 L10,3 z" fill="#000" />
+        </marker>
+    </defs>
+
+    <!-- SVG全体の背景色を設定 -->
+    <rect width="300" height="300" fill="#FFFFE0" />
+
+    <!-- その上にグリッドを描画 -->
+    <rect x="42.857142857142854" y="42.857142857142854" width="214.28571428571428" height="214.28571428571428" fill="url(#grid)" />
+
+    <!-- X軸とY軸を描画 -->
+    <g stroke="black" stroke-width="4" fill="none">
+        <path d="M15,285 L285,285" marker-end="url(#arrow)" /> <!-- X軸 -->
+        <path d="M15,285 L15,15" marker-end="url(#arrow)" /> <!-- Y軸 -->
+    </g>
+</svg>

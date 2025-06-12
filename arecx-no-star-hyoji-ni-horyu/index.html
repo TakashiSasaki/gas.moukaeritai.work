@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+  </head>
+  <body>
+      <input id="host_part" value="<?=PropertiesService.getUserProperties().getProperty('host_part')?>">
+    <button onclick="saveHostPart();" >saveHostPart()</button>
+    <button onclick="getPlayerPage();" >getPlayerPage()</button>
+    <button onclick="openPlayerPage();">openPlayerPage()</button>
+    <?!= HtmlService.createHtmlOutputFromFile("js").getContent()?>
+  </body>
+</html>
+
+

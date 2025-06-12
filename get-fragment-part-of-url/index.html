@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <?!=HtmlService.createHtmlOutputFromFile("css").getContent()?>
+  </head>
+  <body>
+    <p>
+      This is a demo page to get fragment (or hash) part of URL in client side script
+      hosted by Google Apps Script. When you add <cite>#abc</cite> at the end of the URL in address bar, 
+      you'll see it below. This web service is running with NATIVE sandbox mode.
+      In EMULATED sandbox mode, accessing location object is not allowed (I guess it is caused by Caja).
+      In IFRAME sandbox mode, Same Origin Policy disables it. I reported this issue in google-apps-script-issues in Goodle Code.
+      <a href="https://code.google.com/p/google-apps-script-issues/issues/detail?id=5605">Issue 5605:	obtaining fragment part of top window URL from IFRAME sandbox</a>
+      
+      NATIVE mode will be shut down on Jun 30, 2016 as 
+      <a href="https://developers.google.com/apps-script/sunset" target="_blank">Apps Script Sunset Schedule</a> says.
+      I hope I could have workaround to access location object of the top window in IFRAME sandbox.
+    </p>
+    
+    <div>
+      Please try three types of sandbox mode by 
+      reloading <span class="text-primary">https://script.google.com/macros/s/../exec?aaa=bbb#ccc</span>
+      <dl>
+        <dt><a href="https://script.google.com/macros/s/AKfycbxyrBwHW1Fa89GlU06QJ8RRgc0WWr6p_S3czBghW_1E5QQgP3U/exec?aaa=bbb#ccc">with NATIVE sandbox</a></dt>
+        <dd>A client side script in NATIVE sandbox can see location.hash.</dd>
+        <dt><a href="https://script.google.com/macros/s/AKfycbxyrBwHW1Fa89GlU06QJ8RRgc0WWr6p_S3czBghW_1E5QQgP3U/exec?aaa=bbb&sandbox=EMULATED#ccc">with EMULATED sandbox</a></dt>
+        <dd>A client side script in EMULATED sandbox can't see location.hash.</dd>
+        <dt><a href="https://script.google.com/macros/s/AKfycbxyrBwHW1Fa89GlU06QJ8RRgc0WWr6p_S3czBghW_1E5QQgP3U/exec?aaa=bbb&sandbox=IFRAME#ccc">with IFRAME sandbox</a></dt>
+        <dd>A client side script in IFRAME sandbox can't see location.hash. "window.top.location.hash" is also inaccessible because of same origin policy.</dd>
+      </dl>
+    </div>
+    <hr/>
+    <label>current sandbox mode<input readonly="yes" name="sandbox"/></label>
+    <label>location.hash<input name="hash" readonly="true"/></label>
+    <label>location.host<input name="host" readonly="true"/></label>
+    <label>location.hostname<input name="hostname" readonly="true"/></label>
+    <label>location.href<input name="href" readonly="true"/></label>
+    <label>location.pathname<input name="href" readonly="true"/></label>
+    <label>location.port<input name="href" readonly="true"/></label>
+    <label>location.protocol<input name="protocol" readonly="true"/></label>
+    <label>location.search<input name="search" readonly="true"/></label>
+    <label>document.referrer<input name="referrer" readonly="true"/></label>
+
+    <p>
+       <img src="http://chart.googleapis.com/chart?cht=qr&chs=150x150&choe=UTF-8&chld=H&chl=https://goo.gl/loZuuQ?aaa=bbb%23ccc"/>
+       Most of URL shortener service preserves fragment part when redirecting target URL.
+       <cite>https://goo.gl/loZuuQ?aaa=bbb#ccc</cite>
+       is redirected to this page. After redirection, <cite>?aaa=bbb</cite> is dropped while <cite>#ccc</cite> is preserved. 
+       <a href="https://goo.gl/loZuuQ?aaa=bbb#ccc">Try it</a>. QR code is also available for phones.
+       Note that appearance in phones is not fancy because NATIVE and EMULATED sandbox ignores addMetaTag method
+       which is used to set viewport.
+    </p>
+
+    <p>
+      <a href="https://script.google.com/d/1A_kkWBH9eqn08Rir8tv_KdaVyYZkJt487UD69qAbQ0fGHCjKKTPwhC0H/edit?usp=sharing">source code of this page</a>
+    </p>
+    <hr/>
+    <p>This page is requested <?=count()?> times</p>
+    <p>by Takashi SASAKI <a href="http://twitter.com">@TakashiSasaki</a>
+    <?!=HtmlService.createTemplateFromFile("js").evaluate().getContent()?>
+  </body>
+</html>
