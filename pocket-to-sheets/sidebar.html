@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <base target="_top">
+  <style>
+    input {
+      width: 95%;
+    }
+
+    form {
+      border-style: solid;
+      margin-top: 0.5em;
+      margin-bottom: 0.5em;
+    }
+  </style>
+</head>
+
+<body>
+  sidebar
+  <a href="">Get access token</a>
+  <input/>
+
+  <form>
+    <label for="requestToken">Last Request Token</label>
+    <input id="requestToken" readonly value="<?= PropertiesService.getUserProperties().getProperty('requestToken'); ?>"/>
+    <button onclick="fetchRequestToken()">Get request token</button>
+  </form>
+  <script>
+    function fetchRequestToken(){
+ google.script.run.withSuccessHandler(x=>{
+         document.querySelector("#requestToken").value = x;
+         google.script.run.withSuccessHandler(x=>{
+  }).withFailureHandler(x=>{
+           
+         }).getAuthorizationUrl();
+      }).withFailureHandler(x=>{
+         document.querySelector("#requestToken").value = x;
+      }).fetchRequestToken();
+    }//fetchRequestToken
+  </script>
+
+  <a id="authorizationUrl" href="<?= PropertiesService.getUserProperties().getProperty('authorizationUrl'); ?>">
+    last authorization URL
+  </a>
+
+</body>
+
+</html>

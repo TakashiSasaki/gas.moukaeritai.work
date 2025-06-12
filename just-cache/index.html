@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <base target="_top">
+  <?!=HtmlService.createHtmlOutputFromFile("style").getContent()?>
+</head>
+
+<body>
+  <fieldset id="namespaceFieldset">
+    <legend>namespace</legend>
+    <label>Clear namespace <input value="<?=clearNamespace?>"></label>
+    <label>Hashed namespace <input id="hashedNamespaceInput" value="<?=hashedNamespace?>"></label>
+  </fieldset>
+
+  <fieldset id="getFieldset" class="kv">
+    <legend><button>get</button></legend>
+    <label>key<input value="key1"></label>
+
+    <script type="module">
+      window.addEventListener("load", loadEvent=>{
+        document.querySelector("#getFieldset button").addEventListener("click", clickEvent=>{
+          const hashedNamespace = document.querySelector("#hashedNamespaceInput").value;
+          const key = document.querySelector("#getFieldset input").value;
+          google.script.run.withSuccessHandler(result=>{
+            document.querySelector("textarea").value = JSON.stringify(result);
+          }).get(key, hashedNamespace);
+        });
+      });
+    </script>
+  </fieldset>
+
+  <fieldset id="getAllFieldset" class="kv">
+    <legend><button>getAll</button></legend>
+    <label>key1<input value="key1"></label>
+    <label>key2<input value="key2"></label>
+    <label>key3<input value="key3"></label>
+    <script type="module">
+      window.addEventListener("load", loadEvent=>{
+        document.querySelector("#getAllFieldset button").addEventListener("click", clickEvent=>{
+          const hashedNamespace = document.querySelector("#hashedNamespaceInput").value;
+          const keys = [
+            document.querySelectorAll("#getAllFieldset input")[0].value,
+            document.querySelectorAll("#getAllFieldset input")[1].value,
+            document.querySelectorAll("#getAllFieldset input")[2].value,
+          ];
+          google.script.run.withSuccessHandler(result=>{
+            document.querySelector("textarea").value = JSON.stringify(result,null,2);
+          }).getAll(keys, hashedNamespace);
+        });
+      });
+    </script>
+  </fieldset>
+
+  <fieldset id="putFieldset" class="kv">
+    <legend><button>put</button></legend>
+    <label>key<input value="key1"></label>
+    <label>value<input value="value1"></label>
+    <script type="module">
+      window.addEventListener("load", loadEvent=>{
+        document.querySelector("#putFieldset button").addEventListener("click", clickEvent=>{
+          const hashedNamespace = document.querySelector("#hashedNamespaceInput").value;
+          const key = document.querySelectorAll("#putFieldset input")[0].value;
+          const value = document.querySelectorAll("#putFieldset input")[1].value;
+          google.script.run.withSuccessHandler(result=>{
+            document.querySelector("textarea").value = JSON.stringify(result);
+          }).put(key, value, hashedNamespace);
+        });
+      });
+    </script>
+  </fieldset>
+
+  <fieldset id="putAllFieldset" class="kv">
+    <legend><button>putAll</button></legend>
+    <label>key1<input value="key1"></label><label>value1<input value="value1"></label>
+    <label>key2<input value="key2"></label><label>value2<input value="value2"></label>
+    <label>key3<input value="key3"></label><label>value3<input value="value3"></label>
+    <script type="module">
+      window.addEventListener("load", loadEvent=>{
+        document.querySelector("#putAllFieldset button").addEventListener("click", clickEvent=>{
+          const hashedNamespace = document.querySelector("#hashedNamespaceInput").value;
+          const o= {};
+          o[document.querySelectorAll("#putAllFieldset input")[0].value] 
+             = document.querySelectorAll("#putAllFieldset input")[1].value;
+          o[document.querySelectorAll("#putAllFieldset input")[2].value] 
+             = document.querySelectorAll("#putAllFieldset input")[3].value;
+          o[document.querySelectorAll("#putAllFieldset input")[4].value] 
+             = document.querySelectorAll("#putAllFieldset input")[5].value;
+          console.log(o);
+          google.script.run.withSuccessHandler(result=>{
+            document.querySelector("textarea").value = JSON.stringify(result);
+          }).putAll(o, hashedNamespace);
+        });
+      });
+    </script>
+
+  </fieldset>
+  <fieldset id="removeFieldset" class="kv">
+    <legend><button>remove</button></legend>
+    <label>key<input value="key1"></label>
+    <script type="module">
+      window.addEventListener("load", loadEvent=>{
+        document.querySelector("#removeFieldset button").addEventListener("click", clickEvent=>{
+          const hashedNamespace = document.querySelector("#hashedNamespaceInput").value;
+          const key = document.querySelector("#removeFieldset input").value;
+          google.script.run.withSuccessHandler(result=>{
+            document.querySelector("textarea").value = JSON.stringify(result);
+          }).remove(key, hashedNamespace);
+        });
+      });
+    </script>
+  </fieldset>
+
+  <fieldset id="removeAllFieldset" class="kv">
+    <legend><button>removeAll</button></legend>
+    <label>key1<input value="key1"></label>
+    <label>key2<input value="key2"></label>
+    <label>key3<input value="key3"></label>
+    <script type="module">
+      window.addEventListener("load", loadEvent=>{
+        document.querySelector("#removeAllFieldset button").addEventListener("click", clickEvent=>{
+          const hashedNamespace = document.querySelector("#hashedNamespaceInput").value;
+          const keys = [
+            document.querySelectorAll("#removeAllFieldset input")[0].value,
+            document.querySelectorAll("#removeAllFieldset input")[1].value,
+            document.querySelectorAll("#removeAllFieldset input")[2].value,
+          ];
+          google.script.run.withSuccessHandler(result=>{
+            document.querySelector("textarea").value = JSON.stringify(result,null,2);
+          }).removeAll(keys, hashedNamespace);
+        });
+      });
+    </script>
+  </fieldset>
+
+  <fieldset>
+    <legend>result</legend>
+    <textarea readonly></textarea>
+  </fieldset>
+
+  <fieldset id="summaryFieldset">
+    <legend>summary</legend>
+    <label>Script ID <input value="1ye0LXwZ4NyWjO8jnljnGDXMyNDSsAsFotCeMVcC3dtr0gLVOgGEXVZlg" readonly></label>
+    <label>Web App <input value="<?=ScriptApp.getService().getUrl()?>" readonly></label>
+    <label>Base URL <input value="<?=getBaseUrl()?>" readonly></label>
+  </fieldset>
+
+  <fieldset id="apiFieldset">
+    <legend>API</legend>
+    <label>Clear namespace <input placeholder="Use a string that is hard to guess as the namespace name"/></label>
+    <label>POST endpoint <input readonly/></label>
+    <label>GET endpoint <input readonly/></label>
+    <script type="module">
+      window.addEventListener("load", loadEvent=>{
+        document.querySelectorAll("#apiFieldset input")[0].addEventListener("change", changeEvent=>{
+          const clearNamespace = changeEvent.target.value;
+          const baseUrl = document.querySelectorAll("#summaryFieldset input")[2].value;
+          google.script.run.withSuccessHandler(postEndpointPath=>{
+            const postEndpointUrl = baseUrl + "/" + postEndpointPath;
+            document.querySelectorAll("#apiFieldset input")[1].value = postEndpointUrl;
+          }).getPostEndpointPath(clearNamespace);
+          google.script.run.withSuccessHandler(getEndpointPath=>{
+            const getEndpointUrl = baseUrl + "/" + getEndpointPath;
+            document.querySelectorAll("#apiFieldset input")[2].value = getEndpointUrl;
+          }).getGetEndpointPath(clearNamespace);
+        });
+      });
+    </script>
+  </fieldset>
+</body>
+
+</html>

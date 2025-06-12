@@ -1,0 +1,95 @@
+<section id="prank02">
+   <h3>Q.　以下の仮想の物件のなかから、あなたにとって望ましい順に、<div0>最大2つ</div0>まで順位をつけてください。
+   </h3>
+   <br />   
+   <table border="1" width="75%" height="200">
+      <tr>
+      <td width="150" height="80" align="center"></td>
+         <td width="150" height="80" align="center">
+            <select name="順位" id="prank201" onchange="recordPrank02(this)">
+               <option value="0">順位</option>
+               <option value="1">1位</option>
+               <option value="2">2位</option>
+            </select>
+         </td>
+         <td width="150" height="80" align="center">
+            <select name="順位" id="prank202" onchange="recordPrank02(this)">
+               <option value="0">順位</option>
+               <option value="1">1位</option>
+               <option value="2">2位</option>
+            </select>
+         </td>
+         <td width="150" height="80" align="center">
+            <select name="順位" id="prank203" onchange="recordPrank02(this)">
+               <option value="0">順位</option>
+               <option value="1">1位</option>
+               <option value="2">2位</option>
+            </select>
+         </td>
+         <td width="150" height="80" align="center">
+            <select name="順位" id="prank204" onchange="recordPrank02(this)">
+               <option value="0">順位</option>
+               <option value="1">1位</option>
+               <option value="2">2位</option>
+            </select>
+         </td>
+         <td width="150" height="80" align="center">
+            <select name="順位" id="prank205" onchange="recordPrank02(this)">
+               <option value="0">順位</option>
+               <option value="1">1位</option>
+               <option value="2">2位</option>
+            </select>
+         </td>
+         <td width="150" height="80" align="center">
+            <select name="順位" id="prank206" onchange="recordPrank02(this)">
+               <option value="0">順位</option>
+               <option value="1">1位</option>
+               <option value="2">2位</option>
+            </select>
+         </td>
+      </tr>
+      <?!=getNm()?> <?!=getTr("cc00"); ?>
+   </table>
+   <br clear="all"><br />
+   <hr>
+   <button id="button01" onclick="show_pbest00();">次へ</button>
+   <hr>
+</section>
+<script>
+function show_pbest00() {
+	var values = [];
+	values[0] = document.getElementById("prank201").value;
+	values[1] = document.getElementById("prank202").value;
+	values[2] = document.getElementById("prank203").value;
+	values[3] = document.getElementById("prank204").value;
+	values[4] = document.getElementById("prank205").value;
+	values[5] = document.getElementById("prank206").value;
+	var counts = [0, 0, 0];
+	for (var i in values) {
+		counts[values[i]] += 1;
+	}
+	if (!(counts[1] === 1 && counts[2] <= counts[1])){
+		alert("重複している，または順位が入力されていません。");
+		return;
+    }
+//    alert("ありがとうございました");
+    end_prank02 = (new Date()).getTime();
+	var sections = document.getElementsByTagName("section");
+	for (var i = 0; i < sections.length; ++i) {
+		sections[i].style.display = "none";
+	}
+	document.getElementById("pbest00").style.display = "block";
+}
+
+function recordPrank02(element) {
+	//       var start_time = start_time;            //誰が
+	var click_time = (new Date()).getTime(); //いつ
+	var element_id = element.id; //何を
+	var element_value = element.value; //値
+	var element_checked = element.checked; //チェック状態
+	google.script.run.withFailureHandler(function () {
+    }).withSuccessHandler(function () {
+    }).recordPrank02(start_time, end_prank01,click_time, element_id, element_value);
+  }
+recordPrank02(element);
+</script>

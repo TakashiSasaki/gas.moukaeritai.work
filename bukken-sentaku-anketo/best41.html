@@ -1,0 +1,86 @@
+<section id="best41">
+   <h3>Q.　以下の仮想の物件のなかから、あなたにとって望ましい物件を<div0>最大3つ</div0>選んでチェックしてください。</h3>
+     <br />     
+     
+   <table border="1" width="75%" height="200" id="table41" >
+   <tr><td width="150" height="80" align="center"></td>
+         <td width="150" height="80" align="center"><input type="checkbox" class="geomsize" value="1" id="best411" onclick="recordbest41(this);cnt41();"></td>
+         <td width="150" height="80" align="center"><input type="checkbox" class="geomsize" value="2" id="best412" onclick="recordbest41(this);cnt41();"></td>
+         <td width="150" height="80" align="center"><input type="checkbox" class="geomsize" value="3" id="best413" onclick="recordbest41(this);cnt41();"></td>
+         <td width="150" height="80" align="center"><input type="checkbox" class="geomsize" value="4" id="best414" onclick="recordbest41(this);cnt41();"></td>
+         <td width="150" height="80" align="center"><input type="checkbox" class="geomsize" value="5" id="best415" onclick="recordbest41(this);cnt41();"></td>
+         <td width="150" height="80" align="center"><input type="checkbox" class="geomsize" value="6" id="best416" onclick="recordbest41(this);cnt41();"></td>
+  </tr>
+   <?!=getNm()?><?!=getTr("cc41"); ?>        
+   </table>
+   <br /> 
+   <div id="Box41">チェックを入れてください。</div>
+   <style>
+   div0 { color:red; } 
+      
+   </style>
+   <br clear="all"><br />
+   <hr>
+   <button onclick="show_best14();">次へ</button>
+   <hr>
+   <script>
+   function cnt41() {
+   var Myobj = document.getElementById("table41"); // id名が "ptable00"内のオブジェクトを Myobj に格納
+   var Mytag = Myobj.getElementsByTagName("input"); // Myobj 内の "input"タグ要素を格納
+   var chksuu = 0; //チェックの数のカウンタ
+　　　for (var i = 0; i < Mytag.length; i ++) { //Mytag.length; チェックボックスの数
+　　　　　if (Mytag[i].checked == true) { //checked == trueであればチェック有り
+　　　　　　　　chksuu ++; // trueであれば １ずつ加算します
+　　　　　　　　　　　}
+　　　　　}
+　　　　　      msg = "チェックの数は " + chksuu + "個です";
+              document.getElementById("Box41").innerHTML=msg; // メッセージを"tBox"に書き込みます
+    }
+
+    function show_best14() {
+	var tableElement = document.getElementById("table41");
+	var row = tableElement.rows[0];
+	var cells = row.cells;
+	var trueCount = 0;
+	for (var i in cells) {
+		var cell = cells[i];
+		if (cell === undefined || cell === null) {
+			continue;
+		}
+		if (cell.children === undefined || cell.children === null) {
+			continue;
+		}
+		var inputElement = cell.children[0];
+		if (inputElement === undefined || inputElement === null) {
+			continue;
+		}
+		if (inputElement.checked) {
+			trueCount += 1;
+		}
+	} 
+	if (trueCount == 0) {
+	   alert("チェックされていません。");  
+	} else if (trueCount >= 4){
+		alert("4個以上選ばれています。");
+    }else{
+		//ここに次のページへの遷移のためのコードを書く
+       var sections = document.getElementsByTagName("section");
+       end_best41=(new Date()).getTime();
+       for(var i=0; i<sections.length; ++i) {
+       sections[i].style.display="none";
+       }
+       document.getElementById("best14").style.display="block";                
+     }
+	}
+     function recordbest41(element){
+//       var start_time = start_time;            //誰が
+       var click_time = (new Date()).getTime();  //いつ
+       var element_value = element.value;        //値
+       var element_checked = element.checked;    //チェック状態
+       google.script.run.withFailureHandler(function(){
+       }).withSuccessHandler(function(){
+       }).recordbest41(start_time, end_hosoku3, click_time, "best41", element_value, element_checked);
+     } recordbest41(element);
+
+   </script>
+</section>

@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <base target="_top">
+  </head>
+  <style>
+    <!--
+      #hosoku1 { background-color : #ffffff; }
+      #hosoku2 { background-color : #ffffff; display:none;}
+      #hosoku3 { background-color : #ffffff; display:none;}
+      #last { background-color : #ffffff; display:none;}
+      #kojin { background-color : #ffffff; display:none;}
+     
+      #pchoice { background-color : #ffffff; display:none;}
+      #prank00 { background-color : #ffffff; display:none;}
+      #prank01 { background-color : #ffffff; display:none;}
+      #prank02 { background-color : #ffffff; display:none;}
+      #pbest00 { background-color : #ffffff; display:none;}
+      #pbest01 { background-color : #ffffff; display:none;}
+      #pbest02 { background-color : #ffffff; display:none;}
+      
+      #choice01 { background-color : #ffffff; display:none;}
+      #choice02 { background-color : #ffffff; display:none;}
+      #choice03 { background-color : #ffffff; display:none;}
+      #choice04 { background-color : #ffffff; display:none;}
+      
+      #rank01 { background-color : #ffffff; display:none;}
+      #rank02 { background-color : #ffffff; display:none;}
+      #rank03 { background-color : #ffffff; display:none;}
+      #rank04 { background-color : #ffffff; display:none;}
+      #rank11 { background-color : #ffffff; display:none;}
+      #rank12 { background-color : #ffffff; display:none;}
+      #rank13 { background-color : #ffffff; display:none;}
+      #rank14 { background-color : #ffffff; display:none;}
+      #rank21 { background-color : #ffffff; display:none;}
+      #rank22 { background-color : #ffffff; display:none;}
+      #rank23 { background-color : #ffffff; display:none;}
+      #rank24 { background-color : #ffffff; display:none;}
+      #rank31 { background-color : #ffffff; display:none;}
+      #rank32 { background-color : #ffffff; display:none;}
+      #rank33 { background-color : #ffffff; display:none;}
+      #rank34 { background-color : #ffffff; display:none;}
+      #rank41 { background-color : #ffffff; display:none;}
+      #rank42 { background-color : #ffffff; display:none;}
+      #rank43 { background-color : #ffffff; display:none;}
+      #rank44 { background-color : #ffffff; display:none;}
+      
+      #best01 { background-color : #ffffff; display:none;}
+      #best02 { background-color : #ffffff; display:none;}
+      #best03 { background-color : #ffffff; display:none;}
+      #best04 { background-color : #ffffff; display:none;}
+      #best11 { background-color : #ffffff; display:none;}
+      #best12 { background-color : #ffffff; display:none;}
+      #best13 { background-color : #ffffff; display:none;}
+      #best14 { background-color : #ffffff; display:none;}
+      #best21 { background-color : #ffffff; display:none;}
+      #best22 { background-color : #ffffff; display:none;}
+      #best23 { background-color : #ffffff; display:none;}
+      #best24 { background-color : #ffffff; display:none;}
+      #best31 { background-color : #ffffff; display:none;}
+      #best32 { background-color : #ffffff; display:none;}
+      #best33 { background-color : #ffffff; display:none;}
+      #best34 { background-color : #ffffff; display:none;}
+      #best41 { background-color : #ffffff; display:none;}
+      #best42 { background-color : #ffffff; display:none;}
+      #best43 { background-color : #ffffff; display:none;}
+      #best44 { background-color : #ffffff; display:none;}
+      
+      #rest01 { background-color : #ffffff; display:none;}
+      #rest02 { background-color : #ffffff; display:none;}
+      #rest03 { background-color : #ffffff; display:none;}
+      
+      button {font-size:2em}
+      select {font-size:2em}
+      body {font-size:1.5em}
+      
+      input.geomsize {width: 3em;height: 3em; }
+    -->
+  </style>
+  <body>
+      <?!=HtmlService.createHtmlOutputFromFile("hosoku1").getContent();?>      
+      <?!=HtmlService.createHtmlOutputFromFile("hosoku2").getContent();?>
+      <?!=HtmlService.createHtmlOutputFromFile("hosoku3").getContent();?>
+      <?!=HtmlService.createHtmlOutputFromFile("last").getContent();?>      
+      <?!=HtmlService.createHtmlOutputFromFile("rest01").getContent();?>
+      <?!=HtmlService.createHtmlOutputFromFile("rest02").getContent();?>
+      <?!=HtmlService.createHtmlOutputFromFile("rest03").getContent();?>
+      
+      <?!=HtmlService.createHtmlOutputFromFile("kojin").getContent();?>
+      
+      <?!=HtmlService.createTemplateFromFile("pchoice").evaluate().getContent();?>      
+      <?!=HtmlService.createTemplateFromFile("prank00").evaluate().getContent();?> 
+      <?!=HtmlService.createTemplateFromFile("prank01").evaluate().getContent();?>
+      <?!=HtmlService.createTemplateFromFile("prank02").evaluate().getContent();?>
+      <?!=HtmlService.createTemplateFromFile("pbest00").evaluate().getContent();?>
+      <?!=HtmlService.createTemplateFromFile("pbest01").evaluate().getContent();?>
+      <?!=HtmlService.createTemplateFromFile("pbest02").evaluate().getContent();?>
+      
+      <?!=HtmlService.createTemplateFromFile("choice01").evaluate().getContent();?> 
+      <?!=HtmlService.createTemplateFromFile("choice02").evaluate().getContent();?>
+      <?!=HtmlService.createTemplateFromFile("choice03").evaluate().getContent();?>
+      <?!=HtmlService.createTemplateFromFile("choice04").evaluate().getContent();?>
+      
+      <?!=HtmlService.createTemplateFromFile("rank01").evaluate().getContent();?> 
+      <?!=HtmlService.createTemplateFromFile("rank02").evaluate().getContent();?>
+      <?!=HtmlService.createTemplateFromFile("rank03").evaluate().getContent();?>
+      <?!=HtmlService.createTemplateFromFile("rank04").evaluate().getContent();?>
+      <?!=HtmlService.createTemplateFromFile("rank11").evaluate().getContent();?> 
+      <?!=HtmlService.createTemplateFromFile("rank12").evaluate().getContent();?>
+      <?!=HtmlService.createTemplateFromFile("rank13").evaluate().getContent();?>
+      <?!=HtmlService.createTemplateFromFile("rank14").evaluate().getContent();?>
+      <?!=HtmlService.createTemplateFromFile("rank21").evaluate().getContent();?> 
+      <?!=HtmlService.createTemplateFromFile("rank22").evaluate().getContent();?>
+      <?!=HtmlService.createTemplateFromFile("rank23").evaluate().getContent();?>
+      <?!=HtmlService.createTemplateFromFile("rank24").evaluate().getContent();?>
+      <?!=HtmlService.createTemplateFromFile("rank31").evaluate().getContent();?> 
+      <?!=HtmlService.createTemplateFromFile("rank32").evaluate().getContent();?>
+      <?!=HtmlService.createTemplateFromFile("rank33").evaluate().getContent();?>
+      <?!=HtmlService.createTemplateFromFile("rank34").evaluate().getContent();?>
+      <?!=HtmlService.createTemplateFromFile("rank41").evaluate().getContent();?> 
+      <?!=HtmlService.createTemplateFromFile("rank42").evaluate().getContent();?>
+      <?!=HtmlService.createTemplateFromFile("rank43").evaluate().getContent();?>
+      <?!=HtmlService.createTemplateFromFile("rank44").evaluate().getContent();?>
+      
+      <?!=HtmlService.createTemplateFromFile("best01").evaluate().getContent();?>
+      <?!=HtmlService.createTemplateFromFile("best02").evaluate().getContent();?>
+      <?!=HtmlService.createTemplateFromFile("best03").evaluate().getContent();?>
+      <?!=HtmlService.createTemplateFromFile("best04").evaluate().getContent();?>
+      <?!=HtmlService.createTemplateFromFile("best11").evaluate().getContent();?>
+      <?!=HtmlService.createTemplateFromFile("best12").evaluate().getContent();?>
+      <?!=HtmlService.createTemplateFromFile("best13").evaluate().getContent();?>
+      <?!=HtmlService.createTemplateFromFile("best14").evaluate().getContent();?>
+      <?!=HtmlService.createTemplateFromFile("best21").evaluate().getContent();?>
+      <?!=HtmlService.createTemplateFromFile("best22").evaluate().getContent();?>
+      <?!=HtmlService.createTemplateFromFile("best23").evaluate().getContent();?>
+      <?!=HtmlService.createTemplateFromFile("best24").evaluate().getContent();?>
+      <?!=HtmlService.createTemplateFromFile("best31").evaluate().getContent();?>
+      <?!=HtmlService.createTemplateFromFile("best32").evaluate().getContent();?>
+      <?!=HtmlService.createTemplateFromFile("best33").evaluate().getContent();?>
+      <?!=HtmlService.createTemplateFromFile("best34").evaluate().getContent();?>
+      <?!=HtmlService.createTemplateFromFile("best41").evaluate().getContent();?>
+      <?!=HtmlService.createTemplateFromFile("best42").evaluate().getContent();?>
+      <?!=HtmlService.createTemplateFromFile("best43").evaluate().getContent();?>
+      <?!=HtmlService.createTemplateFromFile("best44").evaluate().getContent();?>
+      
+      </body>    
+
+<section>
+   アンケート<a href="https://goo.gl/MtFDSv">https://goo.gl/MtFDSv</a> 
+</section>     
+<script>
+    start_time = (new Date()).getTime();
+
+//
+  </script>
+</html>

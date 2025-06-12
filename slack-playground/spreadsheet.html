@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <base target="_top">
+  <?!=HtmlService.createTemplateFromFile("style").evaluate().getContent();?>
+</head>
+
+<body>
+  <h1>Spreadsheet ID</h1>
+  <div>
+    <input value="<?=UserProperties.getProperty('spreadsheet_id');?>" placeholder="Spreadsheet ID" id="spreadsheet_id">
+  </div>
+  <div>
+    <a>Open the spredsheet</a>
+  </div>
+  <div>
+    <button onclick="createNewSpreadsheet();">Create new spreadsheet</button>
+    <button onclick="setExistingSpreadsheetId()">Set xxisting spreadsheet ID</button>
+    <button onclick="resetSpreadsheetId()">Reset spreadsheet ID</button>
+  </div>
+  <script>
+    function createNewSpreadsheet(){
+      alert("createNewSpreadsheet");
+      google.script.run.withSuccessHandler(spreadsheet_id=>{
+        document.querySelector("#spreadsheet_id").value=spreadsheet_id;
+      }).withFailureHandler(e=>{
+        alert("Failed to create new spreadsheet.");
+      }).createNewSpreadsheet();
+    }
+    function resetSpreadsheetId(){
+      google.script.run.withSuccessHandler(()=>{
+
+      }).withFailureHandler(()=>{
+
+      }).resetSpreadsheetId();
+    }
+  </script>
+</body>
+
+</html>

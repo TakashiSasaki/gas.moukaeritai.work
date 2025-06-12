@@ -1,0 +1,145 @@
+<script>
+function FilePicker() {
+  var self = this;
+  self.oauthToken;
+
+  self.DOCS = function(callback){
+    self.show(google.picker.ViewId.DOCS, callback);
+  }
+  
+  self.DOCS_IMAGES = function(callback){
+    self.show(google.picker.ViewId.DOCS_IMAGES, callback);
+  }
+  
+  self.DOCS_IMAGES_AND_VIDEOS = function(callback){
+    self.show(google.picker.ViewId.DOCS_IMAGES_AND_VIDEOS, callback);
+  }
+  
+  self.DOCS_VIDEOS = function(callback){
+    self.show(google.picker.ViewId.DOCS_VIDEOS, callback);
+  }
+  
+  self.DOCUMENTS = function(callback){
+    self.show(google.picker.ViewId.DOCUMENTS, callback);
+  }
+  
+  self.DRAWINGS = function(callback){
+    self.show(google.picker.ViewId.DRAWINGS, callback);
+  }
+  
+  self.FOLDERS = function(callback){
+    self.show(google.picker.ViewId.FOLDERS, callback);
+  }
+  
+  self.FORMS = function(callback){
+    self.show(google.picker.ViewId.FORMS, callback);
+  }
+  
+  self.IMAGE_SEARCH = function(callback){
+    self.show(google.picker.ViewId.IMAGE_SEARCH, callback);
+  }
+  
+  self.PDFS = function(callback){
+    self.show(google.picker.ViewId.PDFS, callback);
+  }
+  
+  self.PHOTO_ALBUMS = function(callback){
+    self.show(google.picker.ViewId.PHOTO_ALBUMS, callback);
+  }
+  
+  self.PHOTO_UPLOAD = function(callback){
+    self.show(google.picker.ViewId.PHOTO_UPLOAD, callback);
+  }
+  
+  self.PHOTOS = function(callback){
+    self.show(google.picker.ViewId.PHOTOS, callback);
+  }
+  
+  self.PRESENTATIONS = function(callback){
+    self.show(google.picker.ViewId.PRESENTATIONS, callback);
+  }
+  
+  self.RECENTLY_PICKED = function(callback){
+    self.show(google.picker.ViewId.RECENTLY_PICKED, callback);
+  }
+  
+  self.SPREADSHEETS = function(callback){
+    self.show(google.picker.ViewId.SPREADSHEETS, callback);
+  }
+  
+  self.VIDEO_SEARCH = function(callback){
+    self.show(google.picker.ViewId.VIDEO_SEARCH, callback);
+  }
+  
+  self.WEBCAM = function(callback){
+    self.show(google.picker.ViewId.WEBCAM, callback);
+  }
+  
+  self.YOUTUBE = function(callback){
+    self.show(google.picker.ViewId.YOUTUBE, callback);
+  }
+  
+
+  self.show = function (viewId, callback) {
+    if (!self.oauthToken) {
+      gapi.auth.authorize({
+          'client_id': '<?!=clientId?>',
+          'scope': ['https://www.googleapis.com/auth/photos', "https://www.googleapis.com/auth/drive.readonly", " https://www.googleapis.com/auth/drive", "https://www.googleapis.com/auth/photos.upload", "https://www.googleapis.com/auth/youtube"],
+          'immediate': false
+        },
+        function (authResult) {
+          if (authResult && !authResult.error) {
+            self.oauthToken = authResult.access_token;
+            self.show(viewId, callback);
+          } //if
+        } //function
+      );
+      return;
+    } //if
+
+    var pickerBuilder = new google.picker.PickerBuilder()
+      .setOAuthToken(self.oauthToken)
+      .setOrigin(google.script.host.origin)
+      .addView(viewId)
+      /*setDeveloperKey(developerKey).*/
+      .setCallback(function(data){
+         if (data[google.picker.Response.ACTION] != google.picker.Action.PICKED) return;
+         var documents = data[google.picker.Response.DOCUMENTS];
+         var metadataList = [];
+         for(var i in documents){
+           var parents = data[google.picker.Response.PARENTS];
+           var document = documents[i];
+           var metadata = {
+             parents: parents,
+             URL: document[google.picker.Document.URL],
+             ADDRESS_LINES: document[google.picker.Document.ADDRESS_LINES],
+             DESCRIPTION : document[google.picker.Document.DESCRIPTION],
+             DURATION : document[google.picker.Document.DURATION],
+             EMBEDDABLE_URL : document[google.picker.Document.EMBEDDABLE_URL],
+             ICON_URL : document[google.picker.Document.ICON_URL],
+             ID : document[google.picker.Document.ID],
+             IS_NEW : document[google.picker.Document.IS_NEW],
+             LAST_EDITED_UTC : document[google.picker.Document.LAST_EDITED_UTC],
+             LATITUDE : document[google.picker.Document.LATITUDE],
+             LONGITUDE : document[google.picker.Document.LONGITUDE],
+             MIME_TYPE : document[google.picker.Document.MIME_TYPE],
+             NAME : document[google.picker.Document.NAME],
+             NUM_CHILDREN : document[google.picker.Document.NUM_CHILDREN],
+             PARENT_ID : document[google.picker.Document.PARENT_ID],
+             PHONE_NUMBERS : document[google.picker.Document.PHONE_NUMBERS],
+             SERVICE_ID : document[google.picker.Document.SERVICE_ID],
+             THUMBNAILS : document[google.picker.Document.THUMBNAILS],
+             TYPE : document[google.picker.Document.TYPE],
+             URL : document[google.picker.Document.URL]
+           };
+           metadataList.push(metadata);
+         }//for
+         callback(metadataList);
+      });
+    pickerBuilder.build().setVisible(true);
+  }
+} //function FilePicker
+</script>
+<script defer src="https://apis.google.com/js/api.js"></script>
+<script defer src="https://apis.google.com/js/picker.js"></script>
+<script defer src="https://apis.google.com/js/auth.js"></script>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+  </head>
+  <body>
+    <p>JWS Header, raw
+    <textarea><?=jwsHeader?></textarea>
+    </p>
+    <p>JWS Header, base64
+    <textarea><?=Utilities.base64Encode(jwsHeader);?></textarea>
+    </p>
+    <p>JWS Payload, raw
+    <textarea><?=jwsPayload?></textarea>
+    </p>
+    <p>JWS Payload, base64
+    <textarea><?=Utilities.base64Encode(jwsPayload).replace(/=/g,"");?></textarea>
+    </p>
+    <p>JWK, raw
+    <textarea><?=jwk?></textarea>
+    </p>
+    <p>
+    <textarea><?=JSON.parse(jwk).k?></textarea>
+    </p>
+    <p>
+    <textarea><?=Utilities.computeHmacSha256Signature(Utilities.base64Encode(jwsHeader)+'.'+Utilities.base64Encode(jwsPayload), JSON.parse(jwk).k);?></textarea>
+    </p>
+    <p><textarea><?=Utilities.base64Encode(Utilities.computeHmacSha256Signature(Utilities.base64Encode(jwsHeader).replace(/=/g,'')+'.'+Utilities.base64Encode(jwsPayload).replace(/=/g,''), JSON.parse(jwk).k, Utilities.Charset.UTF_8))?></textarea></p>
+  </body>
+</html>

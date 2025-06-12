@@ -1,0 +1,27 @@
+<textarea readonly></textarea>
+<div>
+  <?!=FilePicker.scriptElement(PropertiesService.getScriptProperties().getProperty("clientId"));?>
+  <?!=FilePicker.DOCS('callback');?>
+  <?!=FilePicker.DOCS_IMAGES('callback');?>
+  <?!=FilePicker.DOCS_IMAGES_AND_VIDEOS('callback');?>
+  <?!=FilePicker.DOCUMENTS('callback');?>
+  <?!=FilePicker.DRAWINGS('callback');?>
+  <?!=FilePicker.FOLDERS('callback');?>
+  <?!=FilePicker.FORMS('callback');?>
+  <?!=FilePicker.IMAGE_SEARCH('callback');?>
+  <?!=FilePicker.PDFS('callback');?>
+  <?!=FilePicker.PHOTOS('callback');?>
+  <?!=FilePicker.PHOTO_ALBUMS('callback');?>
+  <?!=FilePicker.PHOTO_UPLOAD('callback');?>
+  <?!=FilePicker.PRESENTATIONS('callback');?>
+  <?!=FilePicker.RECENTLY_PICKED('callback');?>
+  <?!=FilePicker.SPREADSHEETS('callback');?>
+  <?!=FilePicker.VIDEO_SEARCH('callback');?>
+  <?!=FilePicker.WEBCAM('callback');?>
+  <?!=FilePicker.YOUTUBE('callback');?>
+</div>
+<script>
+  function callback (metadataList) {
+      document.getElementsByTagName('textarea')[0].innerHTML = JSON.stringify(metadataList);
+  }; //function
+</script>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <base target="_top">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/pure-min.css">
+</head>
+
+<body>
+  <label>key<input id="keyInput"></label>
+  <label>value<input id="valueInput"></label>
+  <button id="putButton">put</button>
+  <button id="getButton">get</button>
+  <button id="getAllButton">getAll</button>
+  <script>
+    const putButton = document.querySelector("button#putButton");
+    const getButton = document.querySelector("button#getButton");
+    const getAllButton = document.querySelector("button#getAllButton");
+    const valueInput = document.querySelector("input#valueInput");
+    const keyInput = document.querySelector("input#keyInput");
+  </script>
+  <script type="module">
+    console.log(window);
+    window.addEventListener("load", e=>{
+      putButton.addEventListener("click", e=>{
+        google.script.run.withSuccessHandler(()=>{}).
+        withFailureHandler(()=>{})        
+        .putToCache({keyString : keyInput.value, 
+                     valueString : valueInput.value, 
+                     email : "test.example.com"});
+      });
+
+      getButton.addEventListener("click", e=>{
+        google.script.run.withSuccessHandler((v)=>{
+          valueInput.value = v;
+        }).
+        withFailureHandler(()=>{})
+        .getFromCache({keyString : keyInput.value,
+                       email : "test.example.com"});
+      });
+
+      getAllButton.addEventListener("click", e=>{
+        google.script.run.withSuccessHandler((v)=>{
+          valueInput.value = JSON.stringify(v);
+        }).withFailureHandler((e)=>{
+          console.log(e);
+        })
+        .getAllFromCache([keyInput.value])
+      });
+    });
+  </script>
+</body>
+
+</html>

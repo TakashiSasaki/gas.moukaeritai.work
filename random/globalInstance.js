@@ -1,0 +1,1 @@
+globalInstance = createWithRandomSeed();

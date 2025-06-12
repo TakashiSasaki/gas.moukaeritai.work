@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <base target="_top">
+  <?!=HtmlService.createTemplateFromFile("style").evaluate().getContent()?>
+</head>
+
+<body>
+  <h1>Authorization</h1>
+  <h2>Cached Access Token</h2>
+  <input value="<?=CacheService.getUserCache().get('access_token')?>" readonly>
+  <h2></h2>
+  <a href="<?=ScriptApp.getService().getUrl()+'?page=authorize'?>">autorize</a>
+  <h1>MENU</h1>
+  <?!=HtmlService.createTemplateFromFile("menu").evaluate().getContent();?>
+</body>
+
+</html>

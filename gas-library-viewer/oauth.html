@@ -1,0 +1,55 @@
+    <a class="oauthUrl" href="<?=oauthUrl()?>">認証コードを取得する</a>
+    <textarea class="oauthUrl" readonly></textarea>
+    <div>
+      <label for="token">取得済みの認証コード</label>
+      <input id="code" value="<?=CacheService.getUserCache().get('code')?>" readonly>
+    </div>
+    <div>
+      <label for="access_token">取得済みのアクセストークン</label>
+      <input id="access_token" value="<?=PropertiesService.getUserProperties().getProperty('access_token')?>" readonly>
+    </div>
+    <div>
+      <label for="expires_in">アクセストークンの有効期限</label>
+      <input id="expires_in" value="<?=PropertiesService.getUserProperties().getProperty('expires_in')?>" readonly>
+    </div>
+    <div>
+      <label for="token_type">アクセストークンのタイプ</label>
+      <input id="token_type" value="<?=PropertiesService.getUserProperties().getProperty('token_type')?>" readonly>
+    </div>
+    <div>
+      <label for="refresh_token">リフレッシュトークン</label>
+      <input id="refresh_token" value="<?=PropertiesService.getUserProperties().getProperty('refresh_token')?>" readonly>
+    </div>
+    <div>
+      <label for="url">このページのURL</label>
+      <input id="url" value="<?=ScriptApp.getService().getUrl()?>" readonly>
+    </div>
+    <button onclick="deleteToken()">
+      アクセストークンを消去する
+    </button>
+
+    <div>
+      <input id="ping">
+      <button onclick="ping()">ping</button>
+      <input id="pong" readonly>
+    </div>
+
+    <script>
+      $(function(){
+        $("textarea.oauthUrl").text($("a.oauthUrl").attr("href"));
+      });
+      
+      function deleteToken(){
+        google.script.run.withSuccessHandler(function(){
+          alert("トークンを消去しました");
+        }).deleteToken();
+      }
+      
+      function ping(){
+        google.script.run.withSuccessHandler(function(e){
+          $("#pong").val(e);
+        }).withFailureHandler(function(e){
+          $("#pong").val(e);
+        }).ping($("#ping").val());
+      }
+    </script>

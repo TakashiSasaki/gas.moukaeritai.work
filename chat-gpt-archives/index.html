@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <base target="_top">
+</head>
+
+<body>
+  <a id="mailSpreadsheet">mailSpreadsheet</a>
+  <script>
+    google.script.run.
+       withSuccessHandler(url=>{
+          const a = document.querySelector("#mailSpreadsheet");
+          a.setAttribute("href", url);
+       }).getMailSpreadsheetUrl();
+  </script>
+</body>
+
+</html>

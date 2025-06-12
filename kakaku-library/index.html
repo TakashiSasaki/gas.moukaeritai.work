@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+  </head>
+  <body>
+    <p>https://script.google.com/macros/s/AKfycbwjcS0vNrNYhC5Y9E1kqR4x7lmmgVB78nyyie9gaY6myZ9Bl0sN/exec</p>
+    <p>この後に「url=http://kakaku.com/search_results/iPad/?category=0001,0003」のようなパラメーターを与えると、
+    そこに含まれる最初の製品画像のURLが返されます。
+    </p>
+    <p>kakaku.comからスクレイピングによりデータを取得します。取得したデータは6時間キャッシュされます。</p>
+    <? var example_url = "https://script.google.com/macros/s/AKfycbwjcS0vNrNYhC5Y9E1kqR4x7lmmgVB78nyyie9gaY6myZ9Bl0sN/exec?url=http://kakaku.com/search_results/iPad/?category=0001,0003"?>
+    <a href="<?=example_url?>"><?=example_url?></a>
+  </body>
+</html>
+
+

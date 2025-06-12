@@ -1,0 +1,131 @@
+<!-- script.html -->
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    populateYearOptions();
+  });
+
+  // 年の選択肢を生成する関数
+  function populateYearOptions() {
+    const currentYear = new Date().getFullYear();
+    const yearSelect = document.getElementById('year');
+
+    for (let year = currentYear; year >= 2000; year--) { // 2000年から現在の年まで
+      const option = document.createElement('option');
+      option.value = year;
+      option.textContent = year;
+      yearSelect.appendChild(option);
+    }
+  }
+
+  // 年と月を選択するとタイムスタンプを更新する関数
+  function updateTimestamp() {
+    const year = document.getElementById('year').value;
+    const month = document.getElementById('month').value;
+
+    if (year && month) {
+      // 選択された年と月の初日のタイムスタンプを計算
+      const date = new Date(Date.UTC(year, month, 1, 0, 0, 0));
+      const timestamp = Math.floor(date.getTime() / 1000); // UNIXタイムスタンプに変換
+      document.getElementById('since').value = timestamp;
+    }
+  }
+  
+  // Google Apps Scriptで定義したfetchPocketItems関数を呼び出してアイテムを表示する
+  function loadPocketItems() {
+    // フォームから入力されたオプションパラメータを取得
+    const options = {
+      state: document.getElementById('state').value,
+      favorite: document.getElementById('favorite').value,
+      tag: document.getElementById('tag').value,
+      contentType: document.getElementById('contentType').value,
+      sort: document.getElementById('sort').value,
+      detailType: document.getElementById('detailType').value,
+      search: document.getElementById('search').value,
+      domain: document.getElementById('domain').value,
+      since: document.getElementById('since').value ? parseInt(document.getElementById('since').value) : undefined,
+      count: document.getElementById('count').value ? parseInt(document.getElementById('count').value) : undefined,
+      offset: document.getElementById('offset').value ? parseInt(document.getElementById('offset').value) : undefined,
+      total: document.getElementById('total').value
+    };
+
+    // サーバー側のfetchPocketItems関数を呼び出し、オプションパラメータを渡す
+    google.script.run.withSuccessHandler(displayItems).fetchPocketItems(options);
+  }
+
+  // 取得したPocketアイテムを表示する関数
+  function displayItems(items) {
+    const itemList = document.getElementById('itemList');
+    itemList.innerHTML = ''; // 既存のリストをクリア
+
+    // タイムスタンプの初期化
+    let oldestTimestamp = Number.MAX_SAFE_INTEGER;
+    let newestTimestamp = 0;
+
+    items.forEach(item => {
+      // 最も古いタイムスタンプと最も新しいタイムスタンプを計算
+      const timeAdded = parseInt(item.time_added);
+      if (timeAdded < oldestTimestamp) oldestTimestamp = timeAdded;
+      if (timeAdded > newestTimestamp) newestTimestamp = timeAdded;
+
+      // アイテムをリストに追加
+      const listItem = document.createElement('li');
+      listItem.innerHTML = `<a href="${item.resolved_url}" target="_blank">${item.resolved_title || item.given_title || 'Untitled'}</a>`;
+      itemList.appendChild(listItem);
+    });
+
+    // アイテム数を表示
+    document.getElementById('itemCount').textContent = `Number of items: ${items.length}`;
+
+    // 最も古いタイムスタンプと最も新しいタイムスタンプを表示
+    if (items.length > 0) {
+      document.getElementById('timestamps').textContent = 
+        `Oldest timestamp: ${oldestTimestamp} (${new Date(oldestTimestamp * 1000).toLocaleString()}), ` +
+        `Newest timestamp: ${newestTimestamp} (${new Date(newestTimestamp * 1000).toLocaleString()})`;
+    } else {
+      document.getElementById('timestamps').textContent = 'No timestamps available.';
+    }
+  }
+
+  // 生のレスポンスデータをテキストエリアに表示し、アイテム数、バイト数、文字数を表示する関数
+  function loadDebugData() {
+    google.script.run.withSuccessHandler(displayRawData).getRawResponse();
+  }
+
+  // 生のレスポンスデータを表示する関数
+  function displayRawData(rawData) {
+    const debugOutput = document.getElementById('debugOutput');
+    debugOutput.value = rawData || 'No data available';
+
+    if (rawData) {
+      // JSONをパースしてアイテム数を取得
+      const data = JSON.parse(rawData);
+      const itemCount = data.list ? Object.keys(data.list).length : 0;
+
+      // 最も古いタイムスタンプと最も新しいタイムスタンプの計算
+      let oldestTimestamp = Number.MAX_SAFE_INTEGER;
+      let newestTimestamp = 0;
+
+      for (const key in data.list) {
+        const timeAdded = parseInt(data.list[key].time_added);
+        if (timeAdded < oldestTimestamp) oldestTimestamp = timeAdded;
+        if (timeAdded > newestTimestamp) newestTimestamp = timeAdded;
+      }
+
+      // バイト数と文字数を計算
+      const byteSize = new Blob([rawData]).size; // UTF-8でのバイト数
+      const charCount = rawData.length; // 文字数
+
+      // 結果を表示
+      document.getElementById('debugInfo').textContent = 
+        `Item count: ${itemCount}, Byte size: ${byteSize} bytes, Character count: ${charCount} characters`;
+
+      // 最も古いタイムスタンプと最も新しいタイムスタンプを表示
+      document.getElementById('timestampsDebug').textContent = 
+        `Oldest timestamp: ${oldestTimestamp} (${new Date(oldestTimestamp * 1000).toLocaleString()}), ` +
+        `Newest timestamp: ${newestTimestamp} (${new Date(newestTimestamp * 1000).toLocaleString()})`;
+    } else {
+      document.getElementById('debugInfo').textContent = 'No data available';
+      document.getElementById('timestampsDebug').textContent = '';
+    }
+  }
+</script>

@@ -1,0 +1,22 @@
+{
+  "timeZone": "Asia/Tokyo",
+  "dependencies": {
+    "libraries": [{
+      "userSymbol": "DriveAppUtilityLibrary",
+      "libraryId": "1ziQa1RNI42ExDuN7tt5nxa_Cz19yEVCCeeevNU-gFcSwIqJzcThOBno8",
+      "version": "7",
+      "developmentMode": true
+    }, {
+      "userSymbol": "AddonHelper",
+      "libraryId": "1ryBTdV-IJH57QxJefgX334JWuJ7KHLjpT43v45VAqwAmFSKqkXkMFnAY",
+      "version": "3",
+      "developmentMode": true
+    }]
+  },
+  "webapp": {
+    "access": "MYSELF",
+    "executeAs": "USER_DEPLOYING"
+  },
+  "exceptionLogging": "STACKDRIVER",
+  "runtimeVersion": "V8"
+}

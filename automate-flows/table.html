@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+  </head>
+  <body onload="onload()">
+    <div>
+    <input id="user_id" onchange="onChangeUserId(this)">
+    <button onclick="fetchFlows()">fetchFlows</button>
+    <button onclick="redrawTable()">redrawTable</button>
+    </div>
+    <script>
+      function onload(e) {
+        if(!window.localStorage.getItem("user_id")){
+          alert("Tell me Automate community user ID.");
+        } else {
+          var user_id = window.localStorage.getItem("user_id");
+          document.getElementById("user_id").value = user_id;
+        }
+        if(!window.localStorage.getItem(user_id)) {
+          fetchFlows(user_id);
+        }
+        //redrawTable(user_id);
+      }
+      
+      function onChangeUserId(input_element){
+        var user_id = input_element.value;
+        //alert(user_id);
+        window.localStorage.setItem('user_id', user_id);
+      }
+      
+      function fetchFlows(e){
+        //alert("fetchFlows");
+        var user_id = window.localStorage.getItem("user_id");
+        google.script.run.withFailureHandler(function(){
+          alert("failed to fetch flow list of user ID " + user_id);
+        }).withSuccessHandler(function(x){
+          //alert(x);
+          window.localStorage.setItem(user_id, x);
+        }).fetchFlows(user_id);
+      }
+      
+      function redrawTable(e) {
+        //alert("redrawTable");
+        var user_id = window.localStorage.getItem("user_id");
+        var x = window.localStorage.getItem(user_id);
+        //alert(x);
+        return;
+      }
+    </script>
+  </body>
+</html>
+
+

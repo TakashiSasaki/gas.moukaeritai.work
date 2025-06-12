@@ -1,0 +1,154 @@
+<style>
+	html {
+		padding: 0px;
+		margin: 0px;
+	}
+
+	body {
+		padding: 0px;
+		margin: 0px;
+	}
+
+	div {
+		font-size: 9pt
+	}
+
+	/*div.notHeading{padding-left: 1em}*/
+	/*div[data-level="1"]{margin-left: 0.0em}
+      div[data-level="2"]{margin-left: 0.5em}
+      div[data-level="3"]{margin-left: 1.0em}
+      div[data-level="4"]{margin-left: 1.5em}
+      div[data-level="5"]{margin-left: 2.0em}
+      div[data-level="6"]{margin-left: 2.5em}*/
+	/*span { border-style:solid; border-width:1px; }*/
+
+	div:not([data-level=""]) {
+		border-top-style: solid;
+		border-width: 1px;
+    margin-top: 3px;
+    margin-bottom: 3px;
+	}
+
+	span.paragraph {
+		margin-left: 3px;
+		margin-right: 0px;
+    margin-bottom: 2px;
+    border-width: 1px;
+    border-style: solid;
+	}
+
+	span.nInlineImage:before {
+		content: "🖼️";
+		border-style: none;
+	}
+
+	span.nInlineImage[data-n-inline-image="0"] {
+		display: none
+	}
+
+	span.nListItem:before {
+		content: "🧾";
+		border-style: none;
+	}
+
+	span.nListItem[data-n-list-item="0"] {
+		display: none;
+	}
+
+  span[data-type="LIST_ITEM"]:before{
+    content: "L";
+  }
+
+  span[data-type="TABLE"]:before{
+    content: "T";
+  }
+
+  span[data-type="PARAGRAPH"]:before{
+    content: "P";
+  }
+
+  span.t{
+    background: pink;
+  }
+
+	span.nInlineDrawing:before {
+		content: "📐";
+		border-style: none;
+	}
+
+	span.nInlineDrawing[data-n-inline-drawing="0"] {
+		display: none;
+	}
+
+	span.nText:before {
+		content: "🔠";
+		border-style: none;
+	}
+
+	span.nText[data-n-text="0"] {
+		display: none;
+	}
+
+	span.nTable:before {
+		content: "🪑";
+		border-style: none;
+	}
+
+	span.nTable[data-n-table="0"] {
+		display: none;
+	}
+
+	span.nOther:before {
+		content: "❔";
+		border-style: none;
+	}
+
+	span.nOther[data-n-other="0"] {
+		display: none;
+	}
+
+	span.sNumbering {
+		background: yellow;
+	}
+
+	span.sNumbering[data-s-numberig=""] {
+		display: none;
+	}
+
+	span.leader {
+		background: limegreen;
+	}
+
+	span.groupByHeadingOrBlank{
+		background: pink;
+	}
+
+  span.groupByHeadingOrBlank[data-group-by-heading-or-blank='undefined']{
+    display: none;
+  }
+
+  span.groupByHeadingOrBlank[data-group-by-heading='undefined']{
+    display: none;
+  }
+
+	span.nChildren:not([data-n-children="0"]) {
+		display: none;
+	}
+
+	/*span.nChildren[data-n-children="0"] {
+		background: cyan;
+		color: cyan
+	}*/
+
+	div#headings {
+		border: solid;
+		border-width: 1px;
+		margin: 1px;
+        padding: 1px;
+	}
+
+	div#headings>div {
+		display: flex;
+		flex-wrap: wrap;
+	}
+</style>

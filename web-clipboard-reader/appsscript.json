@@ -1,0 +1,17 @@
+{
+  "timeZone": "Asia/Tokyo",
+  "dependencies": {
+    "libraries": [{
+      "userSymbol": "WebClipboardWriter",
+      "libraryId": "14OUFXtFBsyL7_H3lGOSzCTPlSegMO3VE2fN6ZuW4t6FDexc6370Fl1CJ",
+      "version": "75",
+      "developmentMode": true
+    }]
+  },
+  "webapp": {
+    "access": "ANYONE",
+    "executeAs": "USER_ACCESSING"
+  },
+  "exceptionLogging": "STACKDRIVER",
+  "runtimeVersion": "V8"
+}

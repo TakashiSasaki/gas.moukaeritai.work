@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top" />
+    <link
+      rel="stylesheet"
+      href="https://gitcdn.link/repo/Chalarangelo/mini.css/master/dist/mini-default.min.css"
+    />
+  </head>
+  <body>
+    <div id="rendered"></div>
+    <fieldset>
+      <label for="date">last rendered</label>
+      <input readonly="1" id="date" value="<?=date?>"/>
+    </fieldset>
+    <fieldset>
+      <label for="sheetName">sheet</label>
+      <input readonly="1" id="sheetName" value="<?=sheetName?>"/>
+    </fieldset>
+    <fieldset>
+      <button onclick="reload()">Reload</button>
+      <label for="continuous">on edit</label>
+      <input type="checkbox" id="continuous" onchange="onContinuousCheckboxChange(this)"
+      <?= continuous ? "checked='1'" : "" ?>/>
+    </fieldset>
+    <script>
+      function reload() {
+        google.script.run
+          .withSuccessHandler(function(json) {
+            var o = JSON.parse(json);
+            var html = o.html;
+            var date = o.date;
+            var sheetName = o.sheetName;
+            document.getElementById("rendered").innerHTML = html;
+            document.getElementById("date").value = date;
+            document.getElementById("sheetName").value = sheetName;
+          })
+          .withFailureHandler(function(error) {
+            var div = document.getElementById("rendered");
+            //alert(JSON.stringify(error));
+            div.innerHtml = JSON.stringify(error);
+          })
+          .render();
+      } //reload
+
+      function onContinuousCheckboxChange(input) {
+        console.log("onContinuousCheckboxChange:");
+        google.script.run
+          .withSuccessHandler(function(result) {
+            console.log("onContinuousCheckboxChange: withSuccessHandler");
+            document.getElementById("sheetName").value = result.sheetName;
+            document.getElementById("continuous").checked = result.continuous;
+           })
+          .withFailureHandler(function(error) {
+ console.log("onContinuousCheckboxChange: withFailureHandler, error = " + JSON.stringify(error));
+          })
+          .onContinuousCheckboxChange(input.checked);
+      }
+    </script>
+  </body>
+</html>

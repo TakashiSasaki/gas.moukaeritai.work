@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>コンテンツパネルアップローダー (キャプション生成制御改善版)</title>
+    <?!= HtmlService.createHtmlOutputFromFile('style').getContent(); ?>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+</head>
+<body>
+    <div class="main-container">
+        <div class="document-title-section">
+            <label for="document-title-input">ドキュメント全体のタイトル</label>
+            <input type="text" id="document-title-input" placeholder="ドキュメントのタイトルを入力...">
+            <button id="generate-document-title-btn" class="panel-control-btn hidden" title="ドキュメント全体のタイトルを生成">✨ 全体タイトル生成</button>
+        </div>
+
+        <div id="panel-container">
+        </div>
+    </div>
+
+    <div id="modal-overlay" class="modal-overlay">
+        <div id="modal-content" class="modal-content">
+            <button id="modal-close-btn" class="modal-close-btn">&times;</button>
+            <div id="modal-preview-area"></div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const panelContainer = document.getElementById('panel-container');
+            const modalOverlay = document.getElementById('modal-overlay');
+            const modalCloseBtn = document.getElementById('modal-close-btn');
+            const modalPreviewArea = document.getElementById('modal-preview-area');
+            const documentTitleInput = document.getElementById('document-title-input');
+            const generateDocumentTitleBtn = document.getElementById('generate-document-title-btn');
+
+            const MAX_PANELS = 10; 
+            const STORAGE_KEY = 'contentPanelData_v5'; 
+            let panelIdCounter = 0; 
+
+            marked.setOptions({
+                breaks: true, gfm: true, sanitize: true
+            });
+            
+            let saveTimeout;
+            function debounceSaveState() {
+                clearTimeout(saveTimeout);
+                saveTimeout = setTimeout(saveState, 500); 
+            }
+
+            function saveState() {
+                const data = {
+                    documentTitle: documentTitleInput.value,
+                    panels: []
+                };
+                panelContainer.querySelectorAll('.content-panel').forEach(panel => {
+                    const panelData = {
+                        id: panel.id, 
+                        title: panel.querySelector('.panel-title-input').value,
+                        markdown: panel.querySelector('.panel-markdown-editor').value,
+                        images: []
+                    };
+                    panel.querySelectorAll('.panel-image-thumbnail').forEach(thumb => {
+                        const img = thumb.querySelector('img');
+                        const captionDiv = thumb.querySelector('.image-caption');
+                        panelData.images.push({ 
+                            src: img.src, 
+                            alt: img.alt,
+                            caption: captionDiv ? captionDiv.textContent.trim() : '' 
+                        });
+                    });
+                    data.panels.push(panelData);
+                });
+                try {
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+                } catch (error) {
+                    console.error("localStorage保存エラー:", error);
+                }
+            }
+            
+            documentTitleInput.addEventListener('input', debounceSaveState);
+
+            function loadState() {
+                const savedData = localStorage.getItem(STORAGE_KEY);
+                if (savedData) {
+                    try {
+                        const data = JSON.parse(savedData);
+                        documentTitleInput.value = data.documentTitle || '';
+                        panelContainer.innerHTML = ''; 
+                        panelIdCounter = 0; 
+                        if (data.panels && data.panels.length > 0) {
+                            data.panels.forEach(panelData => {
+                                const idNum = parseInt((panelData.id || '').split('-')[1]);
+                                if (!isNaN(idNum) && idNum > panelIdCounter) {
+                                    panelIdCounter = idNum;
+                                }
+                                createPanel(panelData, false); 
+                            });
+                        }
+                    } catch (error) {
+                        console.error("localStorage読み込みエラー:", error);
+                        localStorage.removeItem(STORAGE_KEY); 
+                    }
+                }
+                ensureEmptyPanelExists(); 
+            }
+
+            function showModal(htmlOrErrorMessage, isError = false) {
+                if (isError) { modalPreviewArea.innerHTML = `<div class="modal-error-message">${htmlOrErrorMessage}</div>`; } 
+                else { modalPreviewArea.innerHTML = htmlOrErrorMessage; }
+                modalOverlay.classList.add('show');
+                document.addEventListener('keydown', handleEscKey); 
+            }
+            function hideModal() {
+                modalOverlay.classList.remove('show');
+                modalPreviewArea.innerHTML = ''; 
+                document.removeEventListener('keydown', handleEscKey); 
+            }
+            function handleEscKey(event) {
+                if (event.key === 'Escape') { hideModal(); }
+            }
+            modalCloseBtn.addEventListener('click', hideModal);
+            modalOverlay.addEventListener('click', (event) => {
+                if (event.target === modalOverlay) { hideModal(); }
+            });
+
+            function updateDocumentTitleButtonVisibility() {
+                const panels = panelContainer.querySelectorAll('.content-panel');
+                let hasContent = false;
+                panels.forEach(panel => {
+                    if (!isPanelEmpty(panel)) { 
+                        hasContent = true;
+                    }
+                });
+                generateDocumentTitleBtn.classList.toggle('hidden', !hasContent);
+            }
+
+            function updateMarkdownButtonsVisibility(panelElement) {
+                const markdownEditor = panelElement.querySelector('.panel-markdown-editor');
+                const previewBtn = panelElement.querySelector('.preview-markdown-btn');
+                const clearBtn = panelElement.querySelector('.clear-markdown-btn');
+                const generateTitleBtn = panelElement.querySelector('.generate-panel-title-btn'); 
+                const isEmpty = markdownEditor.value.trim() === '';
+                
+                if (previewBtn) previewBtn.classList.toggle('hidden', isEmpty);
+                if (clearBtn) clearBtn.classList.toggle('hidden', isEmpty);
+                if (generateTitleBtn) generateTitleBtn.classList.toggle('hidden', isEmpty); 
+            }
+
+            function updateImageActionButtonsVisibility(panelElement) {
+                const imagePreviewArea = panelElement.querySelector('.panel-image-preview-area');
+                const generateCaptionBtn = panelElement.querySelector('.generate-caption-btn');
+                const deleteDuplicateBtn = panelElement.querySelector('.delete-duplicate-images-btn');
+                const deleteAllBtn = panelElement.querySelector('.delete-all-images-btn');
+                const hasImages = imagePreviewArea.querySelectorAll('.panel-image-thumbnail').length > 0;
+
+                if (generateCaptionBtn) generateCaptionBtn.classList.toggle('hidden', !hasImages);
+                if (deleteDuplicateBtn) deleteDuplicateBtn.classList.toggle('hidden', !hasImages);
+                if (deleteAllBtn) deleteAllBtn.classList.toggle('hidden', !hasImages);
+            }
+
+            function updatePanelOrderAndControls() {
+                const panels = panelContainer.querySelectorAll('.content-panel');
+                panels.forEach((panel, index) => {
+                    const panelNumberEl = panel.querySelector('.panel-number');
+                    const moveUpBtn = panel.querySelector('.move-up-btn');
+                    const moveDownBtn = panel.querySelector('.move-down-btn');
+                    const deleteBtn = panel.querySelector('.delete-panel-btn');
+
+                    if (panelNumberEl) { panelNumberEl.textContent = `${index + 1}.`; }
+                    if (moveUpBtn) { moveUpBtn.classList.toggle('hidden', index === 0); }
+                    if (moveDownBtn) { moveDownBtn.classList.toggle('hidden', index === panels.length - 1); }
+                    
+                    if (deleteBtn) {
+                        const isThisPanelEmpty = isPanelEmpty(panel); 
+                        if (panels.length === 1 && isThisPanelEmpty) {
+                            deleteBtn.classList.add('hidden'); 
+                        } else if (index === panels.length - 1 && isThisPanelEmpty && panels.length > 0) { 
+                            deleteBtn.classList.add('hidden');
+                        } else {
+                            deleteBtn.classList.remove('hidden');
+                        }
+                    }
+                    updateMarkdownButtonsVisibility(panel); 
+                    updateImageActionButtonsVisibility(panel); 
+                });
+                updateDocumentTitleButtonVisibility(); 
+            }
+
+            function isPanelEmpty(panelElement) {
+                if (!panelElement) return false; 
+                const titleInput = panelElement.querySelector('.panel-title-input');
+                const markdownEditor = panelElement.querySelector('.panel-markdown-editor');
+                const imagePreviewArea = panelElement.querySelector('.panel-image-preview-area');
+                if (!titleInput || !markdownEditor || !imagePreviewArea) { 
+                    return false; 
+                }
+                const isTitleEmpty = titleInput.value.trim() === '';
+                const isMarkdownEmpty = markdownEditor.value.trim() === '';
+                const imageCount = imagePreviewArea.querySelectorAll('.panel-image-thumbnail').length;
+                const isImagesEmpty = imageCount === 0;
+                imagePreviewArea.classList.toggle('no-images', isImagesEmpty);
+                panelElement.classList.toggle('is-empty-panel', isTitleEmpty && isMarkdownEmpty && isImagesEmpty);
+                return isTitleEmpty && isMarkdownEmpty && isImagesEmpty;
+            }
+
+            function ensureEmptyPanelExists() {
+                const currentPanels = Array.from(panelContainer.querySelectorAll('.content-panel'));
+                const currentPanelCount = currentPanels.length;
+                let emptyPanelFound = false;
+                currentPanels.forEach(p => { 
+                    if (isPanelEmpty(p)) { emptyPanelFound = true; }
+                });
+                if (!emptyPanelFound && currentPanelCount < MAX_PANELS) {
+                    createPanel(null, true); 
+                } else if (currentPanelCount === 0 && MAX_PANELS > 0) { 
+                    createPanel(null, true);
+                }
+                updatePanelOrderAndControls(); 
+            }
+            
+            function updateDuplicateImageMarkers(previewArea) {
+                const images = previewArea.querySelectorAll('.panel-image-thumbnail img');
+                const srcCounts = {};
+                images.forEach(img => { srcCounts[img.src] = (srcCounts[img.src] || 0) + 1; });
+                images.forEach(img => {
+                    const thumbWrapper = img.closest('.panel-image-thumbnail');
+                    thumbWrapper.classList.toggle('is-duplicate', srcCounts[img.src] > 1);
+                });
+            }
+
+            function createPanel(panelData = null, doSaveOnCreate = true) { 
+                panelIdCounter++;
+                const panelId = panelData && panelData.id ? panelData.id : `panel-${panelIdCounter}`; 
+                const panel = document.createElement('div');
+                panel.className = 'content-panel'; 
+                panel.id = panelId;
+                panel.innerHTML = `
+                    <div class="panel-header">
+                        <span class="panel-number"></span>
+                        <button class="panel-control-btn move-panel-btn move-up-btn" title="上に移動">↑</button>
+                        <button class="panel-control-btn move-panel-btn move-down-btn" title="下に移動">↓</button>
+                        <input type="text" class="panel-title-input" placeholder="パネルのタイトルを入力...">
+                        <button class="panel-control-btn paste-title-btn" title="クリップボードからタイトルを貼り付け">📋</button>
+                        <button class="delete-panel-btn panel-control-btn">削除</button>
+                    </div>
+                    <div class="panel-section markdown-section">
+                        <div class="panel-section-header">
+                            <h3>マークダウンコンテンツ</h3>
+                            <button class="panel-control-btn paste-markdown-btn" title="クリップボードからマークダウンを貼り付け">📋</button>
+                            <button class="panel-control-btn generate-panel-title-btn hidden" title="マークダウンからタイトル生成">✨</button>
+                            <button class="panel-control-btn preview-markdown-btn hidden" title="プレビューを表示">👁️</button>
+                            <button class="panel-control-btn clear-markdown-btn hidden" title="マークダウンをクリア">🗑️</button>
+                        </div>
+                        <textarea class="panel-markdown-editor" placeholder="ここにマークダウンをペーストまたは入力..."></textarea>
+                    </div>
+                    <div class="panel-section image-section">
+                        <div class="panel-section-header">
+                            <h3>画像</h3>
+                            <button class="panel-control-btn image-op-btn generate-caption-btn hidden" title="未キャプションの全画像にキャプション生成 (API強制)">キャプション一括生成</button>
+                            <button class="panel-control-btn image-op-btn delete-duplicate-images-btn hidden" title="重複画像を削除">重複削除</button>
+                            <button class="panel-control-btn image-op-btn delete-all-images-btn hidden" title="すべての画像を削除">全削除</button>
+                        </div>
+                        <div class="panel-image-preview-area no-images"> 
+                        </div>
+                    </div>
+                `;
+                panelContainer.appendChild(panel);
+                
+                if (panelData) {
+                    panel.querySelector('.panel-title-input').value = panelData.title || '';
+                    panel.querySelector('.panel-markdown-editor').value = panelData.markdown || '';
+                    const previewArea = panel.querySelector('.panel-image-preview-area');
+                    if (panelData.images && panelData.images.length > 0) {
+                        panelData.images.forEach(imgData => {
+                            addImageThumbnailToPanel(imgData.src, imgData.alt, previewArea, panel, false, imgData.caption || ''); 
+                        });
+                         updateDuplicateImageMarkers(previewArea); 
+                    }
+                }
+                
+                initializePanelFunctionality(panel);
+                updateMarkdownButtonsVisibility(panel); 
+                isPanelEmpty(panel); 
+                updatePanelOrderAndControls(); 
+                
+                if (doSaveOnCreate && !panelData) { 
+                    debounceSaveState();
+                }
+            }
+            
+            function triggerPanelTitleGeneration(panelElement, markdownEditor, titleInput, buttonElement, useCache) {
+                const markdownText = markdownEditor.value.trim();
+                if (!markdownText) {
+                    if (buttonElement) console.warn("タイトル生成: マークダウン内容がありません。");
+                    return;
+                }
+                if (buttonElement) { 
+                    buttonElement.classList.add('is-loading');
+                    buttonElement.disabled = true;
+                    buttonElement.textContent = '生成中...'; 
+                }
+                new Promise((resolve, reject) => {
+                    google.script.run
+                        .withSuccessHandler(resolve)
+                        .withFailureHandler(reject)
+                        .generateTitleFromMarkdown(markdownText, useCache); 
+                })
+                .then((generatedTitle) => {
+                    if (generatedTitle && !generatedTitle.startsWith("エラー:")) {
+                        titleInput.value = generatedTitle;
+                    } else {
+                        console.warn("タイトル生成エラーまたは空の応答:", generatedTitle);
+                    }
+                    isPanelEmpty(panelElement); 
+                    ensureEmptyPanelExists(); 
+                    debounceSaveState();
+                })
+                .catch((error) => { console.error("GAS呼び出しエラー (タイトル生成):", error); })
+                .finally(() => {
+                    if (buttonElement) {
+                        buttonElement.classList.remove('is-loading');
+                        buttonElement.disabled = false;
+                        buttonElement.textContent = '✨'; 
+                    }
+                });
+            }
+
+            generateDocumentTitleBtn.addEventListener('click', () => {
+                const panelsData = [];
+                panelContainer.querySelectorAll('.content-panel').forEach(panel => {
+                    if (!isPanelEmpty(panel)) { 
+                        panelsData.push({
+                            title: panel.querySelector('.panel-title-input').value.trim(),
+                            markdown: panel.querySelector('.panel-markdown-editor').value.trim()
+                        });
+                    }
+                });
+                if (panelsData.length === 0) { return; }
+                
+                generateDocumentTitleBtn.classList.add('is-loading');
+                generateDocumentTitleBtn.disabled = true;
+                const originalButtonText = generateDocumentTitleBtn.innerHTML; 
+                generateDocumentTitleBtn.innerHTML = '生成中...'; 
+
+                new Promise((resolve, reject) => {
+                    google.script.run
+                        .withSuccessHandler(resolve)
+                        .withFailureHandler(reject)
+                        .generateDocumentTitleFromPanels(panelsData, false); 
+                })
+                .then(title => {
+                    if (title && !title.startsWith("エラー:")) {
+                        documentTitleInput.value = title;
+                        debounceSaveState();
+                    } else { console.warn("ドキュメントタイトル生成エラー:", title); }
+                })
+                .catch(error => console.error("GAS呼び出しエラー (ドキュメントタイトル):", error))
+                .finally(() => {
+                    generateDocumentTitleBtn.classList.remove('is-loading');
+                    generateDocumentTitleBtn.disabled = false;
+                    generateDocumentTitleBtn.innerHTML = originalButtonText; 
+                });
+            });
+
+            // --- 単一画像キャプション生成ロジック ---
+            function triggerSingleImageCaptionGeneration(imgElement, captionDiv, deleteCapBtn, useCache = true) {
+                if (!imgElement || !imgElement.src) return;
+
+                captionDiv.textContent = "生成中...";
+                captionDiv.className = 'image-caption loading';
+                if (deleteCapBtn) deleteCapBtn.classList.remove('visible');
+
+                const imageDataUrl = imgElement.src;
+                const parts = imageDataUrl.split(',');
+                if (parts.length !== 2) {
+                    captionDiv.textContent = "エラー: 無効形式";
+                    captionDiv.classList.add('error');
+                    captionDiv.classList.remove('loading');
+                    if (deleteCapBtn) deleteCapBtn.classList.add('visible');
+                    return;
+                }
+                const mimeType = parts[0].substring(parts[0].indexOf(':') + 1, parts[0].indexOf(';'));
+                const base64Data = parts[1];
+
+                return new Promise((resolve, reject) => { // Promiseを返すように変更
+                    google.script.run
+                        .withSuccessHandler((caption) => {
+                            captionDiv.textContent = caption;
+                            if (caption.startsWith("エラー:")) {
+                                captionDiv.classList.add('error');
+                            } else {
+                                captionDiv.classList.remove('error');
+                            }
+                            if (deleteCapBtn && caption && !caption.startsWith("エラー:") && caption !== "生成中..." && caption.trim() !== "" && caption.trim() !== "キャプション未生成") {
+                                deleteCapBtn.classList.add('visible');
+                            } else if (deleteCapBtn) {
+                                deleteCapBtn.classList.remove('visible');
+                            }
+                            resolve(caption); // 成功時はキャプションを解決値とする
+                        })
+                        .withFailureHandler((error) => {
+                            let errorMessage = 'サーバー接続失敗';
+                            if (error && typeof error.message === 'string') errorMessage = error.message;
+                            else if (typeof error === 'string') errorMessage = error;
+                            captionDiv.textContent = `エラー: ${errorMessage}`;
+                            captionDiv.classList.add('error');
+                            if (deleteCapBtn) deleteCapBtn.classList.add('visible');
+                            reject(error); // 失敗時はエラーを拒否値とする
+                        })
+                        .generateCaptionForImage(base64Data, mimeType, useCache); // useCache引数を渡す
+                }).finally(() => {
+                    captionDiv.classList.remove('loading');
+                });
+            }
+
+
+            function initializePanelFunctionality(panelElement) {
+                const titleInput = panelElement.querySelector('.panel-title-input');
+                const pasteTitleButton = panelElement.querySelector('.paste-title-btn');
+                const deletePanelButton = panelElement.querySelector('.delete-panel-btn');
+                const markdownEditor = panelElement.querySelector('.panel-markdown-editor');
+                const pasteMarkdownButton = panelElement.querySelector('.paste-markdown-btn');
+                const generatePanelTitleBtn = panelElement.querySelector('.generate-panel-title-btn'); 
+                const previewMarkdownButton = panelElement.querySelector('.preview-markdown-btn');
+                const clearMarkdownButton = panelElement.querySelector('.clear-markdown-btn'); 
+                const imagePreviewArea = panelElement.querySelector('.panel-image-preview-area'); 
+                const moveUpBtn = panelElement.querySelector('.move-up-btn');
+                const moveDownBtn = panelElement.querySelector('.move-down-btn');
+                const generateCaptionBtn = panelElement.querySelector('.generate-caption-btn');
+                const deleteDuplicateImagesBtn = panelElement.querySelector('.delete-duplicate-images-btn');
+                const deleteAllImagesBtn = panelElement.querySelector('.delete-all-images-btn');
+
+                titleInput.addEventListener('input', () => { isPanelEmpty(panelElement); ensureEmptyPanelExists(); debounceSaveState(); });
+                pasteTitleButton.addEventListener('click', async () => { 
+                    try {
+                        if (navigator.clipboard && navigator.clipboard.readText) {
+                            titleInput.value = await navigator.clipboard.readText();
+                            isPanelEmpty(panelElement); ensureEmptyPanelExists(); debounceSaveState();
+                        } else { console.warn('クリップボードAPIが利用できません。'); }
+                    } catch (err) { console.error('クリップボードの読み取りに失敗:', err); }
+                });
+                
+                pasteMarkdownButton.addEventListener('click', async () => {  
+                    try {
+                        if (navigator.clipboard && navigator.clipboard.readText) {
+                            markdownEditor.value = await navigator.clipboard.readText();
+                            updateMarkdownButtonsVisibility(panelElement); 
+                            isPanelEmpty(panelElement); ensureEmptyPanelExists(); debounceSaveState();
+                            if (titleInput.value.trim() === '' && markdownEditor.value.trim() !== '') {
+                                triggerPanelTitleGeneration(panelElement, markdownEditor, titleInput, generatePanelTitleBtn, true); 
+                            }
+                        } else { console.warn('クリップボードAPIが利用できません。'); }
+                    } catch (err) { console.error('クリップボードの読み取りに失敗:', err); }
+                });
+
+                generatePanelTitleBtn.addEventListener('click', () => {
+                    triggerPanelTitleGeneration(panelElement, markdownEditor, titleInput, generatePanelTitleBtn, false); 
+                });
+                
+                markdownEditor.addEventListener('paste', () => { 
+                    setTimeout(() => { 
+                        updateMarkdownButtonsVisibility(panelElement);
+                        isPanelEmpty(panelElement); ensureEmptyPanelExists(); debounceSaveState(); 
+                        if (titleInput.value.trim() === '' && markdownEditor.value.trim() !== '') {
+                            triggerPanelTitleGeneration(panelElement, markdownEditor, titleInput, generatePanelTitleBtn, true); 
+                        }
+                    }, 0);
+                });
+                markdownEditor.addEventListener('input', () => { 
+                    updateMarkdownButtonsVisibility(panelElement);
+                    isPanelEmpty(panelElement); ensureEmptyPanelExists(); debounceSaveState(); 
+                });
+                markdownEditor.addEventListener('blur', () => { 
+                    updateMarkdownButtonsVisibility(panelElement);
+                    isPanelEmpty(panelElement); ensureEmptyPanelExists(); saveState(); 
+                });
+
+                previewMarkdownButton.addEventListener('click', () => {
+                    const markdownText = markdownEditor.value;
+                    try { showModal(marked.parse(markdownText)); } 
+                    catch (error) { showModal(`マークダウンのレンダリング中にエラー:\n${error.message}`, true); }
+                });
+
+                clearMarkdownButton.addEventListener('click', () => { 
+                    markdownEditor.value = '';
+                    updateMarkdownButtonsVisibility(panelElement);
+                    isPanelEmpty(panelElement);
+                    ensureEmptyPanelExists();
+                    debounceSaveState();
+                });
+
+                deletePanelButton.addEventListener('click', () => {  
+                    panelElement.remove(); 
+                    ensureEmptyPanelExists(); 
+                    saveState(); 
+                });
+
+                moveUpBtn.addEventListener('click', () => {
+                    const prevSibling = panelElement.previousElementSibling;
+                    if (prevSibling) {
+                        panelContainer.insertBefore(panelElement, prevSibling);
+                        updatePanelOrderAndControls();
+                        saveState(); 
+                    }
+                });
+                moveDownBtn.addEventListener('click', () => {
+                    const nextSibling = panelElement.nextElementSibling;
+                    if (nextSibling) {
+                        panelContainer.insertBefore(nextSibling, panelElement); 
+                        updatePanelOrderAndControls();
+                        saveState(); 
+                    }
+                });
+
+                generateCaptionBtn.addEventListener('click', () => {
+                    const imageThumbs = imagePreviewArea.querySelectorAll('.panel-image-thumbnail');
+                    let imagesToProcessCount = 0;
+                    const promises = [];
+                    const originalButtonText = generateCaptionBtn.textContent; 
+                    generateCaptionBtn.classList.add('is-loading');
+                    generateCaptionBtn.disabled = true;
+                    generateCaptionBtn.textContent = '生成中...';
+
+                    imageThumbs.forEach((thumb) => {
+                        const imgElement = thumb.querySelector('img');
+                        const captionDiv = thumb.querySelector('.image-caption');
+                        const deleteCapBtn = thumb.querySelector('.delete-caption-btn');
+
+                        if (imgElement && imgElement.src && (!captionDiv.textContent.trim() || captionDiv.textContent.trim() === "キャプション未生成")) {
+                            imagesToProcessCount++;
+                            // triggerSingleImageCaptionGeneration は Promise を返すので、それを promises 配列に追加
+                            promises.push(triggerSingleImageCaptionGeneration(imgElement, captionDiv, deleteCapBtn, false)); // ボタンクリック時はキャッシュを使わない
+                        }
+                    });
+
+                    if (imagesToProcessCount === 0) {
+                        generateCaptionBtn.classList.remove('is-loading');
+                        generateCaptionBtn.disabled = false;
+                        generateCaptionBtn.textContent = originalButtonText;
+                    } else {
+                        Promise.allSettled(promises).then(() => {
+                            generateCaptionBtn.classList.remove('is-loading');
+                            generateCaptionBtn.disabled = false;
+                            generateCaptionBtn.textContent = originalButtonText;
+                            debounceSaveState(); 
+                        });
+                    }
+                });
+
+                deleteDuplicateImagesBtn.addEventListener('click', () => {
+                    const images = imagePreviewArea.querySelectorAll('.panel-image-thumbnail img');
+                    const seenSources = new Set();
+                    images.forEach(img => {
+                        if (seenSources.has(img.src)) { img.closest('.panel-image-thumbnail').remove(); } 
+                        else { seenSources.add(img.src); }
+                    });
+                    updateDuplicateImageMarkers(imagePreviewArea);
+                    updateImageActionButtonsVisibility(panelElement); 
+                    isPanelEmpty(panelElement); ensureEmptyPanelExists(); saveState();
+                });
+
+                deleteAllImagesBtn.addEventListener('click', () => {
+                    imagePreviewArea.innerHTML = ''; 
+                    updateDuplicateImageMarkers(imagePreviewArea); 
+                    updateImageActionButtonsVisibility(panelElement); 
+                    isPanelEmpty(panelElement); ensureEmptyPanelExists(); saveState();
+                });
+
+                imagePreviewArea.addEventListener('dragover', (e) => { e.preventDefault(); imagePreviewArea.classList.add('dragover'); });
+                imagePreviewArea.addEventListener('dragleave', () => { imagePreviewArea.classList.remove('dragover'); });
+                imagePreviewArea.addEventListener('drop', (e) => {  
+                    e.preventDefault(); imagePreviewArea.classList.remove('dragover'); 
+                    handleImageFiles(e.dataTransfer.files, imagePreviewArea, panelElement); 
+                });
+
+                new Sortable(imagePreviewArea, { 
+                    animation: 150, ghostClass: 'sortable-ghost-img', draggable: '.panel-image-thumbnail',
+                    onEnd: function() { saveState(); }
+                 });
+                 updatePanelOrderAndControls(); 
+            }
+            
+            function handleImageFiles(files, previewArea, panelElement) {  
+                for (const file of files) {
+                    if (file.type.startsWith('image/')) {
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            const { thumbWrapper, imgElement, captionDiv, deleteCaptionBtn } = addImageThumbnailToPanel(e.target.result, file.name, previewArea, panelElement);
+                            // 画像ドロップ時に自動でキャプション生成 (キャッシュ利用)
+                            if (imgElement && captionDiv) {
+                                triggerSingleImageCaptionGeneration(imgElement, captionDiv, deleteCaptionBtn, true)
+                                    .then(() => debounceSaveState()) // 成功・失敗に関わらず保存
+                                    .catch(() => debounceSaveState());// 成功・失敗に関わらず保存
+                            }
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                }
+            }
+
+            function addImageThumbnailToPanel(imageDataUrl, fileName, previewArea, panelElement, doSave = true, captionText = '') { 
+                const thumbWrapper = document.createElement('div');
+                thumbWrapper.className = 'panel-image-thumbnail';
+                const img = document.createElement('img');
+                img.src = imageDataUrl; img.alt = fileName;
+                img.onerror = () => { 
+                    img.alt = '画像読み込みエラー';
+                    const errorText = document.createElement('p');
+                    errorText.textContent = '表示不可'; errorText.style.color = 'red';
+                    errorText.style.fontSize = '0.8em'; errorText.style.textAlign = 'center';
+                    errorText.style.padding = '5px';
+                    const currentImg = thumbWrapper.querySelector('img');
+                    if(currentImg) currentImg.replaceWith(errorText);
+                    else thumbWrapper.insertBefore(errorText, thumbWrapper.firstChild); 
+                };
+                const deleteImgBtn = document.createElement('button');
+                deleteImgBtn.className = 'delete-image-btn'; deleteImgBtn.innerHTML = '&times;'; deleteImgBtn.title = '画像を削除';
+                deleteImgBtn.addEventListener('click', (e) => {
+                    e.stopPropagation(); thumbWrapper.remove();
+                    updateDuplicateImageMarkers(previewArea); 
+                    updateImageActionButtonsVisibility(panelElement); 
+                    isPanelEmpty(panelElement); ensureEmptyPanelExists(); saveState(); 
+                });
+                const captionWrapper = document.createElement('div');
+                captionWrapper.className = 'image-caption-wrapper';
+                const captionDiv = document.createElement('div');
+                captionDiv.className = 'image-caption';
+                captionDiv.textContent = captionText; 
+                const deleteCaptionBtn = document.createElement('button');
+                deleteCaptionBtn.className = 'delete-caption-btn';
+                deleteCaptionBtn.innerHTML = '&times;'; deleteCaptionBtn.title = 'キャプションを削除';
+                if (captionText && !captionText.startsWith("エラー:") && captionText !== "生成中..." && captionText !== "キャプション未生成") {
+                    deleteCaptionBtn.classList.add('visible');
+                }
+                deleteCaptionBtn.addEventListener('click', (e) => {
+                    e.stopPropagation(); captionDiv.textContent = ''; 
+                    deleteCaptionBtn.classList.remove('visible'); debounceSaveState();
+                });
+                captionWrapper.appendChild(captionDiv); captionWrapper.appendChild(deleteCaptionBtn);
+                thumbWrapper.appendChild(img); thumbWrapper.appendChild(captionWrapper); 
+                thumbWrapper.appendChild(deleteImgBtn); 
+                previewArea.appendChild(thumbWrapper);
+                
+                updateDuplicateImageMarkers(previewArea); 
+                updateImageActionButtonsVisibility(panelElement); 
+                isPanelEmpty(panelElement); 
+                ensureEmptyPanelExists(); 
+                if (doSave) { debounceSaveState(); } 
+
+                return { thumbWrapper, imgElement: img, captionDiv, deleteCaptionBtn }; // キャプション生成で使う要素を返す
+            }
+
+            loadState(); 
+        });
+    </script>
+</body>
+</html>

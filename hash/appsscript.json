@@ -1,0 +1,22 @@
+{
+  "timeZone": "Asia/Tokyo",
+  "dependencies": {
+    "libraries": [{
+      "userSymbol": "Sha1",
+      "libraryId": "1oKLfiJY_0SIAx62t0fHFW0dcgkq41VNJZaxhoUqurNP_LKxKh6xTa3WN",
+      "version": "1",
+      "developmentMode": true
+    }, {
+      "userSymbol": "Random",
+      "libraryId": "1NtKt5zOmO0Hvgx_6Jxfl1xyHSK4A65O9krJSfqUfdx-mfjp1fcqiRbSr",
+      "version": "1",
+      "developmentMode": true
+    }]
+  },
+  "webapp": {
+    "access": "MYSELF",
+    "executeAs": "USER_DEPLOYING"
+  },
+  "exceptionLogging": "STACKDRIVER",
+  "runtimeVersion": "V8"
+}

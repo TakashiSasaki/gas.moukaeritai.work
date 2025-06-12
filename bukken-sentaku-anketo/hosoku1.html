@@ -1,0 +1,29 @@
+<section id="hosoku1">
+  <strong>物件選択に関するアンケート</strong>
+  <br />
+  <hr>
+  <h3>このアンケート調査は、愛媛大学生の居住物件に関する好みを把握するためのものです。
+    <br />
+    <br />本調査は、以下の手順で行われます。
+    <br />1. あなたご自身のことについてお聞きします。
+    <br />2. 提示された仮想物件に関する好みを伺います。
+    <br />
+    <br />なお、本調査では、氏名等の個人情報はお聞きしませんので安心してご回答ください。
+    <br />また、本調査によって得られた情報は、研究目的にのみ使用し、それ以外での用途に用いることはありません。
+    <br />
+    <br />ご記入にあたっては、再読みボタンや戻るボタンをクリックしないようにご注意ください。 
+  </h3>
+  <hr>
+  <button onclick="show_kojin()">次へ</button>
+  <hr>
+  <script>
+     function show_kojin(){
+       var sections = document.getElementsByTagName("section");
+       for(var i=0; i<sections.length; ++i) {
+         sections[i].style.display="none";
+       }
+       document.getElementById("kojin").style.display="block";
+    } 
+
+   </script>
+</section>

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+  </head>
+  <body>
+    <?
+      var spreadsheet_id = PropertiesService.getUserProperties().getProperty('spreadsheet_id');
+    ?>
+    <label>
+      Spreadsheet ID 
+      <input value="<?=spreadsheet_id?>" readonly="1">
+    </label>
+    <? var user_dictionary_sheet_names = getUserDictionarySheetNames();
+       for(var i=0; i<user_dictionary_sheet_names.length; ++i){
+         var sheet_name = user_dictionary_sheet_names[i];
+         var url = getExportUrl(spreadsheet_id, sheet_name, 'tsv');
+    ?>
+    <div><a href="<?=url?>"><?=sheet_name?></a></div>
+    <?
+       }
+    ?>
+  </body>
+</html>

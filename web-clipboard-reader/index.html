@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mini.css/3.0.1/mini-default.min.css">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+      google.charts.load('current', {'packages':['table']});
+      //google.charts.setOnLoadCallback(drawTable);
+      
+      function drawTable() {
+        google.script.run.withSuccessHandler(function(x){
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'key');
+        data.addColumn('number', 'time');
+        data.addColumn('string', 'value');
+        data.addRows(x);
+        //for(var i in Object.keys(x)){
+        //  var k = Object.keys(x)[i];
+        //  data.addRow([k, x[k]]);
+        //}//for
+      
+        var table = new google.visualization.Table(document.getElementById('table_div'));
+      
+        table.draw(data, {showRowNumber: true, width: '100%', height: '100%'});
+        }).getRows(document.querySelector("#salt").value);
+        
+        if(document.querySelector("#continuous").checked === true){
+          setTimeout(drawTable, 5000);
+        }
+      }
+    </script>
+    <style>
+      #footnote {display: float}
+    </style>
+  </head>
+  <body>
+    <h1><?=PropertiesService.getScriptProperties().getProperty("title")?></h1>
+    <p>
+      Web Clipboard is a temporary key-value store with non-authenticated
+      write operation and authenticated read operation built on Google Apps Script.
+      This is the writer page to put key-value pair with a salt and an email address.
+      You can get it back at the reader page with the same salt and the authentication
+      by Google Account of the same email address.
+    </p>
+    <div> 
+      <label>Reader requires Google account 
+      <input value="https://bit.ly/WebClipboardReader" readonly="1">
+      <a href="https://bit.ly/WebClipboardReader" class="button" target="reader">Open Reader page</a></label>
+    </div>
+    <div>
+      <label>Writer (this page)
+      <input value="https://bit.ly/WebClipboardWriter" readonly="1"><a href="https://bit.ly/WebClipboardWriter"
+        target="writer" class="button">Reload Writer page</a></label>
+    </div>
+    <label>email</label><input value="<?=Session.getEffectiveUser().getEmail()?>" readonly="1">
+    <label>salt</label><input id="salt" onchange="save(this);">
+    <button onclick="drawTable()">getAll</button>
+    <label>continuous</label><input type="checkbox" id="continuous" onchange="saveCheckbox(this);">
+    <div id="table_div">
+    </div>
+    <script>
+      function save(element){
+        window.localStorage.setItem(element.id, element.value);
+      }
+      function saveCheckbox(element){
+        window.localStorage.setItem(element.id, element.checked);
+      }
+      setTimeout(function(){
+        document.querySelector("#salt").value = window.localStorage.getItem("salt");
+        document.querySelector("#continuous").checked = window.localStorage.getItem("continuous");
+      }, 50);
+    </script>
+    <div id="footnote">
+      <?!=PropertiesService.getScriptProperties().getProperty("twitter");?>
+    </div>
+  </body>
+</html>

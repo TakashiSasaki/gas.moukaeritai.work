@@ -1,0 +1,45 @@
+<section id="choice03">
+  <h3>Q.　以下の仮想の物件のなかから、あなたにとって最も望ましい物件を1つだけお選びください。
+  </h3>
+   <br />  
+   <table border="1" width="75%" height="200" id="cablec03">
+      <tr>
+         <td width="150" height="80" align="center"><input type="radio" class="geomsize" name="ルート" value="1" onclick="recordchoice03(this)"></td>
+         <td width="150" height="80" align="center"><input type="radio" class="geomsize" name="ルート" value="2" onclick="recordchoice03(this)"></td>
+         <td width="150" height="80" align="center"><input type="radio" class="geomsize" name="ルート" value="3" onclick="recordchoice03(this)"></td>
+         <td width="150" height="80" align="center"><input type="radio" class="geomsize" name="ルート" value="4" onclick="recordchoice03(this)"></td>
+         <td width="150" height="80" align="center"><input type="radio" class="geomsize" name="ルート" value="5" onclick="recordchoice03(this)"></td>
+         <td width="150" height="80" align="center"><input type="radio" class="geomsize" name="ルート" value="6" onclick="recordchoice03(this)"></td>
+         <td width="150" height="80" align="center"><input type="radio" class="geomsize" name="ルート" value="7" onclick="recordchoice03(this)"></td>
+         <td width="150" height="80" align="center"><input type="radio" class="geomsize" name="ルート" value="8" onclick="recordchoice03(this)"></td>
+         </tr>
+      <?!=getTr("cc03"); ?>
+   </table>
+   <br clear="all"><br />
+   <hr>
+   <button onclick="show_rank12();">次へ</button>
+   <hr>
+<script>
+function show_rank12() {
+
+	end_choice03 = (new Date()).getTime();
+	var sections = document.getElementsByTagName("section");
+	for (var i = 0; i < sections.length; ++i) {
+		sections[i].style.display = "none";
+	}
+	document.getElementById("rank12").style.display = "block";
+}
+
+function recordchoice03(element) {
+	//       var start_time = start_time;            //誰が
+	var click_time = (new Date()).getTime(); //いつ
+	//var element_id = element.id; //何を
+	var element_value = element.value; //値
+	var element_checked = element.checked; //チェック状態
+	google.script.run.withFailureHandler(function () {
+    }).withSuccessHandler(function () {
+    }).recordchoice03(start_time, end_rank42, click_time, "choice03", element_value, element_checked);
+}
+recordchoice03(element);
+</script>
+</section>

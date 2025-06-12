@@ -1,0 +1,132 @@
+<label>effective user </label><input  value="<?=Session.getEffectiveUser().getEmail()?>" readonly>
+<label>screen name </label><input value="<?=getScreenName()?>" readonly>
+
+<button onclick="authorize()">authorize to gain access to the block list in your Twitter account.</button>
+<script>
+function authorize(){
+  google.script.run.withSuccessHandler(function(authorization_url){
+    window.open(authorization_url, "_blank");
+  }).withFailureHandler(function(e){
+    alert(e);
+  }).getAuthorizationUrl();
+}
+</script>
+<button onclick="hasAccess()">check for authorization</button>
+<script>
+function hasAccess(){
+  google.script.run.withSuccessHandler(function(e){
+    alert(e);
+  }).withFailureHandler(function(e){
+    alert(e);
+  }).hasAccess();
+}
+</script>
+
+<div id="blocked_users">
+  <button onclick="fetchBlockedUsers()">fetch blocked users</button>
+  <button onclick="getBlockedUsers()">get blocked users</button>
+  <textarea readonly></textarea>
+  <label>the number of cached users </label><input readonly>
+</div>
+<script>
+$(getBlockedUsers());
+function fetchBlockedUsers(){
+  $("#blocked_users textarea").text("");
+  $("#blocked_users input").val("");
+  google.script.run.withSuccessHandler(function(e){
+    $("#blocked_users textarea").text(JSON.stringify(e));
+    $("#blocked_users input").val(e.length);
+  }).withFailureHandler(function(e){
+    $("#blocked_users textarea").text(e);
+  }).fetchBlockedUsers();
+}
+function getBlockedUsers(){
+  $("#blocked_users textarea").text("");
+  $("#blocked_users input").val("");
+  google.script.run.withSuccessHandler(function(e){
+    $("#blocked_users textarea").text(JSON.stringify(e));
+    $("#blocked_users input").val(e.length);
+  }).withFailureHandler(function(e){
+    $("#blocked_users textarea").text(e);
+  }).getBlockedUsers();
+}
+</script>
+
+<div id="unblock">
+<input placeholder="user_id"/>
+<button onclick="unblock()">unblock</button>
+</div>
+<script>
+function unblock(){
+  google.script.run.withSuccessHandler(function(e){
+    alert(e);
+  }).withFailureHandler(function(e){
+    alert(e);
+  }).unblock($("#unblock input").val());
+}
+</script>
+
+<div id="mute">
+<input placeholder="user_id"/>
+<button onclick="mute()">mute</button>
+</div>
+<script>
+function mute(){
+  google.script.run.withSuccessHandler(function(e){
+    alert(e);
+  }).withFailureHandler(function(e){
+    alert(e);
+  }).mute($("#mute input").val());
+}
+</script>
+
+<div id="unblockAndMute">
+<button onclick="unblockAndMute()">unblockAndMute</button>
+</div>
+<script>
+function unblockAndMute(){
+  google.script.run.withSuccessHandler(function(e){
+    alert(e);
+  }).withFailureHandler(function(e){
+    alert(e);
+  }).unblockAndMute();
+}
+</script>
+
+<div id="getLastExecutionDate">
+<button onclick="getLastExecutionDate()">getLastExecutionDate</button>
+</div>
+<script>
+function getLastExecutionDate(){
+  google.script.run.withSuccessHandler(function(e){
+    alert(e);
+  }).withFailureHandler(function(e){
+    alert(e);
+  }).getLastExecutionDate();
+}
+</script>
+
+<div class="row">
+  <button class="btn" onclick="installTrigger(5)">install 5-min trigger</button>
+  <button class="btn" onclick="installTrigger(15)">install 15-min trigger</button>
+  <button class="btn" onclick="installTrigger(30)">install 30-min trigger</button>
+  <button class="btn" onclick="installHoursTrigger(1)">install 1-hour trigger</button>
+  <button class="btn" onclick="installHoursTrigger(6)">install 6-hour trigger</button>
+  <button class="btn" onclick="installHoursTrigger(12)">install 12-hour trigger</button>
+</div>
+<script>
+  function installTrigger(minutes){
+    google.script.run.withSuccessHandler(function(e){
+      alert("succeeded");
+    }).withFailureHandler(function(e){
+      alert(e);
+    }).installTrigger(minutes);
+  }
+  function installHoursTrigger(hours){
+    google.script.run.withSuccessHandler(function(e){
+      alert("succeeded");
+    }).withFailureHandler(function(e){
+      alert(e);
+    }).installHoursTrigger(hours);
+  }
+</script>

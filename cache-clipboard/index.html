@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <link href="https://jsdo.it/lib/bootstrap.css-3.0.0/css" type="text/css" rel="stylesheet" />
+    <link href="https://jsdo.it/lib/bootstrap-theme.css-3.0.0/css" type="text/css" rel="stylesheet" />
+    <style>
+      <?!=css?>  
+    </style>
+  </head>
+  <body>
+  <p>
+Welcome 
+<?=Session.getEffectiveUser().getEmail();?>.    
+</p>
+      <?!=html?>
+  </body>
+</html>
+
+

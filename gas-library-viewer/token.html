@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+  </head>
+  <body>
+    <div>
+      <label for="token">取得済みの認可コード</label>
+      <input id="token" value="<?=PropertiesService.getUserProperties().getProperty('code')?>" readonly>
+    </div>
+    <div>
+      <label for="token">取得済みのアクセストークン</label>
+      <input id="token" value="<?=PropertiesService.getUserProperties().getProperty('token')?>" readonly>
+    </div>
+    <div>
+      <label for="url">このページのURL</label>
+      <input id="url" value="<?=ScriptApp.getService().getUrl()?>" readonly>
+    </div>    
+  </body>
+</html>

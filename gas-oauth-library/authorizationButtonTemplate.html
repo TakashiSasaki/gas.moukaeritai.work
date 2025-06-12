@@ -1,0 +1,8 @@
+    <div id="post">
+      <button onclick="authorize()"><?=button_face?></button>
+    </div>
+    <script>
+      function authorize(){
+ 　　　  window.open("<?!=getAuthorizationUrl()?>", "_blank");   
+      }
+    </script>

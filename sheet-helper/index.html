@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<!-- filename: index.html -->
+<html>
+  <head>
+    <base target="_top">
+    <script>
+      // ページ読み込み時に listSheets を取得して描画する
+      function loadSheets() {
+        google.script.run.withSuccessHandler(renderSheets).listSheets();  // 直接 listSheets を呼び出し
+      }
+
+      // シート一覧を描画する
+      function renderSheets(sheetList) {
+        var output = '<h2>List of Sheets</h2>';
+        if (sheetList.length > 0) {
+          output += '<ul>';
+          sheetList.forEach(function(sheet) {
+            output += '<li>UUID: ' + sheet.uuid + ', Spreadsheet Title: ' + sheet.title + '</li>';
+          });
+          output += '</ul>';
+        } else {
+          output += '<p>No sheets found.</p>';
+        }
+        document.getElementById('sheet-list').innerHTML = output;
+      }
+
+      // ページロード時にシートを読み込む
+      window.onload = loadSheets;
+    </script>
+  </head>
+  <body>
+    <div id="sheet-list">
+      <!-- シートリストが表示される場所 -->
+      <p>Loading sheets...</p>
+    </div>
+  </body>
+</html>
