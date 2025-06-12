@@ -1,0 +1,303 @@
+<style>
+    /* 全体のスタイル */
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        margin: 0;
+        background-color: #f0f2f5;
+        color: #333;
+        line-height: 1.6;
+    }
+
+    /* メインコンテナ */
+    .main-container {
+        max-width: 900px;
+        margin: 20px auto; /* header削除に伴い上マージン調整 */
+        padding: 0 20px 40px; 
+    }
+
+    /* ドキュメントタイトル入力エリア */
+    .document-title-section {
+        margin-bottom: 25px;
+        padding: 15px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        display: flex; /* ボタンを横に並べるため */
+        align-items: center; /* 垂直中央揃え */
+        gap: 10px; /* 入力欄とボタンの間隔 */
+    }
+    .document-title-section label {
+        /* display: block; */ /* flexアイテムになるので不要 */
+        font-size: 1.2em;
+        font-weight: bold;
+        /* margin-bottom: 8px; */ /* flexで管理 */
+        color: #007bff;
+        flex-shrink: 0; /* ラベルが縮まないように */
+    }
+    #document-title-input {
+        flex-grow: 1; /* 入力欄が可能な限り幅を取る */
+        padding: 10px 15px;
+        font-size: 1.3em;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-sizing: border-box;
+        background-color: #e7f5ff; 
+    }
+    #document-title-input:focus {
+        outline: none;
+        border-color: #007bff;
+        box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+    }
+    #generate-document-title-btn { /* ドキュメントタイトル生成ボタン */
+        background-color: #28a745;
+        padding: 8px 12px; /* 少し小さめ */
+    }
+    #generate-document-title-btn:hover {
+        background-color: #218838;
+    }
+
+
+    /* パネルコンテナ */
+    #panel-container { display: flex; flex-direction: column; gap: 25px; }
+
+    /* コンテンツパネル */
+    .content-panel {
+        background-color: #ffffff;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        position: relative;
+    }
+
+    .panel-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 10px;
+        gap: 8px; 
+    }
+    .panel-number {
+        font-size: 1.1em;
+        font-weight: bold;
+        color: #007bff;
+        margin-right: 8px;
+        flex-shrink: 0;
+    }
+    .panel-title-input {
+        flex-grow: 1;
+        padding: 8px 12px;
+        font-size: 1.2em;
+        font-weight: bold;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        background-color: #e7f5ff; 
+    }
+    .panel-title-input:focus {
+        outline: none;
+        border-color: #007bff;
+        box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+    }
+
+    .panel-control-btn { 
+        background-color: #6c757d;
+        color: white;
+        border: none;
+        padding: 6px 10px;
+        font-size: 1.0em; 
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        line-height: 1; 
+        flex-shrink: 0; 
+    }
+    .panel-control-btn:hover { background-color: #5a6268; }
+    .panel-control-btn.is-loading { cursor: wait; background-color: #adb5bd; } 
+    
+    .preview-markdown-btn { background-color: #17a2b8; } 
+    .preview-markdown-btn:hover { background-color: #138496; }
+    .clear-markdown-btn { background-color: #ffc107; color: #212529;}
+    .clear-markdown-btn:hover { background-color: #e0a800; }
+    
+    .move-panel-btn { font-size: 1.2em; padding: 4px 8px;} 
+    .move-panel-btn.hidden, .delete-panel-btn.hidden,
+    .preview-markdown-btn.hidden, .clear-markdown-btn.hidden,
+    .generate-panel-title-btn.hidden, /* タイトル生成ボタンもhiddenクラス対応 */
+    .generate-caption-btn.hidden, .delete-duplicate-images-btn.hidden, .delete-all-images-btn.hidden,
+    #generate-document-title-btn.hidden { /* ドキュメントタイトル生成ボタンも */
+        display: none !important; 
+    }
+
+    .delete-panel-btn {
+        background-color: #dc3545;
+        margin-left: auto; 
+    }
+    .delete-panel-btn:hover { background-color: #c82333; }
+
+    .panel-section { margin-bottom: 20px; }
+    .panel-section-header { display: flex; align-items: center; margin-bottom: 10px; gap: 8px; flex-wrap: wrap;}
+    .panel-section h3 {
+        font-size: 1.1em;
+        color: #333;
+        margin-top: 0;
+        margin-bottom: 0;
+        padding-bottom: 5px;
+        flex-grow: 1;
+    }
+    .image-op-btn { 
+        font-size: 0.9em;
+        padding: 4px 8px;
+    }
+    .generate-caption-btn { background-color: #20c997; }
+    .generate-caption-btn:hover { background-color: #1baa80; }
+
+
+    .panel-markdown-editor {
+        width: 100%;
+        min-height: 150px; 
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+        resize: vertical;
+        font-size: 0.95em;
+        background-color: #e7f5ff; 
+    }
+
+    .panel-image-preview-area {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+        gap: 10px;
+        min-height: 120px;
+        padding: 10px;
+        border: 2px dashed #ccc;
+        border-radius: 6px;
+        background-color: #e7f5ff; 
+        position: relative;
+        transition: background-color 0.3s ease, border-color 0.3s ease;
+    }
+    .panel-image-preview-area.dragover { background-color: #d0e8f0; border-color: #007bff; } 
+    .panel-image-preview-area.no-images::before { 
+        content: "画像をここにドラッグ＆ドロップ";
+        position: absolute; top: 50%; left: 50%;
+        transform: translate(-50%, -50%);
+        color: #5a6268; 
+        font-size: 0.9em; pointer-events: none; 
+    }
+    .panel-image-thumbnail {
+        position: relative; border: 1px solid #ddd; border-radius: 4px;
+        overflow: hidden; 
+        background-color: #fff; cursor: grab; z-index: 1; 
+        transition: border-color 0.3s ease; 
+        display: flex; 
+        flex-direction: column;
+        height: auto; 
+    }
+    .panel-image-thumbnail.is-duplicate {
+        border: 2px solid red !important; 
+    }
+    .panel-image-thumbnail img { 
+        width: 100%; 
+        height: 100px; 
+        object-fit: cover; 
+    }
+    .image-caption-wrapper { 
+        display: flex;
+        align-items: center; 
+        font-size: 0.75em;
+        padding: 4px 6px;
+        background-color: rgba(255, 255, 255, 0.9);
+        border-top: 1px solid #eee;
+        min-height: 1.2em; 
+    }
+    .image-caption {
+        flex-grow: 1; 
+        text-align: center;
+        word-break: break-all; 
+    }
+    .image-caption.loading { color: #6c757d; font-style: italic; }
+    .image-caption.error { color: red; font-style: italic; }
+    .image-caption:empty::before { 
+        content: "キャプション未生成";
+        color: #999;
+        font-style: italic;
+    }
+    .delete-caption-btn {
+        background: none;
+        border: none;
+        color: #aaa;
+        cursor: pointer;
+        font-size: 1.2em; 
+        padding: 0 3px;
+        line-height: 1;
+        margin-left: 4px; 
+        display: none; 
+    }
+    .delete-caption-btn:hover { color: #333; }
+    .image-caption-wrapper:hover .delete-caption-btn,
+    .image-caption-wrapper .delete-caption-btn.visible { 
+         display: inline-block;
+    }
+
+
+    .delete-image-btn {
+        position: absolute; top: 5px; right: 5px; background: rgba(220, 53, 69, 0.8);
+        color: white; border: none; border-radius: 50%; width: 20px; height: 20px;
+        font-size: 12px; line-height: 20px; text-align: center; cursor: pointer;
+        opacity: 0; transition: opacity 0.2s ease;
+        z-index: 2; 
+    }
+    .panel-image-thumbnail:hover .delete-image-btn { opacity: 1; }
+    .panel-image-thumbnail:active { cursor: grabbing; }
+
+    /* モーダルダイアログのスタイル */
+    .modal-overlay {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0, 0, 0, 0.7); display: none; 
+        justify-content: center; align-items: center; z-index: 1000;
+    }
+    .modal-overlay.show { display: flex; }
+    .modal-content {
+        background: white; padding: 40px; padding-top: 50px; 
+        border-radius: 8px; position: relative; width: 80%;
+        max-width: 800px; height: 80%; max-height: 90vh; 
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+    .modal-close-btn {
+        position: absolute; top: 10px; right: 15px; font-size: 2.5em; 
+        font-weight: bold; color: #aaa; background: none; border: none;
+        cursor: pointer; line-height: 1;
+    }
+    .modal-close-btn:hover { color: #333; }
+    #modal-preview-area {
+        width: 100%; height: 100%; overflow-y: auto; 
+        border: 1px solid #eee; padding: 15px; box-sizing: border-box;
+    }
+    #modal-preview-area h1 { margin-top: 0; border-bottom: 1px solid #eee; }
+    #modal-preview-area img { max-width: 100%; height: auto; }
+    #modal-preview-area pre { background-color: #f4f4f4; padding: 10px; border-radius: 4px; overflow-x: auto;}
+    #modal-preview-area code { font-family: monospace; }
+    #modal-preview-area blockquote { border-left: 5px solid #ccc; padding-left: 15px; margin-left: 0; color: #555; }
+    #modal-preview-area table { border-collapse: collapse; width: 100%; }
+    #modal-preview-area th, #modal-preview-area td { border: 1px solid #ddd; padding: 8px; }
+    #modal-preview-area th { background-color: #f2f2f2; }
+    .modal-error-message { 
+        color: red; font-weight: bold; padding: 10px;
+        border: 1px solid red; background-color: #ffebee;
+        border-radius: 4px; white-space: pre-wrap; 
+    }
+
+    @media (max-width: 768px) {
+        /* header h1 { font-size: 1.5em; } */ /* header削除のため不要 */
+        .main-container { padding: 0 10px 20px; }
+        .document-title-section { flex-direction: column; align-items: flex-start; }
+        #document-title-input { margin-bottom: 10px; }
+        .panel-header { flex-wrap: wrap; }
+        .panel-title-input { margin-bottom: 5px; width: 100%; margin-right: 0;}
+        .panel-header .panel-control-btn, .panel-header .delete-panel-btn { margin-top: 5px; }
+        .panel-section-header { flex-wrap: wrap; } 
+        .panel-section-header h3 { width: 100%; margin-bottom: 5px; } 
+        .modal-content { width: 95%; height: 90%; }
+    }
+</style>
