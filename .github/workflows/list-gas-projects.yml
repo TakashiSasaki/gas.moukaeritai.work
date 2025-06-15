@@ -1,5 +1,4 @@
-name: Update Apps Script Projects List
-
+name: Update clasp-list.txt
 on:
   schedule:
     # 1時間おきに実行（例: 0分, 60分, 120分...）
