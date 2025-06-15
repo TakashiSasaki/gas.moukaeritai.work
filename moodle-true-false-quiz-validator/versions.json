@@ -1,0 +1,14 @@
+[
+  {
+    "version": 1,
+    "description": "Version 1.0: Moodle XML True/False Question Analyzer. Supports Moodle XML input via text paste, file drag & drop, or local file upload. The application parses questions, extracts titles, question text, and the Moodle-defined correct answer (true/false). It currently features a dummy AI for answer inference and provides a comparison with Moodle's correct answer."
+  },
+  {
+    "version": 2,
+    "description": "2025-05-21 DEMO"
+  },
+  {
+    "version": 3,
+    "description": "解説付き"
+  }
+]

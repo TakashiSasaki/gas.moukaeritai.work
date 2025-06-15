@@ -1,0 +1,5 @@
+Found 4 versions.
+1 - No description
+2 - No description
+3 - クラウド同期、全画面対応
+4 - Sheet2対応

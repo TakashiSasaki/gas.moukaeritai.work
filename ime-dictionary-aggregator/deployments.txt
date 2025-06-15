@@ -1,0 +1,4 @@
+Found 3 deployments.
+- AKfycbx4OmwuCwW0U0BPvJuYpgbhma1Kmo9JMnJIiEbm5mpm @HEAD 
+- AKfycbzpAjgvLRNyR2c7IsbglMg0rfZ5eKItfWtlg_H-VNSFCnR84R-u9LurmBMy3Vj2sKvY6Q @2 - ロジックとしてはうまく動いている。見栄えの調整しなきゃな。
+- AKfycby_PLExCT_1RglgDAhgzuS7SRetFrpBp-8hjJpn0YRoZN8nywGyoBvvXvXpzmpTa1wpuQ @1 - 作り始め

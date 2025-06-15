@@ -1,0 +1,12 @@
+[
+  {
+    "id": "AKfycbyn2ggsYDyhNj6RJ-aJRbE6qjvijvtRe5nkIoXu-R4",
+    "target": "HEAD",
+    "description": ""
+  },
+  {
+    "id": "AKfycbyBD73dWM5lqWyd1h0C3oOQlfgXwrTfnOQPUDg0Tqiywq5AZ6PIr6stbCnDrpk3c5Jp",
+    "target": "7",
+    "description": "Pocketで認可してアイテムを取得できるところまで確認"
+  }
+]

@@ -1,0 +1,10 @@
+[
+  {
+    "version": 1,
+    "description": "GCPでプロジェクトを作成し、スコープと認可ページを作成した"
+  },
+  {
+    "version": 2,
+    "description": "Google Takeout File Browser"
+  }
+]

@@ -1,0 +1,10 @@
+Found 9 deployments.
+- AKfycbwd1-6aX3tOwArsxddDkaaGgSn7PcklqUC27uaB4Es @HEAD 
+- AKfycbxduXifHNZ0hl8duSw32ruQvtHuji6GczM0odycclzlQpGuX3zj6lvVcrYavcDvEc8F @7 
+- AKfycbwzSMu0kC9yr2c253w4g-gJIHFSWexQntjx9KqVm6AzbngyGPU9wmeTZPGFOT8FHtQV @8 
+- AKfycbxMqRgtvTXmxM2BRO1p6LW4r7wWA8PlSAY4UU04IhkduosQU2K0t0vyXWGSoxmZEGTg @4 - getActiveUserLocale, read
+- AKfycbxsai84rEwNta_hTco1p8ZAe6aCvfTftKBpw5yqb9E_d8dFw3Q45AgGK4xOg2BWJ5Zy @6 
+- AKfycbxCBuWBzDeJSNDOnHagi_K6lKGhUEn_py3v8XwyZj_HS9VJMwtZaQ51SQND-p5aj24a @3 - hello, getEmail
+- AKfycbzr4vIln1vxd2H1KmC68tM1vW9M2fXxNIV7LpNLC6BCoozJnSUPEVN1R5J38t3uFPmT @5 
+- AKfycbycRXRovF1Dwn4ZgHWIXtL7CmAurK7S_641H90tYXpNL4Qnt_mVCsZTSE0WIqyVfnZi @2 - debug
+- AKfycbwMnd9JWWvOgjaVwyQF08uq08xVL318YHeFhn2YH8LtHc7IKgorJBXtY-nnWf9dgXUl @1 - Dummy doGet returns "Hello" mesasge

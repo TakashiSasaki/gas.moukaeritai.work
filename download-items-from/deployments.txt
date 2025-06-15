@@ -1,0 +1,3 @@
+Found 2 deployments.
+- AKfycbyn2ggsYDyhNj6RJ-aJRbE6qjvijvtRe5nkIoXu-R4 @HEAD 
+- AKfycbyBD73dWM5lqWyd1h0C3oOQlfgXwrTfnOQPUDg0Tqiywq5AZ6PIr6stbCnDrpk3c5Jp @7 - Pocketで認可してアイテムを取得できるところまで確認

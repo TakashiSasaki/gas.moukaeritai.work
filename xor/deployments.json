@@ -1,0 +1,17 @@
+[
+  {
+    "id": "AKfycbyT2wk0k1QsrkICaKiXsu1pYbh0mgKqAW8jz_3yfEHx",
+    "target": "HEAD",
+    "description": ""
+  },
+  {
+    "id": "AKfycbxdWdovzteS3K8cGeeGdIuacnCsA9F4i5efP1gEp2HbaSYQknPQ",
+    "target": "7",
+    "description": "oneplatform api meta-version"
+  },
+  {
+    "id": "AKfycbwrYfAhXvMYRPqHcWvjAbBOTZSPQv1ofnhw2XPeQUd3fXb6KJO6",
+    "target": "8",
+    "description": "web app meta-version"
+  }
+]
