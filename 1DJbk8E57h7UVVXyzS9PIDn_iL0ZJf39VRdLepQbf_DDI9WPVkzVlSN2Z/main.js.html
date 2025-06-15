@@ -1,0 +1,541 @@
+<script>
+    /**
+     * ページの読み込み完了時に実行される初期化関数
+     */
+    window.addEventListener('load', function() {
+        // 逐次実行：まず起点フォルダ情報を取得し、成功後にルートフォルダ一覧を取得する
+        google.script.run
+            .withSuccessHandler(function(folderInfo) {
+                // 1. まず表示を更新する (setup.js.html内の関数を呼び出し)
+                updateCurrentFolderDisplay(folderInfo);
+                // 2. 続けてルートフォルダ一覧の取得を開始する
+                google.script.run
+                    .withSuccessHandler(populateFolderDropdown) // (setup.js.html内の関数を呼び出し)
+                    .withFailureHandler(showError) // (setup.js.html内の関数を呼び出し)
+                    .listRootFolders();
+            })
+            .withFailureHandler(showError) // (setup.js.html内の関数を呼び出し)
+            .getSavedFolderInfo();
+
+        // 各ボタンにイベントリスナーを設定
+        document.getElementById('save-button').addEventListener('click', saveSettings); // (setup.js.html内の関数を呼び出し)
+        document.getElementById('load-button').addEventListener('click', loadInitialContents);
+        document.getElementById('create-subfolder-button').addEventListener('click', handleCreateSubfolderClick);
+        document.getElementById('move-files-button').addEventListener('click', handleMoveFilesClick);
+        document.getElementById('refresh-file-list-button').addEventListener('click', handleRefreshFileListClick);
+        document.getElementById('bulk-generate-titles-button').addEventListener('click', handleBulkGenerateClick);
+        // ファイル一覧内の動的ボタンはイベント委任で処理
+        document.getElementById('file-list').addEventListener('click', handleFileListClick);
+    });
+
+    /**
+     * 「起点フォルダの内容を読み込む」ボタンの処理
+     */
+    function loadInitialContents() {
+        const loadStatus = document.getElementById('load-status');
+        loadStatus.textContent = '読み込み中...';
+        loadStatus.className = '';
+        document.getElementById('subfolder-list').innerHTML = '';
+        document.getElementById('file-list').innerHTML = '';
+
+        google.script.run
+          .withSuccessHandler(displayInitialView)
+          .withFailureHandler(showLoadError)
+          .getFolderContents();
+    }
+
+    /**
+     * フォルダ内容の初期表示（サブフォルダと全ファイル）を描画する
+     * @param {Object} data
+     */
+    function displayInitialView(data) {
+        document.getElementById('load-status').textContent = '読み込み完了。左のリストで絞り込めます。';
+        document.getElementById('load-status').className = 'success';
+        
+        redrawSubfolderList(data.subfolders);
+        document.getElementById('subfolder-list').addEventListener('change', handleFilterChange);
+        updateFileList(data.files);
+
+        // フォルダ内容が読み込めたので、各操作ボタンを有効化する
+        document.getElementById('refresh-file-list-button').disabled = false;
+        document.getElementById('move-files-button').disabled = false;
+        document.getElementById('bulk-generate-titles-button').disabled = false;
+    }
+
+    /**
+     * 絞り込み条件（ラジオボタン）が変更された時の処理
+     * @param {Event} event
+     */
+    function handleFilterChange(event) {
+        const queryText = event.target.value;
+        const fileListStatus = document.getElementById('file-list-status');
+        fileListStatus.textContent = `「${event.target.parentElement.textContent.trim()}」で検索中...`;
+        
+        google.script.run
+            .withSuccessHandler(updateFileList)
+            .withFailureHandler(showFileSearchError)
+            .searchFiles(queryText);
+    }
+
+    /**
+     * 対象ファイル一覧の表示を更新する
+     * @param {Array<Object>} files
+     */
+    function updateFileList(files) {
+        document.getElementById('file-list-status').textContent = '';
+        const fileList = document.getElementById('file-list');
+        fileList.innerHTML = '';
+
+        if (!files || files.length === 0) {
+            fileList.innerHTML = '<li>対象ファイルはありません。</li>';
+            return;
+        }
+        
+        files.forEach(file => {
+            const li = document.createElement('li');
+            li.style.flexWrap = 'wrap';
+            li.style.flexDirection = 'column';
+            li.style.alignItems = 'stretch';
+            
+            const mainRow = document.createElement('div');
+            mainRow.style.display = 'flex';
+            mainRow.style.justifyContent = 'space-between';
+            mainRow.style.width = '100%';
+
+            const label = document.createElement('label');
+            label.style.display = 'flex';
+            label.style.alignItems = 'center';
+            label.style.flexGrow = '1';
+            
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.className = 'file-checkbox';
+            checkbox.value = file.id;
+            checkbox.style.marginRight = '10px';
+            
+            label.appendChild(checkbox);
+            label.appendChild(document.createTextNode(file.name));
+
+            const controlsDiv = document.createElement('div');
+            controlsDiv.style.display = 'flex';
+            controlsDiv.style.alignItems = 'center';
+
+            const typeSpan = document.createElement('span');
+            typeSpan.className = 'file-type';
+            
+            switch (file.type) {
+                case 'Google Doc':
+                    typeSpan.textContent = '📄';
+                    typeSpan.title = 'Google Doc';
+                    break;
+                case 'PDF':
+                    typeSpan.textContent = '📑';
+                    typeSpan.title = 'PDF';
+                    break;
+                default:
+                    typeSpan.textContent = '❔';
+                    typeSpan.title = file.type;
+            }
+            
+            const generateButton = document.createElement('button');
+            generateButton.className = 'generate-title-button';
+            generateButton.dataset.fileId = file.id;
+            generateButton.textContent = 'タイトル生成';
+            generateButton.style.marginLeft = '10px';
+            
+            controlsDiv.appendChild(typeSpan);
+            controlsDiv.appendChild(generateButton);
+            
+            mainRow.appendChild(label);
+            mainRow.appendChild(controlsDiv);
+            
+            li.appendChild(mainRow);
+            
+            const suggestionsContainer = document.createElement('div');
+            suggestionsContainer.className = 'title-suggestions-container';
+            suggestionsContainer.dataset.containerFor = file.id;
+            suggestionsContainer.style.display = 'none';
+            suggestionsContainer.style.marginTop = '10px';
+            suggestionsContainer.style.padding = '10px';
+            suggestionsContainer.style.border = '1px solid #ccc';
+            suggestionsContainer.style.backgroundColor = '#f9f9f9';
+            suggestionsContainer.style.borderRadius = '3px';
+            suggestionsContainer.style.width = '100%';
+
+            li.appendChild(suggestionsContainer);
+
+            fileList.appendChild(li);
+        });
+    }
+
+    /**
+     * フォルダ内容読み込み時のエラーを表示する
+     * @param {Error} error
+     */
+    function showLoadError(error) {
+        const loadStatus = document.getElementById('load-status');
+        loadStatus.textContent = 'エラー: ' + error.message;
+        loadStatus.className = 'error';
+    }
+
+    /**
+     * ファイル検索時のエラーを表示する
+     * @param {Error} error
+     */
+    function showFileSearchError(error) {
+         const fileListStatus = document.getElementById('file-list-status');
+         fileListStatus.textContent = 'エラー: ' + error.message;
+         fileListStatus.className = 'error';
+    }
+
+    /**
+     * 「作成」ボタンがクリックされた時の処理
+     */
+    function handleCreateSubfolderClick() {
+        const input = document.getElementById('new-subfolder-name');
+        const newName = input.value.trim();
+        const statusDiv = document.getElementById('create-folder-status');
+
+        if (newName === '') {
+            statusDiv.textContent = 'フォルダ名を入力してください。';
+            statusDiv.className = 'error';
+            return;
+        }
+
+        statusDiv.textContent = '作成中...';
+        statusDiv.className = '';
+
+        google.script.run
+            .withSuccessHandler(function(updatedSubfolders) {
+                statusDiv.textContent = `フォルダ「${newName}」を作成しました。`;
+                statusDiv.className = 'success';
+                input.value = '';
+                redrawSubfolderList(updatedSubfolders);
+            })
+            .withFailureHandler(function(error) {
+                statusDiv.textContent = 'エラー: ' + error.message;
+                statusDiv.className = 'error';
+            })
+            .createSubfolder(newName);
+    }
+
+    /**
+     * サブフォルダ一覧のUI（ラジオボタン）を再描画する
+     * @param {Array<Object>} subfolders - サブフォルダ情報の配列
+     */
+    function redrawSubfolderList(subfolders) {
+        const subfolderList = document.getElementById('subfolder-list');
+        subfolderList.innerHTML = '';
+
+        const allLi = document.createElement('li');
+        allLi.innerHTML = `<label><input type="radio" name="folder-filter" value="__ALL__" checked> すべて表示</label>`;
+        subfolderList.appendChild(allLi);
+
+        if (subfolders && subfolders.length > 0) {
+            subfolders.forEach(folder => {
+                const li = document.createElement('li');
+                li.innerHTML = `<label><input type="radio" name="folder-filter" value="${folder.name}"> ${folder.name}</label>`;
+                subfolderList.appendChild(li);
+            });
+        }
+    }
+
+    /**
+     * 「チェックしたファイルを移動」ボタンがクリックされた時の処理
+     */
+    function handleMoveFilesClick() {
+        const checkedFiles = document.querySelectorAll('#file-list .file-checkbox:checked');
+        const fileIds = Array.from(checkedFiles).map(cb => cb.value);
+
+        const destinationRadio = document.querySelector('input[name="folder-filter"]:checked');
+        const destinationFolderName = destinationRadio ? destinationRadio.value : null;
+
+        if (fileIds.length === 0) {
+            alert('移動するファイルを1つ以上選択してください。');
+            return;
+        }
+        if (!destinationFolderName || destinationFolderName === '__ALL__') {
+            alert('移動先のサブフォルダを選択してください。（「すべて表示」以外）');
+            return;
+        }
+
+        if (!confirm(`${fileIds.length}個のファイルを「${destinationFolderName}」フォルダに移動します。よろしいですか？`)) {
+            return;
+        }
+
+        const statusDiv = document.getElementById('file-list-status');
+        statusDiv.textContent = `${fileIds.length}個のファイルを移動中...`;
+        statusDiv.className = '';
+
+        const currentFilter = destinationFolderName;
+
+        google.script.run
+            .withSuccessHandler(function(updatedFileList) {
+                statusDiv.textContent = `${fileIds.length}個のファイルを移動しました。`;
+                statusDiv.className = 'success';
+                updateFileList(updatedFileList);
+            })
+            .withFailureHandler(showFileSearchError)
+            .moveFilesToSubfolder(fileIds, destinationFolderName, currentFilter);
+    }
+
+    /**
+     * ファイル一覧エリアでのクリックイベントを処理する（イベント委任）
+     * @param {Event} event
+     */
+    function handleFileListClick(event) {
+        const target = event.target;
+        const fileId = target.dataset.fileId;
+        
+        if (target.classList.contains('generate-title-button')) {
+            handleGenerateTitleClick(fileId, target);
+        } else if (target.classList.contains('confirm-title-button')) {
+            handleConfirmTitleClick(fileId, target.parentElement);
+        } else if (target.classList.contains('cancel-title-button')) {
+            const container = target.parentElement;
+            container.style.display = 'none';
+            const li = container.closest('li');
+            if (li) {
+                const generateButton = li.querySelector('.generate-title-button');
+                if (generateButton) {
+                    generateButton.disabled = false;
+                }
+            }
+        }
+    }
+
+    /**
+     * 「タイトル生成」ボタンが押された時の処理
+     * @param {string} fileId
+     * @param {HTMLElement} buttonElement
+     */
+    function handleGenerateTitleClick(fileId, buttonElement) {
+        const titleCount = document.getElementById('title-count-select').value;
+        
+        buttonElement.textContent = '生成中...';
+        buttonElement.disabled = true;
+        buttonElement.classList.add('btn-loading');
+
+        google.script.run
+            .withSuccessHandler(function(titleSuggestions) {
+                buttonElement.textContent = 'タイトル生成';
+                buttonElement.classList.remove('btn-loading');
+                
+                const container = document.querySelector(`.title-suggestions-container[data-container-for="${fileId}"]`);
+                container.innerHTML = '';
+                
+                const suggestions = titleSuggestions.replace(/[-*]/g, '').trim().split('\n');
+                
+                suggestions.forEach((title, index) => {
+                    const div = document.createElement('div');
+                    const radio = document.createElement('input');
+                    radio.type = 'radio';
+                    radio.name = `title-suggestion-${fileId}`;
+                    radio.id = `title-${fileId}-${index}`;
+                    radio.value = title.trim();
+                    if(index === 0) radio.checked = true;
+                    
+                    const label = document.createElement('label');
+                    label.htmlFor = `title-${fileId}-${index}`;
+                    label.textContent = ` ${title.trim()}`;
+                    
+                    div.appendChild(radio);
+                    div.appendChild(label);
+                    container.appendChild(div);
+                });
+                
+                const otherDiv = document.createElement('div');
+                const otherRadio = document.createElement('input');
+                otherRadio.type = 'radio';
+                otherRadio.name = `title-suggestion-${fileId}`;
+                otherRadio.id = `title-${fileId}-other`;
+                otherRadio.value = 'other';
+                
+                const otherLabel = document.createElement('label');
+                otherLabel.htmlFor = `title-${fileId}-other`;
+                otherLabel.textContent = ' その他: ';
+                
+                const otherInput = document.createElement('input');
+                otherInput.type = 'text';
+                otherInput.className = 'other-title-input';
+                otherInput.style.marginLeft = '5px';
+                otherRadio.addEventListener('change', () => otherInput.focus());
+
+                otherDiv.appendChild(otherRadio);
+                otherDiv.appendChild(otherLabel);
+                otherDiv.appendChild(otherInput);
+                container.appendChild(otherDiv);
+
+                const confirmButton = document.createElement('button');
+                confirmButton.className = 'confirm-title-button';
+                confirmButton.dataset.fileId = fileId;
+                confirmButton.textContent = '決定';
+                confirmButton.style.margin = '5px';
+
+                const cancelButton = document.createElement('button');
+                cancelButton.className = 'cancel-title-button';
+                cancelButton.textContent = 'キャンセル';
+                cancelButton.style.margin = '5px';
+
+                container.appendChild(confirmButton);
+                container.appendChild(cancelButton);
+                
+                container.style.display = 'block';
+            })
+            .withFailureHandler(function(error) {
+                alert('エラー: ' + error.message);
+                buttonElement.textContent = 'タイトル生成';
+                buttonElement.disabled = false;
+                buttonElement.classList.remove('btn-loading');
+            })
+            .generateTitlesForFile(fileId, titleCount);
+    }
+
+    /**
+     * タイトル候補の「決定」ボタンが押された時の処理
+     * @param {string} fileId
+     * @param {HTMLElement} container
+     */
+    function handleConfirmTitleClick(fileId, container) {
+        let newTitle = '';
+        const selectedRadio = container.querySelector(`input[name="title-suggestion-${fileId}"]:checked`);
+        
+        if (selectedRadio) {
+            if (selectedRadio.value === 'other') {
+                newTitle = container.querySelector('.other-title-input').value.trim();
+            } else {
+                newTitle = selectedRadio.value;
+            }
+        }
+
+        if (newTitle) {
+            const li = container.closest('li');
+            if (li) {
+                const generateButton = li.querySelector('.generate-title-button');
+                if (generateButton) {
+                    generateButton.disabled = false;
+                }
+            }
+            container.innerHTML = '名前を変更中...';
+            google.script.run
+                .withSuccessHandler(handleRenameSuccess)
+                .withFailureHandler(showFileSearchError)
+                .renameFile(fileId, newTitle);
+        } else {
+            alert('タイトルを選択または入力してください。');
+        }
+    }
+
+    /**
+     * ファイル名変更が成功した後にUIを更新する
+     */
+    function handleRenameSuccess() {
+        const statusDiv = document.getElementById('file-list-status');
+        statusDiv.textContent = 'ファイル名を変更しました。「一覧を更新」ボタンで表示を更新してください。';
+        statusDiv.className = 'success';
+    }
+    
+    /**
+     * 「一覧を更新」ボタンがクリックされた時の処理
+     */
+    function handleRefreshFileListClick() {
+        const statusDiv = document.getElementById('file-list-status');
+        const refreshButton = document.getElementById('refresh-file-list-button');
+
+        statusDiv.textContent = 'リストを更新中...';
+        statusDiv.className = '';
+        
+        refreshButton.disabled = true;
+        refreshButton.textContent = '更新中...';
+
+        const currentFilter = document.querySelector('input[name="folder-filter"]:checked').value;
+        google.script.run
+            .withSuccessHandler(function(files) {
+                refreshButton.disabled = false;
+                refreshButton.textContent = '一覧を更新';
+                updateFileList(files);
+            })
+            .withFailureHandler(function(error) {
+                refreshButton.disabled = false;
+                refreshButton.textContent = '一覧を更新';
+                showFileSearchError(error);
+            })
+            .searchFiles(currentFilter);
+    }
+
+    /**
+     * 「チェックしたファイルのタイトルを生成」ボタンがクリックされた時の処理
+     */
+    function handleBulkGenerateClick() {
+        const checkedFiles = document.querySelectorAll('#file-list .file-checkbox:checked');
+        const fileIds = Array.from(checkedFiles).map(cb => cb.value);
+
+        if (fileIds.length === 0) {
+            alert('タイトルを生成するファイルを1つ以上選択してください。');
+            return;
+        }
+
+        if (!confirm(`${fileIds.length}個のファイルのタイトルを順次生成し、自動でファイル名を変更します。この処理は時間がかかります。よろしいですか？`)) {
+            return;
+        }
+        
+        document.getElementById('bulk-generate-titles-button').disabled = true;
+        document.getElementById('move-files-button').disabled = true;
+        document.getElementById('refresh-file-list-button').disabled = true;
+
+        processFileQueue(fileIds);
+    }
+
+    /**
+     * ファイルのキューを1つずつ非同期で処理する
+     * @param {Array<string>} queue - 処理対象のファイルIDの配列
+     */
+    function processFileQueue(queue) {
+        const statusDiv = document.getElementById('file-list-status');
+
+        if (queue.length === 0) {
+            statusDiv.textContent = 'すべてのファイルの処理が完了しました。';
+            statusDiv.className = 'success';
+            document.getElementById('bulk-generate-titles-button').disabled = false;
+            document.getElementById('move-files-button').disabled = false;
+            document.getElementById('refresh-file-list-button').disabled = false;
+            handleRefreshFileListClick();
+            return;
+        }
+
+        const currentFileId = queue.shift();
+        const liElement = document.querySelector(`input.file-checkbox[value="${currentFileId}"]`).closest('li');
+        const originalFileName = liElement.querySelector('label').textContent.trim();
+        
+        statusDiv.textContent = `(${queue.length + 1}件中) 「${originalFileName}」のタイトルを生成中...`;
+        statusDiv.className = '';
+
+        google.script.run
+            .withSuccessHandler(function(newTitle) {
+                statusDiv.textContent = `「${originalFileName}」の名前を「${newTitle}」に変更しました。`;
+                statusDiv.className = 'success';
+                const label = liElement.querySelector('label');
+                if (label) {
+                    const checkbox = label.querySelector('.file-checkbox');
+                    label.textContent = newTitle;
+                    if(checkbox) {
+                        label.prepend(checkbox);
+                        // Add space after checkbox
+                        checkbox.insertAdjacentText('afterend', ' ');
+                    }
+                }
+
+                setTimeout(() => {
+                    processFileQueue(queue);
+                }, 5000);
+            })
+            .withFailureHandler(function(error) {
+                statusDiv.textContent = `「${originalFileName}」の処理中にエラーが発生しました: ${error.message}`;
+                statusDiv.className = 'error';
+                setTimeout(() => {
+                    processFileQueue(queue);
+                }, 5000);
+            })
+            .generateAndRenameFile(currentFileId);
+    }
+</script>

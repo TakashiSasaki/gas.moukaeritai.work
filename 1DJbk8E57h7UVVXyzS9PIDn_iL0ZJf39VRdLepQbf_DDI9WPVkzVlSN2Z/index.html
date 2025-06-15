@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <?!= include('style'); ?>
+  </head>
+  <body>
+    <div class="container">
+      <h1>File Triage</h1>
+
+      <div class="section">
+        <h2>1. 起点フォルダの設定</h2>
+        <p>分類対象のドキュメントが格納されているフォルダ（incoming folder）を選択またはIDを入力して保存してください。</p>
+        <div class="form-group">
+          <h3>現在の起点フォルダ</h3>
+          <div id="current-folder-display">読み込み中...</div>
+        </div>
+        <div class="form-group">
+          <label for="folder-select">ルートフォルダから選択:</label>
+          <select id="folder-select">
+            <option value="">選択してください</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="folder-id-input">または、フォルダIDを直接入力:</label>
+          <input type="text" id="folder-id-input" placeholder="Google DriveのフォルダIDをここに貼り付けます">
+        </div>
+        <button id="save-button">設定を保存</button>
+        <div id="status"></div>
+      </div>
+
+      <div class="section" style="margin-top: 20px;">
+        <h2>2. ファイルの絞り込みと操作</h2>
+        <p>まず起点フォルダの内容を読み込み、次に左のリストからサブフォルダを選択して右のファイル一覧を絞り込みます。</p>
+        <button id="load-button">起点フォルダの内容を読み込む</button>
+        <div id="load-status"></div>
+        <div class="grid-container" style="margin-top: 20px;">
+          <div>
+            <h3>絞り込み条件 (サブフォルダ)</h3>
+            <ul id="subfolder-list"></ul>
+            <div class="form-group" style="margin-top: 20px; padding: 10px; border-top: 1px solid #dee2e6;">
+              <label for="new-subfolder-name" style="font-weight: bold;">新規サブフォルダ作成:</label>
+              <input type="text" id="new-subfolder-name" placeholder="新しいサブフォルダ名">
+              <button id="create-subfolder-button" style="margin-top: 5px; background-color: #6c757d;">作成</button>
+              <div id="create-folder-status" style="margin-top: 5px;"></div>
+            </div>
+          </div>
+          <div>
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #dee2e6; padding-bottom: 5px; flex-wrap: wrap; gap: 10px;">
+              <div style="display: flex; align-items: center; gap: 15px;">
+                <h3 style="margin: 0;">対象ファイル一覧</h3>
+                <select id="title-count-select" title="生成するタイトル数">
+                  <option value="1">1つ生成</option>
+                  <option value="2">2つ生成</option>
+                  <option value="3">3つ生成</option>
+                  <option value="4">4つ生成</option>
+                  <option value="5" selected>5つ生成</option>
+                </select>
+              </div>
+              <div style="display: flex; flex-wrap: wrap; gap: 5px;">
+                <button id="refresh-file-list-button" style="background-color: #28a745;" disabled>一覧を更新</button>
+                <button id="move-files-button" style="background-color: #dc3545;" disabled>チェックしたファイルを移動</button>
+                <button id="bulk-generate-titles-button" style="background-color: #17a2b8;" disabled>チェックしたファイルのタイトルを生成</button>
+              </div>
+            </div>
+            <div id="file-list-status" style="font-style: italic; color: #6c757d; margin-top: 5px;"></div>
+            <ul id="file-list"></ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <?!= include('setup.js'); ?>
+    <?!= include('main.js'); ?>
+  </body>
+</html>
