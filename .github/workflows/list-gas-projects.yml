@@ -46,9 +46,11 @@ jobs:
         id: check-changed
         run: |
           if ! git diff --exit-code clasp-list.txt; then
-            echo "changed=true" >> $GITHUB_OUTPUT
+            echo "changed=true"  >> $GITHUB_OUTPUT
+            echo "changed=true"
           else
             echo "changed=false" >> $GITHUB_OUTPUT
+            echo "changed=false"
           fi
 
       - name: Commit and push clasp-list.txt to gas-pull branch
