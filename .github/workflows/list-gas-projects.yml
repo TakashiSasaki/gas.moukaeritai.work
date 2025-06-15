@@ -39,6 +39,8 @@ jobs:
       - name: Get Apps Script Projects List
         run: |
           clasp list > clasp-list.txt
+          echo '--- First 5 lines of clasp-list.txt ---'
+          head -n 5 clasp-list.txt
 
       - name: Check if clasp-list.txt changed
         id: check-changed
