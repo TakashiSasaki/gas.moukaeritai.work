@@ -1,9 +1,9 @@
-name: Create Missing Directories
+name: create_missing_scriptid_dirs
 
 on:
   workflow_dispatch:  # allow manual runs
   workflow_run:
-    workflows: ["Update clasp-list.txt"]  # trigger after this workflow completes
+    workflows: ["update-clasp-list"]  # trigger after this workflow completes
     types:
       - completed
 

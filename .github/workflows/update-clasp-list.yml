@@ -1,4 +1,4 @@
-name: Update clasp-list.txt
+name: update-clasp-list
 on:
   schedule:
     # 1時間おきに実行（例: 0分, 60分, 120分...）
