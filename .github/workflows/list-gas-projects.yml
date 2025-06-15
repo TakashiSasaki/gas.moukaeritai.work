@@ -1,5 +1,4 @@
-name: Update Apps Script Projects List
-
+name: Update clasp-list.txt
 on:
   schedule:
     # 1時間おきに実行（例: 0分, 60分, 120分...）
@@ -39,14 +38,18 @@ jobs:
       - name: Get Apps Script Projects List
         run: |
           clasp list > clasp-list.txt
+          echo '--- First 5 lines of clasp-list.txt ---'
+          head -n 5 clasp-list.txt
 
       - name: Check if clasp-list.txt changed
         id: check-changed
         run: |
           if ! git diff --exit-code clasp-list.txt; then
-            echo "changed=true" >> $GITHUB_OUTPUT
+            echo "changed=true"  >> $GITHUB_OUTPUT
+            echo "changed=true"
           else
             echo "changed=false" >> $GITHUB_OUTPUT
+            echo "changed=false"
           fi
 
       - name: Commit and push clasp-list.txt to gas-pull branch
