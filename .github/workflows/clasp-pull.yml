@@ -5,9 +5,11 @@ permissions:
   contents: write
 
 on:
-  schedule:
-    - cron: '20 * * * *'  # Run daily at 03:20 UTC (12:20 JST)
   workflow_dispatch:
+  workflow_run:
+    workflows: ["create_missing_scriptid_dirs"]  # trigger after this workflow completes
+    types:
+      - completed
 
 jobs:
   pull:
