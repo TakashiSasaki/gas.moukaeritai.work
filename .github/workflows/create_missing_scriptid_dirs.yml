@@ -1,0 +1,52 @@
+name: Create Missing Directories
+
+on:
+  workflow_dispatch:  # allow manual runs
+  workflow_run:
+    workflows: ["Update clasp-list.txt"]  # trigger after this workflow completes
+    types:
+      - completed
+
+jobs:
+  run-script:
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success')
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout gas-pull branch
+        uses: actions/checkout@v4
+        with:
+          ref: gas-pull
+          fetch-depth: 1
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Run missing-scriptid-dirs script
+        run: |
+          if [ ! -f clasp-list.txt ]; then
+            echo "Error: clasp-list.txt not found in the repository root."
+            exit 1
+          fi
+
+          python3 create_missing_scriptid_dirs.py clasp-list.txt
+
+      - name: Configure Git for Actions
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Commit and push new files
+        run: |
+          git add .
+          # Only commit if there are changes
+          if git diff --cached --exit-code; then
+            echo "No new files to commit."
+          else
+            git commit -m "Add missing ScriptID directories and .clasp.json files"
+            git push origin gas-pull
+          fi
