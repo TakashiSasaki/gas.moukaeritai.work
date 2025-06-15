@@ -1,0 +1,66 @@
+<script>
+    /**
+     * フォルダIDの設定を保存する
+     */
+    function saveSettings() {
+        document.getElementById('status').textContent = '保存中...';
+        document.getElementById('status').className = '';
+        const manualId = document.getElementById('folder-id-input').value.trim();
+        const selectedId = document.getElementById('folder-select').value;
+        const folderIdToSave = manualId || selectedId;
+
+        if (!folderIdToSave) {
+            showError({ message: 'フォルダを選択またはIDを入力してください。' });
+            return;
+        }
+        google.script.run.withSuccessHandler(function(savedFolder) {
+            updateCurrentFolderDisplay(savedFolder);
+            document.getElementById('status').textContent = `設定を保存しました。`;
+            document.getElementById('status').className = 'success';
+            document.getElementById('folder-id-input').value = '';
+        }).withFailureHandler(showError).saveFolderId(folderIdToSave);
+    }
+
+    /**
+     * 「現在の起点フォルダ」の表示を更新する
+     * @param {Object|null} folderInfo
+     */
+    function updateCurrentFolderDisplay(folderInfo) {
+        const display = document.getElementById('current-folder-display');
+        if (folderInfo && folderInfo.id) {
+            display.innerHTML = `${folderInfo.name} <br><small>(ID: ${folderInfo.id})</small>`;
+        } else {
+            display.textContent = '未設定';
+        }
+    }
+
+    /**
+     * ルートフォルダのドロップダウンリストを生成する
+     * @param {Array<Object>} folders
+     */
+    function populateFolderDropdown(folders) {
+        const select = document.getElementById('folder-select');
+        // 最初のオプション（"選択してください"）以外をクリア
+        while (select.options.length > 1) {
+            select.remove(1);
+        }
+        if (folders && folders.length > 0) {
+            folders.forEach(function(folder) {
+                const option = document.createElement('option');
+                option.value = folder.id;
+                option.textContent = folder.name;
+                select.appendChild(option);
+            });
+        }
+    }
+    
+    /**
+     * 設定保存時のエラーを表示する
+     * @param {Error} error
+     */
+    function showError(error) {
+        const status = document.getElementById('status');
+        status.textContent = 'エラー: ' + error.message;
+        status.className = 'error';
+    }
+</script>
