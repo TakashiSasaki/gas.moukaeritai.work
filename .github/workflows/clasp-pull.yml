@@ -1,0 +1,50 @@
+name: clasp-pull
+
+# Ensure GITHUB_TOKEN can write to the repo
+permissions:
+  contents: write
+
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows: ["create_missing_scriptid_dirs"]  # trigger after this workflow completes
+    types:
+      - completed
+
+jobs:
+  pull:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout gas-pull branch
+        uses: actions/checkout@v3
+        with:
+          ref: gas-pull
+          persist-credentials: true
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install clasp
+        run: npm install -g @google/clasp
+
+      - name: Restore clasp credentials
+        run: echo '${{ secrets.CLASPRC_JSON }}' > ~/.clasprc.json
+
+      - name: Pull all Apps Script projects
+        run: python3 clasp-pull.py
+
+      - name: Commit & Push changes if any
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if [ -n "$(git status --porcelain)" ]; then
+            git add .
+            git commit -m "chore: daily sync GAS → gas-pull"
+            git push origin gas-pull
+          else
+            echo "No changes detected, skipping commit"
+          fi
