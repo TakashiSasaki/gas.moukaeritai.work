@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <?!= include('style'); ?>
+  </head>
+  <body>
+    <h1>Google Calendar Web App</h1>
+
+    <div>
+      <label for="calendar-select">対象カレンダーを選択:</label>
+      <select id="calendar-select"></select>
+    </div>
+
+    ---
+
+    <div class="tabs">
+      <button class="tablinks active" onclick="openTab(event, 'createEvent')">イベント作成</button>
+      <button class="tablinks" onclick="openTab(event, 'eventList')">イベント一覧</button>
+    </div>
+
+    <div id="createEvent" class="tabcontent">
+      <h2>イベント新規作成</h2>
+      <div class="form-container">
+        <div>
+          <label for="event-title">タイトル:</label>
+          <input type="text" id="event-title" list="title-suggestions" required>
+          <datalist id="title-suggestions"></datalist>
+        </div>
+        <div class="datetime-group">
+          <label for="event-start-datetime">開始日時:</label>
+          <input type="date" id="event-start-date" required>
+          <input type="time" id="event-start-time" required>
+          <button type="button" class="reset-current-datetime-button">現在日時にリセット</button>
+        </div>
+        <div class="datetime-group">
+          <label for="event-end-datetime">終了日時:</label>
+          <input type="date" id="event-end-date" required>
+          <input type="time" id="event-end-time" required>
+          <button type="button" class="copy-start-datetime-button">開始時刻と同じ</button>
+        </div>
+        <div>
+          <label for="event-description">説明:</label>
+          <textarea id="event-description"></textarea>
+        </div>
+        <div>
+          <label for="event-location">場所:</label>
+          <input type="text" id="event-location" list="location-suggestions">
+          <datalist id="location-suggestions"></datalist>
+        </div>
+        <button id="create-event">イベント作成</button>
+      </div>
+    </div>
+
+    <div id="eventList" class="tabcontent" style="display:none;">
+      <h2>イベント一覧 (現在時刻から前後一週間)</h2>
+      <div id="events-container">
+        </div>
+    </div>
+
+    <?!= include('script'); ?>
+  </body>
+</html>

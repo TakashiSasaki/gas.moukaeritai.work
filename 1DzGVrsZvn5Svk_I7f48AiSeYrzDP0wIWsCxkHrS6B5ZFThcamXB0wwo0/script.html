@@ -1,0 +1,206 @@
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const calendarSelect = document.getElementById('calendar-select');
+    const eventsContainer = document.getElementById('events-container');
+
+    const eventTitleInput = document.getElementById('event-title');
+    const titleSuggestionsDatalist = document.getElementById('title-suggestions');
+    const eventStartDateInput = document.getElementById('event-start-date');
+    const eventStartTimeInput = document.getElementById('event-start-time');
+    const eventEndDateInput = document.getElementById('event-end-date');
+    const eventEndTimeInput = document.getElementById('event-end-time');
+    const eventDescriptionInput = document.getElementById('event-description');
+    const eventLocationInput = document.getElementById('event-location');
+    const locationSuggestionsDatalist = document.getElementById('location-suggestions');
+    const createEventButton = document.getElementById('create-event');
+
+    // 現在の日付と時刻を設定
+    const now = new Date();
+    const today = now.toISOString().split('T')[0];
+    const currentTime = now.toTimeString().split(' ')[0].substring(0, 5); // HH:MM
+
+    eventStartDateInput.value = today;
+    eventEndDateInput.value = today;
+    eventStartTimeInput.value = currentTime;
+    eventEndTimeInput.value = currentTime;
+
+    // カレンダー選択の変更を監視し、自動的に保存
+    calendarSelect.addEventListener('change', () => {
+      const selectedCalendarId = calendarSelect.value;
+      google.script.run.saveUserSelectedCalendarId(selectedCalendarId);
+      loadEvents(); // 保存後、イベントを再ロード
+    });
+
+    // 現在日時にリセットボタンのイベントリスナー（開始日時用）
+    document.querySelector('.reset-current-datetime-button').addEventListener('click', () => {
+      eventStartDateInput.value = today;
+      eventStartTimeInput.value = currentTime;
+    });
+
+    // 開始時刻と同じボタンのイベントリスナー（終了日時用）
+    document.querySelector('.copy-start-datetime-button').addEventListener('click', () => {
+      eventEndDateInput.value = eventStartDateInput.value;
+      eventEndTimeInput.value = eventStartTimeInput.value;
+    });
+
+
+    // カレンダーリストをロード
+    google.script.run.withSuccessHandler(calendars => {
+      calendars.forEach(calendar => {
+        const option = document.createElement('option');
+        option.value = calendar.id;
+        option.textContent = calendar.name;
+        calendarSelect.appendChild(option);
+      });
+
+      // ユーザーが以前選択したカレンダーをロードし、設定
+      google.script.run.withSuccessHandler(selectedCalendarId => {
+        if (selectedCalendarId) {
+          calendarSelect.value = selectedCalendarId;
+        }
+        // イベントをロード
+        loadEvents();
+      }).getUserSelectedCalendarId();
+
+    }).getCalendars();
+
+
+    // イベント作成ボタンのイベントリスナー
+    createEventButton.addEventListener('click', () => {
+      const eventData = {
+        title: eventTitleInput.value,
+        startDate: eventStartDateInput.value,
+        startTime: eventStartTimeInput.value,
+        endDate: eventEndDateInput.value,
+        endTime: eventEndTimeInput.value,
+        description: eventDescriptionInput.value,
+        location: eventLocationInput.value
+      };
+
+      if (!eventData.title || !eventData.startDate || !eventData.startTime || !eventData.endDate || !eventData.endTime) {
+        alert('タイトル、開始日時、終了日時は必須です。');
+        return;
+      }
+
+      google.script.run.withSuccessHandler(newEvent => {
+        alert(`イベント「${newEvent.title}」が作成されました！`);
+        // フォームをクリア
+        eventTitleInput.value = '';
+        eventStartDateInput.value = today; // 現在の日付に戻す
+        eventStartTimeInput.value = currentTime; // 現在時刻に戻す
+        eventEndDateInput.value = today; // 現在の日付に戻す
+        eventEndTimeInput.value = currentTime; // 現在時刻に戻す
+        eventDescriptionInput.value = '';
+        eventLocationInput.value = '';
+        loadEvents(); // イベントリストを更新
+      }).withFailureHandler(error => {
+        alert('イベントの作成中にエラーが発生しました: ' + error.message);
+      }).createNewEvent(eventData);
+    });
+
+
+    // イベントをロードする関数
+    function loadEvents() {
+      eventsContainer.innerHTML = 'イベントを読み込み中...';
+      google.script.run.withSuccessHandler(events => {
+        eventsContainer.innerHTML = ''; // 既存のメッセージをクリア
+        if (events.length === 0) {
+          eventsContainer.innerHTML = '<p>表示するイベントはありません。</p>';
+          return;
+        }
+        const uniqueTitles = new Set();
+        const uniqueLocations = new Set();
+
+        events.forEach(event => {
+          const eventDiv = document.createElement('div');
+          eventDiv.className = 'event-item';
+          eventDiv.innerHTML = `
+            <h3>${event.title}</h3>
+            <p><strong>開始:</strong> ${event.startTime}</p>
+            <p><strong>終了:</strong> ${event.endTime}</p>
+            ${event.description ? `<p><strong>説明:</strong> ${event.description}</p>` : ''}
+            ${event.location ? `<p><strong>場所:</strong> ${event.location}</p>` : ''}
+            <button class="delete-edit-button" data-event-id="${event.id}">削除＆編集</button>
+          `;
+          eventsContainer.appendChild(eventDiv);
+
+          // タイトルと場所の候補を追加
+          if (event.title) uniqueTitles.add(event.title);
+          if (event.location) uniqueLocations.add(event.location);
+        });
+
+        // datalistを更新
+        titleSuggestionsDatalist.innerHTML = '';
+        uniqueTitles.forEach(title => {
+          const option = document.createElement('option');
+          option.value = title;
+          titleSuggestionsDatalist.appendChild(option);
+        });
+
+        locationSuggestionsDatalist.innerHTML = '';
+        uniqueLocations.forEach(location => {
+          const option = document.createElement('option');
+          option.value = location;
+          locationSuggestionsDatalist.appendChild(option);
+        });
+
+        // 削除＆編集ボタンにイベントリスナーを設定
+        document.querySelectorAll('.delete-edit-button').forEach(button => {
+          button.addEventListener('click', (e) => {
+            const eventId = e.target.dataset.eventId;
+            const eventToEdit = events.find(event => event.id === eventId); // 編集するイベント情報を取得
+
+            if (confirm('このイベントを削除して編集しますか？')) {
+              google.script.run.withSuccessHandler(() => {
+                alert('イベントが削除されました。イベント作成フォームに情報をセットします。');
+                // フォームに情報をセット
+                if (eventToEdit) {
+                  eventTitleInput.value = eventToEdit.title;
+                  eventStartDateInput.value = eventToEdit.startDate;
+                  eventStartTimeInput.value = eventToEdit._startTime;
+                  eventEndDateInput.value = eventToEdit.endDate; // 修正後のキー名を使用
+                  eventEndTimeInput.value = eventToEdit._endTime;
+                  eventDescriptionInput.value = eventToEdit.description;
+                  eventLocationInput.value = eventToEdit.location;
+                }
+                
+                // イベント作成タブに切り替え
+                openTab(e, 'createEvent'); // openTab関数を呼び出す
+                loadEvents(); // イベントリストを更新
+              }).withFailureHandler(error => {
+                alert('イベントの削除中にエラーが発生しました: ' + error.message);
+              }).deleteEvent(eventId);
+            }
+          });
+        });
+
+      }).getEventsForSelectedCalendar();
+    }
+
+    // タブ切り替え関数
+    window.openTab = (evt, tabName) => {
+      let i, tabcontent, tablinks;
+
+      tabcontent = document.getElementsByClassName("tabcontent");
+      for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+      }
+
+      tablinks = document.getElementsByClassName("tablinks");
+      for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+
+      document.getElementById(tabName).style.display = "block";
+      evt.currentTarget.className += " active";
+
+      // イベント一覧タブに切り替わったら、イベントリストを再ロード
+      if (tabName === 'eventList') {
+        loadEvents();
+      }
+    }
+
+    // 初期表示で「イベント作成」タブを開く
+    document.querySelector('.tablinks.active').click();
+  });
+</script>
