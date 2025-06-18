@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <?!= include('style'); ?>
+  </head>
+  <body>
+    <div class="tabs">
+      <button class="tablinks" onclick="openTab(event, 'Display')">表示</button>
+      <button class="tablinks" onclick="openTab(event, 'Settings')">設定</button>
+    </div>
+
+    <div id="Display" class="tabcontent">
+      <p>ここにスプレッドシートの内容が表示されます。</p>
+      <div id="spreadsheetLinkContainer">
+        </div>
+    </div>
+
+    <div id="Settings" class="tabcontent">
+      <h4>スプレッドシートを検索して選択</h4>
+      <input type="text" id="spreadsheetSearchInput" placeholder="スプレッドシート名を入力">
+      <button onclick="searchSpreadsheets()">検索</button>
+      <div class="loader" id="searchLoader"></div>
+      <select id="spreadsheetSelector" size="5"></select>
+
+      <h4>スプレッドシートIDで選択</h4>
+      <input type="text" id="spreadsheetIdInput" placeholder="スプレッドシートIDを入力">
+      <div id="spreadsheetIdStatus"></div>
+
+      <button onclick="saveSettings()">スプレッドシートを決定</button>
+    </div>
+
+    <div id="confirmationModal" class="modal">
+      <div class="modal-content">
+        <span class="close-button" onclick="closeModal()">&times;</span>
+        <h2>設定の確認</h2>
+        <p>以下のスプレッドシートを保存しますか？</p>
+        <p><strong>タイトル:</strong> <span id="confirmedSpreadsheetTitle"></span></p>
+        <button onclick="confirmSave()">はい、保存します</button>
+        <button onclick="closeModal()">キャンセル</button>
+      </div>
+    </div>
+
+    <?!= include('script'); ?>
+  </body>
+</html>

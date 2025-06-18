@@ -1,0 +1,212 @@
+<script>
+  let pendingSpreadsheetId = '';
+  let titleFetchTimeout;
+
+  function openTab(evt, tabName) {
+    var i, tabcontent, tablinks;
+    tabcontent = document.getElementsByClassName("tabcontent");
+    for (i = 0; i < tabcontent.length; i++) {
+      tabcontent[i].style.display = "none";
+    }
+    tablinks = document.getElementsByClassName("tablinks");
+    for (i = 0; i < tablinks.length; i++) {
+      tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+    document.getElementById(tabName).style.display = "block";
+    evt.currentTarget.className += " active";
+  }
+
+  document.addEventListener('DOMContentLoaded', (event) => {
+    // 初回ロード時に保存済みのスプレッドシート情報を取得し表示
+    google.script.run
+      .withSuccessHandler(displaySavedSpreadsheetLink)
+      .getSavedSpreadsheetInfo();
+
+    document.querySelector('.tablinks').click(); // Displayタブをデフォルトで開く
+    document.getElementById('Display').style.display = 'block'; // Displayタブを表示
+    document.querySelector('.tablinks:nth-child(1)').classList.add('active'); // Displayタブのボタンをアクティブにする
+
+
+    const searchInput = document.getElementById('spreadsheetSearchInput');
+    searchInput.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        searchSpreadsheets();
+      }
+    });
+
+    const idInput = document.getElementById('spreadsheetIdInput');
+    idInput.addEventListener('input', function() {
+      if (titleFetchTimeout) {
+        clearTimeout(titleFetchTimeout);
+      }
+      titleFetchTimeout = setTimeout(() => {
+        getTitleForId(idInput.value);
+      }, 500);
+    });
+    idInput.addEventListener('blur', function() {
+      if (titleFetchTimeout) {
+        clearTimeout(titleFetchTimeout);
+      }
+      getTitleForId(idInput.value);
+    });
+    idInput.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        if (titleFetchTimeout) {
+          clearTimeout(titleFetchTimeout);
+        }
+        getTitleForId(idInput.value);
+      }
+    });
+
+    const selector = document.getElementById('spreadsheetSelector');
+    selector.addEventListener('change', function() {
+      const selectedId = this.value;
+      const idInput = document.getElementById('spreadsheetIdInput');
+      idInput.value = selectedId;
+      getTitleForId(selectedId);
+    });
+  });
+
+  function searchSpreadsheets() {
+    const query = document.getElementById('spreadsheetSearchInput').value;
+    const loader = document.getElementById('searchLoader');
+
+    loader.style.display = 'inline-block';
+
+    google.script.run
+      .withSuccessHandler(populateSpreadsheetSelector)
+      .withFailureHandler(handleSearchError)
+      .searchSpreadsheetsByName(query);
+  }
+
+  function populateSpreadsheetSelector(spreadsheets) {
+    const selector = document.getElementById('spreadsheetSelector');
+    const loader = document.getElementById('searchLoader');
+
+    selector.innerHTML = '';
+    loader.style.display = 'none';
+
+    if (spreadsheets.length === 0) {
+      const option = document.createElement('option');
+      option.value = '';
+      option.textContent = '検索結果なし';
+      selector.appendChild(option);
+      return;
+    }
+    spreadsheets.forEach(ss => {
+      const option = document.createElement('option');
+      option.value = ss.id;
+      option.textContent = ss.name;
+      selector.appendChild(option);
+    });
+  }
+
+  function handleSearchError(error) {
+    const loader = document.getElementById('searchLoader');
+    loader.style.display = 'none';
+    const statusDiv = document.getElementById('spreadsheetIdStatus');
+    statusDiv.textContent = '検索エラー: ' + error.message;
+    statusDiv.className = 'error';
+    console.error('Spreadsheet search error:', error);
+  }
+
+  function getTitleForId(spreadsheetId) {
+    const statusDiv = document.getElementById('spreadsheetIdStatus');
+    statusDiv.textContent = 'タイトルを取得中...';
+    statusDiv.className = '';
+
+    if (!spreadsheetId.trim()) {
+      statusDiv.textContent = '';
+      return;
+    }
+
+    google.script.run
+      .withSuccessHandler(function(title) {
+        statusDiv.textContent = 'タイトル: ' + title;
+        statusDiv.className = 'success';
+      })
+      .withFailureHandler(function(error) {
+        statusDiv.textContent = 'エラー: ' + error.message;
+        statusDiv.className = 'error';
+        console.error('Get title error:', error);
+      })
+      .getSpreadsheetTitle(spreadsheetId);
+  }
+
+  function saveSettings() {
+    let targetSpreadsheetId = '';
+
+    const selector = document.getElementById('spreadsheetSelector');
+    if (selector.value) {
+      targetSpreadsheetId = selector.value;
+    } else {
+      const idInput = document.getElementById('spreadsheetIdInput').value.trim();
+      if (idInput) {
+        targetSpreadsheetId = idInput;
+      }
+    }
+
+    if (targetSpreadsheetId) {
+      google.script.run
+        .withSuccessHandler(function(title) {
+          pendingSpreadsheetId = targetSpreadsheetId;
+          showConfirmationModal(title);
+        })
+        .withFailureHandler(function(error) {
+          const statusDiv = document.getElementById('spreadsheetIdStatus');
+          statusDiv.textContent = '保存エラー: ' + error.message;
+          statusDiv.className = 'error';
+          console.error('Save settings error (pre-check):', error);
+        })
+        .getSpreadsheetTitle(targetSpreadsheetId);
+    } else {
+      const statusDiv = document.getElementById('spreadsheetIdStatus');
+      statusDiv.textContent = 'スプレッドシートを選択するか、IDを入力してください。';
+      statusDiv.className = 'error';
+    }
+  }
+
+  function showConfirmationModal(title) {
+    document.getElementById('confirmedSpreadsheetTitle').textContent = title;
+    document.getElementById('confirmationModal').style.display = 'block';
+  }
+
+  function confirmSave() {
+    google.script.run
+      .withSuccessHandler((response) => {
+        const statusDiv = document.getElementById('spreadsheetIdStatus');
+        statusDiv.textContent = '設定が保存されました！';
+        statusDiv.className = 'success';
+        closeModal();
+        displaySavedSpreadsheetLink(response); // 保存成功後、リンクを表示
+      })
+      .withFailureHandler(function(error) {
+        const statusDiv = document.getElementById('spreadsheetIdStatus');
+        statusDiv.textContent = '保存エラー: ' + error.message;
+        statusDiv.className = 'error';
+        console.error('Save settings error:', error);
+        closeModal();
+      })
+      .saveSelectedSpreadsheet(pendingSpreadsheetId);
+  }
+
+  function closeModal() {
+    document.getElementById('confirmationModal').style.display = 'none';
+    pendingSpreadsheetId = '';
+  }
+
+  function displaySavedSpreadsheetLink(spreadsheetInfo) {
+    const linkContainer = document.getElementById('spreadsheetLinkContainer');
+    linkContainer.innerHTML = ''; // 既存のリンクをクリア
+
+    if (spreadsheetInfo && spreadsheetInfo.id && spreadsheetInfo.title) {
+      const link = document.createElement('a');
+      link.href = `https://docs.google.com/spreadsheets/d/${spreadsheetInfo.id}/edit`;
+      link.textContent = `現在選択中のスプレッドシート: ${spreadsheetInfo.title}`;
+      link.target = '_blank'; // 新しいタブで開く
+      linkContainer.appendChild(link);
+    } else {
+      linkContainer.textContent = '現在、スプレッドシートは選択されていません。';
+    }
+  }
+</script>

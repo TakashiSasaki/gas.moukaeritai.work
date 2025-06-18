@@ -2,6 +2,7 @@
   document.addEventListener('DOMContentLoaded', () => {
     const calendarSelect = document.getElementById('calendar-select');
     const eventsContainer = document.getElementById('events-container');
+    const loadingSpinner = document.getElementById('loading-spinner'); // スピナー要素の取得
     const selectedCalendarUrlSpan = document.getElementById('selected-calendar-url');
     const webAppUrlSpan = document.getElementById('web-app-url');
 
@@ -106,9 +107,11 @@
 
     // イベントをロードする関数
     function loadEvents() {
-      eventsContainer.innerHTML = 'イベントを読み込み中...';
+      eventsContainer.innerHTML = ''; // 既存のメッセージをクリア
+      loadingSpinner.style.display = 'flex'; // スピナーを表示
+
       google.script.run.withSuccessHandler(events => {
-        eventsContainer.innerHTML = ''; // 既存のメッセージをクリア
+        loadingSpinner.style.display = 'none'; // スピナーを非表示
         if (events.length === 0) {
           eventsContainer.innerHTML = '<p>表示するイベントはありません。</p>';
           return;
@@ -153,7 +156,7 @@
         document.querySelectorAll('.delete-edit-button').forEach(button => {
           button.addEventListener('click', (e) => {
             const eventId = e.target.dataset.eventId;
-            const eventToEdit = events.find(event => event.id === eventId); // 編集するイベント情報を取得
+            const eventToEdit = events.find(event => event.id === eventId);
 
             if (confirm('このイベントを削除して編集しますか？')) {
               google.script.run.withSuccessHandler(() => {
@@ -169,9 +172,8 @@
                   eventLocationInput.value = eventToEdit.location;
                 }
                 
-                // イベント作成タブに切り替え
-                openTab(e, 'createEvent'); // openTab関数を呼び出す
-                loadEvents(); // イベントリストを更新
+                openTab(e, 'createEvent');
+                loadEvents();
               }).withFailureHandler(error => {
                 alert('イベントの削除中にエラーが発生しました: ' + error.message);
               }).deleteEvent(eventId);
@@ -179,7 +181,9 @@
           });
         });
 
-      }).getEventsForSelectedCalendar();
+      }).getEventsForSelectedCalendar().finally(() => { // finallyブロックを追加
+          loadingSpinner.style.display = 'none'; // エラー時もスピナーを非表示
+      });
     }
 
     // アプリ設定情報をロードする関数
@@ -208,11 +212,9 @@
       document.getElementById(tabName).style.display = "block";
       evt.currentTarget.className += " active";
 
-      // イベント一覧タブに切り替わったら、イベントリストを再ロード
       if (tabName === 'eventList') {
         loadEvents();
       }
-      // 設定タブに切り替わったら、アプリ設定情報を再ロード
       if (tabName === 'settings') {
         loadAppSettings();
       }
