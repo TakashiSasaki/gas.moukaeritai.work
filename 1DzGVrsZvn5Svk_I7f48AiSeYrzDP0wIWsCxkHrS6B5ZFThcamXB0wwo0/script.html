@@ -2,6 +2,8 @@
   document.addEventListener('DOMContentLoaded', () => {
     const calendarSelect = document.getElementById('calendar-select');
     const eventsContainer = document.getElementById('events-container');
+    const selectedCalendarUrlSpan = document.getElementById('selected-calendar-url');
+    const webAppUrlSpan = document.getElementById('web-app-url');
 
     const eventTitleInput = document.getElementById('event-title');
     const titleSuggestionsDatalist = document.getElementById('title-suggestions');
@@ -27,8 +29,10 @@
     // カレンダー選択の変更を監視し、自動的に保存
     calendarSelect.addEventListener('change', () => {
       const selectedCalendarId = calendarSelect.value;
-      google.script.run.saveUserSelectedCalendarId(selectedCalendarId);
-      loadEvents(); // 保存後、イベントを再ロード
+      google.script.run.withSuccessHandler(() => {
+        loadEvents(); // 保存後、イベントを再ロード
+        loadAppSettings(); // 設定情報を更新
+      }).saveUserSelectedCalendarId(selectedCalendarId);
     });
 
     // 現在日時にリセットボタンのイベントリスナー（開始日時用）
@@ -58,8 +62,9 @@
         if (selectedCalendarId) {
           calendarSelect.value = selectedCalendarId;
         }
-        // イベントをロード
+        // イベントとアプリ設定をロード
         loadEvents();
+        loadAppSettings();
       }).getUserSelectedCalendarId();
 
     }).getCalendars();
@@ -86,10 +91,10 @@
         alert(`イベント「${newEvent.title}」が作成されました！`);
         // フォームをクリア
         eventTitleInput.value = '';
-        eventStartDateInput.value = today; // 現在の日付に戻す
-        eventStartTimeInput.value = currentTime; // 現在時刻に戻す
-        eventEndDateInput.value = today; // 現在の日付に戻す
-        eventEndTimeInput.value = currentTime; // 現在時刻に戻す
+        eventStartDateInput.value = today;
+        eventStartTimeInput.value = currentTime;
+        eventEndDateInput.value = today;
+        eventEndTimeInput.value = currentTime;
         eventDescriptionInput.value = '';
         eventLocationInput.value = '';
         loadEvents(); // イベントリストを更新
@@ -158,7 +163,7 @@
                   eventTitleInput.value = eventToEdit.title;
                   eventStartDateInput.value = eventToEdit.startDate;
                   eventStartTimeInput.value = eventToEdit._startTime;
-                  eventEndDateInput.value = eventToEdit.endDate; // 修正後のキー名を使用
+                  eventEndDateInput.value = eventToEdit.endDate;
                   eventEndTimeInput.value = eventToEdit._endTime;
                   eventDescriptionInput.value = eventToEdit.description;
                   eventLocationInput.value = eventToEdit.location;
@@ -176,6 +181,15 @@
 
       }).getEventsForSelectedCalendar();
     }
+
+    // アプリ設定情報をロードする関数
+    function loadAppSettings() {
+      google.script.run.withSuccessHandler(settings => {
+        selectedCalendarUrlSpan.innerHTML = `<a href="${settings.selectedCalendarUrl}" target="_blank">${settings.selectedCalendarUrl}</a>`;
+        webAppUrlSpan.innerHTML = `<a href="${settings.webAppUrl}" target="_blank">${settings.webAppUrl}</a>`;
+      }).getAppSettings();
+    }
+
 
     // タブ切り替え関数
     window.openTab = (evt, tabName) => {
@@ -197,6 +211,10 @@
       // イベント一覧タブに切り替わったら、イベントリストを再ロード
       if (tabName === 'eventList') {
         loadEvents();
+      }
+      // 設定タブに切り替わったら、アプリ設定情報を再ロード
+      if (tabName === 'settings') {
+        loadAppSettings();
       }
     }
 

@@ -5,22 +5,13 @@
     <?!= include('style'); ?>
   </head>
   <body>
-    <h1>Google Calendar Web App</h1>
-
-    <div>
-      <label for="calendar-select">対象カレンダーを選択:</label>
-      <select id="calendar-select"></select>
-    </div>
-
-    ---
-
     <div class="tabs">
       <button class="tablinks active" onclick="openTab(event, 'createEvent')">イベント作成</button>
       <button class="tablinks" onclick="openTab(event, 'eventList')">イベント一覧</button>
+      <button class="tablinks" onclick="openTab(event, 'settings')">設定</button>
     </div>
 
     <div id="createEvent" class="tabcontent">
-      <h2>イベント新規作成</h2>
       <div class="form-container">
         <div>
           <label for="event-title">タイトル:</label>
@@ -56,6 +47,20 @@
       <h2>イベント一覧 (現在時刻から前後一週間)</h2>
       <div id="events-container">
         </div>
+    </div>
+
+    <div id="settings" class="tabcontent" style="display:none;">
+      <h2>設定</h2>
+      <div class="setting-item">
+        <label for="calendar-select">対象カレンダーを選択:</label>
+        <select id="calendar-select"></select>
+      </div>
+      <div class="setting-item">
+        <p><strong>選択したカレンダーのURL:</strong> <span id="selected-calendar-url"></span></p>
+      </div>
+      <div class="setting-item">
+        <p><strong>このウェブアプリのURL:</strong> <span id="web-app-url"></span></p>
+      </div>
     </div>
 
     <?!= include('script'); ?>

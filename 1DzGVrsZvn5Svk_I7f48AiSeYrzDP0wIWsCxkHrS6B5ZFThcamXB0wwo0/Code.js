@@ -51,7 +51,7 @@ function getEventsForSelectedCalendar() {
     startTime: event.getStartTime().toLocaleString(),
     endTime: event.getEndTime().toLocaleString(),
     startDate: Utilities.formatDate(event.getStartTime(), CalendarApp.getTimeZone(), 'yyyy-MM-dd'),
-    endDate: Utilities.formatDate(event.getEndTime(), CalendarApp.getTimeZone(), 'yyyy-MM-dd'), // endDate のキー名を修正
+    endDate: Utilities.formatDate(event.getEndTime(), CalendarApp.getTimeZone(), 'yyyy-MM-dd'),
     _startTime: Utilities.formatDate(event.getStartTime(), CalendarApp.getTimeZone(), 'HH:mm'),
     _endTime: Utilities.formatDate(event.getEndTime(), CalendarApp.getTimeZone(), 'HH:mm'),
     description: event.getDescription() || '',
@@ -107,4 +107,30 @@ function deleteEvent(eventId) {
   } else {
     throw new Error('指定されたイベントが見つかりませんでした。');
   }
+}
+
+// 追加：選択したカレンダーのURLとウェブアプリのURLを取得する関数
+function getAppSettings() {
+  const userProperties = PropertiesService.getUserProperties();
+  const selectedCalendarId = userProperties.getProperty('selectedCalendarId');
+  let selectedCalendarUrl = 'N/A';
+
+  if (selectedCalendarId) {
+    const calendar = CalendarApp.getCalendarById(selectedCalendarId);
+    if (calendar) {
+      // Google Calendarの公開URL形式（例）
+      // 一般的に、カレンダーIDがあればURLを構築できることが多いが、
+      // 厳密な公開URLはGoogle Calendarの設定に依存するため、
+      // ここでは簡略化して構築する。必要に応じてAdjust
+      selectedCalendarUrl = `https://calendar.google.com/calendar/embed?src=${selectedCalendarId}`;
+    }
+  }
+
+  // WebアプリのURLはScriptAppで取得できる
+  const webAppUrl = ScriptApp.getService().getUrl();
+
+  return {
+    selectedCalendarUrl: selectedCalendarUrl,
+    webAppUrl: webAppUrl
+  };
 }
