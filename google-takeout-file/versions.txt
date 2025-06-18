@@ -1,0 +1,3 @@
+Found 2 versions.
+1 - GCPでプロジェクトを作成し、スコープと認可ページを作成した
+2 - Google Takeout File Browser

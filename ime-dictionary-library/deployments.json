@@ -1,0 +1,17 @@
+[
+  {
+    "id": "AKfycbx_zx3KiuEBvEg49Ecj1ybt33u5hMOhGXhOmB0uFnyX",
+    "target": "HEAD",
+    "description": ""
+  },
+  {
+    "id": "AKfycbwUI7B7lXtXmwFR2yHaP-z7BPnqRmkssL3VJ8QGnNeInvDvp_ILuUkYDQy5GThUrL7XFQ",
+    "target": "1",
+    "description": "initial commit"
+  },
+  {
+    "id": "AKfycbww8l73UVR8Xb_W1-GArwpPVcVoflk0vEthE0kdE4uPVcxDuOC-gLHhYKOrDHXHwWKT9Q",
+    "target": "2",
+    "description": "ライブラリとして使えるレベルになった"
+  }
+]

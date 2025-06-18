@@ -1,0 +1,34 @@
+[
+  {
+    "version": 1,
+    "description": "Dummy doGet returns \"Hello\" mesasge"
+  },
+  {
+    "version": 2,
+    "description": "debug"
+  },
+  {
+    "version": 3,
+    "description": "hello, getEmail"
+  },
+  {
+    "version": 4,
+    "description": "getActiveUserLocale, read"
+  },
+  {
+    "version": 5,
+    "description": "No description"
+  },
+  {
+    "version": 6,
+    "description": "No description"
+  },
+  {
+    "version": 7,
+    "description": "No description"
+  },
+  {
+    "version": 8,
+    "description": "No description"
+  }
+]
