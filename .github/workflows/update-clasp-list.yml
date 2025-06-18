@@ -40,6 +40,14 @@ jobs:
           echo '--- First 5 lines of clasp-list.txt ---'
           head -n 5 clasp-list.txt
 
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x' # Specify Python version
+
+      - name: Generate clasp-list.json
+        run: python parse_clasp_list.py
+
       - name: Check if clasp-list.txt changed
         id: check-changed
         run: |
@@ -51,12 +59,12 @@ jobs:
             echo "changed=false"
           fi
 
-      - name: Commit and push clasp-list.txt to gas-pull branch
+      - name: Commit and push changes to gas-pull branch
         if: steps.check-changed.outputs.changed == 'true'
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add clasp-list.txt
-          git commit -m "Update Apps Script projects list"
+          git add clasp-list.txt clasp-list.json
+          git commit -m "Update Apps Script projects list and JSON"
           # gas-pull ブランチに強制プッシュ
           git push origin gas-pull --force
