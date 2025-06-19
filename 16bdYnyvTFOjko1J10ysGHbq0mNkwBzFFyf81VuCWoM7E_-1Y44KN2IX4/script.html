@@ -1,0 +1,80 @@
+<script>
+  /**
+   * Populates the HTML table with the file data received from the server.
+   * @param {Array<Object>} files An array of file objects.
+   */
+  function updateFileList(files) {
+    const tableBody = document.getElementById('filesTable').getElementsByTagName('tbody')[0];
+    const loader = document.getElementById('loader');
+    const errorDiv = document.getElementById('error');
+    
+    tableBody.innerHTML = ''; // Clear existing rows
+    errorDiv.style.display = 'none';
+
+    if (files.length === 0) {
+      tableBody.innerHTML = '<tr><td colspan="3">Apps Script プロジェクトが見つかりませんでした。</td></tr>';
+    } else {
+      files.forEach(file => {
+        let row = tableBody.insertRow();
+        
+        let nameCell = row.insertCell(0);
+        nameCell.innerHTML = `<a href="${file.url}" target="_blank" rel="noopener noreferrer">${escapeHtml(file.name)}</a>`;
+
+        let dateCell = row.insertCell(1);
+        dateCell.textContent = new Date(file.lastUpdated).toLocaleString();
+        
+        let idCell = row.insertCell(2);
+        idCell.textContent = file.id;
+      });
+    }
+    loader.style.display = 'none';
+  }
+
+  /**
+   * Displays an error message if the server call fails.
+   * @param {Object} error The error object.
+   */
+  function onFailure(error) {
+    const errorDiv = document.getElementById('error');
+    errorDiv.textContent = 'エラーが発生しました: ' + error.message;
+    errorDiv.style.display = 'block';
+    document.getElementById('loader').style.display = 'none';
+  }
+
+  /**
+   * Initiates the process of fetching file data from the server.
+   */
+  function loadFiles() {
+    document.getElementById('loader').style.display = 'block';
+    document.getElementById('error').style.display = 'none';
+    document.getElementById('filesTable').getElementsByTagName('tbody')[0].innerHTML = ''; // 読み込み中はテーブルをクリア
+    
+    google.script.run
+      .withSuccessHandler(updateFileList)
+      .withFailureHandler(onFailure)
+      .searchScriptFiles();
+  }
+  
+  /**
+   * Escapes HTML special characters to prevent XSS.
+   * @param {string} unsafe The string to escape.
+   * @return {string} The escaped string.
+   */
+  function escapeHtml(unsafe) {
+    return unsafe
+         .replace(/&/g, "&amp;")
+         .replace(/</g, "&lt;")
+         .replace(/>/g, "&gt;")
+         .replace(/"/g, "&quot;")
+         .replace(/'/g, "&#039;");
+  }
+
+  // ボタンへのイベントリスナー
+  document.getElementById('loadButton').addEventListener('click', loadFiles);
+
+  // ページ読み込み時に自動でリストを更新
+  window.addEventListener('load', function() {
+    // setTimeoutを使って処理をわずかに遅らせる
+    setTimeout(loadFiles, 1);
+  });
+</script>

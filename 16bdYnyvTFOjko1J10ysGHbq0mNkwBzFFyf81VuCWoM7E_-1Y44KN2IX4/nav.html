@@ -1,0 +1,59 @@
+<nav class="main-nav">
+  <ul>
+    <li><a id="navHome" href="#">ホーム (/)</a></li>
+    <li><a id="navReadme" href="#">仕様書 (/readme)</a></li>
+    <li><a id="navTest" href="#">APIテスト (/test)</a></li>
+  </ul>
+</nav>
+
+<!-- ナビゲーションバー用のスタイル（変更なし） -->
+<style>
+  .main-nav {
+    background-color: #4a6da7;
+    padding: 1em 2em;
+    margin: -2em -2em 2em -2em; /* bodyのマージンを打ち消す */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  .main-nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    gap: 25px;
+  }
+  .main-nav a {
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 1.1em;
+  }
+  .main-nav a:hover {
+    text-decoration: underline;
+  }
+  /* bodyのマージンを元の値に戻すための調整 */
+  body {
+    margin: 2em;
+  }
+</style>
+
+<!-- リンクのURLを動的に設定するスクリプト -->
+<script>
+  window.addEventListener('load', () => {
+    // setTimeoutを使って処理をわずかに遅らせ、gapiライブラリの初期化を待つ
+    setTimeout(function() {
+      google.script.run
+        .withSuccessHandler(function(url) {
+          if (url) {
+            // urlは '.../exec'
+            document.getElementById('navHome').href = url;
+            document.getElementById('navReadme').href = url + '/readme';
+            document.getElementById('navTest').href = url + '/test';
+          }
+        })
+        .withFailureHandler(function(error) {
+          console.error("ナビゲーションURLの取得に失敗: " + error.message);
+        })
+        .getWebAppUrl();
+    }, 1); // 1ミリ秒の遅延
+  });
+</script>
