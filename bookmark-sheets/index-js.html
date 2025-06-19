@@ -9,7 +9,6 @@
     // リロードボタンにイベントリスナーを追加
     reloadContentButton.addEventListener('click', loadInitialContent);
 
-    // ★ 変更点: ここから
     // サーバーからWebアプリのURLを取得して設定ページへのリンクを組み立てる
     google.script.run
       .withSuccessHandler(url => {
@@ -19,15 +18,16 @@
           settingsLink.href = settingsUrl;
         }
       })
+      // ★ 変更点: ここから
       .withFailureHandler(error => {
         console.error('Failed to get web app URL for settings link:', error);
-        // エラー発生時は相対パスでフォールバック
+        // エラー発生時はhref属性を削除してリンクを無効化する
         if (settingsLink) {
-          settingsLink.href = './settings';
+          settingsLink.removeAttribute('href');
         }
       })
+      // ★ 変更点: ここまで
       .getWebAppUrl(); // この関数はCode.jsに実装されています
-    // ★ 変更点: ここまで
 
     // ページの初回読み込み時にコンテンツをロード
     loadInitialContent();
@@ -105,7 +105,6 @@
     // エラーハンドリング
     if (data.error) {
       displayContainer.innerHTML = `<p class="no-content-message">${data.error}</p>`;
-      // ★ 変更点: 設定を促すメッセージの場合、リンクを強調表示
       if (data.error.includes('設定されていません')) {
          const settingsLink = document.getElementById('settingsLink');
          if(settingsLink) {
@@ -123,19 +122,17 @@
     }
 
     // --- ここからコンテンツの描画処理 ---
-    // (元のロジックを維持)
     data.content.forEach(row => {
       const itemDiv = document.createElement('div');
-      itemDiv.classList.add('content-item'); // CSSクラスを適用
-
-      // 各プロパティの存在を確認し、デフォルト値を設定
+      // `content-item`クラスを適用するコードが元々なかったため追加
+      itemDiv.classList.add('content-item'); 
+      
       const url = row.url || '#';
       const title = row.title || 'タイトルなし';
       const image = row.image || '';
 
       let contentHtml = `<h3>${title}</h3>`;
       if (image) {
-        // 画像が存在する場合のみimgタグを追加
         contentHtml += `<img src="${image}" alt="${title}" style="max-width: 100%; height: auto; border-radius: 4px;">`;
       }
       contentHtml += `<a href="${url}" target="_blank" style="font-size: 0.9em; color: #007bff; word-break: break-all; display: block; margin-bottom: 10px;">${url}</a>`;
