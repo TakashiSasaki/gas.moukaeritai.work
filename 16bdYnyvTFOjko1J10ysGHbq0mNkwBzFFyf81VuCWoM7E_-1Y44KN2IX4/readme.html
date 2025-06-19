@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>アプリ仕様 (README)</title>
+  <style>
+    body { font-family: sans-serif; line-height: 1.6; max-width: 800px; padding: 0 20px; }
+    h1, h2, h3 { border-bottom: 1px solid #eee; padding-bottom: 5px; }
+    code { background-color: #f0f0f0; padding: 2px 4px; border-radius: 3px; font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace; }
+    pre { background-color: #f6f8fa; border: 1px solid #ddd; padding: 1em; border-radius: 5px; white-space: pre-wrap; word-wrap: break-word; }
+  </style>
+</head>
+<body>
+  <?!= include('nav'); ?>
+
+  <h1>ウェブアプリ仕様書</h1>
+  <p>このウェブアプリは、認証済みユーザーのGoogle Drive内にあるGoogle Apps Scriptプロジェクトを検索し、一覧表示する機能を提供します。</p>
+  
+  <h2>エンドポイント</h2>
+  <p>ウェブアプリのデプロイURLを <code>https://script.google.com/macros/s/DEPLOYMENT_ID/exec</code> とした場合、以下のエンドポイントが利用可能です。</p>
+  <ul>
+    <li><code>/exec</code> (またはパスなし): メインのHTMLユーザーインターフェースを表示します。</li>
+    <li><code>/exec/test</code>: JSON APIの動作を確認するためのテストページを表示します。</li>
+    <li><code>/exec/readme</code>: この仕様書ページを表示します。</li>
+    <li><code>/exec/json</code>: Drive内の全GASプロジェクトのリストを機械可読なJSON形式で返します。</li>
+  </ul>
+
+  <h2 id="api-usage">JSON API (/json) の使い方</h2>
+  <p><code>/exec/json</code> エンドポイントにGETリクエストを送信することで、スクリプト実行ユーザーのGoogle Drive内にあるApps Scriptプロジェクトの一覧をJSON形式で取得できます。</p>
+  
+  <h3>リクエスト</h3>
+  <ul>
+    <li><b>メソッド:</b> <code>GET</code></li>
+    <li><b>認証:</b> 必要（Googleアカウントでのログイン）</li>
+    <li><b>パラメータ:</b> なし</li>
+  </ul>
+  
+  <h3>レスポンス</h3>
+  <p>成功した場合、HTTPステータスコード <code>200</code> と共に、以下の構造を持つオブジェクトのJSON配列を返します。</p>
+  <pre><code>
+[
+  {
+    "name": "プロジェクトの名称",
+    "id": "プロジェクトのID",
+    "url": "https://script.google.com/d/PROJECT_ID/edit",
+    "lastUpdated": "2025-06-19T01:21:39.000Z"
+  }
+]
+  </code></pre>
+</body>
+</html>
