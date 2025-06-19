@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <base target="_top">
+  <?!= include('style'); ?>
+</head>
+
+<body>
+  <h4>スプレッドシートを検索して選択</h4>
+  <input type="text" id="spreadsheetSearchInput" placeholder="スプレッドシート名を入力">
+  <button id="searchButton">検索</button>
+  <div class="loader" id="searchLoader"></div>
+  <select id="spreadsheetSelector" size="5"></select>
+
+  <h4>スプレッドシートIDで選択</h4>
+  <input type="text" id="spreadsheetIdInput" placeholder="スプレッドシートIDを入力">
+  <div id="spreadsheetIdStatus"></div>
+
+  <button id="saveSettingsButton">スプレッドシートを決定</button>
+
+  <hr>
+  <div id="spreadsheetLinkContainerInSettings">
+  </div>
+
+  <hr>
+  <div id="sheetsInfoContainer">
+  </div>
+  <div id="confirmationModal" class="modal">
+    <div class="modal-content">
+      <span class="close-button" id="closeModalButton">&times;</span>
+      <h2>設定の確認</h2>
+      <p>以下のスプレッドシートを保存しますか？</p>
+      <p><strong>タイトル:</strong> <span id="confirmedSpreadsheetTitle"></span></p>
+      <button id="confirmSaveButton">はい、保存します</button>
+      <button id="cancelModalButton">キャンセル</button>
+    </div>
+  </div>
+  <?!= include('script-js'); ?>
+</body>
+
+</html>
