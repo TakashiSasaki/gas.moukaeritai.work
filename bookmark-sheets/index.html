@@ -3,56 +3,21 @@
   <head>
     <base target="_top">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <?!= include('style'); ?>
+    <?!= include('index-css'); ?>
   </head>
   <body>
-    <div class="tabs">
-      <button class="tablinks" id="displayTabButton">表示</button>
-      <button class="tablinks" id="settingsTabButton">設定</button>
-    </div>
-
-    <div id="Display" class="tabcontent">
-      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
-        <p style="margin: 0;">現在表示中のシート: <span id="currentSheetName">（未選択）</span></p>
-        <button id="reloadContentButton" style="padding: 5px 10px; font-size: 0.9em;">&#x21BB; リロード</button> </div>
-      <div id="displayContentContainer">
-        <p>スプレッドシートのコンテンツはここに表示されます。</p>
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+      <p style="margin: 0;">現在表示中のシート: <span id="currentSheetName">（未選択）</span></p>
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <a id="settingsLink" href="" style="padding: 5px 12px; font-size: 0.9em; background-color: #5bc0de; color: white; text-decoration: none; border-radius: 4px; line-height: 1.5;">設定</a>
+        <button id="reloadContentButton" style="padding: 5px 10px; font-size: 0.9em;">&#x21BB; リロード</button>
       </div>
     </div>
 
-    <div id="Settings" class="tabcontent">
-      <h4>スプレッドシートを検索して選択</h4>
-      <input type="text" id="spreadsheetSearchInput" placeholder="スプレッドシート名を入力">
-      <button id="searchButton">検索</button>
-      <div class="loader" id="searchLoader"></div>
-      <select id="spreadsheetSelector" size="5"></select>
-
-      <h4>スプレッドシートIDで選択</h4>
-      <input type="text" id="spreadsheetIdInput" placeholder="スプレッドシートIDを入力">
-      <div id="spreadsheetIdStatus"></div>
-
-      <button id="saveSettingsButton">スプレッドシートを決定</button>
-
-      <hr>
-      <div id="spreadsheetLinkContainerInSettings">
-        </div>
-
-      <hr>
-      <div id="sheetsInfoContainer">
-        </div>
+    <div id="displayContentContainer">
+      <p>スプレッドシートのコンテンツはここに表示されます。</p>
     </div>
 
-    <div id="confirmationModal" class="modal">
-      <div class="modal-content">
-        <span class="close-button" id="closeModalButton">&times;</span>
-        <h2>設定の確認</h2>
-        <p>以下のスプレッドシートを保存しますか？</p>
-        <p><strong>タイトル:</strong> <span id="confirmedSpreadsheetTitle"></span></p>
-        <button id="confirmSaveButton">はい、保存します</button>
-        <button id="cancelModalButton">キャンセル</button>
-      </div>
-    </div>
-
-    <?!= include('script'); ?>
+    <?!= include('index-js'); ?>
   </body>
 </html>

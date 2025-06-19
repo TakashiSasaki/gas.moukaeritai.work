@@ -157,3 +157,11 @@ function getSheetContent(spreadsheetId) {
     return { error: 'コンテンツの取得に失敗しました。指定されたスプレッドシートが見つからないか、アクセス権がありません。詳細: ' + e.message, sheetName: null };
   }
 }
+
+/**
+ * WebアプリケーションのベースURLを取得します。
+ * @returns {string} /exec/ または /dev/ で終わるURL
+ */
+function getWebAppUrl() {
+  return ScriptApp.getService().getUrl();
+}
