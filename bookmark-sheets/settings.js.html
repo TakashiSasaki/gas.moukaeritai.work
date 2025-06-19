@@ -1,0 +1,302 @@
+<script>
+  let pendingSpreadsheetId = '';
+  let titleFetchTimeout;
+
+  // Settings-specific functions
+  function searchSpreadsheets() {
+    const query = document.getElementById('spreadsheetSearchInput').value;
+    const loader = document.getElementById('searchLoader');
+    if (loader) loader.style.display = 'inline-block';
+
+    google.script.run
+      .withSuccessHandler(populateSpreadsheetSelector)
+      .withFailureHandler(handleSearchError)
+      .searchSpreadsheetsByName(query);
+  }
+
+  function populateSpreadsheetSelector(spreadsheets) {
+    const selector = document.getElementById('spreadsheetSelector');
+    const loader = document.getElementById('searchLoader');
+
+    if (selector) selector.innerHTML = '';
+    if (loader) loader.style.display = 'none';
+
+    if (!spreadsheets || spreadsheets.length === 0) {
+      const option = document.createElement('option');
+      option.value = '';
+      option.textContent = '検索結果なし';
+      if (selector) selector.appendChild(option);
+      return;
+    }
+    spreadsheets.forEach(ss => {
+      const option = document.createElement('option');
+      option.value = ss.id;
+      option.textContent = ss.name;
+      if (selector) selector.appendChild(option);
+    });
+  }
+
+  function handleSearchError(error) {
+    const loader = document.getElementById('searchLoader');
+    if (loader) loader.style.display = 'none';
+    const statusDiv = document.getElementById('spreadsheetIdStatus');
+    if (statusDiv) {
+        statusDiv.textContent = '検索エラー: ' + error.message;
+        statusDiv.className = 'error';
+    }
+    console.error('Spreadsheet search error:', error);
+  }
+
+  function getTitleForId(spreadsheetId) {
+    const statusDiv = document.getElementById('spreadsheetIdStatus');
+    if (!statusDiv) return;
+
+    statusDiv.textContent = 'タイトルを取得中...';
+    statusDiv.className = '';
+
+    if (!spreadsheetId || !spreadsheetId.trim()) {
+      statusDiv.textContent = '';
+      displaySheetsInfo(null); // Clear sheet info if ID is empty
+      // DO NOT CALL displayContent or loadSheetContent here
+      return;
+    }
+
+    google.script.run
+      .withSuccessHandler(function(title) {
+        statusDiv.textContent = 'タイトル: ' + title;
+        statusDiv.className = 'success';
+        // Fetch and display sheet details in settings page
+        google.script.run
+          .withSuccessHandler(displaySheetsInfo)
+          .withFailureHandler(function(error) {
+            displaySheetsInfo(null, 'シート情報の取得に失敗しました: ' + error.message);
+          })
+          .getSpreadsheetSheetsInfo(spreadsheetId);
+        // DO NOT CALL loadSheetContent here
+      })
+      .withFailureHandler(function(error) {
+        statusDiv.textContent = 'エラー: ' + error.message;
+        statusDiv.className = 'error';
+        console.error('Get title error:', error);
+        displaySheetsInfo(null, 'スプレッドシート情報の取得に失敗しました。');
+        // DO NOT CALL displayContent here
+      })
+      .getSpreadsheetTitle(spreadsheetId);
+  }
+
+  function saveSettings() {
+    let targetSpreadsheetId = '';
+    const selector = document.getElementById('spreadsheetSelector');
+    const idInput = document.getElementById('spreadsheetIdInput');
+
+    if (selector && selector.value) {
+      targetSpreadsheetId = selector.value;
+    } else if (idInput && idInput.value.trim()) {
+      targetSpreadsheetId = idInput.value.trim();
+    }
+
+    const statusDiv = document.getElementById('spreadsheetIdStatus');
+
+    if (targetSpreadsheetId) {
+      google.script.run
+        .withSuccessHandler(function(title) {
+          pendingSpreadsheetId = targetSpreadsheetId;
+          showConfirmationModal(title);
+        })
+        .withFailureHandler(function(error) {
+          if (statusDiv) {
+            statusDiv.textContent = '保存エラー: ' + error.message;
+            statusDiv.className = 'error';
+          }
+          console.error('Save settings error (pre-check):', error);
+          displaySheetsInfo(null, '保存前のスプレッドシート情報取得に失敗しました。');
+          // DO NOT CALL displayContent here
+        })
+        .getSpreadsheetTitle(targetSpreadsheetId);
+    } else {
+      if (statusDiv) {
+        statusDiv.textContent = 'スプレッドシートを選択するか、IDを入力してください。';
+        statusDiv.className = 'error';
+      }
+      displaySheetsInfo(null); // Clear sheet info
+      // DO NOT CALL displayContent here
+    }
+  }
+
+  function showConfirmationModal(title) {
+    const modalTitle = document.getElementById('confirmedSpreadsheetTitle');
+    const modal = document.getElementById('confirmationModal');
+    if (modalTitle) modalTitle.textContent = title;
+    if (modal) modal.style.display = 'block';
+  }
+
+  function confirmSave() {
+    const statusDiv = document.getElementById('spreadsheetIdStatus');
+    google.script.run
+      .withSuccessHandler((response) => {
+        if (statusDiv) {
+            statusDiv.textContent = '設定が保存されました！';
+            statusDiv.className = 'success';
+        }
+        closeModal();
+        // Call the settings-specific version of displaySavedSpreadsheetLink
+        displaySavedSpreadsheetLink(response);
+      })
+      .withFailureHandler(function(error) {
+        if (statusDiv) {
+            statusDiv.textContent = '保存エラー: ' + error.message;
+            statusDiv.className = 'error';
+        }
+        console.error('Save settings error:', error);
+        closeModal();
+        // DO NOT CALL displayContent here
+      })
+      .saveSelectedSpreadsheet(pendingSpreadsheetId);
+  }
+
+  function closeModal() {
+    const modal = document.getElementById('confirmationModal');
+    if (modal) modal.style.display = 'none';
+    pendingSpreadsheetId = '';
+  }
+
+  // Settings-specific version of displaySavedSpreadsheetLink
+  // This updates UI elements within settings.html ONLY
+  function displaySavedSpreadsheetLink(spreadsheetInfo) {
+    const linkContainer = document.getElementById('spreadsheetLinkContainerInSettings');
+    if (!linkContainer) return;
+    linkContainer.innerHTML = '';
+
+    if (spreadsheetInfo && spreadsheetInfo.id && spreadsheetInfo.title) {
+      const link = document.createElement('a');
+      link.href = 'https://docs.google.com/spreadsheets/d/' + spreadsheetInfo.id + '/edit';
+      link.textContent = 'スプレッドシートを開く: ' + spreadsheetInfo.title;
+      link.target = '_blank';
+      link.classList.add('open-spreadsheet-button');
+      linkContainer.appendChild(link);
+
+      // Fetch and display sheet details in settings page
+      google.script.run
+        .withSuccessHandler(displaySheetsInfo)
+        .withFailureHandler(function(error) {
+          displaySheetsInfo(null, 'シート情報の取得に失敗しました: ' + error.message);
+        })
+        .getSpreadsheetSheetsInfo(spreadsheetInfo.id);
+      // DO NOT CALL loadSheetContent or displayContent here
+    } else {
+      linkContainer.textContent = '現在、スプレッドシートは選択されていません。';
+      displaySheetsInfo(null); // Clear sheet info
+      // DO NOT CALL loadSheetContent or displayContent here
+    }
+  }
+
+  function displaySheetsInfo(sheetsInfo, errorMessage = null) {
+    const sheetsContainer = document.getElementById('sheetsInfoContainer');
+    if (!sheetsContainer) return;
+    sheetsContainer.innerHTML = '';
+
+    if (errorMessage) {
+      sheetsContainer.innerHTML = '<p class="error">' + errorMessage + '</p>';
+      return;
+    }
+
+    if (sheetsInfo && sheetsInfo.length > 0) {
+      const title = document.createElement('h4');
+      title.textContent = 'シート一覧:';
+      sheetsContainer.appendChild(title);
+
+      sheetsInfo.forEach(sheet => {
+        const sheetItem = document.createElement('div');
+        sheetItem.classList.add('sheet-item');
+
+        let headersHtml = '';
+        if (sheet.headers && sheet.headers.length > 0) {
+          const validHeaders = sheet.headers.filter(h => h !== null && h !== undefined && String(h).trim() !== '');
+          if (validHeaders.length > 0) {
+            headersHtml = `<div class="headers">ヘッダ: ${validHeaders.join(', ')}</div>`;
+          } else {
+            headersHtml = `<div class="headers">ヘッダ: (空または認識できるヘッダなし)</div>`;
+          }
+        } else {
+          headersHtml = `<div class="headers">ヘッダ: (なし)</div>`;
+        }
+
+        sheetItem.innerHTML = `
+          <strong>シート名: ${sheet.name}</strong>
+          <span>カラム数: ${sheet.columnCount}, 行数: ${sheet.rowCount}</span>
+          ${headersHtml}
+        `;
+        sheetsContainer.appendChild(sheetItem);
+      });
+    } else {
+      sheetsContainer.textContent = 'このスプレッドシートにはシートがありません、または情報を取得できませんでした。';
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', (event) => {
+    // Initial load of saved spreadsheet info for settings page
+    google.script.run
+      .withSuccessHandler(function(info) {
+        displaySavedSpreadsheetLink(info); // Updates link and sheet info in settings
+        if (info && info.id) {
+          const idInput = document.getElementById('spreadsheetIdInput');
+          if (idInput) idInput.value = info.id;
+          // getTitleForId also updates the statusDiv and sheet info, which is good for settings page
+          getTitleForId(info.id);
+        } else {
+           displaySheetsInfo(null); // Clear sheet info if nothing is saved
+        }
+      })
+      .withFailureHandler(function(error) {
+        console.error("Error loading saved spreadsheet info on settings page:", error);
+        const statusDiv = document.getElementById('spreadsheetIdStatus');
+        if (statusDiv) {
+            statusDiv.textContent = '保存された情報の取得エラー: ' + error.message;
+            statusDiv.className = 'error';
+        }
+        displaySheetsInfo(null); // Clear sheet info on error
+      })
+      .getSavedSpreadsheetInfo();
+
+    // Event listeners for settings page elements
+    const searchInput = document.getElementById('spreadsheetSearchInput');
+    const searchButton = document.getElementById('searchButton');
+    const idInput = document.getElementById('spreadsheetIdInput');
+    const saveSettingsButton = document.getElementById('saveSettingsButton');
+    const selector = document.getElementById('spreadsheetSelector');
+
+    if (searchButton) searchButton.addEventListener('click', searchSpreadsheets);
+    if (searchInput) searchInput.addEventListener('keypress', function(e) { if (e.key === 'Enter') searchSpreadsheets(); });
+
+    if (idInput) {
+        idInput.addEventListener('input', function() {
+            if (titleFetchTimeout) clearTimeout(titleFetchTimeout);
+            titleFetchTimeout = setTimeout(() => { getTitleForId(idInput.value); }, 500);
+        });
+        idInput.addEventListener('blur', function() {
+            if (titleFetchTimeout) clearTimeout(titleFetchTimeout);
+            getTitleForId(idInput.value);
+        });
+        idInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                if (titleFetchTimeout) clearTimeout(titleFetchTimeout);
+                getTitleForId(idInput.value);
+            }
+        });
+    }
+    if (selector) selector.addEventListener('change', function() {
+        const selectedId = this.value;
+        if (idInput) idInput.value = selectedId;
+        getTitleForId(selectedId);
+    });
+    if (saveSettingsButton) saveSettingsButton.addEventListener('click', saveSettings);
+
+    const closeModalButton = document.getElementById('closeModalButton');
+    const confirmSaveButton = document.getElementById('confirmSaveButton');
+    const cancelModalButton = document.getElementById('cancelModalButton');
+
+    if(closeModalButton) closeModalButton.addEventListener('click', closeModal);
+    if(confirmSaveButton) confirmSaveButton.addEventListener('click', confirmSave);
+    if(cancelModalButton) cancelModalButton.addEventListener('click', closeModal);
+  });
+</script>

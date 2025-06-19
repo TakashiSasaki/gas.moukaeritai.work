@@ -1,151 +1,114 @@
-<!-- Google Apps Script スプレッドシートビューア ウェブアプリ README -->
 <!DOCTYPE html>
 <html lang="ja">
 <head>
+    <base target="_top">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Google Apps Script スプレッドシートビューア ウェブアプリ</title>
+    <title>App Readme/Design</title>
+    <?!= include('nav-style'); ?>
+    <!-- Navigation CSS and common styles might be included here later -->
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            margin: 20px;
-            background-color: #f4f4f4;
-            color: #333;
-        }
-        h1, h2, h3, h4 {
-            color: #0056b3;
-            border-bottom: 2px solid #0056b3;
-            padding-bottom: 5px;
-            margin-top: 25px;
-        }
-        h1 { font-size: 2em; }
-        h2 { font-size: 1.5em; }
-        h3 { font-size: 1.2em; }
-        ul {
-            list-style-type: disc;
-            margin-left: 20px;
-            margin-bottom: 15px;
-        }
-        li {
-            margin-bottom: 5px;
-        }
-        strong {
-            color: #d35400;
-        }
-        .section {
-            background-color: #ffffff;
-            padding: 20px;
-            margin-bottom: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-        .code-block {
-            background-color: #e9e9e9;
-            border: 1px solid #ccc;
-            padding: 15px;
-            border-radius: 5px;
-            overflow-x: auto;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 0.9em;
-        }
-        .note {
-            background-color: #fff3cd;
-            border-left: 5px solid #ffc107;
-            padding: 10px;
-            margin-top: 15px;
-            border-radius: 4px;
-            color: #664d03;
-        }
+        body { font-family: sans-serif; margin: 20px; /* padding-top: 60px; Will be handled by nav-style.css.html */ }
+        h1, h2 { border-bottom: 1px solid #ccc; padding-bottom: 5px; }
+        /* #navigation placeholder styling removed */
+        .code { background-color: #f4f4f4; padding: 2px 5px; border-radius: 3px; font-family: monospace; }
+        table { border-collapse: collapse; margin-top: 1em; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
     </style>
 </head>
 <body>
-    <div class="section">
-        <h1>Google Apps Script スプレッドシートビューア ウェブアプリ</h1>
-        <h2>概要</h2>
-        <p>このウェブアプリは、Google Apps Script を使用して構築されており、Google スプレッドシートの内容をウェブページ上で表示するためのツールです。複数のタブ（「表示」と「設定」）を持ち、ユーザーは「設定」タブで表示したいスプレッドシートを選択・決定できます。選ばれたスプレッドシートは「表示」タブにカード形式で視覚的に表示され、タグ、画像、URLなどの情報が含まれます。</p>
-    </div>
+    <nav class="common-navigation">
+      <a href="<?= baseUrl ?>" <? if (currentPage === 'index') { ?>class="active"<? } ?>>Display</a>
+      <a href="<?= settingsUrl ?>" <? if (currentPage === 'settings') { ?>class="active"<? } ?>>Settings</a>
+      <a href="<?= readmeUrl ?>" <? if (currentPage === 'readme') { ?>class="active"<? } ?>>Readme</a>
+    </nav>
 
-    <div class="section">
-        <h2>機能</h2>
-        <h3>1. タブ切り替え</h3>
-        <ul>
-            <li><strong>表示タブ</strong>: 決定されたスプレッドシートのコンテンツが表示されます。</li>
-            <li><strong>設定タブ</strong>: スプレッドシートの選択と設定を行います。</li>
-        </ul>
+    <h1>Spreadsheet Viewer Web App - Design Document</h1>
 
-        <h3>2. スプレッドシートの選択</h3>
-        <p>「設定」タブでは、以下の2つの方法でスプレッドシートを選択できます。</p>
-        <ul>
-            <li><strong>スプレッドシート名を検索して選択</strong>:
-                <ul>
-                    <li>検索ボックスにスプレッドシート名の一部を入力し、「検索」ボタンを押すことで、一致するスプレッドシートのリストが表示されます。</li>
-                    <li>検索中はローディングインジケーターが表示されます。</li>
-                    <li>リストから目的のスプレッドシートを選択できます。</li>
-                </ul>
-            </li>
-            <li><strong>スプレッドシートIDで選択</strong>:
-                <ul>
-                    <li>スプレッドシートのIDを直接入力ボックスに入力できます。</li>
-                    <li>IDの入力が完了すると、自動的にそのスプレッドシートの<strong>タイトル</strong>が取得され、入力欄の下に表示されます。タイトルが取得できない場合はエラーメッセージが表示されます。</li>
-                    <li>検索リストで項目を選択した場合も、そのIDが自動的に入力欄に反映されます。</li>
-                </ul>
-            </li>
-        </ul>
+    <h2>1. Overview</h2>
+    <p>This document describes the structure and design of the Spreadsheet Viewer web application. The application allows users to select a Google Spreadsheet and view its content. Functionality is split across a main display page, a settings page, and this readme page.</p>
 
-        <h3>3. スプレッドシートの決定とシート情報表示</h3>
-        <ul>
-            <li>スプレッドシートが選択された後、「スプレッドシートを決定」ボタンを押すと、そのスプレッドシートの<strong>タイトルを確認</strong>するダイアログが表示されます。</li>
-            <li>ユーザーが確認を承認すると、選択されたスプレッドシートIDが保存され、「設定」タブ内にそのスプレッドシートを新しいタブで開くための<strong>ボタン形式のリンク</strong>が表示されます。</li>
-            <li>決定されたスプレッドシートに含まれる<strong>シートの一覧</strong>も表示されます。各シートには<strong>シート名</strong>、<strong>カラム数</strong>、<strong>行数</strong>、そして<strong>先頭行のカラム名（ヘッダ）一覧</strong>が表示されます。</li>
-        </ul>
+    <h2>2. File Structure</h2>
+    <p>The application consists of the following key files within the 'bookmark-sheets' directory:</p>
+    <table>
+        <thead>
+            <tr>
+                <th>File</th>
+                <th>Purpose</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><code>index.html</code></td>
+                <td>Main page for displaying spreadsheet content.</td>
+            </tr>
+            <tr>
+                <td><code>settings.html</code></td>
+                <td>Page for configuring application settings, primarily selecting the target spreadsheet.</td>
+            </tr>
+            <tr>
+                <td><code>readme.html</code></td>
+                <td>This design document and application guide.</td>
+            </tr>
+            <tr>
+                <td><code>script.html</code></td>
+                <td>Client-side JavaScript for <code>index.html</code> (content display).</td>
+            </tr>
+            <tr>
+                <td><code>style.html</code></td>
+                <td>CSS styles for <code>index.html</code> and common elements.</td>
+            </tr>
+            <tr>
+                <td><code>settings.js.html</code></td>
+                <td>Client-side JavaScript specific to <code>settings.html</code>.</td>
+            </tr>
+            <tr>
+                <td><code>settings.css.html</code></td>
+                <td>CSS styles specific to <code>settings.html</code>.</td>
+            </tr>
+            <tr>
+                <td><code>doGet.gs</code></td>
+                <td>Server-side Apps Script file containing the main <code>doGet(e)</code> function for routing.</td>
+            </tr>
+            <tr>
+                <td><code>Code.gs</code></td>
+                <td>Server-side Apps Script file for backend logic (e.g., Google Drive interaction, utility functions like <code>include()</code>). Moved from Code.js</td>
+            </tr>
+            <tr>
+                <td><code>appsscript.json</code></td>
+                <td>Apps Script project manifest file.</td>
+            </tr>
+        </tbody>
+    </table>
 
-        <h3>4. コンテンツの表示（「表示」タブ）</h3>
-        <ul>
-            <li>「表示」タブには、決定されたスプレッドシートの最初のシートの内容が表示されます。</li>
-            <li>表示されるコンテンツは、各行がカード形式で表示され、以下のヘッダが存在することを前提としています。
-                <ul>
-                    <li><code>url</code> (必須)</li>
-                    <li><code>title</code> (必須)</li>
-                    <li><code>image</code> (必須)</li>
-                    <li><code>tags</code> (一つ以上、<code>tags</code>で始まるカラム名)</li>
-                </ul>
-            </li>
-            <li>これらの必須ヘッダが存在しない場合、コンテンツは表示されず、必要なヘッダに関するエラーメッセージが表示されます。</li>
-            <li><code>tags</code> カラムは複数存在する場合があり、それらの値は結合されてリスト形式で表示されます。</li>
-            <li>「表示」タブの左上には、現在表示されている<strong>シート名</strong>が表示され、その隣にはシートの内容を<strong>再読み込みするリロードボタン</strong>が配置されています。</li>
-        </ul>
+    <h2>3. Routing</h2>
+    <p>The application uses URL path-based routing, handled by the <code>doGet(e)</code> function in <code>doGet.gs</code>. The <code>e.pathInfo</code> property from the event object determines which page is served:</p>
+    <ul>
+        <li>Base URL (e.g., <code>.../exec/</code>): Serves <code>index.html</code>.</li>
+        <li>Base URL + <code>/settings</code> (e.g., <code>.../exec/settings</code>): Serves <code>settings.html</code>.</li>
+        <li>Base URL + <code>/readme</code> (e.g., <code>.../exec/readme</code>): Serves <code>readme.html</code>.</li>
+    </ul>
+    <p>The <code>HtmlService.createTemplateFromFile(filename).evaluate()</code> method is used to serve these pages.</p>
 
-        <h3>5. その他の機能</h3>
-        <ul>
-            <li><strong>キャッシュ機能</strong>: スプレッドシート名検索の結果はユーザーキャッシュに10分間保存され、同じ検索クエリに対してはキャッシュから素早く結果が返されます。</li>
-            <li><strong>レスポンシブデザイン</strong>: スマートフォンなどのモバイルデバイスでも見やすいように、ビューポート設定と基本的なレスポンシブデザインが適用されています。</li>
-        </ul>
-    </div>
+    <h2>4. Navigation</h2>
+    <p>A common navigation UI is implemented across <code>index.html</code>, <code>settings.html</code>, and <code>readme.html</code>. This allows users to easily switch between the 'Display', 'Settings', and 'Readme' sections of the application. The navigation links will use the appropriate paths (e.g., <code>${webappUrl}</code>, <code>${webappUrl}/settings</code>, <code>${webappUrl}/readme</code>).</p>
 
-    <div class="section">
-        <h2>アプリケーションのデプロイ方法</h2>
-        <ol>
-            <li>Google ドライブで新しい Google スプレッドシートを作成します。</li>
-            <li>「拡張機能」&gt;「Apps Script」を選択し、スクリプトエディタを開きます。</li>
-            <li>提供された <code>Code.gs</code>、<code>index.html</code>、<code>style.html</code>、<code>script.html</code> の内容をそれぞれのファイルにコピー＆ペーストします。</li>
-            <li>Apps Script エディタで、「デプロイ」&gt;「新しいデプロイ」を選択します。</li>
-            <li>「種類の選択」で「ウェブアプリ」を選択します。</li>
-            <li>「アクセス」を「全員」または「Gmail アカウントを持つすべてのユーザー」に設定します（テスト目的の場合）。</li>
-            <li>「デプロイ」をクリックし、必要な承認（権限の許可）を求められたら許可します。</li>
-            <li>デプロイが完了すると、ウェブアプリのURLが発行されます。このURLをブラウザで開いてアプリを使用できます。</li>
-        </ol>
-    </div>
+    <h2>5. Key Functionalities</h2>
+    <h3>5.1. Settings Page (<code>settings.html</code>)</h3>
+    <ul>
+        <li>Search for Google Spreadsheets by name.</li>
+        <li>Select a spreadsheet by its ID.</li>
+        <li>View details of the selected spreadsheet (title, sheet names, headers).</li>
+        <li>Save the selected spreadsheet ID for the application to use.</li>
+    </ul>
+    <h3>5.2. Display Page (<code>index.html</code>)</h3>
+    <ul>
+        <li>Loads and displays content from the first sheet of the currently selected Google Spreadsheet.</li>
+        <li>Content is expected to have specific columns (e.g., 'url', 'title', 'image', 'tags') for optimal display.</li>
+        <li>Provides a reload button to refresh content.</li>
+    </ul>
 
-    <div class="section">
-        <h2>注意事項</h2>
-        <ul>
-            <li>スプレッドシートのコンテンツを表示するには、Apps Script がそのスプレッドシートにアクセスできる必要があります。適切に権限を付与してください。</li>
-            <li>表示タブにコンテンツを表示するためのヘッダ (<code>url</code>, <code>title</code>, <code>image</code>, <code>tags</code> など) が正しく設定されていることを確認してください。</li>
-            <li><code>tags</code> カラムは、<code>tags_jp</code>, <code>tags_en</code> のように <code>tags</code> で始まる複数のカラムがあっても対応します。</li>
-        </ul>
-    </div>
+    <p><em>This readme provides a high-level overview of the application's refactored design.</em></p>
 </body>
 </html>

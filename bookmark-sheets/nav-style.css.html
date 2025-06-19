@@ -1,0 +1,32 @@
+<style>
+  body {
+    padding-top: 70px; /* Increased padding for nav */
+    margin: 0; /* Ensure body has no default margin that could interfere */
+  }
+  nav.common-navigation {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #333;
+    padding: 12px 0;
+    text-align: center;
+    z-index: 1000;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    height: 40px; /* Fixed height */
+    line-height: 40px; /* Vertically center links if they are inline-block */
+  }
+  nav.common-navigation a {
+    color: white;
+    margin: 0 20px;
+    text-decoration: none;
+    font-size: 1em; /* Relative font size */
+    padding: 8px 15px;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+  }
+  nav.common-navigation a:hover,
+  nav.common-navigation a.active {
+    background-color: #555;
+  }
+</style>

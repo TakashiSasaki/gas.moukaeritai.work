@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <?!= include('settings.css'); ?>
+    <?!= include('nav-style'); ?>
+  </head>
+  <body>
+    <nav class="common-navigation">
+      <a href="<?= baseUrl ?>" <? if (currentPage === 'index') { ?>class="active"<? } ?>>Display</a>
+      <a href="<?= settingsUrl ?>" <? if (currentPage === 'settings') { ?>class="active"<? } ?>>Settings</a>
+      <a href="<?= readmeUrl ?>" <? if (currentPage === 'readme') { ?>class="active"<? } ?>>Readme</a>
+    </nav>
+    <!-- Navigation UI will be added here later --> <!-- This comment can be removed or kept, it doesn't harm -->
+
+    <div id="Settings" class="tabcontent" style="display: block;"> <!-- Modified to be visible by default -->
+      <h4>スプレッドシートを検索して選択</h4>
+      <input type="text" id="spreadsheetSearchInput" placeholder="スプレッドシート名を入力">
+      <button id="searchButton">検索</button>
+      <div class="loader" id="searchLoader"></div>
+      <select id="spreadsheetSelector" size="5"></select>
+
+      <h4>スプレッドシートIDで選択</h4>
+      <input type="text" id="spreadsheetIdInput" placeholder="スプレッドシートIDを入力">
+      <div id="spreadsheetIdStatus"></div>
+
+      <button id="saveSettingsButton">スプレッドシートを決定</button>
+
+      <hr>
+      <div id="spreadsheetLinkContainerInSettings">
+        </div>
+
+      <hr>
+      <div id="sheetsInfoContainer">
+        </div>
+    </div>
+
+    <div id="confirmationModal" class="modal">
+      <div class="modal-content">
+        <span class="close-button" id="closeModalButton">&times;</span>
+        <h2>設定の確認</h2>
+        <p>以下のスプレッドシートを保存しますか？</p>
+        <p><strong>タイトル:</strong> <span id="confirmedSpreadsheetTitle"></span></p>
+        <button id="confirmSaveButton">はい、保存します</button>
+        <button id="cancelModalButton">キャンセル</button>
+      </div>
+    </div>
+
+    <?!= include('settings.js'); ?>
+  </body>
+</html>
