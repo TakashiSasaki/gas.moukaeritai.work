@@ -1,0 +1,54 @@
+name: GAS Project Finder
+
+on:
+  schedule:
+    - cron: '45 * * * *' # Run every hour
+  workflow_dispatch: # Allow manual triggering
+
+jobs:
+  fetch_and_commit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout gas-pull branch
+        uses: actions/checkout@v3
+        with:
+          ref: gas-pull
+
+      - name: Fetch JSON data
+        id: fetch_json
+        run: |
+          response_file=$(mktemp)
+          if curl -Lfs "https://script.google.com/macros/s/AKfycbz0a4RTpHE5Bxn3AeHWEAD7QHreptLqpa3HLxatARciZwYLJk8jd494G3Dd5_PF3WsJFg/exec/json" -o "$response_file"; then
+            echo "JSON_FETCH_SUCCESS=true" >> $GITHUB_ENV
+            echo "RESPONSE_FILE_PATH=$response_file" >> $GITHUB_ENV
+          else
+            echo "JSON_FETCH_SUCCESS=false" >> $GITHUB_ENV
+            rm -f "$response_file" # Clean up temp file on failure
+          fi
+
+      - name: Update JSON file if changed
+        if: env.JSON_FETCH_SUCCESS == 'true'
+        run: |
+          TARGET_FILE="gas-project-finder.json"
+          TEMP_FILE="${{ env.RESPONSE_FILE_PATH }}"
+
+          if [ ! -f "$TARGET_FILE" ] || ! cmp -s "$TEMP_FILE" "$TARGET_FILE"; then
+            echo "Changes detected or target file does not exist. Updating $TARGET_FILE."
+            mv "$TEMP_FILE" "$TARGET_FILE"
+            echo "CHANGES_MADE=true" >> $GITHUB_ENV
+          else
+            echo "No changes detected. $TARGET_FILE is up-to-date."
+            rm -f "$TEMP_FILE" # Clean up temp file if no changes
+            echo "CHANGES_MADE=false" >> $GITHUB_ENV
+          fi
+
+      - name: Commit and push if changes were made
+        if: env.CHANGES_MADE == 'true'
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add gas-project-finder.json
+          git commit -m "Update gas-project-finder.json with new data"
+          git push origin gas-pull
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
