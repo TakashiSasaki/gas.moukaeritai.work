@@ -3,337 +3,434 @@
 <head>
   <base target="_top">
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap">
   <style>
-    body { font-family: 'Roboto', sans-serif; background-color: #f5f5f5; color: #333; margin: 0; padding: 20px; }
-    .container { max-width: 900px; margin: 0 auto; background: #fff; padding: 25px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-    h1 { color: #4285f4; border-bottom: 2px solid #eee; padding-bottom: 10px; }
-    .drop-zone { margin-top: 20px; border: 2px dashed #ccc; padding: 30px; text-align: center; color: #666; transition: background-color 0.2s, border-color 0.2s; }
-    .drop-zone.drag-over { background-color: #e8f0fe; border-color: #4285f4; border-style: solid; }
-    #upload-form { display: flex; align-items: center; gap: 15px; margin-top: 20px; }
-    button { border: none; padding: 12px 20px; font-size: 16px; border-radius: 4px; cursor: pointer; transition: background-color 0.3s; }
-    #submitButton { background-color: #4285f4; color: white; }
-    #clearButton { background-color: #f1f3f4; color: #5f6368; }
-    #clearButton:hover { background-color: #e8eaed; }
-    button:disabled { background-color: #9e9e9e; color: white; cursor: not-allowed; }
-    #status { margin-top: 20px; min-height: 24px; }
+    :root {
+      --primary-color: #4285f4;
+      --primary-color-dark: #3367d6;
+      --text-color: #333;
+      --background-color: #f5f5f5;
+      --container-bg: #fff;
+      --border-color: #ccc;
+      --border-light-color: #eee;
+      --button-secondary-bg: #f1f3f4;
+      --button-secondary-hover-bg: #e8eaed;
+      --text-muted: #5f6368;
+      --error-color: #d93025;
+      --success-color: #1e8e3e;
+    }
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: var(--background-color);
+      color: var(--text-color);
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      width: 100%;
+      max-width: 900px;
+      margin: 0 auto;
+      background: var(--container-bg);
+      padding: 25px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    h1, h2 {
+      border-bottom: 2px solid var(--border-light-color);
+      padding-bottom: 10px;
+      margin-top: 0;
+    }
+    h1 { color: var(--primary-color); }
+    h2 { font-size: 1.2em; color: var(--text-color); margin-top: 30px; }
+    .drop-zone {
+      margin-top: 20px;
+      border: 2px dashed var(--border-color);
+      border-radius: 8px;
+      padding: 30px;
+      text-align: center;
+      color: var(--text-muted);
+      transition: background-color 0.2s, border-color 0.2s;
+    }
+    .drop-zone.drag-over { background-color: #e8f0fe; border-color: var(--primary-color); border-style: solid; }
+    #imageFile { display: none; }
+    #file-list-container { margin-top: 15px; max-height: 150px; overflow-y: auto; border: 1px solid var(--border-light-color); border-radius: 4px; padding: 5px; background-color: #fafafa;}
+    #file-list li { list-style-type: none; padding: 4px 8px; font-size: 0.9em; color: var(--text-muted); border-bottom: 1px solid #eee; }
+    #file-list li:last-child { border-bottom: none; }
+    .input-section { margin-top: 20px; }
+    textarea#textInput {
+        width: 100%;
+        min-height: 150px;
+        padding: 10px;
+        border: 1px solid var(--border-color);
+        border-radius: 4px;
+        font-family: 'monospace', 'Courier New';
+        font-size: 14px;
+        box-sizing: border-box;
+        margin-bottom: 10px;
+    }
+    .button-group { display: flex; align-items: center; gap: 15px; margin-top: 20px; }
+    button { border: none; padding: 12px 20px; font-size: 16px; border-radius: 4px; cursor: pointer; transition: background-color 0.3s, opacity 0.3s; }
+    button.primary { background-color: var(--primary-color); color: white; }
+    button.primary:hover { background-color: var(--primary-color-dark); }
+    button.secondary { background-color: var(--button-secondary-bg); color: var(--text-muted); }
+    button.secondary:hover { background-color: var(--button-secondary-hover-bg); }
+    button:disabled { background-color: #9e9e9e; color: white; cursor: not-allowed; opacity: 0.7; }
+    #status { margin-top: 20px; min-height: 24px; transition: opacity 0.3s ease-in-out; }
     .status-main { font-weight: bold; }
-    .summary { font-size: 0.9em; color: #5f6368; margin-top: 8px; font-weight: normal; }
-    b { color: #202124; }
-    .spinner { border: 4px solid #f3f3f3; border-top: 4px solid #4285f4; border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; display: inline-block; vertical-align: middle; margin-right: 10px; }
+    .status-success { color: var(--success-color); }
+    .summary { font-size: 0.9em; color: var(--text-muted); margin-top: 8px; font-weight: normal; }
+    .spinner { border: 4px solid #f3f3f3; border-top: 4px solid var(--primary-color); border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; display: inline-block; vertical-align: middle; margin-right: 10px; }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-    #result-container { margin-top: 20px; }
+    #result-container { margin-top: 20px; overflow-x: auto; }
     table { width: 100%; border-collapse: collapse; }
-    th, td { text-align: left; padding: 12px; border-bottom: 1px solid #ddd; word-break: break-all; }
+    th, td { text-align: left; padding: 12px; border-bottom: 1px solid #ddd; word-break: break-word; }
     th { background-color: #f2f2f2; }
     tr:hover { background-color: #f9f9f9; }
-    .error { color: #d93025; font-weight: bold; }
-    #export-controls { margin-top: 25px; padding-top: 15px; border-top: 1px solid #eee; display: flex; flex-wrap: wrap; gap: 15px; }
-    .export-button { background-color: #fff; color: #4285f4; border: 1px solid #ddd; font-size: 14px; padding: 8px 16px; }
+    .error { color: var(--error-color); font-weight: bold; }
+    #export-controls { margin-top: 25px; padding-top: 15px; border-top: 1px solid var(--border-light-color); display: flex; flex-wrap: wrap; gap: 15px; transition: opacity 0.3s; }
+    .export-button { background-color: var(--container-bg); color: var(--primary-color); border: 1px solid #ddd; font-size: 14px; padding: 8px 16px; }
     .export-button:hover { background-color: #f8f9fa; }
-    #saveToSheetButton { background-color: #1e8e3e; color: white; border: none; }
-    #saveToSheetButton:hover { background-color: #188038; }
+    .copy-button { background-color: #e8f0fe; color: var(--primary-color-dark); border-color: #a9c5f5; }
+    .copy-button:hover { background-color: #d2e3fc; }
+    .hidden { display: none !important; opacity: 0; }
   </style>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap">
 </head>
 <body>
   <div class="container">
     <h1>DNS Record Extractor</h1>
-    <p>DNS settings screenshots (PNG, JPG) – select, drag & drop, or paste. You can process multiple files simultaneously.</p>
-
+    
+    <h2>画像から抽出</h2>
     <div id="dropZone" class="drop-zone">
-      <input type="file" id="imageFile" accept="image/png, image/jpeg, image/webp" multiple>
-      <p>Or drag & drop files here</p>
+      <input type="file" id="imageFile" accept="image/png, image/jpeg, image/webp, text/plain, .zone, .txt" multiple>
+      <p>画像/テキストファイル(.txt, .zone)をここにドラッグ＆ドロップ</p>
+    </div>
+    
+    <div id="file-list-container" class="hidden">
+      <ul id="file-list"></ul>
     </div>
 
-    <div id="upload-form">
-      <button id="submitButton">Extract</button>
-      <button id="clearButton" type="button">Clear Results</button>
+    <h2>テキストから抽出</h2>
+    <div class="input-section">
+        <textarea id="textInput" placeholder="ここにDNSレコードのテキストを貼り付け、または入力してください..."></textarea>
     </div>
 
-    <div id="status"></div>
+    <div class="button-group">
+      <button id="submitButton" class="primary">Extract from Files / Text</button>
+      <button id="clearButton" class="secondary">Clear All</button>
+    </div>
+
+    <div id="status" aria-live="polite"></div>
     <div id="result-container"></div>
     
-    <div id="export-controls" style="display: none;">
+    <div id="export-controls" class="hidden">
       <button id="downloadCsvButton" class="export-button">Download CSV</button>
+      <button id="copyCsvButton" class="export-button copy-button">Copy CSV</button>
       <button id="downloadJsonButton" class="export-button">Download JSON</button>
-      <button id="saveToSheetButton" class="export-button">Save to Google Sheet</button>
+      <button id="copyJsonButton" class="export-button copy-button">Copy JSON</button>
     </div>
-
   </div>
 
-  <script>
-    // Global state: store all unique DNS records
-    let allRecords = [];
+<script>
+  let allRecords = [];
+  const UIElements = {
+    submitButton: document.getElementById('submitButton'),
+    clearButton: document.getElementById('clearButton'),
+    imageFile: document.getElementById('imageFile'),
+    textInput: document.getElementById('textInput'),
+    statusDiv: document.getElementById('status'),
+    resultContainer: document.getElementById('result-container'),
+    dropZone: document.getElementById('dropZone'),
+    exportControls: document.getElementById('export-controls'),
+    copyCsvButton: document.getElementById('copyCsvButton'),
+    copyJsonButton: document.getElementById('copyJsonButton'),
+    downloadCsvButton: document.getElementById('downloadCsvButton'),
+    downloadJsonButton: document.getElementById('downloadJsonButton'),
+    fileListContainer: document.getElementById('file-list-container'),
+    fileList: document.getElementById('file-list')
+  };
 
-    // Element selectors
-    const submitButton = document.getElementById('submitButton');
-    const clearButton = document.getElementById('clearButton');
-    const imageFile = document.getElementById('imageFile');
-    const statusDiv = document.getElementById('status');
-    const resultContainer = document.getElementById('result-container');
-    const dropZone = document.getElementById('dropZone');
-    const exportControls = document.getElementById('export-controls');
-    const downloadCsvButton = document.getElementById('downloadCsvButton');
-    const downloadJsonButton = document.getElementById('downloadJsonButton');
-    const saveToSheetButton = document.getElementById('saveToSheetButton');
+  // --- Event Listeners ---
+  UIElements.submitButton.addEventListener('click', handleSubmitClick);
+  UIElements.clearButton.addEventListener('click', handleClearClick);
+  UIElements.imageFile.addEventListener('change', updateUIState);
+  UIElements.textInput.addEventListener('input', updateUIState);
+  UIElements.copyCsvButton.addEventListener('click', () => handleCopy('CSV'));
+  UIElements.copyJsonButton.addEventListener('click', () => handleCopy('JSON'));
+  UIElements.downloadCsvButton.addEventListener('click', () => handleDownload('CSV'));
+  UIElements.downloadJsonButton.addEventListener('click', () => handleDownload('JSON'));
+  document.addEventListener('paste', handlePaste);
+  
+  ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+    document.body.addEventListener(eventName, preventDefaults);
+    UIElements.dropZone.addEventListener(eventName, preventDefaults);
+  });
+  ['dragenter', 'dragover'].forEach(eventName => UIElements.dropZone.classList.add('drag-over'));
+  ['dragleave', 'drop'].forEach(eventName => UIElements.dropZone.classList.remove('drag-over'));
+  UIElements.dropZone.addEventListener('drop', handleDrop);
 
-    // Event listeners
-    submitButton.addEventListener('click', handleButtonClick);
-    clearButton.addEventListener('click', handleClearClick);
-    imageFile.addEventListener('change', handleFileSelect);
-    document.addEventListener('paste', handlePaste, false);
-    downloadCsvButton.addEventListener('click', downloadAsCsv);
-    downloadJsonButton.addEventListener('click', downloadAsJson);
-    saveToSheetButton.addEventListener('click', saveToSheet);
+  // --- Main Handlers ---
+  function handleSubmitClick() {
+    const textContent = UIElements.textInput.value.trim();
+    const files = UIElements.imageFile.files;
+
+    if (files.length > 0) {
+      processImageFiles(Array.from(files));
+    }
+    if (textContent) {
+      processText(textContent);
+    }
+  }
+
+  function handleClearClick() {
+    allRecords = [];
+    UIElements.imageFile.value = '';
+    UIElements.textInput.value = '';
+    updateUIState();
+    setLoading(false);
+    setStatus('<div class="status-main">Cleared.</div>', 3000);
+  }
+
+  function handleDrop(e) {
+    const files = e.dataTransfer.files;
+    const { imageFiles, textFiles } = categorizeFiles(files);
+
+    if(imageFiles.length > 0) {
+      const dataTransfer = new DataTransfer();
+      imageFiles.forEach(f => dataTransfer.items.add(f));
+      UIElements.imageFile.files = dataTransfer.files;
+    }
     
-    // Drag & Drop events
-    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-      dropZone.addEventListener(eventName, preventDefaults, false);
-      document.body.addEventListener(eventName, preventDefaults, false);
-    });
-    ['dragenter', 'dragover'].forEach(eventName => {
-      dropZone.addEventListener(eventName, () => dropZone.classList.add('drag-over'), false);
-    });
-    ['dragleave', 'drop'].forEach(eventName => {
-      dropZone.addEventListener(eventName, () => dropZone.classList.remove('drag-over'), false);
-    });
-    dropZone.addEventListener('drop', handleDrop, false);
-    
-    function preventDefaults(e) { e.preventDefault(); e.stopPropagation(); }
-
-    function handleButtonClick() {
-      processFiles(imageFile.files);
+    if (textFiles.length > 0) {
+        readTextFiles(textFiles).then(content => {
+            UIElements.textInput.value += content;
+        });
     }
+    updateUIState();
+  }
 
-    function handleFileSelect(e) {
-      const files = e.target.files;
-      statusDiv.innerHTML = `<div class="status-main">${files.length} file(s) selected.</div>`;
+  function handlePaste(e) {
+    const clipboardData = e.clipboardData || window.clipboardData;
+    const pastedText = clipboardData.getData('text');
+    const imageFiles = Array.from(clipboardData.files).filter(f => f.type.startsWith('image/'));
+
+    if (pastedText && document.activeElement !== UIElements.textInput) {
+        UIElements.textInput.value += pastedText;
+        UIElements.textInput.scrollTop = UIElements.textInput.scrollHeight;
+        setStatus('Text pasted into the text area.', 3000);
+        updateUIState();
     }
-
-    function handleDrop(e) {
-      const files = e.dataTransfer.files;
-      imageFile.files = files;
-      processFiles(files);
+    if(imageFiles.length > 0){
+        UIElements.imageFile.files = clipboardData.files;
+        updateUIState();
     }
+  }
 
-    function handlePaste(e) {
-      const files = [];
-      const items = (e.clipboardData || e.originalEvent.clipboardData).items;
-      for (const item of items) {
-        if (item.kind === 'file' && item.type.startsWith('image/')) {
-          files.push(item.getAsFile());
+  // --- Processing Functions ---
+  function processImageFiles(fileList) {
+    setLoading(true, `Reading ${fileList.length} image(s)...`);
+    const fileReaders = fileList.map(file => {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve({ base64: reader.result, mimeType: file.type, name: file.name });
+        reader.onerror = err => reject(err);
+        reader.readAsDataURL(file);
+      });
+    });
+
+    Promise.all(fileReaders)
+      .then(files => {
+        setLoading(true, `Processing ${files.length} image(s) on server...`);
+        google.script.run
+          .withSuccessHandler(displayResults)
+          .withFailureHandler(displayError)
+          .extractDnsRecordsFromImages(files.map(f => f.base64), files.map(f => f.mimeType), files.map(f => f.name));
+      })
+      .catch(err => displayError({ message: 'Failed to read image files.' }));
+  }
+
+  function processText(textContent) {
+    setLoading(true, 'Processing text on server...');
+    google.script.run
+      .withSuccessHandler(displayResults)
+      .withFailureHandler(displayError)
+      .extractDnsRecordsFromText(textContent);
+  }
+
+  function displayResults(jsonString) {
+    setLoading(false);
+    try {
+      const newRecs = JSON.parse(jsonString);
+      if (!Array.isArray(newRecs)) throw new Error('Invalid data from server.');
+      
+      const existing = new Set(allRecords.map(r => `${r.type}|${r.hostname}|${r.value}`));
+      let addedCount = 0;
+      newRecs.forEach(r => {
+        const key = `${r.type}|${r.hostname}|${r.value}`;
+        if (!existing.has(key)) {
+          allRecords.push(r);
+          existing.add(key);
+          addedCount++;
         }
+      });
+      if (addedCount > 0) {
+        const msg = `${addedCount} new record(s) added. Total: ${allRecords.length}.`;
+        const counts = allRecords.reduce((acc, r) => ({...acc, [r.type]: (acc[r.type] || 0) + 1}), {});
+        const summary = Object.keys(counts).sort().map(t => `<b>${t}</b>: ${counts[t]}`).join(' | ');
+        setStatus(`<div class="status-main">${msg}</div><div class="summary">${summary}</div>`);
+      } else {
+        setStatus('<div class="status-main">No new unique records found.</div>');
       }
+      updateUIState();
+    } catch (e) {
+      displayError({ message: 'Failed to parse server response.' });
+    }
+  }
+  
+  function displayError(error) {
+    setLoading(false);
+    setStatus(`<div class="error">Error: ${escapeHtml(error.message)}</div>`);
+  }
+
+  // --- UI Update & Helpers ---
+  function updateUIState() {
+      const files = UIElements.imageFile.files;
       if (files.length > 0) {
-        const dt = new DataTransfer();
-        files.forEach(f => dt.items.add(f));
-        imageFile.files = dt.files;
-        statusDiv.innerHTML = `<div class="status-main">Pasted ${files.length} image(s).</div>`;
-        processFiles(files);
+          UIElements.fileList.innerHTML = Array.from(files)
+              .map(f => `<li>${escapeHtml(f.name)} (${(f.size / 1024).toFixed(1)} KB)</li>`).join('');
+          UIElements.fileListContainer.classList.remove('hidden');
+      } else {
+          UIElements.fileListContainer.classList.add('hidden');
       }
-    }
 
-    function handleClearClick() {
-      allRecords = [];
-      resultContainer.innerHTML = '';
-      statusDiv.innerHTML = '<div class="status-main">Results cleared.</div>';
-      imageFile.value = '';
-      updateExportButtons();
-      setTimeout(() => {
-        if (statusDiv.textContent === 'Results cleared.') {
-          statusDiv.innerHTML = '';
-        }
-      }, 3000);
-    }
+      UIElements.submitButton.disabled = files.length === 0 && UIElements.textInput.value.trim() === '';
 
-    function processFiles(fileList) {
-      if (!fileList || fileList.length === 0) {
-        displayError({ message: 'No files selected.' });
-        return;
+      if (allRecords.length > 0) {
+          createTable(allRecords);
+          UIElements.exportControls.classList.remove('hidden');
+      } else {
+          UIElements.resultContainer.innerHTML = '';
+          UIElements.exportControls.classList.add('hidden');
       }
-      const validTypes = ['image/png', 'image/jpeg', 'image/webp'];
-      for (const file of fileList) {
-        if (!validTypes.includes(file.type)) {
-          displayError({ message: `Invalid file type: ${file.name}` });
-          return;
+  }
+
+  function createTable(records) {
+    const headers = ['type', 'hostname', 'value', 'ttl', 'priority'];
+    const typeOrder = ['SOA','NS','A','AAAA','CNAME','MX','TXT','SRV','DS','CAA'];
+    records.sort((a, b) => {
+      const ta = typeOrder.indexOf(a.type.toUpperCase());
+      const tb = typeOrder.indexOf(b.type.toUpperCase());
+      if (ta !== -1 || tb !== -1) {
+        if (ta === -1) return 1; if (tb === -1) return -1; if (ta !== tb) return ta - tb;
+      }
+      return a.hostname.localeCompare(b.hostname) || a.type.localeCompare(b.type);
+    });
+    let html = `<table><thead><tr>${headers.map(h => `<th>${h.toUpperCase()}</th>`).join('')}</tr></thead><tbody>`;
+    records.forEach(rec => {
+      html += `<tr>${headers.map(h => `<td>${escapeHtml(String(rec[h] != null ? rec[h] : '–'))}</td>`).join('')}</tr>`;
+    });
+    html += '</tbody></table>';
+    UIElements.resultContainer.innerHTML = html;
+  }
+  
+  function setLoading(isLoading, message = '') {
+    UIElements.submitButton.disabled = isLoading;
+    UIElements.clearButton.disabled = isLoading;
+    if (isLoading) setStatus(`<div class="spinner"></div> ${escapeHtml(message)}`);
+  }
+  
+  function setStatus(html, clearAfterMs = 0) {
+      UIElements.statusDiv.innerHTML = html;
+      if (clearAfterMs > 0) {
+          setTimeout(() => { if (UIElements.statusDiv.innerHTML === html) UIElements.statusDiv.innerHTML = ''; }, clearAfterMs);
+      }
+  }
+
+  function preventDefaults(e) { e.preventDefault(); e.stopPropagation(); }
+  function escapeHtml(str) { return str.replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m])); }
+
+  function categorizeFiles(fileList) {
+    const imageFiles = [];
+    const textFiles = [];
+    const textExtensions = ['.txt', '.zone'];
+    Array.from(fileList).forEach(file => {
+        if (file.type.startsWith('image/')) {
+            imageFiles.push(file);
+        } else if (file.type === 'text/plain' || textExtensions.some(ext => file.name.endsWith(ext))) {
+            textFiles.push(file);
         }
-      }
-      setLoading(true, `Loading files... (1/${fileList.length})`);
-      const readers = Array.from(fileList).map(file => {
-        return new Promise((resolve, reject) => {
-          const reader = new FileReader();
-          reader.readAsDataURL(file);
-          reader.onload = () => resolve({ base64: reader.result, mimeType: file.type, name: file.name });
-          reader.onerror = err => reject(err);
-        });
+    });
+    return { imageFiles, textFiles };
+  }
+
+  function readTextFiles(files) {
+      const readers = files.map(file => {
+          return new Promise(resolve => {
+              const reader = new FileReader();
+              reader.onload = () => resolve(reader.result);
+              reader.readAsText(file);
+          });
       });
-      Promise.all(readers)
-        .then(data => {
-          setLoading(true, `Processing ${data.length} image(s) on server...`);
-          const bases = data.map(d => d.base64);
-          const mimes = data.map(d => d.mimeType);
-          const names = data.map(d => d.name);
-          google.script.run
-            .withSuccessHandler(displayResults)
-            .withFailureHandler(displayError)
-            .extractDnsRecordsFromImages(bases, mimes, names);
-        })
-        .catch(() => displayError({ message: 'Failed to read files.' }));
-    }
+      return Promise.all(readers).then(contents => contents.join('\n\n'));
+  }
+  
+  // --- Export & Copy ---
+  function handleDownload(format) {
+    if (!allRecords.length) return;
+    const isCsv = format === 'CSV';
+    const content = isCsv ? generateCsvContent() : generateJsonContent();
+    const mimeType = isCsv ? 'text/csv;charset=utf-8;' : 'application/json';
+    const fileName = isCsv ? 'dns_records.csv' : 'dns_records.json';
+    const blob = new Blob([(isCsv ? '\uFEFF' : '') + content], { type: mimeType });
+    triggerDownload(blob, fileName);
+  }
 
-    function displayResults(jsonString) {
-      setLoading(false);
-      try {
-        const newRecs = JSON.parse(jsonString);
-        if (!Array.isArray(newRecs)) throw new Error('Invalid data format.');
-        const existing = new Set(allRecords.map(r => `${r.type}|${r.hostname}|${r.value}`));
-        let added = 0;
-        newRecs.forEach(r => {
-          const key = `${r.type}|${r.hostname}|${r.value}`;
-          if (!existing.has(key)) {
-            allRecords.push(r);
-            existing.add(key);
-            added++;
-          }
-        });
-        if (allRecords.length === 0) {
-          statusDiv.innerHTML = '<div class="status-main">No DNS records found.</div>';
-          updateExportButtons();
-          return;
-        }
-        const msg = added === 0
-          ? `No new unique records. Total records: ${allRecords.length}.`
-          : `${added} new record(s) added. Total records: ${allRecords.length}.`;
-        statusDiv.innerHTML = `<div class="status-main">${msg}</div>`;
-        const counts = allRecords.reduce((a, r) => {
-          a[r.type] = (a[r.type] || 0) + 1;
-          return a;
-        }, {});
-        const summary = Object.keys(counts)
-          .sort()
-          .map(t => `<b>${t}</b>: ${counts[t]}`)
-          .join(' | ');
-        statusDiv.innerHTML += `<div class="summary">${summary}</div>`;
+  function handleCopy(format) {
+    if (!allRecords.length) return;
+    const isCsv = format === 'CSV';
+    const content = isCsv ? generateCsvContent() : generateJsonContent();
+    copyToClipboard(content, format);
+  }
 
-        createTable(allRecords);
-        updateExportButtons();
-      } catch (e) {
-        displayError({ message: 'Failed to parse server response.' });
-        console.error(e);
-      }
-    }
-
-    function createTable(records) {
-      const headers = ['type', 'hostname', 'value', 'ttl', 'priority'];
-      // Define desired RR type order
-      const typeOrder = ['NS','A','AAAA','CNAME','MX','TXT','SRV','DS','CAA'];
-
-      // Sort by type order first, then by hostname, then by type alphabetically
-      records.sort((a, b) => {
-        const ta = typeOrder.indexOf(a.type.toUpperCase());
-        const tb = typeOrder.indexOf(b.type.toUpperCase());
-        // If one of the types is recognized, use that ordering
-        if (ta !== -1 || tb !== -1) {
-          if (ta === -1) return 1;           // unrecognized types go last
-          if (tb === -1) return -1;
-          if (ta !== tb) return ta - tb;
-        }
-        // Fallback: sort by hostname, then by type name
-        return a.hostname.localeCompare(b.hostname)
-            || a.type.localeCompare(b.type);
-      });
-
-      // Build table HTML
-      let html = '<table><thead><tr>';
-      headers.forEach(h => { html += `<th>${h.toUpperCase()}</th>`; });
-      html += '</tr></thead><tbody>';
-      records.forEach(rec => {
-        html += '<tr>';
-        headers.forEach(h => {
-          const val = rec[h] != null ? rec[h] : '–';
-          html += `<td>${escapeHtml(String(val))}</td>`;
-        });
-        html += '</tr>';
-      });
-      html += '</tbody></table>';
-      resultContainer.innerHTML = html;
-    }
-
-    function updateExportButtons() {
-      exportControls.style.display = allRecords.length > 0 ? 'flex' : 'none';
-    }
-
-    function displayError(error) {
-      setLoading(false);
-      statusDiv.innerHTML = `<div class="error">Error: ${error.message}</div>`;
-    }
-
-    function setLoading(isLoading, message = '') {
-      submitButton.disabled = isLoading;
-      clearButton.disabled = isLoading;
-      statusDiv.innerHTML = isLoading
-        ? `<div class="spinner"></div> ${message}`
-        : statusDiv.innerHTML;
-    }
-
-    function escapeHtml(str) {
-      const div = document.createElement('div');
-      div.appendChild(document.createTextNode(str));
-      return div.innerHTML;
-    }
-
-    function downloadAsJson() {
-      if (!allRecords.length) return;
-      const blob = new Blob([JSON.stringify(allRecords, null, 2)], { type: 'application/json' });
-      triggerDownload(blob, 'dns_records.json');
-    }
-
-    function downloadAsCsv() {
-      if (!allRecords.length) return;
+  function generateJsonContent() { return JSON.stringify(allRecords, null, 2); }
+  function generateCsvContent() {
       const headers = ['type', 'hostname', 'value', 'ttl', 'priority'];
       let csv = headers.join(',') + '\n';
       allRecords.forEach(rec => {
         const row = headers.map(h => {
-          let cell = rec[h] != null ? String(rec[h]) : '';
-          cell = cell.replace(/"/g, '""');
-          if (cell.includes(',')) cell = `"${cell}"`;
-          return cell;
+            let cell = rec[h] != null ? String(rec[h]) : '';
+            if (cell.includes('"')) cell = `"${cell.replace(/"/g, '""')}"`;
+            else if (cell.includes(',')) cell = `"${cell}"`;
+            return cell;
         }).join(',');
         csv += row + '\n';
       });
-      const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
-      triggerDownload(blob, 'dns_records.csv');
-    }
+      return csv;
+  }
 
-    function triggerDownload(blob, fileName) {
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = fileName;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    }
+  function triggerDownload(blob, fileName) {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = fileName;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(a.href);
+  }
 
-    function saveToSheet() {
-      if (!allRecords.length) return;
-      setLoading(true, 'Saving to Google Sheet...');
-      google.script.run
-        .withSuccessHandler(onSaveSuccess)
-        .withFailureHandler(onSaveFailure)
-        .saveRecordsToSheet(allRecords);
+  function copyToClipboard(text, formatName) {
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    textArea.style.position = "fixed"; textArea.style.left = "-9999px";
+    document.body.appendChild(textArea);
+    textArea.select();
+    try {
+      if(document.execCommand('copy')) {
+        setStatus(`<div class="status-main status-success">${formatName} data copied.</div>`, 3000);
+      } else { throw new Error(); }
+    } catch (err) {
+      setStatus(`<div class="error">Failed to copy ${formatName}.</div>`, 5000);
+    } finally {
+      document.body.removeChild(textArea);
     }
-
-    function onSaveSuccess(url) {
-      setLoading(false);
-      statusDiv.innerHTML += `<div class="status-main" style="color:#1e8e3e; margin-top:10px;">Saved to sheet. <a href="${url}" target="_blank">Open</a></div>`;
-    }
-
-    function onSaveFailure(error) {
-      statusDiv.innerHTML += `<div class="error" style="margin-top:10px;">Save failed: ${error.message}</div>`;
-      setLoading(false);
-    }
-  </script>
+  }
+</script>
 </body>
 </html>
