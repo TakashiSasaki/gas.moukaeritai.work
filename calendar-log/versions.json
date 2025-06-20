@@ -9,6 +9,10 @@
   },
   {
     "version": 3,
-    "description": "No description"
+    "description": "公開用 Version 3"
+  },
+  {
+    "version": 4,
+    "description": "公開用 Version 4"
   }
 ]

@@ -2,5 +2,9 @@
   {
     "version": 1,
     "description": "プレビュー用"
+  },
+  {
+    "version": 2,
+    "description": "公開用"
   }
 ]

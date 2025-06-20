@@ -1,3 +1,4 @@
-Found 2 deployments.
+Found 3 deployments.
 - AKfycby_xIfclBR_hh62wHREuBAPX9I6LdH0Kjujc58G_DI3 @HEAD 
+- AKfycbzG1T0CCGAZeRXgqjGnRvn6kf01CawumQ2CoOghPQPmPKMGyytN098yvC1Yd10I0kbAqA @2 - 公開用
 - AKfycbzSsjc2zq4wx3LgfbYVTEMEInTvAzpQjmATklah0_gAsvfRtX2U7Hy1_OQqH4fQ9v9U @1 - プレビュー用
