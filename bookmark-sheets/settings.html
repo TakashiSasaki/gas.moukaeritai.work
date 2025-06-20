@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <base target="_top">
+  <?!= include('settings-css'); ?>
+  <style>
+    /* dialog要素の基本的なスタイリング例 */
+    dialog {
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      padding: 1.5rem;
+      width: 90%;
+      max-width: 400px;
+    }
+    dialog::backdrop {
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+    .dialog-buttons {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+
+<body>
+  <div style="margin-bottom: 1rem;">
+    <a id="homeLink" href="" class="nav-link">トップページに戻る</a>
+  </div>
+
+  <div class="form-group">
+    <label for="spreadsheetSearchInput">スプレッドシートを検索して選択</label>
+    <div class="input-group">
+      <input type="text" id="spreadsheetSearchInput" placeholder="スプレッドシート名を入力">
+      <button type="button" id="searchButton">検索</button>
+    </div>
+    <div class="loader" id="searchLoader" role="status" aria-live="polite"></div>
+    <select id="spreadsheetSelector" size="5"></select>
+  </div>
+
+  <div class="form-group">
+    <label for="spreadsheetIdInput">スプレッドシートIDで選択</label>
+    <input type="text" id="spreadsheetIdInput" placeholder="スプレッドシートIDを入力">
+    <div id="spreadsheetIdStatus" aria-live="polite"></div>
+  </div>
+
+  <button type="button" id="saveSettingsButton">スプレッドシートを決定</button>
+
+  <hr>
+  <div id="spreadsheetLinkContainerInSettings">
+  </div>
+
+  <hr>
+  <div id="sheetsInfoContainer">
+  </div>
+
+  <dialog id="confirmationDialog">
+    <h2>設定の確認</h2>
+    <p>以下のスプレッドシートを保存しますか？</p>
+    <p><strong>タイトル:</strong> <span id="confirmedSpreadsheetTitle"></span></p>
+    <div class="dialog-buttons">
+      <button type="button" id="cancelModalButton">キャンセル</button>
+      <button type="button" id="confirmSaveButton">はい、保存します</button>
+    </div>
+  </dialog>
+
+  <?!= include('settings-js'); ?>
+</body>
+</html>

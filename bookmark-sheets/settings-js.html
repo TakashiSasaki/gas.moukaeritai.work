@@ -1,0 +1,279 @@
+<script>
+  /**
+   * google.script.run を Promise ベースで扱えるようにするラッパー関数。
+   * これにより、async/await 構文が使用可能になります。
+   * @param {string} functionName - サーバーサイドで呼び出す関数名。
+   * @param {...any} args - 関数に渡す引数。
+   * @returns {Promise<any>} サーバーサイド関数の実行結果を解決する Promise。
+   */
+  const server = (functionName, ...args) => {
+    return new Promise((resolve, reject) => {
+      google.script.run
+        .withSuccessHandler(resolve)
+        .withFailureHandler(reject)
+        [functionName](...args);
+    });
+  };
+
+  // DOM要素をあらかじめ取得して定数に格納
+  const UI = {
+    homeLink: document.getElementById('homeLink'), // ★ 変更点: 追加
+    searchInput: document.getElementById('spreadsheetSearchInput'),
+    searchButton: document.getElementById('searchButton'),
+    searchLoader: document.getElementById('searchLoader'),
+    spreadsheetSelector: document.getElementById('spreadsheetSelector'),
+    idInput: document.getElementById('spreadsheetIdInput'),
+    idStatus: document.getElementById('spreadsheetIdStatus'),
+    saveButton: document.getElementById('saveSettingsButton'),
+    linkContainer: document.getElementById('spreadsheetLinkContainerInSettings'),
+    sheetsInfoContainer: document.getElementById('sheetsInfoContainer'),
+    confirmationDialog: document.getElementById('confirmationDialog'),
+    confirmedTitle: document.getElementById('confirmedSpreadsheetTitle'),
+    confirmSaveButton: document.getElementById('confirmSaveButton'),
+    cancelModalButton: document.getElementById('cancelModalButton'),
+  };
+
+  let titleFetchTimeout;
+  let pendingSpreadsheetId = '';
+
+  /**
+   * スプレッドシートを名前で検索し、結果をセレクタに表示します。
+   */
+  async function searchSpreadsheets() {
+    const query = UI.searchInput.value;
+    if (!query) return;
+
+    UI.searchLoader.style.display = 'inline-block';
+    UI.idStatus.textContent = ''; // 以前のエラーメッセージをクリア
+
+    try {
+      const spreadsheets = await server('searchSpreadsheetsByName', query);
+      populateSpreadsheetSelector(spreadsheets);
+    } catch (error) {
+      handleSearchError(error);
+    } finally {
+      UI.searchLoader.style.display = 'none';
+    }
+  }
+
+  /**
+   * 検索結果をセレクタ(<select>)に反映します。
+   * @param {Array<{id: string, name: string}>} spreadsheets - スプレッドシートのリスト。
+   */
+  function populateSpreadsheetSelector(spreadsheets) {
+    UI.spreadsheetSelector.innerHTML = '';
+    if (!spreadsheets || spreadsheets.length === 0) {
+      const option = new Option('検索結果なし', '');
+      UI.spreadsheetSelector.appendChild(option);
+      return;
+    }
+
+    spreadsheets.forEach(ss => {
+      const option = new Option(ss.name, ss.id);
+      UI.spreadsheetSelector.appendChild(option);
+    });
+  }
+
+  /**
+   * 検索時のエラーをハンドルします。
+   * @param {Error} error - エラーオブジェクト。
+   */
+  function handleSearchError(error) {
+    UI.idStatus.textContent = '検索エラー: ' + error.message;
+    UI.idStatus.className = 'error';
+    console.error('Spreadsheet search error:', error);
+  }
+
+  /**
+   * スプレッドシートIDに基づいてタイトルとシート情報を取得・表示します。
+   * @param {string} spreadsheetId - スプレッドシートのID。
+   */
+  async function fetchAndDisplaySheetDetails(spreadsheetId) {
+    if (!spreadsheetId.trim()) {
+      UI.idStatus.textContent = '';
+      displaySheetsInfo(null);
+      return;
+    }
+
+    UI.idStatus.textContent = '情報を取得中...';
+    UI.idStatus.className = '';
+
+    try {
+      // サーバーへの複数のリクエストを Promise.all で並列実行
+      const [title, sheetsInfo] = await Promise.all([
+        server('getSpreadsheetTitle', spreadsheetId),
+        server('getSpreadsheetSheetsInfo', spreadsheetId)
+      ]);
+
+      UI.idStatus.textContent = `タイトル: ${title}`;
+      UI.idStatus.className = 'success';
+      displaySheetsInfo(sheetsInfo);
+    } catch (error) {
+      UI.idStatus.textContent = 'エラー: ' + error.message;
+      UI.idStatus.className = 'error';
+      displaySheetsInfo(null, 'スプレッドシート情報の取得に失敗しました。');
+      console.error('Get details error:', error);
+    }
+  }
+
+  /**
+   * 保存前の確認モーダルを表示します。
+   */
+  async function showSaveConfirmation() {
+    const targetSpreadsheetId = UI.idInput.value.trim();
+
+    if (!targetSpreadsheetId) {
+      UI.idStatus.textContent = 'スプレッドシートを選択するか、IDを入力してください。';
+      UI.idStatus.className = 'error';
+      return;
+    }
+
+    try {
+      const title = await server('getSpreadsheetTitle', targetSpreadsheetId);
+      pendingSpreadsheetId = targetSpreadsheetId;
+      UI.confirmedTitle.textContent = title;
+      UI.confirmationDialog.showModal(); // <dialog>の表示メソッド
+    } catch (error) {
+      UI.idStatus.textContent = 'エラー: ' + error.message;
+      UI.idStatus.className = 'error';
+      console.error('Save settings error (pre-check):', error);
+    }
+  }
+  
+  /**
+   * 設定の保存を確定し、サーバーにIDを送信します。
+   */
+  async function confirmSave() {
+    if (!pendingSpreadsheetId) return;
+
+    try {
+      const response = await server('saveSelectedSpreadsheet', pendingSpreadsheetId);
+      UI.idStatus.textContent = '設定が保存されました！';
+      UI.idStatus.className = 'success';
+      displaySavedSpreadsheetLink(response);
+    } catch (error) {
+      UI.idStatus.textContent = '保存エラー: ' + error.message;
+      UI.idStatus.className = 'error';
+      console.error('Save settings error:', error);
+    } finally {
+      closeModal();
+    }
+  }
+
+  /**
+   * 確認モーダルを閉じます。
+   */
+  function closeModal() {
+    UI.confirmationDialog.close(); // <dialog>の閉じるメソッド
+    pendingSpreadsheetId = '';
+  }
+
+  /**
+   * 保存されたスプレッドシートへのリンクを表示します。
+   * @param {{id: string, title: string}} spreadsheetInfo - スプレッドシート情報。
+   */
+  async function displaySavedSpreadsheetLink(spreadsheetInfo) {
+    UI.linkContainer.innerHTML = '';
+    if (spreadsheetInfo?.id && spreadsheetInfo?.title) {
+      const link = document.createElement('a');
+      link.href = "https://docs.google.com/spreadsheets/d/" + spreadsheetInfo.id + "/edit";
+      link.textContent = `スプレッドシートを開く: ${spreadsheetInfo.title}`;
+      link.target = '_blank';
+      link.classList.add('open-spreadsheet-button');
+      UI.linkContainer.appendChild(link);
+
+      // 保存情報からシート一覧も更新
+      try {
+        const sheetsInfo = await server('getSpreadsheetSheetsInfo', spreadsheetInfo.id);
+        displaySheetsInfo(sheetsInfo);
+      } catch (error) {
+        displaySheetsInfo(null, 'シート情報の取得に失敗しました: ' + error.message);
+      }
+    } else {
+      UI.linkContainer.textContent = '現在、スプレッドシートは選択されていません。';
+      displaySheetsInfo(null);
+    }
+  }
+
+  /**
+   * シート情報をUIに表示します。
+   * @param {Array | null} sheetsInfo - シート情報の配列。
+   * @param {string | null} errorMessage - 表示するエラーメッセージ。
+   */
+  function displaySheetsInfo(sheetsInfo, errorMessage = null) {
+    const container = UI.sheetsInfoContainer;
+    container.innerHTML = '';
+
+    if (errorMessage) {
+      container.innerHTML = `<p class="error">${errorMessage}</p>`;
+      return;
+    }
+    if (sheetsInfo && sheetsInfo.length > 0) {
+      const title = document.createElement('h4');
+      title.textContent = 'シート一覧:';
+      container.appendChild(title);
+
+      sheetsInfo.forEach(sheet => {
+        const item = document.createElement('div');
+        item.className = 'sheet-item';
+        const headers = sheet.headers?.filter(h => String(h).trim()).join(', ') || '(なし)';
+        item.innerHTML = `
+          <strong>シート名: ${sheet.name}</strong>
+          <span>カラム数: ${sheet.columnCount}, 行数: ${sheet.rowCount}</span>
+          <div class="headers">ヘッダ: ${headers}</div>
+        `;
+        container.appendChild(item);
+      });
+    } else if (sheetsInfo) {
+      container.textContent = 'このスプレッドシートにはシートがありません。';
+    }
+  }
+  
+  // === イベントリスナーの登録 ===
+  document.addEventListener('DOMContentLoaded', () => {
+    // ★ 変更点: ここから
+    // サーバーからWebアプリのURLを取得してトップページへのリンクに設定
+    server('getWebAppUrl').then(url => {
+      if (UI.homeLink && url) {
+        UI.homeLink.href = url;
+      }
+    }).catch(error => {
+      console.error('Failed to get web app URL:', error);
+      // エラー時でも相対パスで機能するようフォールバックを設定
+      if (UI.homeLink) UI.homeLink.href = './';
+    });
+    // ★ 変更点: ここまで
+
+    // 初回ロード時に保存済み情報を取得
+    server('getSavedSpreadsheetInfo').then(displaySavedSpreadsheetLink).catch(console.error);
+
+    // 検索機能
+    UI.searchButton.addEventListener('click', searchSpreadsheets);
+    UI.searchInput.addEventListener('keypress', e => {
+      if (e.key === 'Enter') searchSpreadsheets();
+    });
+
+    // ID入力時のデバウンス処理
+    UI.idInput.addEventListener('input', () => {
+      clearTimeout(titleFetchTimeout);
+      titleFetchTimeout = setTimeout(() => {
+        fetchAndDisplaySheetDetails(UI.idInput.value);
+      }, 500); // 500ms待ってから実行
+    });
+
+    // セレクタ変更時の処理
+    UI.spreadsheetSelector.addEventListener('change', (e) => {
+      UI.idInput.value = e.target.value;
+      fetchAndDisplaySheetDetails(e.target.value);
+    });
+
+    // 保存ボタン
+    UI.saveButton.addEventListener('click', showSaveConfirmation);
+
+    // モーダルボタン
+    UI.confirmSaveButton.addEventListener('click', confirmSave);
+    UI.cancelModalButton.addEventListener('click', closeModal);
+    // ダイアログの外側クリックやEscキーで閉じるイベントは<dialog>が自動で処理
+  });
+
+</script>

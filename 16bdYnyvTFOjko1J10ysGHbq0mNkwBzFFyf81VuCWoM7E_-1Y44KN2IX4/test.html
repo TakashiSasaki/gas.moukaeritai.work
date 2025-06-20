@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>JSON API テスト</title>
+  <base target="_top">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      line-height: 1.6; 
+      max-width: 960px; 
+      margin: 0; /* navで調整するため0に */
+      padding: 0 20px; 
+    }
+    button { 
+      padding: 10px 18px; 
+      font-size: 1em; 
+      cursor: pointer; 
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      background-color: #fff;
+      vertical-align: middle; /* ボタンの垂直位置を揃える */
+      margin-right: 10px; /* ボタン間の余白 */
+    }
+    button:hover:not(:disabled) {
+      background-color: #f0f0f0;
+    }
+    button:disabled {
+      cursor: not-allowed;
+      background-color: #f9f9f9;
+      color: #999;
+    }
+    #result { 
+      background-color: #f6f8fa; 
+      border: 1px solid #ddd; 
+      padding: 1em; 
+      margin-top: 1em; 
+      border-radius: 5px; 
+      min-height: 100px; 
+      white-space: pre-wrap; 
+      word-wrap: break-word; 
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+    }
+    #error { 
+      margin-top: 1em;
+      padding: 1em;
+      background-color: #ffebee;
+      color: #c62828;
+      border: 1px solid #c62828;
+      border-radius: 4px;
+      display: none; 
+    }
+    .loader { 
+      border: 5px solid #f3f3f3;
+      border-top: 5px solid #3498db;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 1.5em auto;
+      display: none; 
+    }
+     @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    .url-display {
+      margin-top: 1em;
+      padding: 0.8em;
+      background-color: #eee;
+      border-radius: 4px;
+      font-size: 0.9em;
+      word-break: break-all;
+      display: flex;
+      align-items: center;
+      gap: 1em;
+    }
+    .url-display code {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+    }
+    .url-display a {
+      color: #0056b3;
+      white-space: nowrap;
+    }
+    #copyUrlButton {
+      padding: 5px 10px;
+      font-size: 0.8em;
+      margin-left: auto; /* 右端に寄せる */
+    }
+  </style>
+</head>
+<body>
+  <?!= include('nav'); ?>
+
+  <h1>JSON API テストページ</h1>
+  <p>下のボタンは、クライアントサイド (fetch) とサーバーサイド (UrlFetchApp) の両方で/jsonエンドポイントにリクエストを送信します。</p>
+  
+  <button id="clientFetchButton" disabled>クライアントサイドで取得 (CORSエラー)</button>
+  <button id="serverFetchButton" disabled>サーバーサイドで取得</button>
+
+  <div class="url-display">
+    <span>リクエストURL: </span>
+    <code id="requestUrlText">(URLを読み込み中...)</code>
+    <a id="requestUrlLink" href="#" target="_blank" rel="noopener noreferrer" style="display: none;">[リンクを開く]</a>
+    <button id="copyUrlButton" disabled>コピー</button>
+  </div>
+  
+  <div id="loader" class="loader"></div>
+  <div id="error"></div>
+  
+  <h2>受信データ:</h2>
+  <pre id="result"></pre>
+
+  <script>
+    const clientFetchButton = document.getElementById('clientFetchButton');
+    const serverFetchButton = document.getElementById('serverFetchButton');
+    const resultArea = document.getElementById('result');
+    const errorArea = document.getElementById('error');
+    const loader = document.getElementById('loader');
+    const urlDisplayText = document.getElementById('requestUrlText');
+    const urlDisplayLink = document.getElementById('requestUrlLink');
+    const copyUrlButton = document.getElementById('copyUrlButton');
+    
+    let apiUrl = '';
+
+    window.addEventListener('load', () => {
+      google.script.run
+        .withSuccessHandler(function(baseUrl) {
+          apiUrl = baseUrl + '/json';
+          urlDisplayText.textContent = apiUrl;
+          urlDisplayLink.href = apiUrl;
+          urlDisplayLink.style.display = 'inline';
+          clientFetchButton.disabled = false;
+          serverFetchButton.disabled = false;
+          copyUrlButton.disabled = false;
+        })
+        .withFailureHandler(function(error) {
+           urlDisplayText.textContent = 'URLの取得に失敗しました';
+           errorArea.textContent = `URLの取得に失敗しました: ${error.message}`;
+           errorArea.style.display = 'block';
+        })
+        .getWebAppUrl();
+    });
+    
+    copyUrlButton.addEventListener('click', () => {
+      if (!apiUrl) return;
+      const textarea = document.createElement('textarea');
+      textarea.value = apiUrl;
+      document.body.appendChild(textarea);
+      textarea.select();
+      try {
+        document.execCommand('copy');
+        copyUrlButton.textContent = 'コピーしました！';
+        setTimeout(() => { copyUrlButton.textContent = 'コピー'; }, 2000);
+      } catch (err) {
+        console.error('クリップボードへのコピーに失敗しました', err);
+        copyUrlButton.textContent = '失敗';
+      }
+      document.body.removeChild(textarea);
+    });
+
+    clientFetchButton.addEventListener('click', () => {
+      if (!apiUrl) return;
+      
+      resultArea.textContent = '';
+      errorArea.style.display = 'none';
+      loader.style.display = 'block';
+      clientFetchButton.disabled = true;
+      serverFetchButton.disabled = true;
+      copyUrlButton.disabled = true;
+      
+      fetch(apiUrl, { redirect: 'follow' })
+        .then(response => {
+          if (!response.ok) throw new Error(`HTTPエラー: ${response.status} ${response.statusText}`);
+          return response.json();
+        })
+        .then(data => {
+          resultArea.textContent = JSON.stringify(data, null, 2);
+        })
+        .catch(error => {
+          console.error('Client Fetchエラー:', error);
+          const errorMessage = error.message.replace(/<[/]?.*?>/g, "");
+          errorArea.textContent = `クライアントサイドでの取得に失敗しました: ${errorMessage}`;
+          errorArea.style.display = 'block';
+        })
+        .finally(() => {
+          loader.style.display = 'none';
+          clientFetchButton.disabled = false;
+          serverFetchButton.disabled = false;
+          copyUrlButton.disabled = false;
+        });
+    });
+
+    serverFetchButton.addEventListener('click', () => {
+      if (!apiUrl) return;
+
+      resultArea.textContent = '';
+      errorArea.style.display = 'none';
+      loader.style.display = 'block';
+      clientFetchButton.disabled = true;
+      serverFetchButton.disabled = true;
+      copyUrlButton.disabled = true;
+      
+      // ===== ここから修正 =====
+      // 共通の最終処理を関数として定義
+      const finalUiUpdate = function() {
+        loader.style.display = 'none';
+        clientFetchButton.disabled = false;
+        serverFetchButton.disabled = false;
+        copyUrlButton.disabled = false;
+      };
+
+      google.script.run
+        .withSuccessHandler(function(response) {
+          if (response.success) {
+            resultArea.textContent = JSON.stringify(response.data, null, 2);
+          } else {
+            errorArea.textContent = `サーバーサイドでの取得に失敗しました: ${response.error}`;
+            errorArea.style.display = 'block';
+          }
+          finalUiUpdate(); // 成功時にも最終処理を実行
+        })
+        .withFailureHandler(function(error) {
+          errorArea.textContent = `サーバーサイド関数の呼び出しに失敗しました: ${error.message}`;
+          errorArea.style.display = 'block';
+          finalUiUpdate(); // 失敗時にも最終処理を実行
+        })
+        .fetchUrlFromServer(apiUrl);
+      // ===== ここまで修正 =====
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,69 @@
+<style>
+  /* 全体の基本スタイル */
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px; /* bodyに直接パディングを追加して余白を確保 */
+    background-color: #f4f4f9; /* 背景色を少し設定 */
+  }
+
+  /* 主要なコンテナのスタイル */
+  #displayContentContainer {
+    border: 1px solid #ddd;
+    padding: 20px;
+    margin-top: 15px;
+    border-radius: 8px;
+    background-color: #ffffff;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    min-height: 100px; /* コンテンツがない場合でも高さを確保 */
+  }
+
+  /* ヘッダー部分（シート名とリロードボタン）のフレックスコンテナ */
+  .header-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+
+  /* 現在のシート名テキスト */
+  .current-sheet-display {
+    margin: 0;
+    font-size: 1.1em;
+    color: #333;
+  }
+
+  /* 汎用ボタンスタイル */
+  button {
+    border: none;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 16px;
+    padding: 10px 15px;
+    transition: background-color 0.3s;
+  }
+
+  button:hover {
+    background-color: #0056b3; /* ホバー時の色を少し濃くする */
+  }
+  
+  /* リロードボタンの個別スタイル調整 */
+  #reloadContentButton {
+    padding: 5px 12px; /* パディングを調整 */
+    font-size: 0.9em; /* フォントサイズを調整 */
+    background-color: #6c757d; /* ボタンの色を変更 */
+  }
+
+  #reloadContentButton:hover {
+    background-color: #5a6268; /* ホバー時の色 */
+  }
+
+  /* コンテンツがない場合のメッセージ */
+  .no-content-message {
+    color: #888;
+    text-align: center;
+    padding: 20px;
+  }
+</style>

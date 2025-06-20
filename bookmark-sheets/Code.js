@@ -1,13 +1,3 @@
-function doGet(e) {
-  return HtmlService.createTemplateFromFile('index')
-      .evaluate()
-      .setTitle('Spreadsheet Viewer');
-}
-
-function include(filename) {
-  return HtmlService.createHtmlOutputFromFile(filename)
-      .getContent();
-}
 
 /**
  * Google Driveからスプレッドシートを名前で検索し、UserCacheにキャッシュします。
@@ -166,4 +156,12 @@ function getSheetContent(spreadsheetId) {
   } catch (e) {
     return { error: 'コンテンツの取得に失敗しました。指定されたスプレッドシートが見つからないか、アクセス権がありません。詳細: ' + e.message, sheetName: null };
   }
+}
+
+/**
+ * WebアプリケーションのベースURLを取得します。
+ * @returns {string} /exec/ または /dev/ で終わるURL
+ */
+function getWebAppUrl() {
+  return ScriptApp.getService().getUrl();
 }

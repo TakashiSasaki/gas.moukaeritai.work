@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <?!= include('style'); ?>
+  </head>
+  <body>
+    <?!= include('nav'); ?>
+
+    <h1>Google Apps Script プロジェクト検索</h1>
+    <p>Google Drive内のApps Scriptプロジェクトを検索して一覧表示します。</p>
+    
+    <button id="loadButton">リストを更新</button>
+    <div id="loader" class="loader" style="display: none;"></div>
+    <div id="error" style="display: none;"></div>
+
+    <table id="filesTable">
+      <thead>
+        <tr>
+          <th>プロジェクト名</th>
+          <th>最終更新日時</th>
+          <th>ID</th>
+        </tr>
+      </thead>
+      <tbody>
+        </tbody>
+    </table>
+
+    <?!= include('script'); ?>
+    
+    </body>
+</html>
