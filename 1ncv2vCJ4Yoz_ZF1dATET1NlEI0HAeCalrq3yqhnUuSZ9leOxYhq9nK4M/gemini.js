@@ -151,39 +151,39 @@ function uploadBlobToGemini(blob) {
 // EDITOR TEST FUNCTIONS (for development)
 // =================================================================
 
-/**
- * [Editor用] Google Drive上のファイルを指定してテストを実行します。
- */
-function runTestFromEditor() {
-  try {
-    Logger.log('--- Starting Editor Test ---');
-    const fileName = 'onamae.jpeg'; // !!! Google Driveにあるテスト用のファイル名に変更してください
-    const file = getFileFromDrive(fileName);
-    if (!file) throw new Error(`File not found: ${fileName}`);
+// /**
+//  * [Editor用] Google Drive上のファイルを指定してテストを実行します。
+//  */
+// function runTestFromEditor() {
+//   try {
+//     Logger.log('--- Starting Editor Test ---');
+//     const fileName = 'onamae.jpeg'; // !!! Google Driveにあるテスト用のファイル名に変更してください
+//     const file = getFileFromDrive(fileName);
+//     if (!file) throw new Error(`File not found: ${fileName}`);
 
-    const resultJson = extractDnsRecordsFromImage(
-      `data:${file.getMimeType()};base64,${Utilities.base64Encode(file.getBlob().getBytes())}`,
-      file.getMimeType(),
-      file.getName()
-    );
+//     const resultJson = extractDnsRecordsFromImage(
+//       `data:${file.getMimeType()};base64,${Utilities.base64Encode(file.getBlob().getBytes())}`,
+//       file.getMimeType(),
+//       file.getName()
+//     );
     
-    const dnsRecords = JSON.parse(resultJson);
-    Logger.log('--- Parsed DNS Records (JavaScript Object) ---');
-    console.log(dnsRecords);
-    Logger.log(`--- Test finished successfully. Extracted ${dnsRecords.length} records. ---`);
+//     const dnsRecords = JSON.parse(resultJson);
+//     Logger.log('--- Parsed DNS Records (JavaScript Object) ---');
+//     console.log(dnsRecords);
+//     Logger.log(`--- Test finished successfully. Extracted ${dnsRecords.length} records. ---`);
     
-  } catch (e) {
-    Logger.log('--- An error occurred during the editor test ---');
-    Logger.log('Error: %s', e.toString());
-  }
-}
+//   } catch (e) {
+//     Logger.log('--- An error occurred during the editor test ---');
+//     Logger.log('Error: %s', e.toString());
+//   }
+// }
 
 /**
  * [Editor用] Google Driveからファイルを名前で取得します。
  * @param {string} fileName 取得するファイル名。
  * @return {GoogleAppsScript.Drive.File | null} 見つかったファイルオブジェクト。
  */
-function getFileFromDrive(fileName) {
-  const files = DriveApp.searchFiles(`title = "${fileName}" and trashed = false`);
-  return files.hasNext() ? files.next() : null;
-}
+// function getFileFromDrive(fileName) {
+//   const files = DriveApp.searchFiles(`title = "${fileName}" and trashed = false`);
+//   return files.hasNext() ? files.next() : null;
+// }
