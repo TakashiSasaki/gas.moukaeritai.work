@@ -1,0 +1,19 @@
+{
+  "name": "GAS Project Finder",
+  "id": "16bdYnyvTFOjko1J10ysGHbq0mNkwBzFFyf81VuCWoM7E_-1Y44KN2IX4",
+  "url": "https://script.google.com/d/16bdYnyvTFOjko1J10ysGHbq0mNkwBzFFyf81VuCWoM7E_-1Y44KN2IX4/edit?usp=drivesdk",
+  "lastUpdated": "2025-06-20T01:03:21.643Z",
+  "application.json": null,
+  "deployments.json": [
+    {
+      "id": "AKfycbxTdjPOI6Jr_AWz3lfAxhwokuP3r3HvtYO-vgWMc_-w",
+      "target": "HEAD",
+      "description": ""
+    },
+    {
+      "id": "AKfycbz0a4RTpHE5Bxn3AeHWEAD7QHreptLqpa3HLxatARciZwYLJk8jd494G3Dd5_PF3WsJFg",
+      "target": "7",
+      "description": "公開用 Version 7"
+    }
+  ]
+}
