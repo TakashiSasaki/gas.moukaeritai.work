@@ -1,0 +1,145 @@
+<script>
+  /**
+   * DOMの読み込みが完了したときに実行される初期化処理
+   */
+  document.addEventListener('DOMContentLoaded', () => {
+    const reloadContentButton = document.getElementById('reloadContentButton');
+    const settingsLink = document.getElementById('settingsLink');
+
+    // リロードボタンにイベントリスナーを追加
+    reloadContentButton.addEventListener('click', loadInitialContent);
+
+    // サーバーからWebアプリのURLを取得して設定ページへのリンクを組み立てる
+    google.script.run
+      .withSuccessHandler(url => {
+        if (settingsLink && url) {
+          // URLの末尾が '/' でない場合は追加してから 'settings' を結合
+          const settingsUrl = url.endsWith('/') ? url + 'settings' : url + '/settings';
+          settingsLink.href = settingsUrl;
+        }
+      })
+      // ★ 変更点: ここから
+      .withFailureHandler(error => {
+        console.error('Failed to get web app URL for settings link:', error);
+        // エラー発生時はhref属性を削除してリンクを無効化する
+        if (settingsLink) {
+          settingsLink.removeAttribute('href');
+        }
+      })
+      // ★ 変更点: ここまで
+      .getWebAppUrl(); // この関数はCode.jsに実装されています
+
+    // ページの初回読み込み時にコンテンツをロード
+    loadInitialContent();
+  });
+
+  /**
+   * 保存されているスプレッドシート情報を取得し、コンテンツの読み込みを開始する
+   */
+  function loadInitialContent() {
+    google.script.run
+      .withSuccessHandler(info => {
+        if (info && info.id) {
+          // 保存済みのIDがあれば、そのシートのコンテンツを読み込む
+          loadSheetContent(info.id);
+        } else {
+          // 保存済みのIDがなければ、設定を促すメッセージを表示
+          const errorData = {
+            error: '表示するスプレッドシートが設定されていません。設定ページでスプレッドシートを選択してください。',
+            sheetName: '（未選択）'
+          };
+          displayContent(errorData);
+        }
+      })
+      .withFailureHandler(error => {
+        // スプレッドシート情報の取得に失敗した場合
+        const errorData = {
+          error: '保存済みスプレッドシート情報の取得に失敗しました: ' + error.message,
+          sheetName: '（エラー）'
+        };
+        displayContent(errorData);
+      })
+      .getSavedSpreadsheetInfo();
+  }
+
+  /**
+   * 指定されたスプレッドシートIDからコンテンツを非同期で読み込む
+   * @param {string} spreadsheetId - 読み込むスプレッドシートのID
+   */
+  function loadSheetContent(spreadsheetId) {
+    const displayContainer = document.getElementById('displayContentContainer');
+    const currentSheetNameElement = document.getElementById('currentSheetName');
+
+    // ローディング表示
+    displayContainer.innerHTML = '<p class="no-content-message">コンテンツをロード中...</p>';
+    currentSheetNameElement.textContent = 'ロード中...';
+
+    google.script.run
+      .withSuccessHandler(displayContent) // 成功したらdisplayContentを呼び出す
+      .withFailureHandler(error => {
+        // 失敗した場合
+        const errorData = {
+          error: 'コンテンツのロードに失敗しました: ' + error.message,
+          sheetName: '（エラー）'
+        };
+        displayContent(errorData);
+      })
+      .getSheetContent(spreadsheetId);
+  }
+
+  /**
+   * 取得したコンテンツデータをHTMLに整形して表示する
+   * @param {object} data - サーバーから受け取ったコンテンツデータ
+   * @param {string} [data.sheetName] - 表示対象のシート名
+   * @param {string} [data.error] - エラーメッセージ
+   * @param {Array<object>} [data.content] - 表示するコンテンツの配列
+   * @param {Array<string>} [data.headers] - シートのヘッダー配列
+   */
+  function displayContent(data) {
+    const displayContainer = document.getElementById('displayContentContainer');
+    const currentSheetNameElement = document.getElementById('currentSheetName');
+
+    displayContainer.innerHTML = ''; // コンテナをクリア
+    currentSheetNameElement.textContent = data.sheetName || '（シート情報なし）';
+
+    // エラーハンドリング
+    if (data.error) {
+      displayContainer.innerHTML = `<p class="no-content-message">${data.error}</p>`;
+      if (data.error.includes('設定されていません')) {
+         const settingsLink = document.getElementById('settingsLink');
+         if(settingsLink) {
+           settingsLink.style.fontWeight = 'bold';
+           settingsLink.style.boxShadow = '0 0 8px rgba(91, 192, 222, 0.8)';
+         }
+      }
+      return;
+    }
+
+    // コンテンツがない場合
+    if (!data.content || data.content.length === 0) {
+      displayContainer.innerHTML = '<p class="no-content-message">表示するコンテンツがありません。</p>';
+      return;
+    }
+
+    // --- ここからコンテンツの描画処理 ---
+    data.content.forEach(row => {
+      const itemDiv = document.createElement('div');
+      // `content-item`クラスを適用するコードが元々なかったため追加
+      itemDiv.classList.add('content-item'); 
+      
+      const url = row.url || '#';
+      const title = row.title || 'タイトルなし';
+      const image = row.image || '';
+
+      let contentHtml = `<h3>${title}</h3>`;
+      if (image) {
+        contentHtml += `<img src="${image}" alt="${title}" style="max-width: 100%; height: auto; border-radius: 4px;">`;
+      }
+      contentHtml += `<a href="${url}" target="_blank" style="font-size: 0.9em; color: #007bff; word-break: break-all; display: block; margin-bottom: 10px;">${url}</a>`;
+      
+      itemDiv.innerHTML = contentHtml;
+      
+      displayContainer.appendChild(itemDiv);
+    });
+  }
+</script>
