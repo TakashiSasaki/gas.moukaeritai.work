@@ -1,4 +1,3 @@
-
 /**
  * Google Driveからスプレッドシートを名前で検索し、UserCacheにキャッシュします。
  * @param {string} nameQuery 検索するスプレッドシート名の一部

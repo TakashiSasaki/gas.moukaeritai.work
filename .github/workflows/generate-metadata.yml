@@ -1,0 +1,44 @@
+name: generate-metadata
+
+permissions:
+  contents: write
+
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows: ["GAS Project Finder"]
+    types:
+      - completed
+
+jobs:
+  generate:
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout gas-pull branch
+        uses: actions/checkout@v4
+        with:
+          ref: gas-pull
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Run manifest.py
+        run: python3 manifest.py
+
+      - name: Commit and push metadata
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          if [ -n "$(git status --porcelain)" ]; then
+            git add .
+            git commit -m "Update metadata.json files"
+            git push origin gas-pull
+          else
+            echo "No changes detected, skipping commit"
+          fi
+
