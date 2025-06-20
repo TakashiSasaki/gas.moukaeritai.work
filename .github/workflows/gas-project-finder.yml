@@ -18,7 +18,7 @@ jobs:
         id: fetch_json
         run: |
           response_file=$(mktemp)
-          if curl -Lfs "https://script.google.com/macros/s/AKfycbz0a4RTpHE5Bxn3AeHWEAD7QHreptLqpa3HLxatARciZwYLJk8jd494G3Dd5_PF3WsJFg/exec/json" -o "$response_file"; then
+          if curl -Lfs "https://script.google.com/macros/s/AKfycbz0a4RTpHE5Bxn3AeHWEAD7QHreptLqpa3HLxatARciZwYLJk8jd494G3Dd5_PF3WsJFg/exec?json" -o "$response_file"; then
             echo "JSON_FETCH_SUCCESS=true" >> $GITHUB_ENV
             echo "RESPONSE_FILE_PATH=$response_file" >> $GITHUB_ENV
           else
