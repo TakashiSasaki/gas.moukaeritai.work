@@ -1,3 +1,3 @@
 Found 2 deployments.
 - AKfycbxwckHTK_S3CymGqT1t5pHHlEuTJ7caa0LCbJQhfWM @HEAD 
-- AKfycbwV3dOARMexlmsPpe_heXOfDbKz7NqFaLDV-EzSydMpgyx34EOxmFUzzHPduwLm_KSi @1 - テストするためにはデプロイしなければならないので。
+- AKfycbwV3dOARMexlmsPpe_heXOfDbKz7NqFaLDV-EzSydMpgyx34EOxmFUzzHPduwLm_KSi @2 - release v2

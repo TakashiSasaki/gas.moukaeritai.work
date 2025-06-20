@@ -2,5 +2,9 @@
   {
     "version": 1,
     "description": "テストするためにはデプロイしなければならないので。"
+  },
+  {
+    "version": 2,
+    "description": "release v2"
   }
 ]
