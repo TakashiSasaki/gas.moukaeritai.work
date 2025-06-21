@@ -1,15 +1,28 @@
 /**
- * @fileoverview Web App entry point. Serves the main HTML interface.
+ * @fileoverview Webアプリケーションのメインエントリポイント。
+ * GETリクエストを処理し、ユーザーインターフェースを提供します。
  */
 
 /**
- * ユーザーがウェブアプリのURLにアクセスしたときにHTMLページを提供します。
- * Google Apps ScriptがWebアプリとして実行される際に、最初に呼び出す関数です。
- * @param {Object} e - イベントパラメータ。
- * @return {GoogleAppsScript.HTML.HtmlOutput} 生成されたHTMLページ。
+ * WebアプリケーションへのHTTP GETリクエストを処理します。
+ *
+ * @param {Object} e GETリクエストのイベントパラメータ。
+ * @return {HtmlOutput} HTMLサービスの出力。
  */
 function doGet(e) {
-  return HtmlService.createHtmlOutputFromFile('index')
-      .setTitle('DNS Record Extractor')
-      .addMetaTag('viewport', 'width=device-width, initial-scale=1');
+  // createHtmlOutputFromFileの代わりにcreateTemplateFromFileを使用し、
+  // HTML内の <?!= ... ?> のようなスクリプトレットを処理できるようにします。
+  const template = HtmlService.createTemplateFromFile('index');
+
+  // evaluate() メソッドは、テンプレート内のスクリプトレットを実行し、
+  // HtmlOutputオブジェクトを返します。これは、サーバーサイドのコンテンツや
+  // 他のHTMLファイルをインクルードするために不可欠なステップです。
+  const htmlOutput = template.evaluate();
+
+  // 最終的なHtmlOutputオブジェクトにタイトルやメタデータを設定します。
+  htmlOutput
+    .setTitle('DNS Record Extractor')
+    .addMetaTag('viewport', 'width=device-width, initial-scale=1.0');
+
+  return htmlOutput;
 }

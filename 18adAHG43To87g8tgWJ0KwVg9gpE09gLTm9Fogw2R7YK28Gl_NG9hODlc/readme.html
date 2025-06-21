@@ -73,11 +73,12 @@
             本アプリケーションは、Google Apps Scriptの<code>CacheService.getScriptCache()</code>を利用して、キーと値のペアを一時的に保存・取得するためのWebツールです。揮発性のデータを手軽に共有したり、アクセスしたりする目的で使用します。
         </p>
         <p>
-            アプリケーションは2つの主要なモードで動作します。
+            アプリケーションは以下の3つの方法で利用できます。
         </p>
         <ul>
-            <li><strong>UIモード</strong>: Webブラウザを通じてキーと値のペアを対話的に管理するインターフェースを提供します。</li>
-            <li><strong>APIモード</strong>: WebアプリのURLにキーをパラメータとして付与することで、対応する値を直接プレーンテキストとして取得するインターフェースを提供します。</li>
+            <li><strong>UIモード</strong>: Webブラウザを通じてキーと値のペアを対話的に管理します。</li>
+            <li><strong>APIモード</strong>: WebアプリのURLにキーをパラメータとして付与することで、対応する値を直接取得します。</li>
+            <li><strong>ライブラリモード</strong>: 他のGoogle Apps Scriptプロジェクトからライブラリとして参照し、関数を直接呼び出します。</li>
         </ul>
 
         <h2>2. 機能仕様</h2>
@@ -113,19 +114,66 @@
             <li><strong>失敗時（キー不在・無効）</strong>: キーがキャッシュに存在しない、またはキーの形式が不正な場合、空の文字列が返されます。</li>
         </ul>
 
-        <h2>3. 技術仕様</h2>
-        <h3>3.1. キーの要件</h3>
+        <h2>3. ライブラリとしての利用</h2>
+        <p>
+            本スクリプトを他のGoogle Apps Scriptプロジェクトからライブラリとしてインポートすることで、キャッシュ機能を直接利用できます。
+        </p>
+        <h3>3.1. セットアップ</h3>
+        <ol>
+            <li>ライブラリを利用したいスクリプトのプロジェクトを開きます。</li>
+            <li>エディタの左側メニューにある「ライブラリ」の横の「+」アイコンをクリックします。</li>
+            <li>「スクリプトID」の入力欄に、本プロジェクトのスクリプトIDを貼り付け、「検索」をクリックします。</li>
+            <li>バージョンを選択し、「識別子」を（例: <code>PubCache</code>）設定して「追加」ボタンをクリックします。</li>
+        </ol>
+
+        <h3>3.2. 利用可能な関数</h3>
+        <p>
+            標準の<code>Cache</code>クラスが提供するメソッドと互換性のある以下のグローバル関数が利用できます。
+        </p>
+        <table>
+            <thead>
+                <tr><th>関数名</th><th>説明</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>getEndpoint(key)</code></td><td>指定されたキーに対応するAPIエンドポイントURLを返します。キーが無効な場合は<code>null</code>を返します。</td></tr>
+                <tr><td><code>get(key)</code></td><td>指定されたキーに対応する値を取得します。成功すると有効期限がリセットされます。</td></tr>
+                <tr><td><code>put(key, value, expirationInSeconds)</code></td><td>キーと値のペアを保存します。<code>expirationInSeconds</code>は任意です。</td></tr>
+                <tr><td><code>putAll(values, expirationInSeconds)</code></td><td>複数のキーと値のペアをオブジェクト形式で保存します。</td></tr>
+                <tr><td><code>remove(key)</code></td><td>指定されたキーの値を削除します。</td></tr>
+                <tr><td><code>removeAll(keys)</code></td><td>指定されたキーのリストに一致するすべての値を削除します。</td></tr>
+            </tbody>
+        </table>
+
+        <h3>3.3. 使用例</h3>
+        <pre><code>function myFunction() {
+  const myKey = '...（有効なキー）...';
+  const myValue = 'This is a test value.';
+
+  // PubCacheライブラリを使って値を保存
+  PubCache.put(myKey, myValue);
+
+  // APIエンドポイントのURLを取得
+  const endpointUrl = PubCache.getEndpoint(myKey);
+  Logger.log(endpointUrl); // "https://script.google.com/macros/s/.../exec?{myKey}"
+
+  // 保存した値を取得
+  const cachedValue = PubCache.get(myKey);
+  Logger.log(cachedValue); // "This is a test value."
+}</code></pre>
+
+        <h2>4. 技術仕様</h2>
+        <h3>4.1. キーの要件</h3>
         <p>キャッシュのキーとして使用される文字列は、以下の要件を満たす必要があります。</p>
         <ul>
             <li><strong>形式</strong>: 32バイト以上のオクテット列をBase64urlエンコードした文字列。</li>
             <li><strong>長さ</strong>: クライアントサイドおよびサーバーサイドで、文字列長が<strong>43文字以上</strong>であることが検証されます。これは32バイトのデータをパディングなしのBase64url形式にエンコードした際の最小長に相当します。</li>
         </ul>
-        <h3>3.2. キャッシュの仕様</h3>
+        <h3>4.2. キャッシュの仕様</h3>
         <ul>
             <li><strong>サービス</strong>: Google Apps Script の <code>CacheService.getScriptCache()</code></li>
             <li><strong>有効期限</strong>: 新規保存時および読み出し成功時に <strong>21600秒 (6時間)</strong> に設定（またはリセット）されます。</li>
         </ul>
-        <h3>3.3. クライアントサイドの永続化</h3>
+        <h3>4.3. クライアントサイドの永続化</h3>
         <ul>
             <li><strong>技術</strong>: ブラウザの <code>localStorage</code></li>
             <li><strong>保存データ</strong>: 操作に成功したキーの履歴（最大10件）</li>

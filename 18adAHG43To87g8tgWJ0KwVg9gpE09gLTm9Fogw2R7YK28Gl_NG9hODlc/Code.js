@@ -7,6 +7,19 @@ const MIN_KEY_LENGTH = 43;   // 32バイトデータのBase64urlエンコード�
 // ===============================================================
 
 /**
+ * 指定されたキーに対応するAPIエンドポイントURLを返します。
+ * @param {string} key URLに含めるキー。
+ * @returns {string|null} 完全なエンドポイントURL。キーが無効な場合はnullを返します。
+ */
+function getEndpoint(key) {
+  if (!_isValidKey(key)) {
+    return null;
+  }
+  return "https://script.google.com/macros/s/AKfycbySWM-zP6L4yiypXCK4_o8IZHEeM02l1MGnzIrXB0utA3Q92_P89sp0z4E9uMH3RdvRUg/exec" + "?" + key;
+  //return ScriptApp.getService().getUrl() + '?' + key;
+}
+
+/**
  * 指定されたキーに対応する値をキャッシュから取得します。
  * 値の取得に成功した場合、そのキーの有効期限は自動的にリセットされます。
  * @param {string} key 取得したいデータのキー。
@@ -112,7 +125,7 @@ function doGet(e) {
   if (e && e.parameter && typeof e.parameter.readme !== 'undefined') {
     const template = HtmlService.createTemplateFromFile('readme');
     template.baseUrl = baseUrl;
-    return template.evaluate().setTitle('仕様書 - ScriptCache Web App').setXFrameOptionsMode(HtmlService.XFrameOptionsMode.DEFAULT);
+    return template.evaluate().setTitle('仕様書 - PubCache').setXFrameOptionsMode(HtmlService.XFrameOptionsMode.DEFAULT);
   }
 
   if (e && e.parameter && Object.keys(e.parameter).length > 0) {
@@ -123,7 +136,7 @@ function doGet(e) {
 
   const template = HtmlService.createTemplateFromFile('index');
   template.baseUrl = baseUrl;
-  return template.evaluate().setTitle('ScriptCache Web App').setXFrameOptionsMode(HtmlService.XFrameOptionsMode.DEFAULT);
+  return template.evaluate().setTitle('PubCache').setXFrameOptionsMode(HtmlService.XFrameOptionsMode.DEFAULT);
 }
 
 /**
