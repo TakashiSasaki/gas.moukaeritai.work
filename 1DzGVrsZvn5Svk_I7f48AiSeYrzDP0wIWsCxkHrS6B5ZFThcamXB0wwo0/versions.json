@@ -14,5 +14,9 @@
   {
     "version": 4,
     "description": "公開用 Version 4"
+  },
+  {
+    "version": 5,
+    "description": "公開用 Version 5"
   }
 ]
