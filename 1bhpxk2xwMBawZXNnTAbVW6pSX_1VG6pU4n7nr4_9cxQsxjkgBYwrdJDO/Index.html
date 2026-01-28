@@ -26,7 +26,35 @@
       border-radius: 8px;
       box-shadow: 0 1px 3px rgba(0,0,0,0.12);
     }
-    h2 { color: var(--primary-color); border-bottom: 2px solid var(--border-color); padding-bottom: 10px; }
+    
+    /* Header Styles with User Info */
+    .header-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid var(--border-color);
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+    }
+    .header-container h2 {
+      color: var(--primary-color);
+      border-bottom: none;
+      padding-bottom: 0;
+      margin: 0;
+    }
+    .user-info {
+      font-size: 0.85em;
+      color: #5f6368;
+      background-color: #f1f3f4;
+      padding: 6px 12px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .user-icon {
+      font-size: 1.1em;
+    }
     
     .section { margin-bottom: 25px; padding: 15px; border: 1px solid var(--border-color); border-radius: 8px; }
     .section-title { font-weight: bold; margin-bottom: 15px; display: block; font-size: 1.1em; }
@@ -150,7 +178,7 @@
 
     /* Date Filter Styles */
     .date-filter-group {
-      grid-column: 1 / -1; /* 横幅いっぱいに */
+      grid-column: 1 / -1;
       border: 1px solid var(--border-color);
       border-radius: 4px;
       padding: 10px;
@@ -230,7 +258,14 @@
 <body>
 
 <div class="container">
-  <h2>Drive Query Builder & Mover</h2>
+  <!-- Header with Title and User Info -->
+  <div class="header-container">
+    <h2>Drive Query Builder & Mover</h2>
+    <span id="userInfo" class="user-info">
+      <span class="user-icon">👤</span> 
+      <span id="userEmail">Loading...</span>
+    </span>
+  </div>
 
   <div class="section">
     <span class="section-title">1. 検索条件の設定 (GUI)</span>
@@ -441,6 +476,14 @@
 
   window.onload = function() {
     if (typeof google !== 'undefined' && google.script && google.script.run) {
+      // ユーザーのメールアドレス取得
+      google.script.run
+        .withSuccessHandler(email => {
+          document.getElementById('userEmail').textContent = email;
+        })
+        .getCurrentUserEmail();
+
+      // 設定の読み込み
       google.script.run
         .withSuccessHandler(settings => {
           if (settings) {
@@ -674,12 +717,10 @@
 
     if (dateMode === 'absolute') {
       if (dateAfterInput) {
-        // 指定日の00:00:00以後 (含む)
         const utcStart = getDateQueryString(dateAfterInput, false);
         if (utcStart) parts.push(`modifiedTime >= '${utcStart}'`);
       }
       if (dateBeforeInput) {
-        // 指定日の23:59:59以前 (含む)
         const utcEnd = getDateQueryString(dateBeforeInput, true);
         if (utcEnd) parts.push(`modifiedTime <= '${utcEnd}'`);
       }
@@ -690,10 +731,8 @@
       const utcTarget = targetDate.toISOString();
       
       if (relativeOperator === 'older') {
-        // N日以前 -> modifiedTime < N日前
         parts.push(`modifiedTime < '${utcTarget}'`);
       } else {
-        // N日以後（以内） -> modifiedTime > N日前
         parts.push(`modifiedTime > '${utcTarget}'`);
       }
     }
@@ -732,7 +771,6 @@
         mimeType: mimeType,
         ownerType: ownerType,
         destFolderId: destFolderId,
-        // Date Settings
         dateMode: dateMode,
         dateAfter: dateAfterInput,
         dateBefore: dateBeforeInput,
