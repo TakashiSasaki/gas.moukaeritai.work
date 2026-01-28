@@ -8,6 +8,8 @@
       --bg-color: #f8f9fa;
       --border-color: #dadce0;
       --hover-color: #f1f3f4;
+      --cache-color: #f29900;
+      --live-color: #0f9d58;
     }
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -71,7 +73,34 @@
     .loading { display: none; color: var(--primary-color); font-weight: bold; margin: 10px 0; }
     .status-msg { font-size: 0.8em; color: #888; margin-top: 5px; height: 1em; }
 
-    /* Modal Styles */
+    /* Accordion Styles */
+    .accordion-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      user-select: none;
+      padding: 5px 0;
+    }
+    .accordion-header:hover .section-title { color: var(--primary-color); }
+    .accordion-arrow {
+      font-size: 0.8em;
+      transition: transform 0.2s;
+      color: #5f6368;
+    }
+    .accordion-collapsed .accordion-arrow { transform: rotate(-90deg); }
+    .results-content { overflow: hidden; transition: max-height 0.3s ease-out; }
+    .accordion-collapsed .results-content { display: none; }
+    
+    .count-badge {
+      background: #e8f0fe;
+      color: var(--primary-color);
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 0.8em;
+      margin-left: 10px;
+    }
+
     #folderPickerModal {
       display: none;
       position: fixed;
@@ -97,12 +126,17 @@
     
     .folder-item { padding: 12px 20px; border-bottom: 1px solid #f1f3f4; cursor: pointer; display: flex; align-items: center; gap: 10px; }
     .folder-item:hover { background: var(--hover-color); }
-    .folder-item i { color: #5f6368; }
     
     .breadcrumb { padding: 10px 20px; background: #f8f9fa; font-size: 0.85em; display: flex; flex-wrap: wrap; gap: 5px; border-bottom: 1px solid var(--border-color); }
     .breadcrumb span { cursor: pointer; color: var(--primary-color); }
     .breadcrumb span:hover { text-decoration: underline; }
     .breadcrumb b { color: #3c4043; }
+
+    .cache-status { font-size: 11px; padding: 2px 6px; border-radius: 10px; font-weight: bold; margin-left: 10px; }
+    .status-cached { background: #fff8e1; color: var(--cache-color); border: 1px solid #ffe082; }
+    .status-live { background: #e8f5e9; color: var(--live-color); border: 1px solid #a5d6a7; }
+
+    .fetch-more-area { margin-top: 15px; text-align: center; border-top: 1px dashed var(--border-color); padding-top: 15px; }
   </style>
 </head>
 <body>
@@ -160,43 +194,56 @@
   </div>
 
   <div id="resultsSection" class="section" style="display:none;">
-    <span class="section-title">2. 検索結果 プレビュー</span>
-    <div id="loadingSearch" class="loading">検索中...</div>
-    <div id="fileTableContainer">
-      <table id="fileTable">
-        <thead>
-          <tr>
-            <th>選択</th>
-            <th>ファイル名</th>
-            <th>最終更新</th>
-            <th>サイズ</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
+    <div class="accordion-header" onclick="toggleAccordion('resultsSection')">
+      <span class="section-title" style="margin-bottom:0;">2. 検索結果 プレビュー <span id="itemCountBadge" class="count-badge" style="display:none;">0</span></span>
+      <span class="accordion-arrow">▼</span>
     </div>
     
-    <div style="margin-top:20px; background:#fff3e0; padding:15px; border-radius:4px;">
-      <span class="section-title">3. ファイルの移動</span>
-      <div class="field">
-        <label>移動先フォルダID (Destination Folder ID)</label>
-        <div class="input-with-btn">
-          <input type="text" id="destFolderId" placeholder="フォルダIDを入力してください" oninput="updateQuery(true)">
-          <button class="btn btn-outline btn-small" onclick="openPicker('destFolderId')">選択</button>
-        </div>
+    <div class="results-content">
+      <div id="loadingSearch" class="loading">検索中...</div>
+      <div id="fileTableContainer">
+        <table id="fileTable">
+          <thead>
+            <tr>
+              <th>選択</th>
+              <th>ファイル名</th>
+              <th>最終更新</th>
+              <th>サイズ</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
       </div>
-      <button class="btn btn-secondary" id="moveBtn" style="margin-top:10px;" onclick="runMove()">選択したファイルを移動する</button>
-      <div id="loadingMove" class="loading">移動処理中...</div>
+
+      <div id="fetchMoreArea" class="fetch-more-area" style="display:none;">
+        <p style="font-size: 0.85em; color: #666;">他にも結果があります...</p>
+        <button class="btn btn-outline" id="fetchAllBtn" onclick="runFetchAll()">残りをすべて取得する</button>
+      </div>
+      
+      <div style="margin-top:20px; background:#fff3e0; padding:15px; border-radius:4px;">
+        <span class="section-title">3. ファイルの移動</span>
+        <div class="field">
+          <label>移動先フォルダID (Destination Folder ID)</label>
+          <div class="input-with-btn">
+            <input type="text" id="destFolderId" placeholder="フォルダIDを入力してください" oninput="updateQuery(true)">
+            <button class="btn btn-outline btn-small" onclick="openPicker('destFolderId')">選択</button>
+          </div>
+        </div>
+        <button class="btn btn-secondary" id="moveBtn" style="margin-top:10px;" onclick="runMove()">選択したファイルを移動する</button>
+        <div id="loadingMove" class="loading">移動処理中...</div>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- Folder Picker Modal -->
 <div id="folderPickerModal">
   <div class="modal-content">
     <div class="modal-header">
-      <h3 style="margin:0; font-size:1.1em;">フォルダを選択</h3>
-      <button class="btn btn-outline btn-small" onclick="closePicker()">×</button>
+      <h3 style="margin:0; font-size:1.1em;">フォルダを選択<span id="cacheIndicator" class="cache-status" style="display:none;"></span></h3>
+      <div>
+        <button class="btn btn-outline btn-small" onclick="refreshPicker()" title="キャッシュをクリアして再取得">🔄 更新</button>
+        <button class="btn btn-outline btn-small" onclick="closePicker()">×</button>
+      </div>
     </div>
     <div class="breadcrumb" id="pickerBreadcrumb"></div>
     <div class="modal-body" id="pickerBody">
@@ -215,6 +262,10 @@
   let currentTargetInputId = '';
   let pickerStack = [{ id: 'root', name: 'マイドライブ' }];
   let selectedFolderInfo = null;
+  
+  let currentNextPageToken = null;
+  let currentLastQuery = '';
+  let loadedFilesCount = 0;
 
   window.onload = function() {
     if (typeof google !== 'undefined' && google.script && google.script.run) {
@@ -237,14 +288,24 @@
   };
 
   /**
-   * フォルダピッカーを開く
+   * アコーディオンの開閉
    */
+  function toggleAccordion(sectionId, forceOpen = false) {
+    const section = document.getElementById(sectionId);
+    if (forceOpen) {
+      section.classList.remove('accordion-collapsed');
+    } else {
+      section.classList.toggle('accordion-collapsed');
+    }
+  }
+
   function openPicker(targetId) {
     currentTargetInputId = targetId;
     pickerStack = [{ id: 'root', name: 'マイドライブ' }];
     selectedFolderInfo = null;
     document.getElementById('confirmPickBtn').disabled = true;
     document.getElementById('selectedFolderName').textContent = '';
+    document.getElementById('cacheIndicator').style.display = 'none';
     document.getElementById('folderPickerModal').style.display = 'flex';
     loadFolderList('root');
   }
@@ -253,24 +314,33 @@
     document.getElementById('folderPickerModal').style.display = 'none';
   }
 
-  function loadFolderList(parentId) {
+  function refreshPicker() {
+    const currentParentId = pickerStack[pickerStack.length - 1].id;
+    loadFolderList(currentParentId, true);
+  }
+
+  function loadFolderList(parentId, bypassCache = false) {
     const body = document.getElementById('pickerBody');
+    const indicator = document.getElementById('cacheIndicator');
     body.innerHTML = '<div style="padding:20px; text-align:center;">フォルダを取得中...</div>';
-    
     updateBreadcrumb();
-
-    if (typeof google === 'undefined') {
-      body.innerHTML = '<div style="padding:20px; color:red;">GAS環境以外では動作しません。</div>';
-      return;
-    }
-
+    if (typeof google === 'undefined') return;
     google.script.run
-      .withSuccessHandler(folders => {
+      .withSuccessHandler(response => {
+        const { items, fromCache } = response;
+        indicator.style.display = 'inline-block';
+        if (fromCache) {
+          indicator.textContent = 'キャッシュ';
+          indicator.className = 'cache-status status-cached';
+        } else {
+          indicator.textContent = '最新';
+          indicator.className = 'cache-status status-live';
+        }
         body.innerHTML = '';
-        if (folders.length === 0) {
+        if (items.length === 0) {
           body.innerHTML = '<div style="padding:20px; text-align:center; color:#888;">サブフォルダはありません</div>';
         }
-        folders.forEach(f => {
+        items.forEach(f => {
           const div = document.createElement('div');
           div.className = 'folder-item';
           div.innerHTML = `📁 <span>${f.name}</span>`;
@@ -284,16 +354,15 @@
       })
       .withFailureHandler(err => {
         body.innerHTML = `<div style="padding:20px; color:red;">エラー: ${err.message}</div>`;
+        indicator.style.display = 'none';
       })
-      .getChildFolders(parentId);
+      .getChildFolders(parentId, bypassCache);
   }
 
   function selectFolderItem(folder) {
     selectedFolderInfo = folder;
     document.getElementById('selectedFolderName').textContent = `選択中: ${folder.name}`;
     document.getElementById('confirmPickBtn').disabled = false;
-    
-    // ハイライト処理
     document.querySelectorAll('.folder-item').forEach(el => {
       el.style.background = el.querySelector('span').textContent === folder.name ? 'var(--hover-color)' : '';
     });
@@ -330,7 +399,6 @@
 
   function updateQuery(shouldSave = true) {
     let parts = ['trashed = false'];
-    
     const pType = document.getElementById('parentType').value;
     const customArea = document.getElementById('customParentArea');
     const customIdInput = document.getElementById('customParentId');
@@ -338,7 +406,6 @@
     const mimeType = document.getElementById('mimeType').value;
     const ownerType = document.getElementById('ownerType').value;
     const destFolderId = document.getElementById('destFolderId').value;
-
     if (pType === 'root') {
       parts.push("'root' in parents");
       customArea.style.display = 'none';
@@ -348,19 +415,14 @@
     } else {
       customArea.style.display = 'none';
     }
-
     if (fileName) parts.push(`name contains '${fileName}'`);
-
     if (mimeType) {
       const op = mimeType.endsWith('/') ? 'contains' : '=';
       parts.push(`mimeType ${op} '${mimeType}'`);
     }
-
     if (ownerType === 'me') parts.push("'me' in owners");
     if (ownerType === 'notMe') parts.push("not 'me' in owners");
-
     document.getElementById('qResult').textContent = parts.join(' and ');
-
     if (shouldSave) {
       debounceSave({
         parentType: pType,
@@ -394,27 +456,81 @@
     const btn = document.getElementById('searchBtn');
     const loading = document.getElementById('loadingSearch');
     const resultsSection = document.getElementById('resultsSection');
+    const fetchMoreArea = document.getElementById('fetchMoreArea');
+    const badge = document.getElementById('itemCountBadge');
+    
+    currentLastQuery = q;
+    loadedFilesCount = 0;
     btn.disabled = true;
     loading.style.display = 'block';
     resultsSection.style.display = 'block';
+    fetchMoreArea.style.display = 'none';
+    badge.style.display = 'none';
+    
+    // 検索時は自動でアコーディオンを展開
+    toggleAccordion('resultsSection', true);
+
     google.script.run
-      .withSuccessHandler(files => {
+      .withSuccessHandler(response => {
         btn.disabled = false;
         loading.style.display = 'none';
-        renderTable(files);
+        currentNextPageToken = response.nextPageToken;
+        loadedFilesCount = response.files.length;
+        
+        updateBadge();
+        renderTable(response.files, false);
+        
+        if (currentNextPageToken) {
+          fetchMoreArea.style.display = 'block';
+        }
       })
       .withFailureHandler(err => {
         btn.disabled = false;
         loading.style.display = 'none';
         alert(err.message);
       })
-      .searchFiles(q);
+      .searchFiles(q, null, 10);
   }
 
-  function renderTable(files) {
+  function runFetchAll() {
+    if (!currentNextPageToken || typeof google === 'undefined') return;
+    
+    const btn = document.getElementById('fetchAllBtn');
+    const loading = document.getElementById('loadingSearch');
+    const fetchMoreArea = document.getElementById('fetchMoreArea');
+    
+    btn.disabled = true;
+    loading.style.display = 'block';
+    
+    google.script.run
+      .withSuccessHandler(files => {
+        btn.disabled = false;
+        loading.style.display = 'none';
+        fetchMoreArea.style.display = 'none';
+        currentNextPageToken = null;
+        loadedFilesCount += files.length;
+        
+        updateBadge();
+        renderTable(files, true);
+      })
+      .withFailureHandler(err => {
+        btn.disabled = false;
+        loading.style.display = 'none';
+        alert(err.message);
+      })
+      .fetchAllRemaining(currentLastQuery, currentNextPageToken);
+  }
+
+  function updateBadge() {
+    const badge = document.getElementById('itemCountBadge');
+    badge.textContent = loadedFilesCount + (currentNextPageToken ? '+' : '');
+    badge.style.display = 'inline-block';
+  }
+
+  function renderTable(files, append = false) {
     const tbody = document.querySelector('#fileTable tbody');
-    tbody.innerHTML = '';
-    if (files.length === 0) {
+    if (!append) tbody.innerHTML = '';
+    if (!append && files.length === 0) {
       tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">該当するファイルが見つかりませんでした。</td></tr>';
       return;
     }
