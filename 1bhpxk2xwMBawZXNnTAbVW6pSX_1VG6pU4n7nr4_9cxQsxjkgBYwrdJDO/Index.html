@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <style>
+    :root {
+      --primary-color: #1a73e8;
+      --bg-color: #f8f9fa;
+      --border-color: #dadce0;
+      --hover-color: #f1f3f4;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--bg-color);
+      margin: 0;
+      padding: 20px;
+      color: #3c4043;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+    }
+    h2 { color: var(--primary-color); border-bottom: 2px solid var(--border-color); padding-bottom: 10px; }
+    
+    .section { margin-bottom: 25px; padding: 15px; border: 1px solid var(--border-color); border-radius: 8px; }
+    .section-title { font-weight: bold; margin-bottom: 15px; display: block; font-size: 1.1em; }
+    
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+    .field { display: flex; flex-direction: column; position: relative; }
+    label { font-size: 0.9em; margin-bottom: 5px; color: #5f6368; }
+    input, select { padding: 10px; border: 1px solid var(--border-color); border-radius: 4px; font-size: 14px; }
+    
+    .input-with-btn { display: flex; gap: 5px; }
+    .input-with-btn input { flex-grow: 1; }
+    
+    .query-display {
+      background: #f1f3f4;
+      padding: 15px;
+      border-radius: 4px;
+      margin-top: 20px;
+      border-left: 4px solid var(--primary-color);
+    }
+    code { font-family: 'Courier New', Courier, monospace; color: #d93025; font-weight: bold; word-break: break-all; }
+
+    .btn {
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: bold;
+      transition: background 0.2s;
+      white-space: nowrap;
+    }
+    .btn:hover { background-color: #1765cc; }
+    .btn:disabled { background-color: #ccc; cursor: not-allowed; }
+    .btn-secondary { background-color: #5f6368; }
+    .btn-outline { background-color: white; color: var(--primary-color); border: 1px solid var(--primary-color); }
+    .btn-small { padding: 5px 10px; font-size: 12px; }
+
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 14px; }
+    th, td { text-align: left; padding: 12px; border-bottom: 1px solid var(--border-color); }
+    th { background-color: #f1f3f4; }
+    
+    .loading { display: none; color: var(--primary-color); font-weight: bold; margin: 10px 0; }
+    .status-msg { font-size: 0.8em; color: #888; margin-top: 5px; height: 1em; }
+
+    /* Modal Styles */
+    #folderPickerModal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-content {
+      background: white;
+      width: 90%;
+      max-width: 500px;
+      border-radius: 8px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      max-height: 80vh;
+    }
+    .modal-header { padding: 15px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
+    .modal-body { flex-grow: 1; overflow-y: auto; padding: 0; }
+    .modal-footer { padding: 15px; border-top: 1px solid var(--border-color); display: flex; justify-content: flex-end; gap: 10px; }
+    
+    .folder-item { padding: 12px 20px; border-bottom: 1px solid #f1f3f4; cursor: pointer; display: flex; align-items: center; gap: 10px; }
+    .folder-item:hover { background: var(--hover-color); }
+    .folder-item i { color: #5f6368; }
+    
+    .breadcrumb { padding: 10px 20px; background: #f8f9fa; font-size: 0.85em; display: flex; flex-wrap: wrap; gap: 5px; border-bottom: 1px solid var(--border-color); }
+    .breadcrumb span { cursor: pointer; color: var(--primary-color); }
+    .breadcrumb span:hover { text-decoration: underline; }
+    .breadcrumb b { color: #3c4043; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2>Drive Query Builder & Mover</h2>
+
+  <div class="section">
+    <span class="section-title">1. 検索条件の設定 (GUI)</span>
+    <div class="grid">
+      <div class="field">
+        <label>場所 (Location)</label>
+        <select id="parentType" onchange="updateQuery(true)">
+          <option value="root">マイドライブ直下 ('root')</option>
+          <option value="custom">特定のフォルダID直下</option>
+          <option value="any">場所を問わない</option>
+        </select>
+        <div id="customParentArea" style="display:none; margin-top:5px;" class="input-with-btn">
+          <input type="text" id="customParentId" placeholder="フォルダIDを入力" oninput="updateQuery(true)">
+          <button class="btn btn-outline btn-small" onclick="openPicker('customParentId')">選択</button>
+        </div>
+      </div>
+      <div class="field">
+        <label>ファイル名 (Name contains)</label>
+        <input type="text" id="fileName" placeholder="例: 2025_レポート" oninput="updateQuery(true)">
+      </div>
+      <div class="field">
+        <label>ファイル形式 (MimeType)</label>
+        <select id="mimeType" onchange="updateQuery(true)">
+          <option value="">すべて</option>
+          <option value="application/vnd.google-apps.spreadsheet">スプレッドシート</option>
+          <option value="application/vnd.google-apps.document">ドキュメント</option>
+          <option value="application/pdf">PDF</option>
+          <option value="image/">画像全般</option>
+          <option value="application/vnd.google-apps.folder">フォルダ</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>所有者 (Owner)</label>
+        <select id="ownerType" onchange="updateQuery(true)">
+          <option value="">指定なし</option>
+          <option value="me">自分が所有</option>
+          <option value="notMe">自分以外が所有</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="query-display">
+      <label>組み立てられた q パラメータ:</label><br>
+      <code id="qResult">trashed = false</code>
+      <div id="saveStatus" class="status-msg"></div>
+    </div>
+    
+    <button class="btn" id="searchBtn" style="margin-top:20px;" onclick="runSearch()">この条件で検索を実行</button>
+  </div>
+
+  <div id="resultsSection" class="section" style="display:none;">
+    <span class="section-title">2. 検索結果 プレビュー</span>
+    <div id="loadingSearch" class="loading">検索中...</div>
+    <div id="fileTableContainer">
+      <table id="fileTable">
+        <thead>
+          <tr>
+            <th>選択</th>
+            <th>ファイル名</th>
+            <th>最終更新</th>
+            <th>サイズ</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    
+    <div style="margin-top:20px; background:#fff3e0; padding:15px; border-radius:4px;">
+      <span class="section-title">3. ファイルの移動</span>
+      <div class="field">
+        <label>移動先フォルダID (Destination Folder ID)</label>
+        <div class="input-with-btn">
+          <input type="text" id="destFolderId" placeholder="フォルダIDを入力してください" oninput="updateQuery(true)">
+          <button class="btn btn-outline btn-small" onclick="openPicker('destFolderId')">選択</button>
+        </div>
+      </div>
+      <button class="btn btn-secondary" id="moveBtn" style="margin-top:10px;" onclick="runMove()">選択したファイルを移動する</button>
+      <div id="loadingMove" class="loading">移動処理中...</div>
+    </div>
+  </div>
+</div>
+
+<!-- Folder Picker Modal -->
+<div id="folderPickerModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3 style="margin:0; font-size:1.1em;">フォルダを選択</h3>
+      <button class="btn btn-outline btn-small" onclick="closePicker()">×</button>
+    </div>
+    <div class="breadcrumb" id="pickerBreadcrumb"></div>
+    <div class="modal-body" id="pickerBody">
+      <div style="padding:20px; text-align:center;">読み込み中...</div>
+    </div>
+    <div class="modal-footer">
+      <span id="selectedFolderName" style="margin-right:auto; font-size:0.9em; color:#1a73e8; font-weight:bold;"></span>
+      <button class="btn btn-secondary" onclick="closePicker()">キャンセル</button>
+      <button class="btn" id="confirmPickBtn" disabled onclick="confirmPicker()">決定</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  let saveTimeout = null;
+  let currentTargetInputId = '';
+  let pickerStack = [{ id: 'root', name: 'マイドライブ' }];
+  let selectedFolderInfo = null;
+
+  window.onload = function() {
+    if (typeof google !== 'undefined' && google.script && google.script.run) {
+      google.script.run
+        .withSuccessHandler(settings => {
+          if (settings) {
+            if (settings.parentType) document.getElementById('parentType').value = settings.parentType;
+            if (settings.customParentId) document.getElementById('customParentId').value = settings.customParentId;
+            if (settings.fileName) document.getElementById('fileName').value = settings.fileName;
+            if (settings.mimeType) document.getElementById('mimeType').value = settings.mimeType;
+            if (settings.ownerType) document.getElementById('ownerType').value = settings.ownerType;
+            if (settings.destFolderId) document.getElementById('destFolderId').value = settings.destFolderId;
+          }
+          updateQuery(false);
+        })
+        .loadUserSettings();
+    } else {
+      updateQuery(false);
+    }
+  };
+
+  /**
+   * フォルダピッカーを開く
+   */
+  function openPicker(targetId) {
+    currentTargetInputId = targetId;
+    pickerStack = [{ id: 'root', name: 'マイドライブ' }];
+    selectedFolderInfo = null;
+    document.getElementById('confirmPickBtn').disabled = true;
+    document.getElementById('selectedFolderName').textContent = '';
+    document.getElementById('folderPickerModal').style.display = 'flex';
+    loadFolderList('root');
+  }
+
+  function closePicker() {
+    document.getElementById('folderPickerModal').style.display = 'none';
+  }
+
+  function loadFolderList(parentId) {
+    const body = document.getElementById('pickerBody');
+    body.innerHTML = '<div style="padding:20px; text-align:center;">フォルダを取得中...</div>';
+    
+    updateBreadcrumb();
+
+    if (typeof google === 'undefined') {
+      body.innerHTML = '<div style="padding:20px; color:red;">GAS環境以外では動作しません。</div>';
+      return;
+    }
+
+    google.script.run
+      .withSuccessHandler(folders => {
+        body.innerHTML = '';
+        if (folders.length === 0) {
+          body.innerHTML = '<div style="padding:20px; text-align:center; color:#888;">サブフォルダはありません</div>';
+        }
+        folders.forEach(f => {
+          const div = document.createElement('div');
+          div.className = 'folder-item';
+          div.innerHTML = `📁 <span>${f.name}</span>`;
+          div.onclick = () => selectFolderItem(f);
+          div.ondblclick = () => {
+            pickerStack.push(f);
+            loadFolderList(f.id);
+          };
+          body.appendChild(div);
+        });
+      })
+      .withFailureHandler(err => {
+        body.innerHTML = `<div style="padding:20px; color:red;">エラー: ${err.message}</div>`;
+      })
+      .getChildFolders(parentId);
+  }
+
+  function selectFolderItem(folder) {
+    selectedFolderInfo = folder;
+    document.getElementById('selectedFolderName').textContent = `選択中: ${folder.name}`;
+    document.getElementById('confirmPickBtn').disabled = false;
+    
+    // ハイライト処理
+    document.querySelectorAll('.folder-item').forEach(el => {
+      el.style.background = el.querySelector('span').textContent === folder.name ? 'var(--hover-color)' : '';
+    });
+  }
+
+  function updateBreadcrumb() {
+    const bc = document.getElementById('pickerBreadcrumb');
+    bc.innerHTML = '';
+    pickerStack.forEach((p, index) => {
+      const span = document.createElement('span');
+      span.textContent = p.name;
+      if (index < pickerStack.length - 1) {
+        span.onclick = () => {
+          pickerStack = pickerStack.slice(0, index + 1);
+          loadFolderList(p.id);
+        };
+        bc.appendChild(span);
+        bc.appendChild(document.createTextNode(' > '));
+      } else {
+        const b = document.createElement('b');
+        b.textContent = p.name;
+        bc.appendChild(b);
+      }
+    });
+  }
+
+  function confirmPicker() {
+    if (selectedFolderInfo) {
+      document.getElementById(currentTargetInputId).value = selectedFolderInfo.id;
+      updateQuery(true);
+      closePicker();
+    }
+  }
+
+  function updateQuery(shouldSave = true) {
+    let parts = ['trashed = false'];
+    
+    const pType = document.getElementById('parentType').value;
+    const customArea = document.getElementById('customParentArea');
+    const customIdInput = document.getElementById('customParentId');
+    const fileName = document.getElementById('fileName').value;
+    const mimeType = document.getElementById('mimeType').value;
+    const ownerType = document.getElementById('ownerType').value;
+    const destFolderId = document.getElementById('destFolderId').value;
+
+    if (pType === 'root') {
+      parts.push("'root' in parents");
+      customArea.style.display = 'none';
+    } else if (pType === 'custom') {
+      customArea.style.display = 'flex';
+      if (customIdInput.value) parts.push(`'${customIdInput.value}' in parents`);
+    } else {
+      customArea.style.display = 'none';
+    }
+
+    if (fileName) parts.push(`name contains '${fileName}'`);
+
+    if (mimeType) {
+      const op = mimeType.endsWith('/') ? 'contains' : '=';
+      parts.push(`mimeType ${op} '${mimeType}'`);
+    }
+
+    if (ownerType === 'me') parts.push("'me' in owners");
+    if (ownerType === 'notMe') parts.push("not 'me' in owners");
+
+    document.getElementById('qResult').textContent = parts.join(' and ');
+
+    if (shouldSave) {
+      debounceSave({
+        parentType: pType,
+        customParentId: customIdInput.value,
+        fileName: fileName,
+        mimeType: mimeType,
+        ownerType: ownerType,
+        destFolderId: destFolderId
+      });
+    }
+  }
+
+  function debounceSave(settings) {
+    if (typeof google === 'undefined') return;
+    clearTimeout(saveTimeout);
+    const status = document.getElementById('saveStatus');
+    status.textContent = '入力を保存中...';
+    saveTimeout = setTimeout(() => {
+      google.script.run
+        .withSuccessHandler(() => {
+          status.textContent = '設定を自動保存しました。';
+          setTimeout(() => status.textContent = '', 2000);
+        })
+        .saveUserSettings(settings);
+    }, 1000);
+  }
+
+  function runSearch() {
+    if (typeof google === 'undefined') return;
+    const q = document.getElementById('qResult').textContent;
+    const btn = document.getElementById('searchBtn');
+    const loading = document.getElementById('loadingSearch');
+    const resultsSection = document.getElementById('resultsSection');
+    btn.disabled = true;
+    loading.style.display = 'block';
+    resultsSection.style.display = 'block';
+    google.script.run
+      .withSuccessHandler(files => {
+        btn.disabled = false;
+        loading.style.display = 'none';
+        renderTable(files);
+      })
+      .withFailureHandler(err => {
+        btn.disabled = false;
+        loading.style.display = 'none';
+        alert(err.message);
+      })
+      .searchFiles(q);
+  }
+
+  function renderTable(files) {
+    const tbody = document.querySelector('#fileTable tbody');
+    tbody.innerHTML = '';
+    if (files.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">該当するファイルが見つかりませんでした。</td></tr>';
+      return;
+    }
+    files.forEach(file => {
+      const row = tbody.insertRow();
+      row.innerHTML = `
+        <td><input type="checkbox" class="file-check" value="${file.id}"></td>
+        <td>${file.name}</td>
+        <td>${new Date(file.modifiedTime).toLocaleString()}</td>
+        <td>${file.size}</td>
+      `;
+    });
+  }
+
+  function runMove() {
+    if (typeof google === 'undefined') return;
+    const destId = document.getElementById('destFolderId').value;
+    const selectedIds = Array.from(document.querySelectorAll('.file-check:checked')).map(cb => cb.value);
+    if (!destId || selectedIds.length === 0) {
+      alert('移動先フォルダと対象ファイルを選択してください。');
+      return;
+    }
+    if (!confirm(`${selectedIds.length} 個のファイルを移動します。よろしいですか？`)) return;
+    const btn = document.getElementById('moveBtn');
+    const loading = document.getElementById('loadingMove');
+    btn.disabled = true;
+    loading.style.display = 'block';
+    google.script.run
+      .withSuccessHandler(res => {
+        btn.disabled = false;
+        loading.style.display = 'none';
+        alert(`処理完了: ${res.success}件成功, ${res.error}件失敗`);
+        runSearch();
+      })
+      .withFailureHandler(err => {
+        btn.disabled = false;
+        loading.style.display = 'none';
+        alert('エラー: ' + err.message);
+      })
+      .moveFiles(selectedIds, destId);
+  }
+</script>
+
+</body>
+</html>
