@@ -63,6 +63,27 @@ function getChildFolders(parentId = 'root', bypassCache = false) {
 }
 
 /**
+ * ファイルサイズを適切な単位に整形するヘルパー関数
+ * @param {string|number} sizeBytes バイト数
+ * @return {string} 整形されたサイズ文字列
+ */
+function formatFileSize(sizeBytes) {
+  if (!sizeBytes) return '-';
+  const bytes = parseInt(sizeBytes);
+  if (isNaN(bytes) || bytes === 0) return '0 B';
+
+  const k = 1024;
+  const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  
+  // 単位配列の範囲外アクセス防止
+  if (i < 0) return bytes + ' B';
+  if (i >= sizes.length) return (bytes / Math.pow(k, sizes.length - 1)).toFixed(2) + ' ' + sizes[sizes.length - 1];
+
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+}
+
+/**
  * 組み立てられた q パラメータを使用してファイルを検索する
  */
 function searchFiles(q, pageToken = null, pageSize = 10) {
@@ -80,7 +101,7 @@ function searchFiles(q, pageToken = null, pageSize = 10) {
       name: file.name,
       mimeType: file.mimeType,
       modifiedTime: file.modifiedTime,
-      size: file.size ? (parseInt(file.size) / 1024 / 1024).toFixed(2) + ' MB' : '-'
+      size: formatFileSize(file.size) // ヘルパー関数を使用
     }));
     return {
       files: files,
@@ -115,7 +136,7 @@ function fetchAllRemaining(q, initialPageToken) {
           name: file.name,
           mimeType: file.mimeType,
           modifiedTime: file.modifiedTime,
-          size: file.size ? (parseInt(file.size) / 1024 / 1024).toFixed(2) + ' MB' : '-'
+          size: formatFileSize(file.size) // ヘルパー関数を使用
         })));
       }
       pageToken = response.nextPageToken;
@@ -156,50 +177,46 @@ function moveFiles(fileIds, destinationId) {
 }
 
 /**
- * 指定したフォルダ単体のアイテム数（サブフォルダ数、ファイル数）を集計する
+ * 指定したフォルダ単体のアイテム数（種別ごとの内訳）を集計する
  * キャッシュを活用してAPI呼び出し回数を削減
  * @param {string} folderId 集計対象のフォルダID
  */
 function getSingleFolderStats(folderId) {
   const cache = CacheService.getUserCache();
-  // フォルダ一覧用のキャッシュキー(folder_children_)と衝突しないようプレフィックスを変える
-  const cacheKey = 'folder_stats_' + folderId;
+  const cacheKey = 'folder_stats_v2_' + folderId;
   
   const cachedData = cache.get(cacheKey);
   if (cachedData) {
     return JSON.parse(cachedData);
   }
 
-  // 集計処理は読み取り専用のため、他の操作をブロックしないようロックは使用しない
-  let folderCount = 0;
-  let fileCount = 0;
+  const counts = {};
   let pageToken = null;
   
   try {
     do {
-      // 1000件ずつ取得して高速化
       const response = Drive.Files.list({
         q: `'${folderId}' in parents and trashed = false`,
         pageToken: pageToken,
-        fields: 'nextPageToken, files(mimeType)',
+        fields: 'nextPageToken, files(mimeType, name)', 
         pageSize: 1000
       });
       
       if (response.files) {
         response.files.forEach(f => {
-          if (f.mimeType === 'application/vnd.google-apps.folder') {
-            folderCount++;
-          } else {
-            fileCount++;
+          let type = f.mimeType;
+          if (f.name && f.name.toLowerCase().endsWith('.md')) {
+            type = 'text/markdown';
           }
+          
+          counts[type] = (counts[type] || 0) + 1;
         });
       }
       pageToken = response.nextPageToken;
     } while (pageToken);
     
-    const result = { folderId: folderId, folders: folderCount, files: fileCount };
+    const result = { folderId: folderId, counts: counts };
     
-    // 結果をキャッシュに保存（10分間有効）
     try {
       cache.put(cacheKey, JSON.stringify(result), 600);
     } catch (e) {

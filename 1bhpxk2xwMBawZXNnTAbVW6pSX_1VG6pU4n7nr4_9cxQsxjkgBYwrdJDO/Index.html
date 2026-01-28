@@ -87,6 +87,7 @@
       font-size: 0.8em;
       transition: transform 0.2s;
       color: #5f6368;
+      transform: rotate(0deg);
     }
     .accordion-collapsed .accordion-arrow { transform: rotate(-90deg); }
     .results-content { overflow: hidden; }
@@ -144,8 +145,50 @@
       text-align: center;
     }
     
-    .stats-cell { font-family: monospace; color: #666; font-size: 0.9em; }
+    .stats-cell { font-family: monospace; color: #5f6368; font-size: 0.9em; white-space: nowrap; }
+    .stat-item { margin-right: 8px; }
 
+    /* Date Filter Styles */
+    .date-filter-group {
+      grid-column: 1 / -1; /* 横幅いっぱいに */
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      padding: 10px;
+      background: #fff;
+    }
+    .date-options {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 10px;
+      border-bottom: 1px dashed var(--border-color);
+      padding-bottom: 8px;
+    }
+    .date-option-label {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+      font-size: 0.9em;
+      font-weight: bold;
+    }
+    .date-inputs {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .date-input-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.9em;
+    }
+    .input-disabled {
+      opacity: 0.5;
+      pointer-events: none;
+    }
+
+    /* Modal Styles */
     #folderPickerModal {
       display: none;
       position: fixed;
@@ -209,6 +252,56 @@
         <input type="text" id="fileName" placeholder="例: 2025_レポート" oninput="updateQuery(true)">
       </div>
       <div class="field">
+        <label>本文 (Full text contains)</label>
+        <input type="text" id="fullText" placeholder="例: 重要機密" oninput="updateQuery(true)">
+      </div>
+      <div class="field">
+        <label>説明文 (Description contains)</label>
+        <input type="text" id="description" placeholder="例: 補足説明" oninput="updateQuery(true)">
+      </div>
+      
+      <!-- Date Filter Section -->
+      <div class="date-filter-group">
+        <label>最終更新日時 (Modified Time)</label>
+        <div class="date-options">
+          <label class="date-option-label">
+            <input type="radio" name="dateMode" value="none" checked onchange="toggleDateInputs()"> 指定なし
+          </label>
+          <label class="date-option-label">
+            <input type="radio" name="dateMode" value="absolute" onchange="toggleDateInputs()"> 日付範囲
+          </label>
+          <label class="date-option-label">
+            <input type="radio" name="dateMode" value="relative" onchange="toggleDateInputs()"> 相対指定
+          </label>
+        </div>
+        
+        <!-- Absolute Inputs -->
+        <div id="dateAbsolute" class="date-inputs input-disabled">
+          <div class="date-input-wrapper">
+            <span>以後 (After):</span>
+            <input type="date" id="dateAfter" oninput="updateQuery(true)">
+          </div>
+          <div class="date-input-wrapper">
+            <span>以前 (Before):</span>
+            <input type="date" id="dateBefore" oninput="updateQuery(true)">
+          </div>
+        </div>
+        
+        <!-- Relative Inputs -->
+        <div id="dateRelative" class="date-inputs input-disabled" style="display:none;">
+          <div class="date-input-wrapper">
+            <span>現在から</span>
+            <input type="number" id="relativeDays" value="7" min="0" style="width:60px;" oninput="updateQuery(true)">
+            <span>日</span>
+            <select id="relativeOperator" onchange="updateQuery(true)">
+              <option value="older">以前 (Older than)</option>
+              <option value="newer">以後 (Within/Newer)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="field">
         <label>ファイル形式 (MimeType)</label>
         <select id="mimeType" onchange="updateQuery(true)">
           <option value="">すべて</option>
@@ -269,7 +362,7 @@
             <tr>
               <th>選択</th>
               <th>フォルダ名</th>
-              <th>内訳 <small>(フォルダ/ファイル)</small></th>
+              <th>内訳 <small>(種別ごと)</small></th>
               <th>最終更新</th>
             </tr>
           </thead>
@@ -344,7 +437,7 @@
   let loadedFilesCount = 0;
   let folderCount = 0;
   let fileCount = 0;
-  let currentFolderIds = []; // 現在表示中のフォルダIDリスト
+  let currentFolderIds = [];
 
   window.onload = function() {
     if (typeof google !== 'undefined' && google.script && google.script.run) {
@@ -354,9 +447,22 @@
             if (settings.parentType) document.getElementById('parentType').value = settings.parentType;
             if (settings.customParentId) document.getElementById('customParentId').value = settings.customParentId;
             if (settings.fileName) document.getElementById('fileName').value = settings.fileName;
+            if (settings.fullText) document.getElementById('fullText').value = settings.fullText;
+            if (settings.description) document.getElementById('description').value = settings.description;
             if (settings.mimeType) document.getElementById('mimeType').value = settings.mimeType;
             if (settings.ownerType) document.getElementById('ownerType').value = settings.ownerType;
             if (settings.destFolderId) document.getElementById('destFolderId').value = settings.destFolderId;
+            
+            // Date settings restore
+            if (settings.dateMode) {
+              document.querySelector(`input[name="dateMode"][value="${settings.dateMode}"]`).checked = true;
+            }
+            if (settings.dateAfter) document.getElementById('dateAfter').value = settings.dateAfter;
+            if (settings.dateBefore) document.getElementById('dateBefore').value = settings.dateBefore;
+            if (settings.relativeDays) document.getElementById('relativeDays').value = settings.relativeDays;
+            if (settings.relativeOperator) document.getElementById('relativeOperator').value = settings.relativeOperator;
+            
+            toggleDateInputs();
           }
           updateQuery(false);
         })
@@ -366,8 +472,49 @@
     }
   };
 
+  /**
+   * 日付入力エリアの切り替え
+   */
+  function toggleDateInputs() {
+    const mode = document.querySelector('input[name="dateMode"]:checked').value;
+    const absArea = document.getElementById('dateAbsolute');
+    const relArea = document.getElementById('dateRelative');
+    
+    if (mode === 'absolute') {
+      absArea.style.display = 'flex';
+      absArea.classList.remove('input-disabled');
+      relArea.style.display = 'none';
+    } else if (mode === 'relative') {
+      absArea.style.display = 'none';
+      relArea.style.display = 'flex';
+      relArea.classList.remove('input-disabled');
+    } else {
+      absArea.style.display = 'flex';
+      absArea.classList.add('input-disabled');
+      relArea.style.display = 'none';
+    }
+    updateQuery(true);
+  }
+
+  /**
+   * 日付の開始/終了時刻をUTC文字列に変換する
+   * ローカルの 00:00:00 または 23:59:59 を UTC に変換
+   */
+  function getDateQueryString(dateStr, isEndOfDay) {
+    if (!dateStr) return null;
+    const date = new Date(dateStr);
+    if (isEndOfDay) {
+      date.setHours(23, 59, 59, 999);
+    } else {
+      date.setHours(0, 0, 0, 0);
+    }
+    return date.toISOString();
+  }
+
   function getFileIcon(mimeType, fileName) {
-    if (fileName.toLowerCase().endsWith('.md')) return 'Ⓜ️';
+    if (mimeType === 'text/markdown') return 'Ⓜ️'; 
+    if (fileName && fileName.toLowerCase().endsWith('.md')) return 'Ⓜ️';
+    
     if (mimeType === 'application/vnd.google-apps.folder') return '📁';
     if (mimeType === 'application/vnd.google-apps.spreadsheet') return '📈';
     if (mimeType === 'application/vnd.google-apps.document') return '📄';
@@ -388,7 +535,7 @@
     if (type === 'folders') {
       document.getElementById('tabFolders').classList.add('active');
       document.getElementById('foldersContent').classList.add('active');
-      analyzeContainer.style.display = 'block'; // フォルダタブの時だけ表示
+      analyzeContainer.style.display = 'block';
     } else {
       document.getElementById('tabFiles').classList.add('active');
       document.getElementById('filesContent').classList.add('active');
@@ -405,7 +552,7 @@
     }
   }
 
-  // --- Picker Functions (omitted same as before) ---
+  // --- Picker Functions ---
   function openPicker(targetId) {
     currentTargetInputId = targetId;
     pickerStack = [{ id: 'root', name: 'マイドライブ' }];
@@ -512,10 +659,46 @@
     const customArea = document.getElementById('customParentArea');
     const customIdInput = document.getElementById('customParentId');
     const fileName = document.getElementById('fileName').value;
+    const fullText = document.getElementById('fullText').value;
+    const description = document.getElementById('description').value;
     const mimeType = document.getElementById('mimeType').value;
     const ownerType = document.getElementById('ownerType').value;
     const destFolderId = document.getElementById('destFolderId').value;
     
+    // --- Date Query Logic ---
+    const dateMode = document.querySelector('input[name="dateMode"]:checked').value;
+    const dateAfterInput = document.getElementById('dateAfter').value;
+    const dateBeforeInput = document.getElementById('dateBefore').value;
+    const relativeDays = document.getElementById('relativeDays').value;
+    const relativeOperator = document.getElementById('relativeOperator').value;
+
+    if (dateMode === 'absolute') {
+      if (dateAfterInput) {
+        // 指定日の00:00:00以後 (含む)
+        const utcStart = getDateQueryString(dateAfterInput, false);
+        if (utcStart) parts.push(`modifiedTime >= '${utcStart}'`);
+      }
+      if (dateBeforeInput) {
+        // 指定日の23:59:59以前 (含む)
+        const utcEnd = getDateQueryString(dateBeforeInput, true);
+        if (utcEnd) parts.push(`modifiedTime <= '${utcEnd}'`);
+      }
+    } else if (dateMode === 'relative' && relativeDays) {
+      const days = parseInt(relativeDays);
+      const targetDate = new Date();
+      targetDate.setDate(targetDate.getDate() - days);
+      const utcTarget = targetDate.toISOString();
+      
+      if (relativeOperator === 'older') {
+        // N日以前 -> modifiedTime < N日前
+        parts.push(`modifiedTime < '${utcTarget}'`);
+      } else {
+        // N日以後（以内） -> modifiedTime > N日前
+        parts.push(`modifiedTime > '${utcTarget}'`);
+      }
+    }
+    // ------------------------
+
     if (pType === 'root') {
       parts.push("'root' in parents");
       customArea.style.display = 'none';
@@ -525,13 +708,18 @@
     } else {
       customArea.style.display = 'none';
     }
+    
     if (fileName) parts.push(`name contains '${fileName}'`);
+    if (fullText) parts.push(`fullText contains '${fullText}'`);
+    if (description) parts.push(`description contains '${description}'`);
+    
     if (mimeType) {
       const op = mimeType.endsWith('/') ? 'contains' : '=';
       parts.push(`mimeType ${op} '${mimeType}'`);
     }
     if (ownerType === 'me') parts.push("'me' in owners");
     if (ownerType === 'notMe') parts.push("not 'me' in owners");
+    
     document.getElementById('qResult').textContent = parts.join(' and ');
     
     if (shouldSave) {
@@ -539,9 +727,17 @@
         parentType: pType,
         customParentId: customIdInput.value,
         fileName: fileName,
+        fullText: fullText,
+        description: description,
         mimeType: mimeType,
         ownerType: ownerType,
-        destFolderId: destFolderId
+        destFolderId: destFolderId,
+        // Date Settings
+        dateMode: dateMode,
+        dateAfter: dateAfterInput,
+        dateBefore: dateBeforeInput,
+        relativeDays: relativeDays,
+        relativeOperator: relativeOperator
       });
     }
   }
@@ -574,7 +770,7 @@
     loadedFilesCount = 0;
     folderCount = 0;
     fileCount = 0;
-    currentFolderIds = []; // リセット
+    currentFolderIds = [];
     
     btn.disabled = true;
     loading.style.display = 'block';
@@ -590,9 +786,7 @@
         loading.style.display = 'none';
         currentNextPageToken = response.nextPageToken;
         loadedFilesCount = response.files.length;
-        
         renderTable(response.files, false);
-        
         if (currentNextPageToken) {
           fetchMoreArea.style.display = 'block';
         }
@@ -664,7 +858,6 @@
       const icon = getFileIcon(file.mimeType, file.name);
       
       if (isFolder) {
-        // フォルダ用: 内訳カラム付き
         row.innerHTML = `
           <td><input type="checkbox" class="file-check" value="${file.id}"></td>
           <td>
@@ -677,7 +870,6 @@
           <td>${new Date(file.modifiedTime).toLocaleString()}</td>
         `;
       } else {
-        // ファイル用: サイズカラム付き
         row.innerHTML = `
           <td><input type="checkbox" class="file-check" value="${file.id}"></td>
           <td>
@@ -706,9 +898,6 @@
     updateBadge();
   }
 
-  /**
-   * フォルダの内訳集計を順次実行する
-   */
   async function runAnalyzeFolders() {
     if (currentFolderIds.length === 0) {
       alert('表示されているフォルダがありません。');
@@ -720,7 +909,6 @@
     btn.disabled = true;
     btn.textContent = '集計中...';
     
-    // UIブロックを避けるため、1つずつ非同期で処理
     for (const folderId of currentFolderIds) {
       const cell = document.getElementById(`stats-${folderId}`);
       if (cell) cell.textContent = '...';
@@ -732,7 +920,13 @@
                cell.textContent = 'Err';
                cell.title = res.error;
             } else {
-               cell.textContent = `${res.folders} / ${res.files}`;
+               const details = Object.entries(res.counts || {})
+                 .map(([type, count]) => {
+                   return `<span class="stat-item">${getFileIcon(type)} ${count}</span>`;
+                 })
+                 .join(' ');
+               
+               cell.innerHTML = details || '(空)';
             }
             resolve();
           })
