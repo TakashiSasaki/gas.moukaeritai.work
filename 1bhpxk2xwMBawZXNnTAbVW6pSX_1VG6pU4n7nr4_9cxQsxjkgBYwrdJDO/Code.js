@@ -4,7 +4,7 @@
 function doGet() {
   return HtmlService.createTemplateFromFile('Index')
     .evaluate()
-    .setTitle('Drive Query Builder & Mover')
+    .setTitle('Drive Shallow Mover')
     .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL)
     .addMetaTag('viewport', 'width=device-width, initial-scale=1');
 }
@@ -27,12 +27,23 @@ function loadUserSettings() {
 }
 
 /**
+ * 現在のユーザーのメールアドレスを取得する
+ */
+function getCurrentUserEmail() {
+  return Session.getActiveUser().getEmail();
+}
+
+/**
  * 指定した親フォルダ内のサブフォルダ一覧を取得する（ピッカー用）
  */
 function getChildFolders(parentId = 'root', bypassCache = false) {
   const lock = LockService.getUserLock();
+  // 2秒待ってロックが取れなければ即座にエラーを返し、クライアント側でリトライさせる
+  if (!lock.tryLock(2000)) {
+    throw new Error('SERVER_BUSY');
+  }
+  
   try {
-    lock.waitLock(10000);
     const cache = CacheService.getUserCache();
     const cacheKey = 'folder_children_' + parentId;
     if (!bypassCache) {
@@ -64,8 +75,6 @@ function getChildFolders(parentId = 'root', bypassCache = false) {
 
 /**
  * ファイルサイズを適切な単位に整形するヘルパー関数
- * @param {string|number} sizeBytes バイト数
- * @return {string} 整形されたサイズ文字列
  */
 function formatFileSize(sizeBytes) {
   if (!sizeBytes) return '-';
@@ -76,7 +85,6 @@ function formatFileSize(sizeBytes) {
   const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
   
-  // 単位配列の範囲外アクセス防止
   if (i < 0) return bytes + ' B';
   if (i >= sizes.length) return (bytes / Math.pow(k, sizes.length - 1)).toFixed(2) + ' ' + sizes[sizes.length - 1];
 
@@ -88,8 +96,12 @@ function formatFileSize(sizeBytes) {
  */
 function searchFiles(q, pageToken = null, pageSize = 10) {
   const lock = LockService.getUserLock();
+  // 2秒待ってロックが取れなければ即座にエラーを返す
+  if (!lock.tryLock(2000)) {
+    throw new Error('SERVER_BUSY');
+  }
+
   try {
-    lock.waitLock(30000);
     const response = Drive.Files.list({
       q: q,
       pageToken: pageToken,
@@ -101,7 +113,7 @@ function searchFiles(q, pageToken = null, pageSize = 10) {
       name: file.name,
       mimeType: file.mimeType,
       modifiedTime: file.modifiedTime,
-      size: formatFileSize(file.size) // ヘルパー関数を使用
+      size: formatFileSize(file.size)
     }));
     return {
       files: files,
@@ -119,8 +131,12 @@ function searchFiles(q, pageToken = null, pageSize = 10) {
  */
 function fetchAllRemaining(q, initialPageToken) {
   const lock = LockService.getUserLock();
+  // 2秒待ってロックが取れなければ即座にエラーを返す
+  if (!lock.tryLock(2000)) {
+    throw new Error('SERVER_BUSY');
+  }
+
   try {
-    lock.waitLock(60000);
     const allResults = [];
     let pageToken = initialPageToken;
     do {
@@ -136,7 +152,7 @@ function fetchAllRemaining(q, initialPageToken) {
           name: file.name,
           mimeType: file.mimeType,
           modifiedTime: file.modifiedTime,
-          size: formatFileSize(file.size) // ヘルパー関数を使用
+          size: formatFileSize(file.size)
         })));
       }
       pageToken = response.nextPageToken;
@@ -154,8 +170,12 @@ function fetchAllRemaining(q, initialPageToken) {
  */
 function moveFiles(fileIds, destinationId) {
   const lock = LockService.getUserLock();
+  // 2秒待ってロックが取れなければ即座にエラーを返す
+  if (!lock.tryLock(2000)) {
+    throw new Error('SERVER_BUSY');
+  }
+
   try {
-    lock.waitLock(30000);
     const results = { success: 0, error: 0, details: [] };
     fileIds.forEach(fileId => {
       try {
@@ -178,10 +198,9 @@ function moveFiles(fileIds, destinationId) {
 
 /**
  * 指定したフォルダ単体のアイテム数（種別ごとの内訳）を集計する
- * キャッシュを活用してAPI呼び出し回数を削減
- * @param {string} folderId 集計対象のフォルダID
  */
 function getSingleFolderStats(folderId) {
+  // 読み取り専用で軽い処理のためロックは使用しない（並列実行を許可）
   const cache = CacheService.getUserCache();
   const cacheKey = 'folder_stats_v2_' + folderId;
   

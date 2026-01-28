@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Development Context & Rules - Drive Shallow Mover</title>
+    <style>
+        :root {
+            --bg-color: #2d2d2d;
+            --text-color: #e0e0e0;
+            --accent-color: #76c7c0;
+            --code-bg: #383838;
+        }
+        body {
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding: 20px;
+            line-height: 1.5;
+        }
+        h1, h2 {
+            color: var(--accent-color);
+            border-bottom: 1px solid #555;
+            padding-bottom: 10px;
+        }
+        code {
+            background-color: var(--code-bg);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #ffab91;
+        }
+        pre {
+            background-color: var(--code-bg);
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            border: 1px solid #555;
+        }
+        .tag {
+            display: inline-block;
+            background-color: #0277bd;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            margin-right: 5px;
+        }
+        .rule-block {
+            margin-bottom: 20px;
+            border-left: 4px solid var(--accent-color);
+            padding-left: 15px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>🤖 Development Context: Drive Shallow Mover</h1>
+    <p>This document outlines the architectural decisions, coding rules, and constraints established during the development of the "Drive Shallow Mover" application. Future coding agents should adhere to these guidelines to maintain consistency and functionality.</p>
+
+    <h2>1. Project Overview</h2>
+    <p><strong>Goal:</strong> A Google Apps Script (GAS) web application to search, filter, and move files within Google Drive without recursive directory traversal.</p>
+    <p><strong>Core Philosophy:</strong> "Shallow" operation. Only interact with files directly under the specified folder (or root). No deep recursion.</p>
+
+    <h2>2. Mandatory Coding Rules</h2>
+
+    <div class="rule-block">
+        <h3><span class="tag">CRITICAL</span> Single-File Architecture</h3>
+        <p>Do NOT separate CSS or JavaScript into different files (e.g., <code>Stylesheet.html</code> or <code>Script.html</code>) included via GAS templates <code>&lt;?!= include(...) ?&gt;</code>.</p>
+        <p><strong>Reason:</strong> The preview environment (Gemini Canvas) cannot render server-side GAS template includes. To ensure the UI can be previewed and debugged in real-time within the Canvas, <strong>all CSS and JavaScript must be embedded directly within <code>Index.html</code></strong>.</p>
+    </div>
+
+    <div class="rule-block">
+        <h3><span class="tag">CRITICAL</span> Mock Data for Preview</h3>
+        <p>The <code>Index.html</code> must detect if it is running outside of the GAS environment (i.e., <code>typeof google === 'undefined'</code>) and switch to a <strong>Mock Mode</strong>.</p>
+        <ul>
+            <li>Search, Folder Picker, Fetch All, and Analysis functions must return dummy data.</li>
+            <li>Use <code>setTimeout</code> to simulate network latency.</li>
+            <li>This allows visual verification of UI states (loading, tables, badges) without deployment.</li>
+        </ul>
+    </div>
+
+    <div class="rule-block">
+        <h3><span class="tag">PERFORMANCE</span> Concurrency & Locking</h3>
+        <p>Since GAS does not handle concurrent execution for the same user state well in this context:</p>
+        <ul>
+            <li><strong>Server-side:</strong> Use <code>LockService.getUserLock()</code> in <code>Code.gs</code>. If the lock cannot be acquired within 2 seconds, throw a <code>SERVER_BUSY</code> error immediately. Do not wait long.</li>
+            <li><strong>Client-side:</strong> Implement a `runWithRetry` mechanism. If `SERVER_BUSY` is returned, automatically retry after a short delay and show a "Waiting..." status to the user.</li>
+        </ul>
+    </div>
+
+    <div class="rule-block">
+        <h3><span class="tag">API</span> Drive API v3 Usage</h3>
+        <p>Use the advanced Drive service (v3).</p>
+        <ul>
+            <li><strong>Search:</strong> Construct the <code>q</code> parameter string dynamically based on UI inputs.</li>
+            <li><strong>Move:</strong> Use <code>Drive.Files.update</code> with `addParents` and `removeParents` fields.</li>
+            <li><strong>Query Construction:</strong> Users do not write raw queries. The UI constructs them. Clicking the query display area should reopen the settings accordion.</li>
+        </ul>
+    </div>
+
+    <h2>3. UI/UX Specifications</h2>
+
+    <h3>Layout & Responsiveness</h3>
+    <ul>
+        <li><strong>Responsive:</strong> Must use <code>&lt;meta name="viewport" ...&gt;</code> and CSS media queries. Minimize padding/margins on mobile devices (&lt; 600px).</li>
+        <li><strong>Accordion:</strong> The search settings section is collapsible. It auto-closes upon search execution.</li>
+        <li><strong>Tabs:</strong> Search results are split into "Folders" and "Files" tabs. Default to the tab that has content.</li>
+        <li><strong>Scrolling:</strong> Result tables have `max-height` (approx 500px) with internal scrolling to prevent the "Move" section from being pushed too far down.</li>
+    </ul>
+
+    <h3>Visual Feedback</h3>
+    <ul>
+        <li><strong>Badges:</strong> Real-time count of total items and selected items.</li>
+        <li><strong>Icons:</strong> Use file-type specific emojis (📄, 📁, 📷, etc.) in the file list.</li>
+        <li><strong>Progress:</strong> "Fetch All" button shows elapsed seconds. "Analyze" button updates individual rows asynchronously.</li>
+    </ul>
+
+    <h2>4. Evolution History & Key Decisions</h2>
+    <ul>
+        <li><strong>Naming:</strong> Changed from "Manager" to "Mover" to accurately reflect its limited scope (moving files, not general management).</li>
+        <li><strong>Filtering:</strong> Added "Name does not contain", "Description contains", "Full text contains", Date ranges (absolute/relative), and Size ranges.</li>
+        <li><strong>Analysis:</strong> Implemented a "Analyze Breakdown" feature that fetches counts of children (folders/files) for listed folders using server-side caching (<code>CacheService</code>) to reduce API calls.</li>
+        <li><strong>Style Consistency:</strong> Removed white background boxes from Date/Size filters to match the flat design of other fields.</li>
+    </ul>
+
+</body>
+</html>
