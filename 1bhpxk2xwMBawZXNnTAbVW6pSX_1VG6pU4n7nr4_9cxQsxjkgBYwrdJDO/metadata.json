@@ -1,3 +1,14 @@
 {
-  "lastUpdated": "2026-01-28T10:48:09.574Z"
+  "name": "drive-file-mover",
+  "id": "1bhpxk2xwMBawZXNnTAbVW6pSX_1VG6pU4n7nr4_9cxQsxjkgBYwrdJDO",
+  "url": "https://script.google.com/d/1bhpxk2xwMBawZXNnTAbVW6pSX_1VG6pU4n7nr4_9cxQsxjkgBYwrdJDO/edit?usp=drivesdk",
+  "lastUpdated": "2026-01-28T11:00:54.656Z",
+  "application.json": null,
+  "deployments.json": [
+    {
+      "id": "AKfycbyVplN2_YKjBksTfGGG6U2WIPwmf15KJzkeBSj-Ifkj",
+      "target": "HEAD",
+      "description": ""
+    }
+  ]
 }
