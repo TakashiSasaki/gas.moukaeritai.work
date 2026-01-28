@@ -66,7 +66,7 @@
     .btn-outline { background-color: white; color: var(--primary-color); border: 1px solid var(--primary-color); }
     .btn-small { padding: 5px 10px; font-size: 12px; }
 
-    table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 14px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14px; }
     th, td { text-align: left; padding: 12px; border-bottom: 1px solid var(--border-color); }
     th { background-color: #f1f3f4; }
     
@@ -89,7 +89,7 @@
       color: #5f6368;
     }
     .accordion-collapsed .accordion-arrow { transform: rotate(-90deg); }
-    .results-content { overflow: hidden; transition: max-height 0.3s ease-out; }
+    .results-content { overflow: hidden; }
     .accordion-collapsed .results-content { display: none; }
     
     .count-badge {
@@ -100,6 +100,51 @@
       font-size: 0.8em;
       margin-left: 10px;
     }
+
+    /* Tab Styles */
+    .tabs-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-color);
+      margin-top: 15px;
+    }
+    .tabs {
+      display: flex;
+    }
+    .tab {
+      padding: 10px 20px;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      font-weight: bold;
+      color: #5f6368;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .tab:hover { background-color: var(--hover-color); }
+    .tab.active {
+      color: var(--primary-color);
+      border-bottom-color: var(--primary-color);
+    }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    
+    #analyzeBtnContainer { display: none; padding-right: 10px; }
+
+    /* File Icon Styles */
+    .file-name-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .file-icon {
+      font-size: 1.2em;
+      min-width: 24px;
+      text-align: center;
+    }
+    
+    .stats-cell { font-family: monospace; color: #666; font-size: 0.9em; }
 
     #folderPickerModal {
       display: none;
@@ -169,8 +214,10 @@
           <option value="">すべて</option>
           <option value="application/vnd.google-apps.spreadsheet">スプレッドシート</option>
           <option value="application/vnd.google-apps.document">ドキュメント</option>
+          <option value="application/vnd.google-apps.presentation">スライド</option>
           <option value="application/pdf">PDF</option>
           <option value="image/">画像全般</option>
+          <option value="video/">動画全般</option>
           <option value="application/vnd.google-apps.folder">フォルダ</option>
         </select>
       </div>
@@ -201,7 +248,36 @@
     
     <div class="results-content">
       <div id="loadingSearch" class="loading">検索中...</div>
-      <div id="fileTableContainer">
+      
+      <div class="tabs-container">
+        <div class="tabs">
+          <div id="tabFolders" class="tab active" onclick="switchResultTab('folders')">
+            フォルダ <span id="folderTabCount" class="count-badge">0</span>
+          </div>
+          <div id="tabFiles" class="tab" onclick="switchResultTab('files')">
+            ファイル <span id="fileTabCount" class="count-badge">0</span>
+          </div>
+        </div>
+        <div id="analyzeBtnContainer">
+          <button class="btn btn-outline btn-small" id="analyzeBtn" onclick="runAnalyzeFolders()">📊 内訳を集計</button>
+        </div>
+      </div>
+
+      <div id="foldersContent" class="tab-content active">
+        <table id="folderTable">
+          <thead>
+            <tr>
+              <th>選択</th>
+              <th>フォルダ名</th>
+              <th>内訳 <small>(フォルダ/ファイル)</small></th>
+              <th>最終更新</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
+      <div id="filesContent" class="tab-content">
         <table id="fileTable">
           <thead>
             <tr>
@@ -229,7 +305,7 @@
             <button class="btn btn-outline btn-small" onclick="openPicker('destFolderId')">選択</button>
           </div>
         </div>
-        <button class="btn btn-secondary" id="moveBtn" style="margin-top:10px;" onclick="runMove()">選択したファイルを移動する</button>
+        <button class="btn btn-secondary" id="moveBtn" style="margin-top:10px;" onclick="runMove()">選択したアイテムを移動する</button>
         <div id="loadingMove" class="loading">移動処理中...</div>
       </div>
     </div>
@@ -266,6 +342,9 @@
   let currentNextPageToken = null;
   let currentLastQuery = '';
   let loadedFilesCount = 0;
+  let folderCount = 0;
+  let fileCount = 0;
+  let currentFolderIds = []; // 現在表示中のフォルダIDリスト
 
   window.onload = function() {
     if (typeof google !== 'undefined' && google.script && google.script.run) {
@@ -287,9 +366,36 @@
     }
   };
 
-  /**
-   * アコーディオンの開閉
-   */
+  function getFileIcon(mimeType, fileName) {
+    if (fileName.toLowerCase().endsWith('.md')) return 'Ⓜ️';
+    if (mimeType === 'application/vnd.google-apps.folder') return '📁';
+    if (mimeType === 'application/vnd.google-apps.spreadsheet') return '📈';
+    if (mimeType === 'application/vnd.google-apps.document') return '📄';
+    if (mimeType === 'application/vnd.google-apps.presentation') return '🖼️';
+    if (mimeType === 'application/pdf') return '📕';
+    if (mimeType.startsWith('image/')) return '📷';
+    if (mimeType.startsWith('video/')) return '🎬';
+    if (mimeType.startsWith('audio/')) return '🎵';
+    return '📄';
+  }
+
+  function switchResultTab(type) {
+    document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+    
+    const analyzeContainer = document.getElementById('analyzeBtnContainer');
+    
+    if (type === 'folders') {
+      document.getElementById('tabFolders').classList.add('active');
+      document.getElementById('foldersContent').classList.add('active');
+      analyzeContainer.style.display = 'block'; // フォルダタブの時だけ表示
+    } else {
+      document.getElementById('tabFiles').classList.add('active');
+      document.getElementById('filesContent').classList.add('active');
+      analyzeContainer.style.display = 'none';
+    }
+  }
+
   function toggleAccordion(sectionId, forceOpen = false) {
     const section = document.getElementById(sectionId);
     if (forceOpen) {
@@ -299,6 +405,7 @@
     }
   }
 
+  // --- Picker Functions (omitted same as before) ---
   function openPicker(targetId) {
     currentTargetInputId = targetId;
     pickerStack = [{ id: 'root', name: 'マイドライブ' }];
@@ -397,6 +504,8 @@
     }
   }
 
+  // --- Main Logic Functions ---
+
   function updateQuery(shouldSave = true) {
     let parts = ['trashed = false'];
     const pType = document.getElementById('parentType').value;
@@ -406,6 +515,7 @@
     const mimeType = document.getElementById('mimeType').value;
     const ownerType = document.getElementById('ownerType').value;
     const destFolderId = document.getElementById('destFolderId').value;
+    
     if (pType === 'root') {
       parts.push("'root' in parents");
       customArea.style.display = 'none';
@@ -423,6 +533,7 @@
     if (ownerType === 'me') parts.push("'me' in owners");
     if (ownerType === 'notMe') parts.push("not 'me' in owners");
     document.getElementById('qResult').textContent = parts.join(' and ');
+    
     if (shouldSave) {
       debounceSave({
         parentType: pType,
@@ -461,13 +572,16 @@
     
     currentLastQuery = q;
     loadedFilesCount = 0;
+    folderCount = 0;
+    fileCount = 0;
+    currentFolderIds = []; // リセット
+    
     btn.disabled = true;
     loading.style.display = 'block';
     resultsSection.style.display = 'block';
     fetchMoreArea.style.display = 'none';
     badge.style.display = 'none';
     
-    // 検索時は自動でアコーディオンを展開
     toggleAccordion('resultsSection', true);
 
     google.script.run
@@ -477,7 +591,6 @@
         currentNextPageToken = response.nextPageToken;
         loadedFilesCount = response.files.length;
         
-        updateBadge();
         renderTable(response.files, false);
         
         if (currentNextPageToken) {
@@ -494,14 +607,11 @@
 
   function runFetchAll() {
     if (!currentNextPageToken || typeof google === 'undefined') return;
-    
     const btn = document.getElementById('fetchAllBtn');
     const loading = document.getElementById('loadingSearch');
     const fetchMoreArea = document.getElementById('fetchMoreArea');
-    
     btn.disabled = true;
     loading.style.display = 'block';
-    
     google.script.run
       .withSuccessHandler(files => {
         btn.disabled = false;
@@ -509,8 +619,6 @@
         fetchMoreArea.style.display = 'none';
         currentNextPageToken = null;
         loadedFilesCount += files.length;
-        
-        updateBadge();
         renderTable(files, true);
       })
       .withFailureHandler(err => {
@@ -525,24 +633,119 @@
     const badge = document.getElementById('itemCountBadge');
     badge.textContent = loadedFilesCount + (currentNextPageToken ? '+' : '');
     badge.style.display = 'inline-block';
+    
+    document.getElementById('folderTabCount').textContent = folderCount + (currentNextPageToken ? '+' : '');
+    document.getElementById('fileTabCount').textContent = fileCount + (currentNextPageToken ? '+' : '');
   }
 
   function renderTable(files, append = false) {
-    const tbody = document.querySelector('#fileTable tbody');
-    if (!append) tbody.innerHTML = '';
-    if (!append && files.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">該当するファイルが見つかりませんでした。</td></tr>';
+    const folderTbody = document.querySelector('#folderTable tbody');
+    const fileTbody = document.querySelector('#fileTable tbody');
+    
+    if (!append) {
+      folderTbody.innerHTML = '';
+      fileTbody.innerHTML = '';
+      folderCount = 0;
+      fileCount = 0;
+      currentFolderIds = [];
+    }
+
+    files.forEach(file => {
+      const isFolder = file.mimeType === 'application/vnd.google-apps.folder';
+      const targetTbody = isFolder ? folderTbody : fileTbody;
+      if (isFolder) {
+        folderCount++;
+        currentFolderIds.push(file.id);
+      } else {
+        fileCount++;
+      }
+
+      const row = targetTbody.insertRow();
+      const icon = getFileIcon(file.mimeType, file.name);
+      
+      if (isFolder) {
+        // フォルダ用: 内訳カラム付き
+        row.innerHTML = `
+          <td><input type="checkbox" class="file-check" value="${file.id}"></td>
+          <td>
+            <div class="file-name-container">
+              <span class="file-icon">${icon}</span>
+              <span>${file.name}</span>
+            </div>
+          </td>
+          <td><span id="stats-${file.id}" class="stats-cell">-</span></td>
+          <td>${new Date(file.modifiedTime).toLocaleString()}</td>
+        `;
+      } else {
+        // ファイル用: サイズカラム付き
+        row.innerHTML = `
+          <td><input type="checkbox" class="file-check" value="${file.id}"></td>
+          <td>
+            <div class="file-name-container">
+              <span class="file-icon">${icon}</span>
+              <span>${file.name}</span>
+            </div>
+          </td>
+          <td>${new Date(file.modifiedTime).toLocaleString()}</td>
+          <td>${file.size}</td>
+        `;
+      }
+    });
+
+    if (!append) {
+      if (folderCount === 0) folderTbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">該当するフォルダはありません。</td></tr>';
+      if (fileCount === 0) fileTbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">該当するファイルはありません。</td></tr>';
+      
+      if (folderCount === 0 && fileCount > 0) {
+        switchResultTab('files');
+      } else {
+        switchResultTab('folders');
+      }
+    }
+    
+    updateBadge();
+  }
+
+  /**
+   * フォルダの内訳集計を順次実行する
+   */
+  async function runAnalyzeFolders() {
+    if (currentFolderIds.length === 0) {
+      alert('表示されているフォルダがありません。');
       return;
     }
-    files.forEach(file => {
-      const row = tbody.insertRow();
-      row.innerHTML = `
-        <td><input type="checkbox" class="file-check" value="${file.id}"></td>
-        <td>${file.name}</td>
-        <td>${new Date(file.modifiedTime).toLocaleString()}</td>
-        <td>${file.size}</td>
-      `;
-    });
+    
+    const btn = document.getElementById('analyzeBtn');
+    const originalText = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = '集計中...';
+    
+    // UIブロックを避けるため、1つずつ非同期で処理
+    for (const folderId of currentFolderIds) {
+      const cell = document.getElementById(`stats-${folderId}`);
+      if (cell) cell.textContent = '...';
+      
+      await new Promise(resolve => {
+        google.script.run
+          .withSuccessHandler(res => {
+            if (res.error) {
+               cell.textContent = 'Err';
+               cell.title = res.error;
+            } else {
+               cell.textContent = `${res.folders} / ${res.files}`;
+            }
+            resolve();
+          })
+          .withFailureHandler(() => {
+            cell.textContent = 'Err';
+            resolve();
+          })
+          .getSingleFolderStats(folderId);
+      });
+    }
+    
+    btn.disabled = false;
+    btn.textContent = originalText;
   }
 
   function runMove() {
@@ -550,10 +753,10 @@
     const destId = document.getElementById('destFolderId').value;
     const selectedIds = Array.from(document.querySelectorAll('.file-check:checked')).map(cb => cb.value);
     if (!destId || selectedIds.length === 0) {
-      alert('移動先フォルダと対象ファイルを選択してください。');
+      alert('移動先フォルダと対象アイテムを選択してください。');
       return;
     }
-    if (!confirm(`${selectedIds.length} 個のファイルを移動します。よろしいですか？`)) return;
+    if (!confirm(`${selectedIds.length} 個のアイテムを移動します。よろしいですか？`)) return;
     const btn = document.getElementById('moveBtn');
     const loading = document.getElementById('loadingMove');
     btn.disabled = true;

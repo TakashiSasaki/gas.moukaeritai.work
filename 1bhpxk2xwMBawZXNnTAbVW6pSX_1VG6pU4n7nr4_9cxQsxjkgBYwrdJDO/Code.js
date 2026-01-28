@@ -28,7 +28,6 @@ function loadUserSettings() {
 
 /**
  * 指定した親フォルダ内のサブフォルダ一覧を取得する（ピッカー用）
- * @return {Object} { items: Array, fromCache: boolean }
  */
 function getChildFolders(parentId = 'root', bypassCache = false) {
   const lock = LockService.getUserLock();
@@ -64,10 +63,7 @@ function getChildFolders(parentId = 'root', bypassCache = false) {
 }
 
 /**
- * 組み立てられた q パラメータを使用してファイルを検索する（プレビュー用/ページング対応）
- * @param {string} q 検索クエリ
- * @param {string} pageToken 次のページを取得するためのトークン
- * @param {number} pageSize 取得件数
+ * 組み立てられた q パラメータを使用してファイルを検索する
  */
 function searchFiles(q, pageToken = null, pageSize = 10) {
   const lock = LockService.getUserLock();
@@ -103,7 +99,7 @@ function searchFiles(q, pageToken = null, pageSize = 10) {
 function fetchAllRemaining(q, initialPageToken) {
   const lock = LockService.getUserLock();
   try {
-    lock.waitLock(60000); // 重い可能性があるため長めに待機
+    lock.waitLock(60000);
     const allResults = [];
     let pageToken = initialPageToken;
     do {
@@ -156,5 +152,62 @@ function moveFiles(fileIds, destinationId) {
     throw new Error('移動処理エラー: ' + e.message);
   } finally {
     lock.releaseLock();
+  }
+}
+
+/**
+ * 指定したフォルダ単体のアイテム数（サブフォルダ数、ファイル数）を集計する
+ * キャッシュを活用してAPI呼び出し回数を削減
+ * @param {string} folderId 集計対象のフォルダID
+ */
+function getSingleFolderStats(folderId) {
+  const cache = CacheService.getUserCache();
+  // フォルダ一覧用のキャッシュキー(folder_children_)と衝突しないようプレフィックスを変える
+  const cacheKey = 'folder_stats_' + folderId;
+  
+  const cachedData = cache.get(cacheKey);
+  if (cachedData) {
+    return JSON.parse(cachedData);
+  }
+
+  // 集計処理は読み取り専用のため、他の操作をブロックしないようロックは使用しない
+  let folderCount = 0;
+  let fileCount = 0;
+  let pageToken = null;
+  
+  try {
+    do {
+      // 1000件ずつ取得して高速化
+      const response = Drive.Files.list({
+        q: `'${folderId}' in parents and trashed = false`,
+        pageToken: pageToken,
+        fields: 'nextPageToken, files(mimeType)',
+        pageSize: 1000
+      });
+      
+      if (response.files) {
+        response.files.forEach(f => {
+          if (f.mimeType === 'application/vnd.google-apps.folder') {
+            folderCount++;
+          } else {
+            fileCount++;
+          }
+        });
+      }
+      pageToken = response.nextPageToken;
+    } while (pageToken);
+    
+    const result = { folderId: folderId, folders: folderCount, files: fileCount };
+    
+    // 結果をキャッシュに保存（10分間有効）
+    try {
+      cache.put(cacheKey, JSON.stringify(result), 600);
+    } catch (e) {
+      console.warn('Stats cache storage failed: ' + e.message);
+    }
+    
+    return result;
+  } catch (e) {
+    return { folderId: folderId, error: e.message };
   }
 }
