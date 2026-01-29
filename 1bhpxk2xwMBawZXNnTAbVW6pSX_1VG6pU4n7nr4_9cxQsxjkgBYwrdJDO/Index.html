@@ -4,7 +4,7 @@
   <base target="_top">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    /* CSSは変更なし */
+    /* CSSは前回と同様 */
     :root { --primary-color: #1a73e8; --bg-color: #f8f9fa; --border-color: #dadce0; --hover-color: #f1f3f4; --cache-color: #f29900; --live-color: #0f9d58; --error-color: #d93025; }
     * { box-sizing: border-box; }
     body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-color); margin: 0; padding: 20px; color: #3c4043; }
@@ -70,8 +70,6 @@
     .log-item { margin-bottom: 4px; } .log-error { color: var(--error-color); font-weight: bold; } .log-success { color: var(--live-color); }
     .error-summary { background-color: #fce8e6; color: #c5221f; padding: 10px; border-radius: 4px; margin-top: 10px; display: none; }
     .fetch-more-control { display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 10px; }
-    
-    /* Modal Styles */
     #folderPickerModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; }
     .modal-content { background: white; width: 95%; max-width: 500px; border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; max-height: 85vh; }
     .modal-header { padding: 12px 15px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
@@ -154,7 +152,7 @@
   <div id="moveSection" class="section" style="display:none;">
     <span class="section-title">3. ファイルの移動</span>
     <div class="field"><label>移動先フォルダID</label>
-      <div class="input-with-btn"><input type="text" id="destFolderId" placeholder="フォルダIDを入力" oninput="updateDestPath()"><button class="btn btn-outline btn-small" onclick="openPicker('destFolderId')">選択</button></div>
+      <div class="input-with-btn"><input type="text" id="destFolderId" placeholder="フォルダIDを入力" oninput="updateDestPath(); updateQuery(true)"><button class="btn btn-outline btn-small" onclick="openPicker('destFolderId')">選択</button></div>
       <div id="destPathDisplay" class="path-display"></div>
     </div>
     <button class="btn btn-secondary" id="moveBtn" style="margin-top:10px;" onclick="runMove()">選択したアイテムを移動する</button>
@@ -167,21 +165,7 @@
   </div>
 </div>
 
-<div id="folderPickerModal">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h3>フォルダを選択<span id="cacheIndicator" class="cache-status" style="display:none;"></span></h3>
-      <div><button class="btn btn-outline btn-small" onclick="refreshPicker()">🔄 更新</button><button class="btn btn-outline btn-small" onclick="closePicker()">×</button></div>
-    </div>
-    <div class="breadcrumb" id="pickerBreadcrumb"></div>
-    <div class="modal-body" id="pickerBody"><div style="padding:20px; text-align:center;">読み込み中...</div></div>
-    <div class="modal-footer">
-      <span id="selectedFolderName" style="margin-right:auto;font-weight:bold;"></span>
-      <button class="btn btn-secondary" onclick="closePicker()">キャンセル</button>
-      <button class="btn" id="confirmPickBtn" disabled onclick="confirmPicker()">決定</button>
-    </div>
-  </div>
-</div>
+<div id="folderPickerModal"><div class="modal-content"><div class="modal-header"><h3>フォルダを選択<span id="cacheIndicator" class="cache-status" style="display:none;"></span></h3><div><button class="btn btn-outline btn-small" onclick="refreshPicker()">🔄 更新</button><button class="btn btn-outline btn-small" onclick="closePicker()">×</button></div></div><div class="breadcrumb" id="pickerBreadcrumb"></div><div class="modal-body" id="pickerBody"><div style="padding:20px; text-align:center;">読み込み中...</div></div><div class="modal-footer"><span id="selectedFolderName" style="margin-right:auto;font-weight:bold;"></span><button class="btn btn-secondary" onclick="closePicker()">キャンセル</button><button class="btn" id="confirmPickBtn" disabled onclick="confirmPicker()">決定</button></div></div></div>
 
 <script>
   let saveTimeout = null;
@@ -199,7 +183,6 @@
   let currentFolderIds = [];
   let fileNamesMap = {};
 
-  // Mock Initialization for Preview
   function initApp() {
       console.log('Preview Mode Initialized');
       document.getElementById('userEmail').textContent = 'preview_user@example.com';
@@ -213,6 +196,7 @@
       if (typeof initApp === 'function') initApp(); 
   };
 
+  // --- Common UI Functions ---
   function updateSelectionCount() {
     const count = document.querySelectorAll('.file-check:checked').length;
     const badge = document.getElementById('selectionCountBadge');
@@ -223,6 +207,7 @@
   function syncSelectAllCheckbox(type) {
     const tableId = type === 'folders' ? 'folderTable' : 'fileTable';
     const headerCheckbox = document.getElementById(type === 'folders' ? 'selectAllFolders' : 'selectAllFiles');
+    if(!headerCheckbox) return;
     const checkboxes = document.querySelectorAll(`#${tableId} tbody .file-check`);
     if (checkboxes.length === 0) { headerCheckbox.checked = false; headerCheckbox.indeterminate = false; return; }
     const allChecked = Array.from(checkboxes).every(cb => cb.checked);
@@ -236,20 +221,27 @@
     try { document.execCommand('copy'); const btn = document.getElementById('copyBtn'); const old = btn.textContent; btn.textContent = '✅ コピー完了'; setTimeout(() => btn.textContent = old, 1500); } catch (e) { alert('コピー失敗'); }
     document.body.removeChild(temp);
   }
-  function toggleDateInputs() {
+  
+  function toggleDateInputs(shouldSave = true) {
     const mode = document.querySelector('input[name="dateMode"]:checked').value;
     const abs = document.getElementById('dateAbsolute'), rel = document.getElementById('dateRelative');
-    abs.style.display = mode === 'absolute' || mode === 'none' ? 'flex' : 'none';
-    abs.className = mode === 'none' ? 'filter-inputs input-disabled' : 'filter-inputs';
-    rel.style.display = mode === 'relative' ? 'flex' : 'none';
-    updateQuery(true);
+    const setState = (el, enable) => {
+        el.style.display = enable ? 'flex' : 'none';
+        if (enable) {
+            el.classList.remove('input-disabled');
+            el.querySelectorAll('input, select').forEach(i => i.disabled = false);
+        } else {
+            el.classList.add('input-disabled');
+            el.querySelectorAll('input, select').forEach(i => i.disabled = true);
+        }
+    };
+    setState(abs, false); setState(rel, false);
+    if (mode === 'absolute') { setState(abs, true); } 
+    else if (mode === 'relative') { setState(rel, true); } 
+    else { abs.style.display = 'flex'; }
+    updateQuery(shouldSave);
   }
-  function getDateQueryString(dateStr, isEndOfDay) {
-    if (!dateStr) return null;
-    const date = new Date(dateStr);
-    if (isEndOfDay) date.setHours(23, 59, 59, 999); else date.setHours(0, 0, 0, 0);
-    return date.toISOString();
-  }
+
   function getFileIcon(mime, name) {
     if (mime === 'text/markdown' || (name && name.toLowerCase().endsWith('.md'))) return 'Ⓜ️';
     if (mime === 'text/plain') return '📝';
@@ -274,29 +266,120 @@
     document.querySelectorAll(`#${t === 'folders' ? 'folderTable' : 'fileTable'} tbody .file-check`).forEach(cb => cb.checked = checked);
     updateSelectionCount();
   }
+
+  // --- COMPLETE Logic for Query Construction ---
   function updateQuery(shouldSave) {
     let parts = ['trashed = false'];
-    const val = id => document.getElementById(id).value;
-    if (val('parentType') === 'root') parts.push("'root' in parents");
-    else if (val('parentType') === 'custom' && val('customParentId')) parts.push(`'${val('customParentId')}' in parents`);
-    document.getElementById('customParentArea').style.display = val('parentType') === 'custom' ? 'flex' : 'none';
+
+    // Helper: Escapes single quotes and gets value
+    const val = id => {
+        const el = document.getElementById(id);
+        if(!el) return '';
+        // CRITICAL: Escape single quotes for q parameter
+        return el.value.replace(/'/g, "\\'");
+    };
     
-    if (val('fileName')) parts.push(`name contains '${val('fileName')}'`);
-    for(let i=1; i<=5; i++) { if(val('fileNameExclude'+i)) parts.push(`not name contains '${val('fileNameExclude'+i)}'`); }
+    // 1. Location
+    const pType = document.getElementById('parentType').value;
+    if (pType === 'root') parts.push("'root' in parents");
+    else if (pType === 'custom' && val('customParentId')) parts.push(`'${val('customParentId')}' in parents`);
+    const customArea = document.getElementById('customParentArea');
+    if(customArea) customArea.style.display = pType === 'custom' ? 'flex' : 'none';
     
-    document.getElementById('qResult').textContent = parts.join(' and ');
-    if (shouldSave && typeof debounceSave === 'function') debounceSave({});
+    // 2. Name
+    const fileName = val('fileName');
+    if (fileName) parts.push(`name contains '${fileName}'`);
+    for(let i=1; i<=5; i++) { 
+        const v = val('fileNameExclude'+i);
+        if(v) parts.push(`not name contains '${v}'`); 
+    }
+
+    // 3. MimeType (Markdown handled as OR)
+    const mime = document.getElementById('mimeType').value;
+    if (mime) {
+        if (mime === 'text/markdown') {
+            parts.push("(mimeType = 'text/markdown' or (mimeType = 'text/plain' and name contains '.md'))");
+        } else if (mime.endsWith('/')) {
+            parts.push(`mimeType contains '${mime}'`);
+        } else {
+            parts.push(`mimeType = '${mime}'`);
+        }
+    }
+
+    // 4. Owner
+    const owner = document.getElementById('ownerType').value;
+    if (owner === 'me') parts.push("'me' in owners");
+    else if (owner === 'notMe') parts.push("not 'me' in owners");
+
+    // 5. Text (Combines UI description and fullText into fullText property)
+    const ftInput = val('fullText');
+    const descInput = val('description');
+    if (ftInput) parts.push(`fullText contains '${ftInput}'`);
+    if (descInput) parts.push(`fullText contains '${descInput}'`); // API doesn't support 'description' key in q
+
+    // 6. Modified Time
+    const dateModeEl = document.querySelector('input[name="dateMode"]:checked');
+    const dateMode = dateModeEl ? dateModeEl.value : 'none';
+    if (dateMode === 'absolute') {
+        const after = val('dateAfter');
+        const before = val('dateBefore');
+        if (after) parts.push(`modifiedTime >= '${new Date(after).toISOString()}'`);
+        if (before) {
+            let d = new Date(before); d.setHours(23, 59, 59, 999);
+            parts.push(`modifiedTime <= '${d.toISOString()}'`);
+        }
+    } else if (dateMode === 'relative') {
+        const days = parseInt(document.getElementById('relativeDays').value) || 0;
+        const operator = document.getElementById('relativeOperator').value === 'older' ? '<' : '>';
+        const d = new Date(); d.setDate(d.getDate() - days);
+        parts.push(`modifiedTime ${operator} '${d.toISOString()}'`);
+    }
+
+    // 7. File Size (API does NOT support 'size' in q. We must remove it to avoid Invalid Value error)
+    // To implement size filtering, it must be done server-side after the search.
+    
+    // Update Display
+    const resultEl = document.getElementById('qResult');
+    if(resultEl) resultEl.textContent = parts.join(' and ');
+
+    // Automatic Save
+    if (shouldSave && typeof debounceSave === 'function') {
+        const settings = {};
+        const allIds = ['parentType', 'customParentId', 'fileName', 'fullText', 'description', 'mimeType', 'ownerType', 'destFolderId', 'dateAfter', 'dateBefore', 'relativeDays', 'relativeOperator', 'sizeLarger', 'sizeLargerUnit', 'sizeSmaller', 'sizeSmallerUnit'];
+        allIds.forEach(k => {
+            const el = document.getElementById(k);
+            if(el) settings[k] = el.value;
+        });
+        for(let i=1; i<=5; i++) settings['fileNameExclude'+i] = val('fileNameExclude'+i);
+        settings.dateMode = dateMode;
+        debounceSave(settings);
+    }
   }
 
-  // --- MOCK Functions ---
+  // --- MOCK Functions for Preview ---
+  function openPicker(id) { currentTargetInputId = id; pickerStack = [{id:'root', name:'マイドライブ'}]; document.getElementById('folderPickerModal').style.display = 'flex'; loadFolderList('root'); }
+  function closePicker() { document.getElementById('folderPickerModal').style.display = 'none'; }
+  function confirmPicker() { if (selectedFolderInfo) { document.getElementById(currentTargetInputId).value = selectedFolderInfo.id; updateQuery(true); updateDestPath(); closePicker(); } }
+  function refreshPicker() { loadFolderList(pickerStack[pickerStack.length - 1].id, true); }
+  function loadFolderList(p) {
+    const body = document.getElementById('pickerBody'); const indicator = document.getElementById('cacheIndicator');
+    body.innerHTML = '読み込み中...';
+    setTimeout(() => {
+        const mockFolders = [{ id: 'f1', name: '📂 Documents' }, { id: 'f2', name: '🖼️ Images' }, { id: 'f3', name: '💼 Work' }];
+        indicator.style.display = 'inline-block'; indicator.textContent = 'ダミー'; indicator.className = 'cache-status status-live';
+        body.innerHTML = ''; mockFolders.forEach(f => {
+          const div = document.createElement('div'); div.className = 'folder-item'; div.innerHTML = `<span>${f.name}</span>`;
+          div.onclick = () => { selectedFolderInfo = f; document.getElementById('selectedFolderName').textContent = f.name; document.getElementById('confirmPickBtn').disabled = false; };
+          div.ondblclick = () => { pickerStack.push(f); loadFolderList(f.id); }; body.appendChild(div);
+        });
+    }, 300);
+  }
   function generateMockFiles(count, startId = 0) {
     const types = ['application/vnd.google-apps.folder', 'text/plain'];
     return Array.from({length: count}, (_, i) => ({
       id: 'mock_' + (startId + i),
-      name: 'Mock Item ' + (startId + i),
-      mimeType: types[Math.floor(Math.random() * types.length)],
-      modifiedTime: new Date().toISOString(),
-      size: '1KB'
+      name: 'Mock Item ' + (startId + i), mimeType: types[Math.floor(Math.random() * types.length)],
+      modifiedTime: new Date().toISOString(), size: '1KB'
     }));
   }
   function runSearch() {
@@ -309,16 +392,6 @@
         renderTable(generateMockFiles(10), false);
         document.getElementById('fetchMoreArea').style.display = 'block';
     }, 500);
-  }
-  function runFetchAll() {
-    const btn = document.getElementById('fetchAllBtn');
-    let sec = 0;
-    const timer = setInterval(() => { sec++; btn.textContent = `取得中... (${sec}秒)`; }, 1000);
-    setTimeout(() => {
-        clearInterval(timer);
-        renderTable(generateMockFiles(15, 10), true);
-        btn.textContent = '追加で読み込む';
-    }, 1500);
   }
   function renderTable(files, append) {
       const ft = document.querySelector('#folderTable tbody'), flt = document.querySelector('#fileTable tbody');
@@ -337,29 +410,11 @@
       document.getElementById('fileTabCount').textContent = fileCount;
       document.getElementById('itemCountBadge').textContent = folderCount + fileCount;
   }
-  
-  // Picker related mock functions
-  function openPicker(id) { currentTargetInputId = id; pickerStack = [{id:'root', name:'マイドライブ'}]; document.getElementById('folderPickerModal').style.display = 'flex'; loadFolderList('root'); }
-  function closePicker() { document.getElementById('folderPickerModal').style.display = 'none'; }
-  function confirmPicker() { if (selectedFolderInfo) { document.getElementById(currentTargetInputId).value = selectedFolderInfo.id; updateQuery(true); updateDestPath(); closePicker(); } }
-  function refreshPicker() { loadFolderList(pickerStack[pickerStack.length - 1].id, true); }
-  function loadFolderList(p) {
-    const body = document.getElementById('pickerBody'); const indicator = document.getElementById('cacheIndicator');
-    body.innerHTML = '読み込み中...';
-    setTimeout(() => {
-        const mockFolders = [{ id: 'f1', name: '📂 Documents' }, { id: 'f2', name: '🖼️ Images' }, { id: 'f3', name: '💼 Work' }];
-        indicator.style.display = 'inline-block'; indicator.textContent = 'ダミー'; indicator.className = 'cache-status status-live';
-        body.innerHTML = ''; mockFolders.forEach(f => {
-          const div = document.createElement('div'); div.className = 'folder-item'; div.innerHTML = `<span>${f.name}</span>`;
-          div.onclick = () => { selectedFolderInfo = f; document.getElementById('selectedFolderName').textContent = f.name; document.getElementById('confirmPickBtn').disabled = false; };
-          div.ondblclick = () => { pickerStack.push(f); loadFolderList(f.id); }; body.appendChild(div);
-        });
-    }, 300);
-  }
-
   function runMove() { alert('Mock Move'); }
   function runAnalyzeFolders() { alert('Mock Analyze'); }
   function updateDestPath() { document.getElementById('destPathDisplay').textContent = '📂 Mock Path'; }
+  function selectFolderItem(f) { selectedFolderInfo = f; } 
+  function updateBreadcrumb() {} 
   function debounceSave() {} 
 </script>
 

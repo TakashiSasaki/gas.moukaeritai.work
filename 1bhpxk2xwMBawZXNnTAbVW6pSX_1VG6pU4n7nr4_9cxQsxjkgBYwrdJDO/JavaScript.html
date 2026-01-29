@@ -1,388 +1,285 @@
 <script>
-  /**
-   * GAS環境用: サーバー連携ロジック (JavaScript.html)
-   * Index.htmlの同名関数(モック)を上書きして動作します。
-   */
+  (function() {
+    console.log('JavaScript.html loaded');
 
-  // リトライロジック
-  function runWithRetry(funcName, args, onSuccess, onFailure, onBusy) {
-    google.script.run
-      .withSuccessHandler(onSuccess)
-      .withFailureHandler(err => {
-        if (err.message && err.message.includes('SERVER_BUSY')) {
-          if (onBusy) onBusy();
-          setTimeout(() => runWithRetry(funcName, args, onSuccess, onFailure, onBusy), 1500);
-        } else {
-          console.error(err);
-          if (onFailure) onFailure(err);
-        }
-      })[funcName](...args);
-  }
-
-  // アプリケーション初期化
-  window.initApp = function() {
-    console.log('App initialized in GAS environment');
-    
-    google.script.run
-      .withSuccessHandler(email => { 
-        const el = document.getElementById('userEmail');
-        if (el) el.textContent = email; 
-      })
-      .withFailureHandler(err => { console.error(err); })
-      .getCurrentUserEmail();
-
-    google.script.run.withSuccessHandler(settings => {
-      if (settings) {
-        const ids = ['parentType', 'customParentId', 'fileName', 'fileNameExclude1', 'fileNameExclude2', 'fileNameExclude3', 'fileNameExclude4', 'fileNameExclude5', 'fullText', 'description', 'mimeType', 'ownerType', 'destFolderId', 'dateAfter', 'dateBefore', 'relativeDays', 'relativeOperator', 'sizeLarger', 'sizeLargerUnit', 'sizeSmaller', 'sizeSmallerUnit'];
-        
-        ids.forEach(id => {
-          const el = document.getElementById(id);
-          if (el && settings[id] !== undefined) el.value = settings[id];
-        });
-
-        if (settings.dateMode) {
-          const rb = document.querySelector(`input[name="dateMode"][value="${settings.dateMode}"]`);
-          if (rb) rb.checked = true;
-        }
-        
-        if (typeof toggleDateInputs === 'function') toggleDateInputs();
-        if (typeof updateDestPath === 'function') updateDestPath();
-      }
-      if (typeof updateQuery === 'function') updateQuery(false);
-    }).loadUserSettings();
-  };
-
-  // 設定保存
-  window.debounceSave = function(settings) {
-    clearTimeout(saveTimeout);
-    const status = document.getElementById('saveStatus');
-    if(status) status.textContent = '保存中...';
-    
-    saveTimeout = setTimeout(() => {
-      google.script.run.withSuccessHandler(() => {
-        if(status) {
-          status.textContent = '設定を自動保存しました';
-          setTimeout(() => status.textContent = '', 2000);
-        }
-      }).saveUserSettings(settings);
-    }, 1000);
-  };
-
-  // --- Folder Picker Functions (Override Mocks) ---
-  window.openPicker = function(id) { 
-    currentTargetInputId = id; 
-    pickerStack = [{id:'root', name:'マイドライブ'}]; 
-    selectedFolderInfo = null;
-    
-    const btn = document.getElementById('confirmPickBtn');
-    if (btn) btn.disabled = true;
-    
-    const nameEl = document.getElementById('selectedFolderName');
-    if (nameEl) nameEl.textContent = '';
-    
-    const indicator = document.getElementById('cacheIndicator');
-    if (indicator) indicator.style.display = 'none';
-    
-    const modal = document.getElementById('folderPickerModal');
-    if (modal) {
-      modal.style.display = 'flex';
-      loadFolderList('root'); 
-    } else {
-      console.error('Modal element not found');
-    }
-  };
-
-  window.closePicker = function() { 
-    const modal = document.getElementById('folderPickerModal');
-    if (modal) modal.style.display = 'none'; 
-  };
-  
-  window.refreshPicker = function() { 
-    const currentParentId = pickerStack[pickerStack.length - 1].id; 
-    loadFolderList(currentParentId, true); 
-  };
-  
-  window.confirmPicker = function() { 
-    if (selectedFolderInfo) { 
-      const input = document.getElementById(currentTargetInputId);
-      if (input) input.value = selectedFolderInfo.id;
-      updateQuery(true); 
-      updateDestPath(); 
-      closePicker(); 
-    } 
-  };
-
-  window.loadFolderList = function(parentId, bypassCache = false) {
-    const body = document.getElementById('pickerBody');
-    const indicator = document.getElementById('cacheIndicator');
-    if (body) body.innerHTML = '<div style="padding:20px; text-align:center;">読み込み中...</div>';
-    if (typeof updateBreadcrumb === 'function') updateBreadcrumb();
-
-    runWithRetry('getChildFolders', [parentId, bypassCache],
-      (response) => {
-        const { items, fromCache } = response;
-        if (indicator) {
-          indicator.style.display = 'inline-block';
-          indicator.textContent = fromCache ? 'キャッシュ' : '最新';
-          indicator.className = fromCache ? 'cache-status status-cached' : 'cache-status status-live';
-        }
-        
-        if (body) {
-          body.innerHTML = '';
-          if (items.length === 0) {
-            body.innerHTML = '<div style="padding:20px; text-align:center; color:#888;">フォルダなし</div>';
+    // --- Retry Logic ---
+    window.runWithRetry = function(funcName, args, onSuccess, onFailure, onBusy) {
+      google.script.run
+        .withSuccessHandler(onSuccess)
+        .withFailureHandler(err => {
+          if (err.message && err.message.includes('SERVER_BUSY')) {
+            if (onBusy) onBusy();
+            setTimeout(() => window.runWithRetry(funcName, args, onSuccess, onFailure, onBusy), 1500);
           } else {
-            items.forEach(f => {
-              const div = document.createElement('div');
-              div.className = 'folder-item';
-              div.innerHTML = `📁 <span>${f.name}</span>`;
-              div.onclick = () => selectFolderItem(f);
-              div.ondblclick = () => {
-                pickerStack.push(f);
-                loadFolderList(f.id);
-              };
-              body.appendChild(div);
-            });
+            console.error(err);
+            if(onFailure) onFailure(err);
           }
-        }
-      },
-      (err) => {
-        if (body) body.innerHTML = `<div style="padding:20px; color:red;">エラー: ${err.message}</div>`;
-        if (indicator) indicator.style.display = 'none';
-      },
-      () => { if (body) body.innerHTML = '<div style="padding:20px; text-align:center;">待機中...</div>'; }
-    );
-  };
-
-  // --- Path Display ---
-  window.updateDestPath = function() {
-    const folderId = document.getElementById('destFolderId').value;
-    const display = document.getElementById('destPathDisplay');
-    
-    if (!folderId) {
-      if (display) display.textContent = '';
-      return;
-    }
-
-    if (display) display.textContent = '確認中...';
-    clearTimeout(pathDebounceTimer);
-    
-    pathDebounceTimer = setTimeout(() => {
-        google.script.run
-            .withSuccessHandler(path => {
-                if (display) display.textContent = path ? '📂 ' + path.join(' > ') : '❌ フォルダが見つかりません';
-            })
-            .withFailureHandler(err => { if (display) display.textContent = '⚠️ エラー: ' + err.message; })
-            .getFolderPath(folderId);
-    }, 500);
-  };
-
-  // --- Search Functions ---
-  window.runSearch = function() {
-    const q = document.getElementById('qResult').textContent;
-    const btn = document.getElementById('searchBtn');
-    const loading = document.getElementById('loadingSearch');
-    
-    currentLastQuery = q; loadedFilesCount = 0; folderCount = 0; fileCount = 0; currentFolderIds = []; fileNamesMap = {};
-    
-    if (btn) btn.disabled = true;
-    if (loading) loading.style.display = 'block';
-    
-    const resultsSection = document.getElementById('resultsSection');
-    const moveSection = document.getElementById('moveSection');
-    if (resultsSection) resultsSection.style.display = 'block';
-    if (moveSection) moveSection.style.display = 'block';
-    
-    const searchSection = document.getElementById('searchSection');
-    if (searchSection) searchSection.classList.add('accordion-collapsed');
-    
-    toggleAccordion('resultsSection', true);
-    
-    const checkFolders = document.getElementById('selectAllFolders');
-    const checkFiles = document.getElementById('selectAllFiles');
-    if (checkFolders) checkFolders.checked = false;
-    if (checkFiles) checkFiles.checked = false;
-    updateSelectionCount();
-
-    runWithRetry('searchFiles', [q, null, 20],
-      (response) => {
-        if (btn) btn.disabled = false;
-        if (loading) loading.style.display = 'none';
-        currentNextPageToken = response.nextPageToken;
-        loadedFilesCount = response.files.length;
-        renderTable(response.files, false);
-        
-        const fetchMore = document.getElementById('fetchMoreArea');
-        if(fetchMore) fetchMore.style.display = currentNextPageToken ? 'block' : 'none';
-        
-        if (btn) btn.textContent = 'この条件で検索を実行 (最大20件)';
-      },
-      (err) => {
-        if (btn) btn.disabled = false;
-        if (loading) loading.style.display = 'none';
-        alert(err.message);
-        if (btn) btn.textContent = 'この条件で検索を実行 (最大20件)';
-      },
-      () => { if (btn) btn.textContent = '待機中...'; }
-    );
-  };
-
-  window.runFetchAll = function() {
-    const btn = document.getElementById('fetchAllBtn');
-    const limit = parseInt(document.getElementById('fetchLimit').value);
-    const originalText = '追加で読み込む';
-    
-    let seconds = 0;
-    if (btn) btn.disabled = true;
-    
-    const loading = document.getElementById('loadingSearch');
-    if (loading) loading.style.display = 'block';
-    
-    if (fetchAllTimer) clearInterval(fetchAllTimer);
-    fetchAllTimer = setInterval(() => {
-      seconds++;
-      if (btn) btn.textContent = `取得中... (${seconds}秒)`;
-    }, 1000);
-
-    const finish = () => {
-      clearInterval(fetchAllTimer);
-      if (btn) {
-          btn.textContent = originalText;
-          btn.disabled = false;
-      }
-      if (loading) loading.style.display = 'none';
+        })[funcName](...args);
     };
 
-    runWithRetry('fetchFiles', [currentLastQuery, currentNextPageToken, limit],
-      (res) => {
-        currentNextPageToken = res.nextPageToken;
-        loadedFilesCount += res.files.length;
-        renderTable(res.files, true);
-        const fetchMore = document.getElementById('fetchMoreArea');
-        if(fetchMore) fetchMore.style.display = currentNextPageToken ? 'block' : 'none';
-        finish();
-      },
-      (err) => { alert(err.message); finish(); },
-      () => {}
-    );
-  };
+    // --- Initialization ---
+    window.initApp = function() {
+      google.script.run.withSuccessHandler(email => { 
+        const el = document.getElementById('userEmail'); if(el) el.textContent = email; 
+      }).getCurrentUserEmail();
 
-  window.runAnalyzeFolders = async function() {
-    if (currentFolderIds.length === 0) return;
-    const btn = document.getElementById('analyzeBtn');
-    const originalText = btn ? btn.textContent : '';
-    if (btn) {
-        btn.disabled = true;
-        btn.textContent = '集計中...';
-    }
-    
-    for (const folderId of currentFolderIds) {
-      const cell = document.getElementById(`stats-${folderId}`);
-      if (cell) cell.textContent = '...';
-      
-      await new Promise(resolve => {
-        google.script.run
-          .withSuccessHandler(res => {
-            if (res.error) {
-               if (cell) {
-                   cell.textContent = 'Err';
-                   cell.title = res.error;
-               }
-            } else {
-               const details = Object.entries(res.counts || {})
-                 .map(([type, count]) => `<span class="stat-item">${getFileIcon(type)} ${count}</span>`)
-                 .join(' ');
-               if (cell) cell.innerHTML = details || '(空)';
-            }
-            resolve();
-          })
-          .withFailureHandler(() => { if (cell) cell.textContent = 'Err'; resolve(); })
-          .getSingleFolderStats(folderId);
-      });
-    }
-    if (btn) {
-        btn.disabled = false;
-        btn.textContent = originalText;
-    }
-  };
+      google.script.run.withSuccessHandler(settings => {
+        if (settings) {
+          // 1. 各入力フィールドの復元
+          const ids = ['parentType', 'customParentId', 'fileName', 'fullText', 'description', 'mimeType', 'ownerType', 'destFolderId', 'dateAfter', 'dateBefore', 'relativeDays', 'relativeOperator', 'sizeLarger', 'sizeLargerUnit', 'sizeSmaller', 'sizeSmallerUnit'];
+          ids.forEach(id => {
+            const el = document.getElementById(id);
+            if (el && settings[id] !== undefined) el.value = settings[id];
+          });
+          
+          // 複数除外設定の復元
+          for (let i = 1; i <= 5; i++) {
+            const el = document.getElementById('fileNameExclude' + i);
+            if (el && settings['fileNameExclude' + i]) el.value = settings['fileNameExclude' + i];
+          }
 
-  window.runMove = async function() {
-    const destIdInput = document.getElementById('destFolderId');
-    const destId = destIdInput ? destIdInput.value : '';
-    const selectedIds = Array.from(document.querySelectorAll('tbody .file-check:checked'))
-                             .map(cb => cb.value)
-                             .filter(val => val && val !== 'on');
-    
-    if (!destId || selectedIds.length === 0) {
-      alert('移動先フォルダと対象アイテムを選択してください。');
-      return;
-    }
-    if (!confirm(`${selectedIds.length} 個のアイテムを移動します。よろしいですか？`)) return;
-
-    const btn = document.getElementById('moveBtn');
-    const progressArea = document.getElementById('moveProgressArea');
-    const progressBar = document.getElementById('moveProgressBar');
-    const progressText = document.getElementById('moveProgressText');
-    const logArea = document.getElementById('moveLog');
-    const errorSummary = document.getElementById('moveErrorSummary');
-
-    if (btn) btn.disabled = true;
-    if (progressArea) progressArea.style.display = 'block';
-    if (logArea) logArea.innerHTML = '';
-    if (errorSummary) {
-        errorSummary.style.display = 'none';
-        errorSummary.innerHTML = '<h4>エラーレポート</h4><ul></ul>';
-    }
-    
-    let successCount = 0;
-    let errorCount = 0;
-    const errors = [];
-
-    for (let i = 0; i < selectedIds.length; i++) {
-        const id = selectedIds[i];
-        const name = fileNamesMap[id] || id;
-        const percent = Math.round(((i + 1) / selectedIds.length) * 100);
-        
-        if (progressText) progressText.textContent = `${i + 1} / ${selectedIds.length} 件処理中...`;
-        if (progressBar) progressBar.style.width = percent + '%';
-
-        await new Promise(resolve => {
-            runWithRetry('moveFiles', [[id], destId],
-                (res) => {
-                    if (res.error > 0) {
-                        errorCount++;
-                        const msg = res.details[0] || 'Unknown error';
-                        if (logArea) logArea.innerHTML = `<div class="log-item">Moving "${name}"... <span class="log-error">Failed</span></div>` + logArea.innerHTML;
-                        errors.push(`<li><strong>${name}</strong>: ${msg}</li>`);
-                    } else {
-                        successCount++;
-                        if (logArea) logArea.innerHTML = `<div class="log-item">Moving "${name}"... <span class="log-success">OK</span></div>` + logArea.innerHTML;
-                    }
-                    resolve();
-                },
-                (err) => {
-                    errorCount++;
-                    if (logArea) logArea.innerHTML = `<div class="log-item">Moving "${name}"... <span class="log-error">Error: ${err.message}</span></div>` + logArea.innerHTML;
-                    errors.push(`<li><strong>${name}</strong>: ${err.message}</li>`);
-                    resolve();
-                },
-                () => { if (logArea) logArea.innerHTML = `<div class="log-item" style="color:#f9a825;">Waiting for server lock...</div>` + logArea.innerHTML; }
-            );
-        });
-    }
-
-    if (btn) btn.disabled = false;
-    if (progressText) progressText.textContent = '処理完了';
-    
-    if (errorCount > 0) {
-        if (errorSummary) {
-            errorSummary.querySelector('ul').innerHTML = errors.join('');
-            errorSummary.style.display = 'block';
+          // ラジオボタンの復元
+          if (settings.dateMode) {
+            const rb = document.querySelector(`input[name="dateMode"][value="${settings.dateMode}"]`);
+            if (rb) rb.checked = true;
+          }
+          
+          // 2. UI状態の更新 (保存はさせない: false)
+          if (typeof toggleDateInputs === 'function') toggleDateInputs(false);
+          
+          // 移動先パスの更新
+          if (typeof updateDestPath === 'function') updateDestPath();
         }
-        alert(`完了: 成功${successCount}件, 失敗${errorCount}件。\nエラー詳細は下部のレポートを確認してください。`);
-    } else {
-        alert(`すべて移動しました (成功: ${successCount}件)`);
-        runSearch(); 
-    }
-  };
+        
+        // 3. 最後にクエリ表示を強制更新 (保存はさせない: false)
+        // これにより、復元された入力値に基づいて q パラメータが再計算・表示されます
+        if (typeof updateQuery === 'function') updateQuery(false);
+        
+      }).loadUserSettings();
+    };
+
+    window.debounceSave = function(settings) {
+      if (window.saveTimeout) clearTimeout(window.saveTimeout);
+      const status = document.getElementById('saveStatus');
+      if(status) status.textContent = '保存中...';
+      window.saveTimeout = setTimeout(() => {
+        google.script.run.withSuccessHandler(() => {
+          if(status) { status.textContent = '設定を自動保存しました'; setTimeout(() => status.textContent = '', 2000); }
+        }).saveUserSettings(settings);
+      }, 1000);
+    };
+
+    // --- Folder Picker Functions ---
+    window.openPicker = function(id) { 
+      window.currentTargetInputId = id; 
+      window.selectedFolderInfo = null;
+      const btn = document.getElementById('confirmPickBtn'); if (btn) btn.disabled = true; 
+      const nameEl = document.getElementById('selectedFolderName'); if (nameEl) nameEl.textContent = '未選択';
+      const modal = document.getElementById('folderPickerModal');
+      if (modal) { modal.style.display = 'flex'; window.loadFolderList('root'); }
+    };
+    window.closePicker = function() { 
+      const modal = document.getElementById('folderPickerModal'); if (modal) modal.style.display = 'none'; 
+    };
+    window.refreshPicker = function() { 
+       const currentId = window.currentPickerFolderId || 'root'; window.loadFolderList(currentId, true);
+    };
+    window.selectFolderItem = function(id, name) {
+      window.selectedFolderInfo = { id: id, name: name };
+      const nameEl = document.getElementById('selectedFolderName'); if (nameEl) nameEl.textContent = `選択中: ${name}`;
+      const btn = document.getElementById('confirmPickBtn'); if (btn) btn.disabled = false;
+      document.querySelectorAll('.folder-item').forEach(el => {
+        if (el.dataset.id === id) el.classList.add('selected'); else el.classList.remove('selected');
+      });
+    };
+    window.confirmPicker = function() { 
+      if (window.selectedFolderInfo) { 
+        const input = document.getElementById(window.currentTargetInputId);
+        if (input) {
+            input.value = window.selectedFolderInfo.id;
+            // 入力欄更新後にクエリとパスを更新 (保存する: true)
+            if (typeof updateQuery === 'function') updateQuery(true); 
+            if (typeof updateDestPath === 'function') updateDestPath(); 
+        }
+        window.closePicker(); 
+      } 
+    };
+    window.loadFolderList = function(parentId, bypassCache = false) {
+      const body = document.getElementById('pickerBody');
+      const indicator = document.getElementById('cacheIndicator');
+      window.currentPickerFolderId = parentId;
+      window.selectedFolderInfo = null;
+      document.getElementById('confirmPickBtn').disabled = true;
+      document.getElementById('selectedFolderName').textContent = '未選択';
+      if (body) body.innerHTML = '<div style="padding:20px; text-align:center;">読み込み中...</div>';
+      if (typeof updateBreadcrumb === 'function') updateBreadcrumb(); // Call mock helper if needed or define breadcrumb logic here
+      
+      // Breadcrumb logic inside
+      const breadcrumb = document.getElementById('pickerBreadcrumb');
+
+      window.runWithRetry('getChildFolders', [parentId, bypassCache],
+        (response) => {
+          const { items, path, fromCache } = response;
+          if (indicator) {
+            indicator.style.display = 'inline-block';
+            indicator.textContent = fromCache ? 'キャッシュ' : '最新';
+            indicator.className = fromCache ? 'cache-status status-cached' : 'cache-status status-live';
+          }
+          if (breadcrumb && path) {
+              breadcrumb.innerHTML = '';
+              path.forEach((p, index) => {
+                  const span = document.createElement('span');
+                  span.textContent = p.name;
+                  if (index < path.length - 1) {
+                      span.className = 'crumb-link';
+                      span.style.color = '#1a73e8'; span.style.cursor = 'pointer'; span.style.textDecoration = 'underline';
+                      span.onclick = () => window.loadFolderList(p.id);
+                      breadcrumb.appendChild(span); breadcrumb.appendChild(document.createTextNode(' > '));
+                  } else {
+                      span.style.fontWeight = 'bold'; breadcrumb.appendChild(span);
+                  }
+              });
+          }
+          if (body) {
+            body.innerHTML = '';
+            if (items.length === 0) {
+              body.innerHTML = '<div style="padding:20px; text-align:center; color:#888;">フォルダなし</div>';
+            } else {
+              items.forEach(f => {
+                const div = document.createElement('div');
+                div.className = 'folder-item';
+                div.dataset.id = f.id;
+                div.innerHTML = `📁 <span>${f.name}</span>`;
+                div.onclick = () => window.selectFolderItem(f.id, f.name);
+                div.ondblclick = () => window.loadFolderList(f.id);
+                body.appendChild(div);
+              });
+            }
+          }
+        },
+        (err) => {
+          if (body) body.innerHTML = `<div style="padding:20px; color:red;">エラー: ${err.message}</div>`;
+        },
+        () => { if (body) body.innerHTML = '<div style="padding:20px; text-align:center;">待機中...</div>'; }
+      );
+    };
+
+    // --- Path Display ---
+    window.updateDestPath = function() {
+      const folderId = document.getElementById('destFolderId').value;
+      const display = document.getElementById('destPathDisplay');
+      if (!folderId) { if (display) display.textContent = ''; return; }
+      if (display) display.textContent = '確認中...';
+      if (window.pathDebounceTimer) clearTimeout(window.pathDebounceTimer);
+      window.pathDebounceTimer = setTimeout(() => {
+          google.script.run.withSuccessHandler(path => {
+              if (display) display.textContent = path ? '📂 ' + path.join(' > ') : '❌ フォルダが見つかりません';
+          }).withFailureHandler(err => { if (display) display.textContent = '⚠️ エラー: ' + err.message; }).getFolderPath(folderId);
+      }, 500);
+    };
+
+    // --- Search & Action Functions ---
+    window.runSearch = function() {
+      const q = document.getElementById('qResult').textContent;
+      const btn = document.getElementById('searchBtn');
+      const loading = document.getElementById('loadingSearch');
+      window.currentLastQuery = q; window.loadedFilesCount = 0; window.folderCount = 0; window.fileCount = 0; window.currentFolderIds = []; window.fileNamesMap = {};
+      if (btn) btn.disabled = true;
+      if (loading) loading.style.display = 'block';
+      document.getElementById('resultsSection').style.display = 'block';
+      document.getElementById('moveSection').style.display = 'block';
+      const searchSection = document.getElementById('searchSection');
+      if (searchSection) searchSection.classList.add('accordion-collapsed');
+      if(typeof toggleAccordion === 'function') toggleAccordion('resultsSection', true);
+      document.getElementById('selectAllFolders').checked = false;
+      document.getElementById('selectAllFiles').checked = false;
+      if(typeof updateSelectionCount === 'function') updateSelectionCount();
+
+      window.runWithRetry('searchFiles', [q, null, 20],
+        (response) => {
+          if (btn) btn.disabled = false;
+          if (loading) loading.style.display = 'none';
+          window.currentNextPageToken = response.nextPageToken;
+          window.loadedFilesCount = response.files.length;
+          if(typeof renderTable === 'function') renderTable(response.files, false);
+          const fm = document.getElementById('fetchMoreArea');
+          if(fm) fm.style.display = window.currentNextPageToken ? 'block' : 'none';
+          if(btn) btn.textContent = 'この条件で検索を実行 (最大20件)';
+        },
+        (err) => {
+          if(btn) btn.disabled = false;
+          if(loading) loading.style.display = 'none';
+          alert(err.message);
+          if(btn) btn.textContent = 'この条件で検索を実行 (最大20件)';
+        },
+        () => { if (btn) btn.textContent = '待機中...'; }
+      );
+    };
+
+    window.runFetchAll = function() {
+      const btn = document.getElementById('fetchAllBtn');
+      const limit = parseInt(document.getElementById('fetchLimit').value);
+      const originalText = '追加で読み込む';
+      let seconds = 0;
+      if(btn) btn.disabled = true;
+      const loading = document.getElementById('loadingSearch');
+      if(loading) loading.style.display = 'block';
+      if (window.fetchAllTimer) clearInterval(window.fetchAllTimer);
+      window.fetchAllTimer = setInterval(() => { seconds++; if(btn) btn.textContent = `取得中... (${seconds}秒)`; }, 1000);
+      const finish = () => { clearInterval(window.fetchAllTimer); if(btn) { btn.textContent = originalText; btn.disabled = false; } if(loading) loading.style.display = 'none'; };
+      window.runWithRetry('fetchFiles', [window.currentLastQuery, window.currentNextPageToken, limit], (res) => {
+        window.currentNextPageToken = res.nextPageToken;
+        window.loadedFilesCount += res.files.length;
+        if(typeof renderTable === 'function') renderTable(res.files, true);
+        const fm = document.getElementById('fetchMoreArea');
+        if(fm) fm.style.display = window.currentNextPageToken ? 'block' : 'none';
+        finish();
+      }, (err) => { alert(err.message); finish(); }, () => {});
+    };
+
+    window.runAnalyzeFolders = async function() {
+      if (window.currentFolderIds.length === 0) return;
+      const btn = document.getElementById('analyzeBtn');
+      const originalText = btn ? btn.textContent : '';
+      if (btn) { btn.disabled = true; btn.textContent = '集計中...'; }
+      for (const folderId of window.currentFolderIds) {
+        const cell = document.getElementById(`stats-${folderId}`);
+        if (cell) cell.textContent = '...';
+        await new Promise(resolve => {
+          google.script.run.withSuccessHandler(res => {
+            if (res.error) { if(cell) { cell.textContent = 'Err'; cell.title = res.error; } }
+            else { const d = Object.entries(res.counts || {}).map(([t, c]) => `<span class="stat-item">${getFileIcon(t)} ${c}</span>`).join(' '); if(cell) cell.innerHTML = d || '(空)'; }
+            resolve();
+          }).withFailureHandler(() => { if(cell) cell.textContent = 'Err'; resolve(); }).getSingleFolderStats(folderId);
+        });
+      }
+      if (btn) { btn.disabled = false; btn.textContent = originalText; }
+    };
+
+    window.runMove = async function() {
+      const destId = document.getElementById('destFolderId').value;
+      const selectedIds = Array.from(document.querySelectorAll('tbody .file-check:checked')).map(c => c.value).filter(v => v && v !== 'on');
+      if (!destId || !selectedIds.length) { alert('移動先フォルダと対象アイテムを選択してください。'); return; }
+      if (!confirm('移動しますか？')) return;
+      const btn = document.getElementById('moveBtn'), pArea = document.getElementById('moveProgressArea'), pBar = document.getElementById('moveProgressBar'), pText = document.getElementById('moveProgressText'), logArea = document.getElementById('moveLog'), errorSummary = document.getElementById('moveErrorSummary');
+      if(btn) btn.disabled = true; if(pArea) pArea.style.display = 'block'; if(logArea) logArea.innerHTML = ''; 
+      if(errorSummary) { errorSummary.style.display = 'none'; errorSummary.innerHTML = '<h4>エラーレポート</h4><ul></ul>'; }
+      let successCount = 0, errorCount = 0; const errors = [];
+      for (let i = 0; i < selectedIds.length; i++) {
+        const id = selectedIds[i]; const name = window.fileNamesMap[id] || id;
+        if(pText) pText.textContent = `${i+1}/${selectedIds.length} 処理中...`;
+        if(pBar) pBar.style.width = Math.round(((i+1)/selectedIds.length)*100) + '%';
+        await new Promise(resolve => {
+          window.runWithRetry('moveFiles', [[id], destId], res => {
+            if(res.error > 0) { errorCount++; const msg = res.details[0]||'Unknown'; if(logArea) logArea.innerHTML = `<div class="log-item">Moving "${name}"... <span class="log-error">Failed</span></div>` + logArea.innerHTML; errors.push(`<li><strong>${name}</strong>: ${msg}</li>`); }
+            else { successCount++; if(logArea) logArea.innerHTML = `<div class="log-item">Moving "${name}"... <span class="log-success">OK</span></div>` + logArea.innerHTML; }
+            resolve();
+          }, err => { errorCount++; if(logArea) logArea.innerHTML = `<div class="log-item">Moving "${name}"... <span class="log-error">Error: ${err.message}</span></div>` + logArea.innerHTML; errors.push(`<li><strong>${name}</strong>: ${err.message}</li>`); resolve(); }, () => { if(logArea) logArea.innerHTML = `<div class="log-item" style="color:#f9a825">Lock wait...</div>` + logArea.innerHTML; });
+        });
+      }
+      if(btn) btn.disabled = false; if(pText) pText.textContent = '処理完了';
+      if(errorCount > 0) { if(errorSummary) { errorSummary.querySelector('ul').innerHTML = errors.join(''); errorSummary.style.display = 'block'; } alert(`完了: 成功${successCount} 失敗${errorCount}`); }
+      else { alert(`全件移動成功 (${successCount}件)`); window.runSearch(); }
+    };
+  })();
 </script>
