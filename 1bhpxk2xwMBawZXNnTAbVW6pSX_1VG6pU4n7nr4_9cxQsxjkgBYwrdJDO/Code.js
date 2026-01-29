@@ -10,6 +10,15 @@ function doGet() {
 }
 
 /**
+ * HTMLファイルの内容をインクルードするヘルパー関数
+ * @param {string} filename インクルードするファイル名（拡張子なし）
+ * @return {string} ファイルの内容
+ */
+function include(filename) {
+  return HtmlService.createHtmlOutputFromFile(filename).getContent();
+}
+
+/**
  * ユーザープロパティに設定を保存する
  */
 function saveUserSettings(settings) {
@@ -28,7 +37,6 @@ function loadUserSettings() {
 
 /**
  * 現在のユーザーのメールアドレスを取得する
- * @return {string} メールアドレス
  */
 function getCurrentUserEmail() {
   return Session.getActiveUser().getEmail();
@@ -40,7 +48,6 @@ function getCurrentUserEmail() {
 function getChildFolders(parentId = 'root', bypassCache = false) {
   const lock = LockService.getUserLock();
   try {
-    // 2秒待ってロックが取れなければ即座にエラーを返し、クライアント側でリトライさせる
     if (!lock.tryLock(2000)) {
       throw new Error('SERVER_BUSY');
     }
@@ -157,10 +164,7 @@ function searchFiles(q, pageToken = null, pageSize = 10) {
 }
 
 /**
- * 続きのファイルを指定件数分取得する（旧 fetchAllRemaining を拡張）
- * @param {string} q 検索クエリ
- * @param {string} initialPageToken 開始ページのトークン
- * @param {number} maxLimit 取得上限数 (-1の場合は制限なし)
+ * 続きのファイルを指定件数分取得する
  */
 function fetchFiles(q, initialPageToken, maxLimit = -1) {
   const lock = LockService.getUserLock();
@@ -173,17 +177,15 @@ function fetchFiles(q, initialPageToken, maxLimit = -1) {
     let pageToken = initialPageToken;
     let limitReached = false;
     
-    // 取得ループ
     do {
       const response = Drive.Files.list({
         q: q,
         pageToken: pageToken,
         fields: 'nextPageToken, files(id, name, mimeType, modifiedTime, size)',
-        pageSize: 100 // API呼び出しごとのページサイズ（固定）
+        pageSize: 100
       });
       
       if (response.files) {
-        // 整形してリストに追加
         const formattedFiles = response.files.map(file => ({
           id: file.id,
           name: file.name,
@@ -192,28 +194,10 @@ function fetchFiles(q, initialPageToken, maxLimit = -1) {
           size: formatFileSize(file.size)
         }));
         
-        // 制限チェック
         if (maxLimit > 0) {
           const remainingSlots = maxLimit - allResults.length;
           if (formattedFiles.length > remainingSlots) {
-            // 上限を超える場合は切り詰める
             allResults.push(...formattedFiles.slice(0, remainingSlots));
-            // 次回はこのページの続きからではなく、次のページトークンも捨てて
-            // ここで打ち切りとする手もあるが、APIの仕様上、途中再開は難しい。
-            // 簡易的に「次のトークンがあればそれを返す」ことで次回そこから再開できる。
-            // ただし厳密に切り詰めた位置からの再開はできないため、
-            // 今回取得した分(formattedFiles全量)は次回重複しないようにページトークンはresponseのものを使う。
-            // ここではシンプルに「ページ単位」で進めるか、バッファするかだが、
-            // ユーザー体験としては「指定件数以上取れたら止める」で十分。
-            
-            // 修正案: 今回取得分を全部入れて、limitを超えたらループを抜ける
-            // (多少多めに取れることは許容するか、厳密にするか)
-            // ここでは厳密にカットせず、取得したページ分はすべて返す実装にするか、
-            // あるいは下記のように厳密にカットして、トークンはAPIから返ってきた最新のものを使う形にする。
-            // ※ Drive APIは「スキップ」ができないため、厳密な続きからの再開は難しい。
-            // したがって、「ページ単位（100件）」で制御するのが最も安全。
-            
-            allResults.push(...formattedFiles);
           } else {
              allResults.push(...formattedFiles);
           }
@@ -224,20 +208,16 @@ function fetchFiles(q, initialPageToken, maxLimit = -1) {
       
       pageToken = response.nextPageToken;
 
-      // 上限チェック
       if (maxLimit > 0 && allResults.length >= maxLimit) {
         limitReached = true;
         break;
       }
       
-      // 安全のため1回の実行時間を考慮し、あまりに大量なら強制ブレイクする等の処理も本来は必要
-      // ここでは maxLimit が指定されている前提でループする
-      
     } while (pageToken);
 
     return {
       files: allResults,
-      nextPageToken: pageToken || null // 次のページがあればトークンを返す
+      nextPageToken: pageToken || null
     };
     
   } catch (e) {
