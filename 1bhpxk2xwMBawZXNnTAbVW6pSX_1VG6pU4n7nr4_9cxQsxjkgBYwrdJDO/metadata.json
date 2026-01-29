@@ -1,5 +1,5 @@
 {
-  "name": "drive-file-mover",
+  "name": "Drive Shallow Mover",
   "id": "1bhpxk2xwMBawZXNnTAbVW6pSX_1VG6pU4n7nr4_9cxQsxjkgBYwrdJDO",
   "url": "https://script.google.com/d/1bhpxk2xwMBawZXNnTAbVW6pSX_1VG6pU4n7nr4_9cxQsxjkgBYwrdJDO/edit?usp=drivesdk",
   "lastUpdated": "2026-01-29T01:13:35.593Z",
@@ -12,8 +12,8 @@
     },
     {
       "id": "AKfycbyhxxFtBaXstAo3E0ycj15x4nzFWJsYBaiSSn1GJFo4XMnilU4vZn-9hB32VFcy8wuTMw",
-      "target": "1",
-      "description": "公開"
+      "target": "3",
+      "description": ""
     }
   ]
 }
