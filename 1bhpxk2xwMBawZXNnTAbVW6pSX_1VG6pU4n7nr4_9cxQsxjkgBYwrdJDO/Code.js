@@ -28,6 +28,7 @@ function loadUserSettings() {
 
 /**
  * 現在のユーザーのメールアドレスを取得する
+ * @return {string} メールアドレス
  */
 function getCurrentUserEmail() {
   return Session.getActiveUser().getEmail();
@@ -38,12 +39,12 @@ function getCurrentUserEmail() {
  */
 function getChildFolders(parentId = 'root', bypassCache = false) {
   const lock = LockService.getUserLock();
-  // 2秒待ってロックが取れなければ即座にエラーを返し、クライアント側でリトライさせる
-  if (!lock.tryLock(2000)) {
-    throw new Error('SERVER_BUSY');
-  }
-  
   try {
+    // 2秒待ってロックが取れなければ即座にエラーを返し、クライアント側でリトライさせる
+    if (!lock.tryLock(2000)) {
+      throw new Error('SERVER_BUSY');
+    }
+
     const cache = CacheService.getUserCache();
     const cacheKey = 'folder_children_' + parentId;
     if (!bypassCache) {
@@ -74,6 +75,36 @@ function getChildFolders(parentId = 'root', bypassCache = false) {
 }
 
 /**
+ * フォルダIDからルートまでのパス（フォルダ名の配列）を取得する
+ */
+function getFolderPath(folderId) {
+  if (!folderId) return null;
+  
+  const cache = CacheService.getUserCache();
+  const cacheKey = 'folder_path_v1_' + folderId;
+  const cached = cache.get(cacheKey);
+  if (cached) return JSON.parse(cached);
+
+  const path = [];
+  let currentId = folderId;
+  
+  for (let i = 0; i < 20; i++) {
+    try {
+      const file = Drive.Files.get(currentId, { fields: 'id, name, parents' });
+      path.unshift(file.name);
+      if (!file.parents || file.parents.length === 0) break; 
+      currentId = file.parents[0];
+    } catch (e) {
+      if (path.length === 0) return null;
+      break; 
+    }
+  }
+  
+  try { cache.put(cacheKey, JSON.stringify(path), 300); } catch (e) {}
+  return path;
+}
+
+/**
  * ファイルサイズを適切な単位に整形するヘルパー関数
  */
 function formatFileSize(sizeBytes) {
@@ -96,7 +127,6 @@ function formatFileSize(sizeBytes) {
  */
 function searchFiles(q, pageToken = null, pageSize = 10) {
   const lock = LockService.getUserLock();
-  // 2秒待ってロックが取れなければ即座にエラーを返す
   if (!lock.tryLock(2000)) {
     throw new Error('SERVER_BUSY');
   }
@@ -127,11 +157,13 @@ function searchFiles(q, pageToken = null, pageSize = 10) {
 }
 
 /**
- * 特定のトークンから残りのファイルをすべて一括取得する
+ * 続きのファイルを指定件数分取得する（旧 fetchAllRemaining を拡張）
+ * @param {string} q 検索クエリ
+ * @param {string} initialPageToken 開始ページのトークン
+ * @param {number} maxLimit 取得上限数 (-1の場合は制限なし)
  */
-function fetchAllRemaining(q, initialPageToken) {
+function fetchFiles(q, initialPageToken, maxLimit = -1) {
   const lock = LockService.getUserLock();
-  // 2秒待ってロックが取れなければ即座にエラーを返す
   if (!lock.tryLock(2000)) {
     throw new Error('SERVER_BUSY');
   }
@@ -139,27 +171,77 @@ function fetchAllRemaining(q, initialPageToken) {
   try {
     const allResults = [];
     let pageToken = initialPageToken;
+    let limitReached = false;
+    
+    // 取得ループ
     do {
       const response = Drive.Files.list({
         q: q,
         pageToken: pageToken,
         fields: 'nextPageToken, files(id, name, mimeType, modifiedTime, size)',
-        pageSize: 100
+        pageSize: 100 // API呼び出しごとのページサイズ（固定）
       });
+      
       if (response.files) {
-        allResults.push(...response.files.map(file => ({
+        // 整形してリストに追加
+        const formattedFiles = response.files.map(file => ({
           id: file.id,
           name: file.name,
           mimeType: file.mimeType,
           modifiedTime: file.modifiedTime,
           size: formatFileSize(file.size)
-        })));
+        }));
+        
+        // 制限チェック
+        if (maxLimit > 0) {
+          const remainingSlots = maxLimit - allResults.length;
+          if (formattedFiles.length > remainingSlots) {
+            // 上限を超える場合は切り詰める
+            allResults.push(...formattedFiles.slice(0, remainingSlots));
+            // 次回はこのページの続きからではなく、次のページトークンも捨てて
+            // ここで打ち切りとする手もあるが、APIの仕様上、途中再開は難しい。
+            // 簡易的に「次のトークンがあればそれを返す」ことで次回そこから再開できる。
+            // ただし厳密に切り詰めた位置からの再開はできないため、
+            // 今回取得した分(formattedFiles全量)は次回重複しないようにページトークンはresponseのものを使う。
+            // ここではシンプルに「ページ単位」で進めるか、バッファするかだが、
+            // ユーザー体験としては「指定件数以上取れたら止める」で十分。
+            
+            // 修正案: 今回取得分を全部入れて、limitを超えたらループを抜ける
+            // (多少多めに取れることは許容するか、厳密にするか)
+            // ここでは厳密にカットせず、取得したページ分はすべて返す実装にするか、
+            // あるいは下記のように厳密にカットして、トークンはAPIから返ってきた最新のものを使う形にする。
+            // ※ Drive APIは「スキップ」ができないため、厳密な続きからの再開は難しい。
+            // したがって、「ページ単位（100件）」で制御するのが最も安全。
+            
+            allResults.push(...formattedFiles);
+          } else {
+             allResults.push(...formattedFiles);
+          }
+        } else {
+           allResults.push(...formattedFiles);
+        }
       }
+      
       pageToken = response.nextPageToken;
+
+      // 上限チェック
+      if (maxLimit > 0 && allResults.length >= maxLimit) {
+        limitReached = true;
+        break;
+      }
+      
+      // 安全のため1回の実行時間を考慮し、あまりに大量なら強制ブレイクする等の処理も本来は必要
+      // ここでは maxLimit が指定されている前提でループする
+      
     } while (pageToken);
-    return allResults;
+
+    return {
+      files: allResults,
+      nextPageToken: pageToken || null // 次のページがあればトークンを返す
+    };
+    
   } catch (e) {
-    throw new Error('一括取得エラー: ' + e.message);
+    throw new Error('取得エラー: ' + e.message);
   } finally {
     lock.releaseLock();
   }
@@ -170,7 +252,6 @@ function fetchAllRemaining(q, initialPageToken) {
  */
 function moveFiles(fileIds, destinationId) {
   const lock = LockService.getUserLock();
-  // 2秒待ってロックが取れなければ即座にエラーを返す
   if (!lock.tryLock(2000)) {
     throw new Error('SERVER_BUSY');
   }
@@ -181,11 +262,16 @@ function moveFiles(fileIds, destinationId) {
       try {
         const file = Drive.Files.get(fileId, { fields: 'parents' });
         const previousParents = (file.parents || []).join(',');
-        Drive.Files.update({}, fileId, { addParents: destinationId, removeParents: previousParents });
+        
+        Drive.Files.update({}, fileId, null, {
+          addParents: destinationId,
+          removeParents: previousParents
+        });
+        
         results.success++;
       } catch (e) {
         results.error++;
-        results.details.push(`Error moving ${fileId}: ${e.message}`);
+        results.details.push(`${e.message}`);
       }
     });
     return results;
@@ -200,7 +286,6 @@ function moveFiles(fileIds, destinationId) {
  * 指定したフォルダ単体のアイテム数（種別ごとの内訳）を集計する
  */
 function getSingleFolderStats(folderId) {
-  // 読み取り専用で軽い処理のためロックは使用しない（並列実行を許可）
   const cache = CacheService.getUserCache();
   const cacheKey = 'folder_stats_v2_' + folderId;
   
