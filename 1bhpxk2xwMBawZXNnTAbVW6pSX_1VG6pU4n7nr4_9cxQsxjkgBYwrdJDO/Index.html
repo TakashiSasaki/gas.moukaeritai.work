@@ -4,170 +4,55 @@
   <base target="_top">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    /* CSSはそのまま維持 */
-    :root {
-      --primary-color: #1a73e8;
-      --bg-color: #f8f9fa;
-      --border-color: #dadce0;
-      --hover-color: #f1f3f4;
-      --cache-color: #f29900;
-      --live-color: #0f9d58;
-      --error-color: #d93025;
-    }
-    
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: var(--bg-color);
-      margin: 0;
-      padding: 20px;
-      color: #3c4043;
-    }
-    .container {
-      max-width: 900px;
-      margin: 0 auto;
-      background: white;
-      padding: 30px;
-      border-radius: 8px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.12);
-    }
-    
-    .header-container {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 2px solid var(--border-color);
-      padding-bottom: 10px;
-      margin-bottom: 20px;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-    .header-container h2 {
-      color: var(--primary-color);
-      border-bottom: none;
-      padding-bottom: 0;
-      margin: 0;
-      font-size: 1.5em;
-    }
-    .user-info {
-      font-size: 0.85em;
-      color: #5f6368;
-      background-color: #f1f3f4;
-      padding: 6px 12px;
-      border-radius: 20px;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      max-width: 100%;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-    .user-icon {
-      font-size: 1.1em;
-    }
-    
+    /* CSSは前回と同じ */
+    :root { --primary-color: #1a73e8; --bg-color: #f8f9fa; --border-color: #dadce0; --hover-color: #f1f3f4; --cache-color: #f29900; --live-color: #0f9d58; --error-color: #d93025; }
+    * { box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-color); margin: 0; padding: 20px; color: #3c4043; }
+    .container { max-width: 900px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.12); }
+    .header-container { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--border-color); padding-bottom: 10px; margin-bottom: 20px; flex-wrap: wrap; gap: 10px; }
+    .header-container h2 { color: var(--primary-color); border-bottom: none; padding-bottom: 0; margin: 0; font-size: 1.5em; }
+    .user-info { font-size: 0.85em; color: #5f6368; background-color: #f1f3f4; padding: 6px 12px; border-radius: 20px; display: flex; align-items: center; gap: 5px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .section { margin-bottom: 25px; padding: 15px; border: 1px solid var(--border-color); border-radius: 8px; }
     .section-title { font-weight: bold; margin-bottom: 15px; display: block; font-size: 1.1em; }
-    
     #searchSection { background-color: #e3f2fd; border-color: #bbdefb; }
     #resultsSection { background-color: #e8f5e9; border-color: #c8e6c9; }
     #moveSection { background-color: #fff3e0; border-color: #ffe0b2; }
-
-    .grid { 
-      display: grid; 
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 15px; 
-    }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; }
     .field { display: flex; flex-direction: column; position: relative; }
     label { font-size: 0.9em; margin-bottom: 5px; color: #5f6368; }
     input, select { padding: 10px; border: 1px solid var(--border-color); border-radius: 4px; font-size: 14px; background-color: #fff; width: 100%; }
-    
-    .input-with-btn { display: flex; gap: 5px; }
-    .input-with-btn input { flex-grow: 1; }
-    
-    .query-display-wrapper {
-      background: #f1f3f4;
-      padding: 15px;
-      border-radius: 4px;
-      margin-top: 20px;
-      border-left: 4px solid var(--primary-color);
-      position: relative;
-      cursor: pointer;
-      transition: background-color 0.2s;
-    }
-    .query-display-wrapper:hover {
-      background-color: #e8e8e8;
-    }
-    .query-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 5px;
-    }
+    .input-with-btn { display: flex; gap: 5px; } .input-with-btn input { flex-grow: 1; }
+    .query-display-wrapper { background: #f1f3f4; padding: 15px; border-radius: 4px; margin-top: 20px; border-left: 4px solid var(--primary-color); position: relative; cursor: pointer; transition: background-color 0.2s; }
+    .query-display-wrapper:hover { background-color: #e8e8e8; }
+    .query-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 5px; }
     .query-header label { margin-bottom: 0; cursor: pointer; }
-    .btn-copy {
-      background: none; border: 1px solid #dadce0; color: #5f6368; cursor: pointer;
-      font-size: 0.8em; padding: 4px 8px; border-radius: 4px; background-color: white; transition: all 0.2s; white-space: nowrap;
-    }
-    .btn-copy:hover {
-      background-color: #f1f3f4;
-      border-color: #888;
-    }
-    
+    .btn-copy { background: none; border: 1px solid #dadce0; color: #5f6368; cursor: pointer; font-size: 0.8em; padding: 4px 8px; border-radius: 4px; background-color: white; transition: all 0.2s; white-space: nowrap; }
+    .btn-copy:hover { background-color: #f1f3f4; border-color: #888; }
     .query-content { overflow-x: auto; padding-bottom: 5px; }
     code { font-family: 'Courier New', Courier, monospace; color: #d93025; font-weight: bold; word-break: break-all; }
-
-    .btn {
-      background-color: var(--primary-color); color: white; border: none; padding: 12px 20px;
-      border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: bold; transition: background 0.2s; white-space: nowrap;
-    }
-    .btn:hover { background-color: #1765cc; }
-    .btn:disabled { background-color: #ccc; cursor: not-allowed; }
-    .btn-secondary { background-color: #5f6368; }
-    .btn-outline { background-color: white; color: var(--primary-color); border: 1px solid var(--primary-color); }
+    .btn { background-color: var(--primary-color); color: white; border: none; padding: 12px 20px; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: bold; transition: background 0.2s; white-space: nowrap; }
+    .btn:hover { background-color: #1765cc; } .btn:disabled { background-color: #ccc; cursor: not-allowed; }
+    .btn-secondary { background-color: #5f6368; } .btn-outline { background-color: white; color: var(--primary-color); border: 1px solid var(--primary-color); }
     .btn-small { padding: 6px 10px; font-size: 12px; }
-
     table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14px; background-color: #fff; }
-    th, td { text-align: left; padding: 10px; border-bottom: 1px solid var(--border-color); }
-    th { background-color: #f1f3f4; position: sticky; top: 0; z-index: 1; }
-    
-    #fileTableContainer, #foldersContent, #filesContent {
-      overflow-y: auto; max-height: 500px; border: 1px solid var(--border-color); border-radius: 4px; background-color: #fff;
-    }
-    
+    th, td { text-align: left; padding: 10px; border-bottom: 1px solid var(--border-color); } th { background-color: #f1f3f4; position: sticky; top: 0; z-index: 1; }
+    #fileTableContainer, #foldersContent, #filesContent { overflow-y: auto; max-height: 500px; border: 1px solid var(--border-color); border-radius: 4px; background-color: #fff; }
     .loading { display: none; color: var(--primary-color); font-weight: bold; margin: 10px 0; }
     .status-msg { font-size: 0.8em; color: #888; margin-top: 5px; height: 1em; }
-
-    .accordion-header {
-      display: flex; justify-content: space-between; align-items: center; cursor: pointer; user-select: none; padding: 5px 0;
-    }
+    .accordion-header { display: flex; justify-content: space-between; align-items: center; cursor: pointer; user-select: none; padding: 5px 0; }
     .accordion-arrow { font-size: 0.8em; transition: transform 0.2s; color: #5f6368; transform: rotate(0deg); }
     .accordion-collapsed .accordion-arrow { transform: rotate(-90deg); }
-    .results-content { overflow: hidden; }
-    .accordion-collapsed .results-content { display: none; }
-    
+    .results-content { overflow: hidden; } .accordion-collapsed .results-content { display: none; }
     .count-badge { background: #e8f0fe; color: var(--primary-color); padding: 2px 8px; border-radius: 12px; font-size: 0.8em; margin-left: 8px; }
     #selectionCountBadge { background: #fbbc04; color: #3c4043; font-weight: bold; }
-
-    /* Tabs */
     .tabs-container { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); margin-top: 15px; flex-wrap: wrap; gap: 10px; }
     .tabs { display: flex; overflow-x: auto; }
     .tab { padding: 10px 15px; cursor: pointer; border-bottom: 3px solid transparent; font-weight: bold; color: #5f6368; display: flex; align-items: center; gap: 5px; white-space: nowrap; }
     .tab.active { color: var(--primary-color); border-bottom-color: var(--primary-color); }
-    .tab-content { display: none; padding: 0; }
-    .tab-content.active { display: block; }
+    .tab-content { display: none; padding: 0; } .tab-content.active { display: block; }
     #analyzeBtnContainer { display: none; padding-right: 5px; }
-
-    .file-name-container { display: flex; align-items: center; gap: 8px; }
-    .file-icon { font-size: 1.2em; min-width: 24px; text-align: center; }
-    .stats-cell { font-family: monospace; color: #5f6368; font-size: 0.9em; white-space: nowrap; }
-    .stat-item { margin-right: 5px; display: inline-block; }
-
-    /* Filter Groups */
+    .file-name-container { display: flex; align-items: center; gap: 8px; } .file-icon { font-size: 1.2em; min-width: 24px; text-align: center; }
+    .stats-cell { font-family: monospace; color: #5f6368; font-size: 0.9em; white-space: nowrap; } .stat-item { margin-right: 5px; display: inline-block; }
     .filter-group { grid-column: 1 / -1; border: 1px solid var(--border-color); border-radius: 4px; padding: 10px; background: #fff; margin-bottom: 0; }
     .filter-group label { display: block; margin-bottom: 5px; font-weight: bold; color: #5f6368; font-size: 0.9em; }
     .filter-options { display: flex; gap: 15px; margin-bottom: 10px; border-bottom: 1px dashed var(--border-color); padding-bottom: 8px; flex-wrap: wrap; align-items: center; }
@@ -175,85 +60,16 @@
     .filter-inputs { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
     .filter-input-wrapper { display: flex; align-items: center; gap: 5px; font-size: 0.9em; flex-wrap: wrap;}
     .input-disabled { opacity: 0.5; pointer-events: none; }
-    
-    /* Path Display */
-    .path-display {
-        font-size: 0.85em;
-        color: #5f6368;
-        margin-top: 5px;
-        padding: 5px 10px;
-        background-color: #f8f9fa;
-        border-radius: 4px;
-        min-height: 20px;
-        word-break: break-all;
-    }
-
-    /* Exclude Inputs Grid */
-    .exclude-inputs {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 5px;
-    }
-
-    /* Move Progress Styles */
-    #moveProgressArea {
-      margin-top: 15px;
-      display: none;
-      background-color: #fff;
-      padding: 15px;
-      border-radius: 4px;
-      border: 1px solid #ffe0b2;
-    }
-    .progress-bar-container {
-      width: 100%;
-      background-color: #f1f3f4;
-      border-radius: 4px;
-      height: 20px;
-      margin-bottom: 10px;
-      overflow: hidden;
-    }
-    .progress-bar {
-      height: 100%;
-      background-color: var(--primary-color);
-      width: 0%;
-      transition: width 0.3s ease;
-    }
-    .progress-text {
-      text-align: center;
-      font-size: 0.9em;
-      font-weight: bold;
-      margin-bottom: 5px;
-    }
-    .log-area {
-      max-height: 150px;
-      overflow-y: auto;
-      font-size: 0.85em;
-      border-top: 1px dashed #ffe0b2;
-      padding-top: 10px;
-      margin-top: 10px;
-    }
-    .log-item { margin-bottom: 4px; }
-    .log-error { color: var(--error-color); font-weight: bold; }
-    .log-success { color: var(--live-color); }
-    .error-summary {
-      background-color: #fce8e6;
-      color: #c5221f;
-      padding: 10px;
-      border-radius: 4px;
-      margin-top: 10px;
-      display: none;
-    }
-
-    /* Fetch More Control */
-    .fetch-more-control {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 10px;
-    }
-
-    /* Modal */
+    .path-display { font-size: 0.85em; color: #5f6368; margin-top: 5px; padding: 5px 10px; background-color: #f8f9fa; border-radius: 4px; min-height: 20px; word-break: break-all; }
+    .exclude-inputs { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 5px; }
+    #moveProgressArea { margin-top: 15px; display: none; background-color: #fff; padding: 15px; border-radius: 4px; border: 1px solid #ffe0b2; }
+    .progress-bar-container { width: 100%; background-color: #f1f3f4; border-radius: 4px; height: 20px; margin-bottom: 10px; overflow: hidden; }
+    .progress-bar { height: 100%; background-color: var(--primary-color); width: 0%; transition: width 0.3s ease; }
+    .progress-text { text-align: center; font-size: 0.9em; font-weight: bold; margin-bottom: 5px; }
+    .log-area { max-height: 150px; overflow-y: auto; font-size: 0.85em; border-top: 1px dashed #ffe0b2; padding-top: 10px; margin-top: 10px; }
+    .log-item { margin-bottom: 4px; } .log-error { color: var(--error-color); font-weight: bold; } .log-success { color: var(--live-color); }
+    .error-summary { background-color: #fce8e6; color: #c5221f; padding: 10px; border-radius: 4px; margin-top: 10px; display: none; }
+    .fetch-more-control { display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 10px; }
     #folderPickerModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; }
     .modal-content { background: white; width: 95%; max-width: 500px; border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; max-height: 85vh; }
     .modal-header { padding: 12px 15px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
@@ -268,21 +84,7 @@
     .fetch-more-area { margin: 15px; text-align: center; border-top: 1px dashed var(--border-color); padding-top: 15px; }
 
     @media (max-width: 600px) {
-      body { padding: 5px; }
-      .container { padding: 12px; width: 100%; border-radius: 4px; }
-      .header-container { margin-bottom: 15px; }
-      .header-container h2 { font-size: 1.3em; }
-      .section { padding: 10px; margin-bottom: 15px; }
-      .grid { gap: 10px; grid-template-columns: 1fr; }
-      .query-display-wrapper { padding: 10px; margin-top: 15px; }
-      .btn { padding: 10px 15px; width: 100%; margin-top: 5px; }
-      .btn-small { width: auto; }
-      #searchBtn { margin-top: 10px; }
-      .input-with-btn .btn { width: auto; }
-      th, td { padding: 8px; font-size: 13px; }
-      .count-badge { margin-left: 5px; font-size: 0.75em; }
-      .modal-content { width: 98%; max-height: 90vh; }
-      .exclude-inputs { grid-template-columns: 1fr; }
+      body { padding: 5px; } .container { padding: 12px; width: 100%; } .section { padding: 10px; } .grid { gap: 10px; grid-template-columns: 1fr; } .query-display-wrapper { padding: 10px; margin-top: 15px; } .btn { padding: 10px 15px; width: 100%; margin-top: 5px; } .btn-small { width: auto; } #searchBtn { margin-top: 10px; } .input-with-btn .btn { width: auto; } th, td { padding: 8px; font-size: 13px; } .count-badge { margin-left: 5px; font-size: 0.75em; } .modal-content { width: 98%; max-height: 90vh; } .exclude-inputs { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -299,7 +101,6 @@
       <span class="section-title">1. 検索条件の設定 (GUI)</span>
       <span class="accordion-arrow">▼</span>
     </div>
-
     <div class="results-content">
       <div class="grid" style="margin-top: 15px;">
         <div class="field">
@@ -314,90 +115,17 @@
             <button class="btn btn-outline btn-small" onclick="openPicker('customParentId')">選択</button>
           </div>
         </div>
-        
-        <div class="field">
-          <label>🏷️ ファイル名 (Name contains)</label>
-          <input type="text" id="fileName" placeholder="例: 2025_レポート" oninput="updateQuery(true)">
-        </div>
-
-        <div class="field">
-          <label>🚫 除外するファイル名 (Name does not contain)</label>
-          <div class="exclude-inputs">
-            <input type="text" id="fileNameExclude1" placeholder="除外1" oninput="updateQuery(true)">
-            <input type="text" id="fileNameExclude2" placeholder="除外2" oninput="updateQuery(true)">
-            <input type="text" id="fileNameExclude3" placeholder="除外3" oninput="updateQuery(true)">
-            <input type="text" id="fileNameExclude4" placeholder="除外4" oninput="updateQuery(true)">
-            <input type="text" id="fileNameExclude5" placeholder="除外5" oninput="updateQuery(true)">
-          </div>
-        </div>
-        
-        <div class="field">
-          <label>🧩 ファイル形式 (MimeType)</label>
-          <select id="mimeType" onchange="updateQuery(true)">
-            <option value="">すべて</option>
-            <option value="text/markdown">マークダウン (.md)</option>
-            <option value="application/vnd.google-apps.spreadsheet">スプレッドシート</option>
-            <option value="application/vnd.google-apps.document">ドキュメント</option>
-            <option value="application/vnd.google-apps.presentation">スライド</option>
-            <option value="application/vnd.google-apps.form">Google フォーム</option>
-            <option value="application/pdf">PDF</option>
-            <option value="text/plain">プレーンテキスト</option>
-            <option value="image/">画像全般</option>
-            <option value="video/">動画全般</option>
-            <option value="application/zip">アーカイブ (zip等)</option>
-            <option value="application/vnd.google-apps.folder">フォルダ</option>
-            <option value="application/vnd.google-apps.script">Google Apps Script</option>
-            <option value="application/vnd.google-apps.site">Google サイト</option>
-            <option value="application/vnd.google-apps.shortcut">ショートカット</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>👤 所有者 (Owner)</label>
-          <select id="ownerType" onchange="updateQuery(true)">
-            <option value="">指定なし</option>
-            <option value="me">自分が所有</option>
-            <option value="notMe">自分以外が所有</option>
-          </select>
-        </div>
-
+        <div class="field"><label>🏷️ ファイル名 (Name contains)</label><input type="text" id="fileName" placeholder="例: 2025_レポート" oninput="updateQuery(true)"></div>
+        <div class="field"><label>🚫 除外するファイル名 (Name does not contain)</label><div class="exclude-inputs"><input type="text" id="fileNameExclude1" placeholder="除外1" oninput="updateQuery(true)"><input type="text" id="fileNameExclude2" placeholder="除外2" oninput="updateQuery(true)"><input type="text" id="fileNameExclude3" placeholder="除外3" oninput="updateQuery(true)"><input type="text" id="fileNameExclude4" placeholder="除外4" oninput="updateQuery(true)"><input type="text" id="fileNameExclude5" placeholder="除外5" oninput="updateQuery(true)"></div></div>
+        <div class="field"><label>🧩 ファイル形式 (MimeType)</label><select id="mimeType" onchange="updateQuery(true)"><option value="">すべて</option><option value="text/markdown">マークダウン (.md)</option><option value="application/vnd.google-apps.spreadsheet">スプレッドシート</option><option value="application/vnd.google-apps.document">ドキュメント</option><option value="application/vnd.google-apps.presentation">スライド</option><option value="application/vnd.google-apps.form">Google フォーム</option><option value="application/pdf">PDF</option><option value="text/plain">プレーンテキスト</option><option value="image/">画像全般</option><option value="video/">動画全般</option><option value="application/zip">アーカイブ (zip等)</option><option value="application/vnd.google-apps.folder">フォルダ</option><option value="application/vnd.google-apps.script">Google Apps Script</option><option value="application/vnd.google-apps.site">Google サイト</option><option value="application/vnd.google-apps.shortcut">ショートカット</option></select></div>
+        <div class="field"><label>👤 所有者 (Owner)</label><select id="ownerType" onchange="updateQuery(true)"><option value="">指定なし</option><option value="me">自分が所有</option><option value="notMe">自分以外が所有</option></select></div>
         <div class="field"><label>📝 本文 (Full text contains)</label><input type="text" id="fullText" placeholder="例: 重要機密" oninput="updateQuery(true)"></div>
         <div class="field"><label>💬 説明文 (Description contains)</label><input type="text" id="description" placeholder="例: 補足説明" oninput="updateQuery(true)"></div>
-        
-        <div class="filter-group">
-          <label>📅 最終更新日時 (Modified Time)</label>
-          <div class="filter-options">
-            <label class="filter-option-label"><input type="radio" name="dateMode" value="none" checked onchange="toggleDateInputs()"> 指定なし</label>
-            <label class="filter-option-label"><input type="radio" name="dateMode" value="absolute" onchange="toggleDateInputs()"> 日付範囲</label>
-            <label class="filter-option-label"><input type="radio" name="dateMode" value="relative" onchange="toggleDateInputs()"> 相対指定</label>
-          </div>
-          <div id="dateAbsolute" class="filter-inputs input-disabled">
-            <div class="filter-input-wrapper"><span>👉 以後 (After):</span><input type="date" id="dateAfter" oninput="updateQuery(true)"></div>
-            <div class="filter-input-wrapper"><span>👈 以前 (Before):</span><input type="date" id="dateBefore" oninput="updateQuery(true)"></div>
-          </div>
-          <div id="dateRelative" class="filter-inputs input-disabled" style="display:none;">
-            <div class="filter-input-wrapper"><span>現在から</span><input type="number" id="relativeDays" value="7" min="0" style="width:60px;" oninput="updateQuery(true)"><span>日</span><select id="relativeOperator" onchange="updateQuery(true)"><option value="older">以前 (Older than)</option><option value="newer">以後 (Within/Newer)</option></select></div>
-          </div>
-        </div>
-
-        <div class="filter-group">
-          <label>📏 ファイルサイズ (Size)</label>
-          <div class="filter-inputs">
-            <div class="filter-input-wrapper"><span>＞</span><input type="number" id="sizeLarger" min="0" step="0.1" style="width:80px;" oninput="updateQuery(true)"><select id="sizeLargerUnit" onchange="updateQuery(true)"><option value="1">B</option><option value="1024">KB</option><option value="1048576" selected>MB</option><option value="1073741824">GB</option></select></div>
-            <div class="filter-input-wrapper"><span>＜</span><input type="number" id="sizeSmaller" min="0" step="0.1" style="width:80px;" oninput="updateQuery(true)"><select id="sizeSmallerUnit" onchange="updateQuery(true)"><option value="1">B</option><option value="1024">KB</option><option value="1048576" selected>MB</option><option value="1073741824">GB</option></select></div>
-          </div>
-        </div>
+        <div class="filter-group"><label>📅 最終更新日時 (Modified Time)</label><div class="filter-options"><label class="filter-option-label"><input type="radio" name="dateMode" value="none" checked onchange="toggleDateInputs()"> 指定なし</label><label class="filter-option-label"><input type="radio" name="dateMode" value="absolute" onchange="toggleDateInputs()"> 日付範囲</label><label class="filter-option-label"><input type="radio" name="dateMode" value="relative" onchange="toggleDateInputs()"> 相対指定</label></div><div id="dateAbsolute" class="filter-inputs input-disabled"><div class="filter-input-wrapper"><span>👉 以後:</span><input type="date" id="dateAfter" oninput="updateQuery(true)"></div><div class="filter-input-wrapper"><span>👈 以前:</span><input type="date" id="dateBefore" oninput="updateQuery(true)"></div></div><div id="dateRelative" class="filter-inputs input-disabled" style="display:none;"><div class="filter-input-wrapper"><span>現在から</span><input type="number" id="relativeDays" value="7" min="0" style="width:60px;" oninput="updateQuery(true)"><span>日</span><select id="relativeOperator" onchange="updateQuery(true)"><option value="older">以前</option><option value="newer">以後</option></select></div></div></div>
+        <div class="filter-group"><label>📏 ファイルサイズ (Size)</label><div class="filter-inputs"><div class="filter-input-wrapper"><span>＞</span><input type="number" id="sizeLarger" min="0" step="0.1" style="width:80px;" oninput="updateQuery(true)"><select id="sizeLargerUnit" onchange="updateQuery(true)"><option value="1">B</option><option value="1024">KB</option><option value="1048576" selected>MB</option><option value="1073741824">GB</option></select></div><div class="filter-input-wrapper"><span>＜</span><input type="number" id="sizeSmaller" min="0" step="0.1" style="width:80px;" oninput="updateQuery(true)"><select id="sizeSmallerUnit" onchange="updateQuery(true)"><option value="1">B</option><option value="1024">KB</option><option value="1048576" selected>MB</option><option value="1073741824">GB</option></select></div></div></div>
       </div>
     </div>
-
-    <div class="query-display-wrapper" onclick="ensureSearchSectionOpen()" title="クリックして検索条件を表示">
-      <div class="query-header">
-        <label>組み立てられた q パラメータ:</label>
-        <button class="btn-copy" id="copyBtn" onclick="event.stopPropagation(); copyQueryToClipboard()" title="クリップボードにコピー">📋 コピー</button>
-      </div>
-      <div class="query-content"><code id="qResult">trashed = false</code></div>
-      <div id="saveStatus" class="status-msg"></div>
-    </div>
-    
+    <div class="query-display-wrapper" onclick="ensureSearchSectionOpen()" title="クリックして検索条件を表示"><div class="query-header"><label>組み立てられた q パラメータ:</label><button class="btn-copy" id="copyBtn" onclick="event.stopPropagation(); copyQueryToClipboard()">📋 コピー</button></div><div class="query-content"><code id="qResult">trashed = false</code></div><div id="saveStatus" class="status-msg"></div></div>
     <button class="btn" id="searchBtn" style="margin-top:20px;" onclick="runSearch()">この条件で検索を実行 (最大20件)</button>
   </div>
 
@@ -406,7 +134,6 @@
       <span class="section-title">2. 検索結果・対象の選択 <span id="itemCountBadge" class="count-badge" style="display:none;">0</span> <span id="selectionCountBadge" class="count-badge" style="display:none;">選択中: 0</span></span>
       <span class="accordion-arrow">▼</span>
     </div>
-    
     <div class="results-content">
       <div id="loadingSearch" class="loading">検索中...</div>
       <div class="tabs-container">
@@ -416,16 +143,9 @@
         </div>
         <div id="analyzeBtnContainer"><button class="btn btn-outline btn-small" id="analyzeBtn" onclick="runAnalyzeFolders()">📊 内訳を集計</button></div>
       </div>
-      <div id="foldersContent" class="tab-content">
-        <table id="folderTable"><thead><tr><th style="width:40px;"><input type="checkbox" id="selectAllFolders" title="全選択/解除" onchange="toggleSelectAll('folders')"></th><th>フォルダ名</th><th>内訳 <small>(種別ごと)</small></th><th>最終更新</th></tr></thead><tbody></tbody></table>
-      </div>
-      <div id="filesContent" class="tab-content active">
-        <table id="fileTable"><thead><tr><th style="width:40px;"><input type="checkbox" id="selectAllFiles" title="全選択/解除" onchange="toggleSelectAll('files')"></th><th>ファイル名</th><th>最終更新</th><th>サイズ</th></tr></thead><tbody></tbody></table>
-      </div>
-      <div id="fetchMoreArea" class="fetch-more-area" style="display:none;">
-        <div class="fetch-more-control"><span>取得件数:</span><select id="fetchLimit"><option value="100" selected>100件</option><option value="200">200件</option><option value="500">500件</option><option value="1000">1000件</option><option value="-1">全て</option></select><button class="btn btn-outline" id="fetchAllBtn" onclick="runFetchAll()">追加で読み込む</button></div>
-        <p style="font-size: 0.85em; color: #666;">※ さらに結果があります</p>
-      </div>
+      <div id="foldersContent" class="tab-content"><table id="folderTable"><thead><tr><th style="width:40px;"><input type="checkbox" id="selectAllFolders" title="全選択/解除" onchange="toggleSelectAll('folders')"></th><th>フォルダ名</th><th>内訳 <small>(種別ごと)</small></th><th>最終更新</th></tr></thead><tbody></tbody></table></div>
+      <div id="filesContent" class="tab-content active"><table id="fileTable"><thead><tr><th style="width:40px;"><input type="checkbox" id="selectAllFiles" title="全選択/解除" onchange="toggleSelectAll('files')"></th><th>ファイル名</th><th>最終更新</th><th>サイズ</th></tr></thead><tbody></tbody></table></div>
+      <div id="fetchMoreArea" class="fetch-more-area" style="display:none;"><div class="fetch-more-control"><span>取得件数:</span><select id="fetchLimit"><option value="100" selected>100件</option><option value="200">200件</option><option value="500">500件</option><option value="1000">1000件</option><option value="-1">全て</option></select><button class="btn btn-outline" id="fetchAllBtn" onclick="runFetchAll()">追加で読み込む</button></div><p style="font-size: 0.85em; color: #666;">※ さらに結果があります</p></div>
     </div>
   </div>
 
@@ -436,12 +156,9 @@
       <div id="destPathDisplay" class="path-display"></div>
     </div>
     <button class="btn btn-secondary" id="moveBtn" style="margin-top:10px;" onclick="runMove()">選択したアイテムを移動する</button>
-    
     <div id="moveProgressArea" style="display:none; margin-top:15px; background:#fff; padding:15px; border-radius:4px; border:1px solid #ffe0b2;">
       <div class="progress-text" id="moveProgressText">準備中...</div>
-      <div style="width:100%; background:#f1f3f4; height:20px; border-radius:4px; overflow:hidden;">
-        <div id="moveProgressBar" style="height:100%; background:var(--primary-color); width:0%; transition:width 0.3s ease;"></div>
-      </div>
+      <div style="width:100%; background:#f1f3f4; height:20px; border-radius:4px; overflow:hidden;"><div id="moveProgressBar" style="height:100%; background:var(--primary-color); width:0%; transition:width 0.3s ease;"></div></div>
       <div id="moveLog" style="max-height:150px; overflow-y:auto; font-size:0.85em; border-top:1px dashed #ffe0b2; padding-top:10px; margin-top:10px;"></div>
       <div id="moveErrorSummary" style="background:#fce8e6; color:#c5221f; padding:10px; border-radius:4px; margin-top:10px; display:none;"></div>
     </div>
@@ -449,7 +166,6 @@
 </div>
 
 <script>
-  // UI Logic & Mocks for Preview
   let saveTimeout = null;
   let currentTargetInputId = '';
   let pickerStack = [{ id: 'root', name: 'マイドライブ' }];
@@ -465,19 +181,22 @@
   let currentFolderIds = [];
   let fileNamesMap = {};
 
-  window.onload = function() {
-    if (typeof google === 'undefined' || !google.script || !google.script.run) {
+  // Mock Initialization for Preview
+  function initApp() {
+      console.log('Preview Mode Initialized');
       document.getElementById('userEmail').textContent = 'preview_user@example.com';
-      updateQuery(false); updateDestPath(); return;
-    }
-    // GAS環境初期化はインクルードされたスクリプトで行われる可能性があるが、
-    // インクルードタグは末尾にあるため、ここで初期化キックを行う。
-    // (JavaScript.html側で上書きされた関数を呼ぶ形になる)
-    // ただし、JavaScript.htmlが読み込まれる前にここが走るとエラーになるので注意が必要。
-    // 通常GASではHTML全体が構築されてからクライアントに渡されるため、window.onload時点では全てのスクリプトが存在する。
+      updateQuery(false); updateDestPath();
+  }
+
+  window.onload = function() {
+      if (typeof google === 'undefined' || !google.script || !google.script.run) {
+          initApp(); return;
+      }
+      // Trigger initialization if function available
+      if (typeof initApp === 'function') initApp(); 
   };
 
-  // --- Common UI Functions (Always available) ---
+  // --- Common UI Functions ---
   function updateSelectionCount() {
     const count = document.querySelectorAll('.file-check:checked').length;
     const badge = document.getElementById('selectionCountBadge');
@@ -485,7 +204,6 @@
     else { badge.style.display = 'none'; }
     syncSelectAllCheckbox('folders'); syncSelectAllCheckbox('files');
   }
-
   function syncSelectAllCheckbox(type) {
     const tableId = type === 'folders' ? 'folderTable' : 'fileTable';
     const headerCheckbox = document.getElementById(type === 'folders' ? 'selectAllFolders' : 'selectAllFiles');
@@ -495,16 +213,13 @@
     const someChecked = Array.from(checkboxes).some(cb => cb.checked);
     headerCheckbox.checked = allChecked; headerCheckbox.indeterminate = someChecked && !allChecked;
   }
-
   function ensureSearchSectionOpen() { document.getElementById('searchSection').classList.remove('accordion-collapsed'); }
-
   function copyQueryToClipboard() {
     const text = document.getElementById('qResult').textContent;
     const temp = document.createElement("textarea"); temp.value = text; document.body.appendChild(temp); temp.select();
-    try { document.execCommand('copy'); const btn = document.getElementById('copyBtn'); const old = btn.textContent; btn.textContent = '✅ コピー完了'; setTimeout(() => btn.textContent = old, 1500); } catch (e) { alert('コピー失敗'); }
+    try { document.execCommand('copy'); const btn = document.getElementById('copyBtn'); const old = btn.textContent; btn.textContent = '✅'; setTimeout(() => btn.textContent = old, 1500); } catch (e) { alert('コピー失敗'); }
     document.body.removeChild(temp);
   }
-
   function toggleDateInputs() {
     const mode = document.querySelector('input[name="dateMode"]:checked').value;
     const abs = document.getElementById('dateAbsolute'), rel = document.getElementById('dateRelative');
@@ -513,7 +228,12 @@
     rel.style.display = mode === 'relative' ? 'flex' : 'none';
     updateQuery(true);
   }
-
+  function getDateQueryString(dateStr, isEndOfDay) {
+    if (!dateStr) return null;
+    const date = new Date(dateStr);
+    if (isEndOfDay) date.setHours(23, 59, 59, 999); else date.setHours(0, 0, 0, 0);
+    return date.toISOString();
+  }
   function getFileIcon(mime, name) {
     if (mime === 'text/markdown' || (name && name.toLowerCase().endsWith('.md'))) return 'Ⓜ️';
     if (mime === 'text/plain') return '📝';
@@ -521,27 +241,23 @@
     if (mime.startsWith('image/')) return '📷';
     return '📄';
   }
-
   function switchResultTab(t) {
     document.querySelectorAll('.tab').forEach(el => el.classList.toggle('active', el.id === (t === 'folders' ? 'tabFolders' : 'tabFiles')));
     document.getElementById('foldersContent').classList.toggle('active', t === 'folders');
     document.getElementById('filesContent').classList.toggle('active', t === 'files');
     document.getElementById('analyzeBtnContainer').style.display = t === 'folders' ? 'block' : 'none';
   }
-
   function toggleAccordion(id, forceOpen) {
     const el = document.getElementById(id);
     if (forceOpen === true) el.classList.remove('accordion-collapsed');
     else if (forceOpen === false) el.classList.add('accordion-collapsed');
     else el.classList.toggle('accordion-collapsed');
   }
-
   function toggleSelectAll(t) {
     const checked = document.getElementById(t === 'folders' ? 'selectAllFolders' : 'selectAllFiles').checked;
     document.querySelectorAll(`#${t === 'folders' ? 'folderTable' : 'fileTable'} tbody .file-check`).forEach(cb => cb.checked = checked);
     updateSelectionCount();
   }
-
   function updateQuery(shouldSave) {
     let parts = ['trashed = false'];
     const val = id => document.getElementById(id).value;
@@ -553,45 +269,88 @@
     for(let i=1; i<=5; i++) { if(val('fileNameExclude'+i)) parts.push(`not name contains '${val('fileNameExclude'+i)}'`); }
     
     document.getElementById('qResult').textContent = parts.join(' and ');
-    if (shouldSave && typeof google !== 'undefined') {
-       // Debounce save (mock implementation in preview, overridden by real one in GAS)
-       if (typeof debounceSave === 'function') debounceSave({}); 
-    }
+    if (shouldSave && typeof debounceSave === 'function') debounceSave({});
   }
 
-  // --- MOCK Functions for Preview (Overridden by JavaScript.html in GAS) ---
+  // --- MOCK Functions for Preview ---
+  function openPicker(id) { 
+      // This function is SHARED logic in this version, calling loadFolderList
+      currentTargetInputId = id; pickerStack = [{id:'root', name:'マイドライブ'}]; document.getElementById('folderPickerModal').style.display = 'flex'; loadFolderList('root'); 
+  }
+  function closePicker() { document.getElementById('folderPickerModal').style.display = 'none'; }
+  function confirmPicker() { if (selectedFolderInfo) { document.getElementById(currentTargetInputId).value = selectedFolderInfo.id; updateQuery(true); updateDestPath(); closePicker(); } }
+  function refreshPicker() { loadFolderList(pickerStack[pickerStack.length - 1].id, true); }
   
+  function loadFolderList(p) {
+    // Mock implementation for Preview
+    const body = document.getElementById('pickerBody'); const indicator = document.getElementById('cacheIndicator');
+    body.innerHTML = '読み込み中...';
+    setTimeout(() => {
+        const mockFolders = [{ id: 'f1', name: '📂 Documents' }, { id: 'f2', name: '🖼️ Images' }, { id: 'f3', name: '💼 Work' }];
+        indicator.style.display = 'inline-block'; indicator.textContent = 'ダミー'; indicator.className = 'cache-status status-live';
+        body.innerHTML = ''; mockFolders.forEach(f => {
+          const div = document.createElement('div'); div.className = 'folder-item'; div.innerHTML = `<span>${f.name}</span>`;
+          div.onclick = () => { selectedFolderInfo = f; document.getElementById('selectedFolderName').textContent = f.name; document.getElementById('confirmPickBtn').disabled = false; };
+          div.ondblclick = () => { pickerStack.push(f); loadFolderList(f.id); }; body.appendChild(div);
+        });
+    }, 300);
+  }
+  
+  function generateMockFiles(count, startId = 0) {
+    const types = ['application/vnd.google-apps.folder', 'text/plain'];
+    return Array.from({length: count}, (_, i) => ({
+      id: 'mock_' + (startId + i),
+      name: 'Mock Item ' + (startId + i),
+      mimeType: types[Math.floor(Math.random() * types.length)],
+      modifiedTime: new Date().toISOString(),
+      size: '1KB'
+    }));
+  }
   function runSearch() {
-    // Mock Search
     document.getElementById('loadingSearch').style.display = 'block';
     setTimeout(() => {
         document.getElementById('loadingSearch').style.display = 'none';
         document.getElementById('resultsSection').style.display = 'block';
         document.getElementById('moveSection').style.display = 'block';
-        // Mock data
-        const files = [{id:'1', name:'Mock File.txt', mimeType:'text/plain', modifiedTime:new Date().toISOString(), size:'1KB'}];
-        renderTable(files, false);
+        loadedFilesCount = 10;
+        renderTable(generateMockFiles(10), false);
+        document.getElementById('fetchMoreArea').style.display = 'block';
     }, 500);
   }
-
-  function renderTable(files, append) {
-      // (Simplified Mock Render)
-      const tbody = document.querySelector('#fileTable tbody');
-      if (!append) tbody.innerHTML = '';
-      files.forEach(f => {
-          tbody.innerHTML += `<tr><td><input type="checkbox"></td><td>${f.name}</td><td>${f.modifiedTime}</td><td>${f.size}</td></tr>`;
-      });
+  function runFetchAll() {
+    const btn = document.getElementById('fetchAllBtn');
+    let sec = 0;
+    const timer = setInterval(() => { sec++; btn.textContent = `取得中... (${sec}秒)`; }, 1000);
+    setTimeout(() => {
+        clearInterval(timer);
+        renderTable(generateMockFiles(15, 10), true);
+        btn.textContent = '追加で読み込む';
+    }, 1500);
   }
-  
-  function runMove() { alert('Mock Move Executed'); }
+  function renderTable(files, append) {
+      const ft = document.querySelector('#folderTable tbody'), flt = document.querySelector('#fileTable tbody');
+      if (!append) { ft.innerHTML = ''; flt.innerHTML = ''; folderCount = 0; fileCount = 0; }
+      files.forEach(f => {
+          const isF = f.mimeType === 'application/vnd.google-apps.folder';
+          const target = isF ? ft : flt;
+          if (isF) folderCount++; else fileCount++;
+          target.innerHTML += `<tr><td><input type="checkbox" class="file-check" onchange="updateSelectionCount()"></td><td>${f.name}</td>${isF?'<td>-</td>':''}<td>${f.modifiedTime}</td>${!isF?'<td>'+f.size+'</td>':''}</tr>`;
+      });
+      updateBadge(); updateSelectionCount();
+      if(!append) switchResultTab(fileCount > 0 ? 'files' : 'folders');
+  }
+  function updateBadge() {
+      document.getElementById('folderTabCount').textContent = folderCount;
+      document.getElementById('fileTabCount').textContent = fileCount;
+      document.getElementById('itemCountBadge').textContent = folderCount + fileCount;
+  }
+  function runMove() { alert('Mock Move'); }
   function runAnalyzeFolders() { alert('Mock Analyze'); }
-  function runFetchAll() { alert('Mock Fetch All'); }
-  function updateDestPath() { /* Mock Path */ document.getElementById('destPathDisplay').textContent = '📂 Mock > Path'; }
-
-  // ... (Other Picker functions omitted for brevity in this specific block, but should be present)
+  function updateDestPath() { document.getElementById('destPathDisplay').textContent = '📂 Mock Path'; }
+  function debounceSave() {} 
 </script>
 
-<!-- GAS Include Tag -->
+<!-- GAS Include -->
 <?!= include('JavaScript'); ?>
 
 </body>

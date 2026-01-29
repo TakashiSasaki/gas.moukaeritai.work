@@ -11,8 +11,7 @@ function doGet() {
 
 /**
  * HTMLファイルの内容をインクルードするヘルパー関数
- * @param {string} filename インクルードするファイル名（拡張子なし）
- * @return {string} ファイルの内容
+ * これがないと <?!= include('JavaScript'); ?> が動作しません
  */
 function include(filename) {
   return HtmlService.createHtmlOutputFromFile(filename).getContent();
@@ -39,7 +38,15 @@ function loadUserSettings() {
  * 現在のユーザーのメールアドレスを取得する
  */
 function getCurrentUserEmail() {
-  return Session.getActiveUser().getEmail();
+  try {
+    let email = Session.getActiveUser().getEmail();
+    if (!email) {
+      email = Session.getEffectiveUser().getEmail();
+    }
+    return email || "User (No Email Detected)";
+  } catch (e) {
+    return "Error: " + e.message;
+  }
 }
 
 /**
@@ -239,6 +246,12 @@ function moveFiles(fileIds, destinationId) {
   try {
     const results = { success: 0, error: 0, details: [] };
     fileIds.forEach(fileId => {
+      if (!fileId || fileId === 'on') {
+        results.error++;
+        results.details.push(`Invalid ID: ${fileId}`);
+        return;
+      }
+
       try {
         const file = Drive.Files.get(fileId, { fields: 'parents' });
         const previousParents = (file.parents || []).join(',');
