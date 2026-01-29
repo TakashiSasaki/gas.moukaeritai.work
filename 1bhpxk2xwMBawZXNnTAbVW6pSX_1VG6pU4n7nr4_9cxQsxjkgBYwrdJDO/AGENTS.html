@@ -8,11 +8,13 @@
         :root {
             --bg-color: #1e1e1e;
             --text-color: #d4d4d4;
-            --accent-color: #4fc1ff;
-            --code-bg: #2d2d2d;
-            --highlight-color: #ce9178;
-            --tag-bg: #3794ef;
+            --heading-color: #569cd6;
+            --code-bg: #252526;
             --border-color: #454545;
+            --tag-arch: #ce9178;
+            --tag-rule: #4ec9b0;
+            --tag-warn: #f48771;
+            --tag-api: #6a9955;
         }
         body {
             font-family: 'Segoe UI', 'Consolas', monospace;
@@ -23,155 +25,76 @@
             max-width: 1000px;
             margin: 0 auto;
         }
-        h1 { color: var(--accent-color); border-bottom: 2px solid var(--tag-bg); padding-bottom: 10px; margin-bottom: 30px; }
-        h2 { color: var(--accent-color); border-bottom: 1px solid var(--border-color); padding-bottom: 5px; margin-top: 40px; }
-        h3 { color: #b5cea8; margin-top: 25px; }
-        code {
-            background-color: var(--code-bg);
-            padding: 2px 6px;
-            border-radius: 4px;
-            color: var(--highlight-color);
-            font-family: 'Consolas', monospace;
-        }
-        pre {
-            background-color: var(--code-bg);
-            padding: 15px;
-            border-radius: 4px;
-            overflow-x: auto;
-            border: 1px solid var(--border-color);
-            color: #dcdccc;
-        }
-        .rule-block {
-            margin-bottom: 20px;
-            border-left: 4px solid var(--tag-bg);
-            padding-left: 20px;
-            background-color: rgba(255, 255, 255, 0.03);
-            padding: 20px;
-            border-radius: 0 4px 4px 0;
-        }
-        .tag {
-            display: inline-block;
-            background-color: var(--tag-bg);
-            color: white;
-            padding: 2px 10px;
-            border-radius: 12px;
-            font-size: 0.75em;
-            margin-right: 10px;
-            vertical-align: middle;
-            font-weight: bold;
-            text-transform: uppercase;
-        }
-        .tag.critical { background-color: #f44336; }
-        .tag.spec { background-color: #4caf50; }
+        h1, h2, h3 { color: var(--heading-color); border-bottom: 1px solid var(--border-color); padding-bottom: 0.3em; }
+        h1 { font-size: 2.2em; border-bottom: 2px solid var(--heading-color); }
+        h2 { margin-top: 2.5em; font-size: 1.5em; }
+        h3 { margin-top: 1.5em; font-size: 1.2em; border: none; color: #dcdcaa; }
+        code { font-family: 'Consolas', monospace; background-color: var(--code-bg); padding: 2px 5px; border-radius: 4px; color: #9cdcfe; }
+        pre { background-color: var(--code-bg); padding: 15px; border-radius: 6px; overflow-x: auto; border: 1px solid var(--border-color); margin: 10px 0; }
+        .rule-box { background-color: rgba(255, 255, 255, 0.03); border-left: 5px solid; padding: 15px 20px; margin: 20px 0; border-radius: 0 4px 4px 0; }
+        .rule-arch { border-color: var(--tag-arch); }
+        .rule-rule { border-color: var(--tag-rule); }
+        .rule-warn { border-color: var(--tag-warn); background-color: rgba(244, 135, 113, 0.1); }
+        .rule-api { border-color: var(--tag-api); }
+        .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.75em; font-weight: bold; margin-right: 8px; vertical-align: middle; color: #1e1e1e; }
+        .t-arch { background-color: var(--tag-arch); }
+        .t-rule { background-color: var(--tag-rule); }
+        .t-warn { background-color: var(--tag-warn); }
+        .t-api { background-color: var(--tag-api); }
         table { width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 0.9em; }
-        th, td { border: 1px solid var(--border-color); padding: 12px; text-align: left; }
-        th { background-color: #333; color: var(--accent-color); }
+        th, td { border: 1px solid var(--border-color); padding: 10px; text-align: left; }
+        th { background-color: #333; }
     </style>
 </head>
 <body>
 
     <h1>🤖 Development Context: Drive Shallow Mover</h1>
-    <p>This document tracks the technical architecture, constraints, and operational rules for the Drive Shallow Mover project. Adherence to these standards is mandatory to maintain compatibility between the Gemini Preview environment and GAS production.</p>
+    <p>This is the <strong>source of truth</strong> for technical specifications. All agents MUST consult this before making changes.</p>
 
-    <h2>1. System Architecture</h2>
-    <div class="rule-block">
-        <h3><span class="tag">Architecture</span> Hybrid Loading Strategy</h3>
-        <p>The application uses a three-file structure to enable real-time UI previewing and full backend integration:</p>
+    <h2 id="architecture">1. System Architecture (Hybrid Loading)</h2>
+    <div class="rule-box rule-arch">
+        <h3><span class="tag t-arch">ARCH</span> Component Separation</h3>
         <ul>
-            <li><strong><code>Index.html</code></strong>: Contains the UI layout, CSS, and <strong>Mock Functions</strong>. Mocks allow testing in the Canvas environment where <code>google.script.run</code> is unavailable.</li>
-            <li><strong><code>JavaScript.html</code></strong>: Contains the production logic. It <strong>overrides</strong> mock functions in the global <code>window</code> scope when evaluated by the GAS template engine.</li>
-            <li><strong><code>Code.gs</code></strong>: Server-side implementation. Must include a <code>include(filename)</code> helper to inject <code>JavaScript.html</code> into <code>Index.html</code>.</li>
+            <li><strong><code>Index.html</code></strong>: Structure and logic. <strong>No CSS.</strong> Uses <code>include('Stylesheet')</code>. Contains UI Mocks.</li>
+            <li><strong><code>Stylesheet.html</code></strong>: All CSS rules. Disconnected in Preview to keep logic lightweight.</li>
+            <li><strong><code>JavaScript.html</code></strong>: Real production logic overriding global window functions.</li>
+            <li><strong><code>Code.gs</code></strong>: Server-side Drive API logic and <code>include()</code> helper.</li>
         </ul>
     </div>
 
-    <h2>2. Backend & API Constraints</h2>
-    <div class="rule-block">
-        <h3><span class="tag critical">Critical</span> Drive API v3 Update Protocol</h3>
-        <p>When moving files/folders via parent updates using <code>Drive.Files.update</code>:</p>
+    <h2 id="api-constraints">2. Drive API v3 Constraints</h2>
+    <div class="rule-box rule-warn">
+        <h3><span class="tag t-warn">CRITICAL</span> Update Signature</h3>
+        <p>Moving files: <code>Drive.Files.update({}, fileId, null, {addParents, removeParents})</code>. 3rd arg MUST be <code>null</code>.</p>
+    </div>
+
+    <div class="rule-box rule-api">
+        <h3><span class="tag t-api">API</span> Forbidden q-Fields</h3>
         <ul>
-            <li>The 3rd argument (<code>mediaData</code>) <strong>MUST be <code>null</code></strong>.</li>
-            <li>Parent changes (<code>addParents</code>, <code>removeParents</code>) <strong>MUST</strong> be passed within the 4th argument (<code>options</code>).</li>
-            <li>Failure to follow this signature results in silent failures or internal server errors.</li>
+            <li><code>size</code>: ❌ Forbidden in search query. Filter post-fetch.</li>
+            <li><code>description</code>: ❌ Forbidden. Use <code>fullText contains</code>.</li>
+            <li><code>'</code> (Quote): ⚠️ Always escape user input as <code>\'</code>.</li>
         </ul>
     </div>
 
-    <div class="rule-block">
-        <h3><span class="tag critical">Critical</span> Search Query (q) Parameters</h3>
-        <p>To prevent <code>Invalid Value</code> errors during <code>drive.files.list</code> calls, observe the following field restrictions:</p>
-        <table>
-            <thead>
-                <tr>
-                    <th>Target Field</th>
-                    <th>Status</th>
-                    <th>Requirement / Alternative</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td><code>size</code></td>
-                    <td>❌ Forbidden</td>
-                    <td>Filtering by size must be performed post-fetch on the server or client.</td>
-                </tr>
-                <tr>
-                    <td><code>description</code></td>
-                    <td>❌ Forbidden</td>
-                    <td>Use <code>fullText contains '...'</code> (searches name, body, and description).</td>
-                </tr>
-                <tr>
-                    <td><code>modifiedTime</code></td>
-                    <td>✅ Supported</td>
-                    <td>Must be an RFC 3339 / ISO 8601 formatted string.</td>
-                </tr>
-                <tr>
-                    <td>Single Quote (<code>'</code>)</td>
-                    <td>⚠️ Dangerous</td>
-                    <td>All user-provided string values must have quotes escaped as <code>\'</code>.</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-
-    <h2>3. Query Construction Specifications</h2>
-    <div class="rule-block">
-        <h3><span class="tag spec">Logic</span> <code>updateQuery(shouldSave)</code> Implementation</h3>
-        <p>The client-side query assembly logic must adhere to these specific Drive API mappings:</p>
+    <h2 id="concurrency">5. Concurrency & Performance Strategy</h2>
+    <div class="rule-box rule-arch">
+        <h3><span class="tag t-arch">PERF</span> Sequential Batch Processing (UPDATED)</h3>
+        <p>To optimize execution while maintaining UI responsiveness and avoiding script timeouts:</p>
         <ul>
-            <li><strong>Markdown Search</strong>: Uses OR logic to capture inconsistent MIME types:
-                <br><code>(mimeType = 'text/markdown' or (mimeType = 'text/plain' and name contains '.md'))</code></li>
-            <li><strong>Exclusion Filters</strong>: Supports up to 5 keywords using <code>not name contains '...'</code>.</li>
-            <li><strong>Relative Dates</strong>: "Days ago" values must be calculated into a fixed ISO string before assembly.</li>
-            <li><strong>Location Scope</strong>: Defaults to <code>'root' in parents</code> if no specific ID is provided.</li>
+            <li><strong>Client-Side Iteration</strong>: The client iterates over selected file IDs.</li>
+            <li><strong>Batching</strong>: IDs are grouped into <strong>chunks of 10</strong>.</li>
+            <li><strong>Single Request per Batch</strong>: Send one request (10 files) at a time to the server.</li>
+            <li><strong>Feedback</strong>: Progress bar and logs are updated after each batch (every 10 files).</li>
         </ul>
     </div>
 
-    <h2>4. UI Logic & Interaction Rules</h2>
-    <div class="rule-block">
-        <h3><span class="tag">UI/UX</span> State Management (Reset-First Rule)</h3>
-        <p>To avoid regressions where input fields remain grayed out or unusable:</p>
+    <div class="rule-box rule-rule">
+        <h3><span class="tag t-rule">UI</span> State Rules</h3>
         <ul>
-            <li><strong>The Rule</strong>: When toggling conditional input groups (e.g., Date Modes), first <strong>disable and hide ALL</strong> groups in that set. Then, enable only the one corresponding to the active mode.</li>
-            <li><strong>Dual-Lock Mechanism</strong>: Apply both the <code>disabled</code> HTML attribute and the <code>.input-disabled</code> CSS class to elements.</li>
-            <li><strong>Restoration Safety</strong>: Initialization/Restoration must call <code>toggleDateInputs(false)</code> to prevent default values from overwriting existing settings in the <code>PropertiesService</code>.</li>
-        </ul>
-    </div>
-
-    <h2>5. Performance & Concurrency</h2>
-    <div class="rule-block">
-        <h3><span class="tag">Performance</span> Locking and Sequential Processing</h3>
-        <ul>
-            <li><strong>Server Lock</strong>: Use <code>LockService.getUserLock()</code> with a <strong>2-second timeout</strong>. Return <code>SERVER_BUSY</code> for retries.</li>
-            <li><strong>Client Retry</strong>: Wrap API calls in <code>runWithRetry</code> to handle busy signals with a 1.5s delay.</li>
-            <li><strong>Batch Operations</strong>: For file movement, the client-side must iterate over IDs and send <strong>one request per file</strong>. This ensures progress tracking and prevents script timeouts for large selections.</li>
-        </ul>
-    </div>
-
-    <h2>6. Data Persistence</h2>
-    <div class="rule-block">
-        <h3><span class="tag spec">Sync</span> Auto-Save and Restoration</h3>
-        <ul>
-            <li><strong>Debounce Save</strong>: Persistence is triggered via <code>debounceSave(settings)</code> after a 1-second delay from the last user input.</li>
-            <li><strong>Input Coverage</strong>: All interactive inputs (including <code>destFolderId</code> manual edits) must trigger <code>updateQuery(true)</code> on the <code>oninput</code> event.</li>
-            <li><strong>Restoration Flow</strong>: <code>initApp</code> in <code>JavaScript.html</code> fetches the settings JSON and maps keys directly to DOM Element IDs.</li>
+            <li><strong>Reset-First</strong>: Disable/hide all groups before enabling the active mode.</li>
+            <li><strong>Checkboxes</strong>: Rows MUST set <code>value="${file.id}"</code>.</li>
+            <li><strong>Smart Picker</strong>: If ID exists, open its parent folder in the dialog.</li>
         </ul>
     </div>
 

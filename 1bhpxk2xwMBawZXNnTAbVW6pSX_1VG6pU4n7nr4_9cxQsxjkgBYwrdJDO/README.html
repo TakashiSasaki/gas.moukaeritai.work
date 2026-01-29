@@ -4,194 +4,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Drive Shallow Mover - ユーザーガイド</title>
-    <style>
-        :root {
-            --primary-color: #1a73e8;
-            --text-color: #3c4043;
-            --bg-color: #f8f9fa;
-            --border-color: #dadce0;
-        }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: var(--text-color);
-            background-color: var(--bg-color);
-            margin: 0;
-            padding: 20px;
-        }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: white;
-            padding: 40px;
-            border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.12);
-        }
-        h1 {
-            color: var(--primary-color);
-            border-bottom: 2px solid var(--primary-color);
-            padding-bottom: 10px;
-        }
-        h2 {
-            margin-top: 30px;
-            border-left: 5px solid var(--primary-color);
-            padding-left: 10px;
-            background-color: #e8f0fe;
-        }
-        h3 {
-            color: #5f6368;
-            margin-top: 25px;
-        }
-        ul {
-            padding-left: 20px;
-        }
-        li {
-            margin-bottom: 8px;
-        }
-        code {
-            background-color: #f1f3f4;
-            padding: 2px 5px;
-            border-radius: 3px;
-            font-family: monospace;
-            color: #d93025;
-        }
-        .alert {
-            background-color: #fff3e0;
-            border: 1px solid #ffe0b2;
-            padding: 15px;
-            border-radius: 4px;
-            margin: 20px 0;
-        }
-        .step {
-            display: flex;
-            align-items: flex-start;
-            margin-bottom: 15px;
-        }
-        .step-number {
-            background-color: var(--primary-color);
-            color: white;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            text-align: center;
-            line-height: 24px;
-            margin-right: 10px;
-            flex-shrink: 0;
-            font-weight: bold;
-        }
-        .img-placeholder {
-            background-color: #eee;
-            color: #888;
-            padding: 20px;
-            text-align: center;
-            border: 1px dashed #ccc;
-            margin: 10px 0;
-            border-radius: 4px;
-        }
-    </style>
+    <!-- CSS etc. (Simplified for guide) -->
 </head>
 <body>
+<div style="font-family: sans-serif; padding: 20px; max-width: 800px; margin: 0 auto; line-height: 1.6;">
+    <h1 style="color: #1a73e8; border-bottom: 2px solid #1a73e8;">Drive Shallow Mover ユーザーガイド</h1>
+    <p>高度な条件でファイルを検索し、指定したフォルダへ一括移動します。入力された設定は自動保存されます。</p>
 
-<div class="container">
-    <h1>Drive Shallow Mover ユーザーガイド</h1>
+    <h2 style="border-left: 5px solid #1a73e8; padding-left: 10px;">1. 検索条件の設定</h2>
+    <ul>
+        <li><strong>場所</strong>: マイドライブ直下、または特定のフォルダID内を対象にできます。</li>
+        <li><strong>除外キーワード</strong>: 検索結果から除きたい言葉を5つまで指定できます。</li>
+        <li><strong>マークダウン検索</strong>: MIMEタイプと言語設定の両面からマークダウンを特定します。</li>
+        <li><strong>本文・説明文検索</strong>: ファイルの中身や、Googleドライブ上の「説明」欄に含まれる文字列を検索します。</li>
+        <li><strong>最終更新日時</strong>: 日付範囲指定、または「〇日以前」といった相対指定が可能です。</li>
+    </ul>
+
+    <h2 style="border-left: 5px solid #1a73e8; padding-left: 10px;">2. フォルダ選択</h2>
+    <ul>
+        <li>「選択」ボタンでダイアログが開きます。ダブルクリックで階層を降り、パンくずリストで戻ります。</li>
+        <li><strong>スマートオープン</strong>: すでにIDが入力されている場合、その隣接フォルダを探しやすいよう「親フォルダ」を表示した状態で開始します。</li>
+    </ul>
+
+    <h2 style="border-left: 5px solid #1a73e8; padding-left: 10px;">3. 移動の実行</h2>
+    <p>ファイルを選択して移動を開始すると、進捗状況がプログレスバーで表示されます。効率化のため、内部的に10件ずつのバッチ処理を行います。</p>
     
-    <p><strong>Drive Shallow Mover</strong> は、Google ドライブ内のファイルを「直感的に」「条件を指定して」「一括で」移動するためのツールです。<br>
-    フォルダ階層の奥深くまで自動探索するのではなく、<strong>指定したフォルダの直下にあるファイルだけ</strong>を安全かつ確実に整理することに特化しています。</p>
-
-    <div class="alert">
-        <strong>⚠️ 注意事項</strong><br>
-        このアプリは「再帰的（Recursive）」な操作は行いません。つまり、フォルダの中にさらにフォルダがある場合、その中のファイルまでは操作しません。指定した場所の「表面（Shallow）」にあるアイテムのみが対象です。
-    </div>
-
-    <h2>主な機能</h2>
-    <ul>
-        <li><strong>高度な検索フィルター</strong>: ファイル名、本文、説明文、更新日時、サイズ、所有者など、多彩な条件でファイルを絞り込めます。</li>
-        <li><strong>プレビューと選択</strong>: 移動前に検索結果を確認し、チェックボックスで個別に移動対象を選べます。</li>
-        <li><strong>フォルダ/ファイルの分離</strong>: 検索結果はタブで分かれているため、大量のファイルがあっても見やすく管理できます。</li>
-        <li><strong>一括移動</strong>: 選択したアイテムを指定したフォルダへ一括で移動します。</li>
-        <li><strong>設定の保存</strong>: 検索条件や移動先フォルダは自動的に保存され、次回起動時に復元されます。</li>
-    </ul>
-
-    <h2>使い方のステップ</h2>
-
-    <h3>STEP 1: 検索条件を設定する</h3>
-    <div class="step">
-        <div class="step-number">1</div>
-        <div>
-            <strong>場所 (Location)</strong> を指定します。<br>
-            デフォルトは「マイドライブ直下 ('root')」です。「特定のフォルダID直下」を選び、右側の「選択」ボタンからフォルダピッカーを使って対象フォルダを指定することもできます。
-        </div>
-    </div>
-    <div class="step">
-        <div class="step-number">2</div>
-        <div>
-            必要に応じてその他のフィルター条件を入力します。<br>
-            <ul>
-                <li><strong>ファイル名</strong>: 「含む」だけでなく「除外する」キーワードも指定可能です。</li>
-                <li><strong>日時</strong>: 「2025/01/01 以後」のような範囲指定や、「現在から 7 日 以前」のような相対指定が可能です。</li>
-                <li><strong>サイズ</strong>: 「1 MB より大きい」などの指定が可能です。</li>
-            </ul>
-        </div>
-    </div>
-    <div class="step">
-        <div class="step-number">3</div>
-        <div>
-            「<strong>この条件で検索を実行</strong>」ボタンをクリックします。
-        </div>
-    </div>
-
-    <h3>STEP 2: 対象を選択する</h3>
-    <div class="step">
-        <div class="step-number">4</div>
-        <div>
-            検索結果が表示されます。「フォルダ」と「ファイル」のタブを切り替えて確認できます。<br>
-            移動したいアイテムのチェックボックスをオンにします（ヘッダーのチェックボックスで全選択も可能です）。
-        </div>
-    </div>
-    <div class="step">
-        <div class="step-number">5</div>
-        <div>
-            結果が多い場合は「残りをすべて取得する」ボタンが表示されます。
-        </div>
-    </div>
-    <div class="step">
-        <div class="step-number">6</div>
-        <div>
-            <strong>ヒント</strong>: フォルダタブにある「📊 内訳を集計」ボタンを押すと、各フォルダの中にファイルが何個あるかを事前に確認できます。
-        </div>
-    </div>
-
-    <h3>STEP 3: 移動を実行する</h3>
-    <div class="step">
-        <div class="step-number">7</div>
-        <div>
-            画面下部の「<strong>移動先フォルダID</strong>」を入力します。<br>
-            「選択」ボタンからフォルダピッカーを使って移動先を選ぶのが簡単です。
-        </div>
-    </div>
-    <div class="step">
-        <div class="step-number">8</div>
-        <div>
-            「<strong>選択したアイテムを移動する</strong>」ボタンをクリックします。確認ダイアログが表示され、OKを押すと移動が開始されます。
-        </div>
-    </div>
-
-    <h2>高度な機能</h2>
-
-    <h3>クエリのコピー</h3>
-    <p>検索条件エリアに表示されている赤文字のコード（例: <code>name contains 'report' and ...</code>）は、Google Drive API の検索クエリそのものです。右上の「📋 コピー」ボタンでクリップボードにコピーし、他のツールやAPI開発で利用することができます。</p>
-
-    <h3>内訳集計機能</h3>
-    <p>フォルダの中に何が入っているか移動前に知りたい場合、検索結果の「内訳」列を活用してください。「集計」を実行すると、そのフォルダ直下のサブフォルダ数、ファイル数、さらにはファイル種別（📄 ドキュメント, 📈 スプレッドシートなど）ごとの概数アイコンが表示されます。</p>
-
-    <h2>トラブルシューティング</h2>
-    <ul>
-        <li><strong>"SERVER_BUSY" エラー</strong>: 他の処理が実行中です。自動的にリトライが行われますので、そのままお待ちください。</li>
-        <li><strong>検索結果が出ない</strong>: 除外キーワードや日付条件が厳しすぎないか確認してください。「ゴミ箱」にあるファイルは検索対象外です。</li>
-        <li><strong>プレビュー表示で動作がおかしい</strong>: 本番環境（GASデプロイ後）と異なり、開発中のプレビュー画面ではダミーデータで動作します。実際のファイル操作はデプロイされたアプリ上で行ってください。</li>
-    </ul>
-
+    <p style="font-size: 0.9em; color: #666; border-top: 1px solid #ccc; margin-top: 20px; padding-top: 10px;">
+        ※ ファイルサイズによる絞り込みは検索後のリストフィルタとして機能します。
+    </p>
 </div>
-
 </body>
 </html>
