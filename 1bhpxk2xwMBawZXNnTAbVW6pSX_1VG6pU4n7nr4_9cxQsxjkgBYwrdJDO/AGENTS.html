@@ -30,13 +30,13 @@
         h2 { margin-top: 2.5em; font-size: 1.5em; }
         h3 { margin-top: 1.5em; font-size: 1.2em; border: none; color: #dcdcaa; }
         code { font-family: 'Consolas', monospace; background-color: var(--code-bg); padding: 2px 5px; border-radius: 4px; color: #9cdcfe; }
-        pre { background-color: var(--code-bg); padding: 15px; border-radius: 6px; overflow-x: auto; border: 1px solid var(--border-color); margin: 10px 0; }
+        pre { background-color: var(--code-bg); padding: 15px; border-radius: 6px; border: 1px solid var(--border-color); overflow-x: auto; }
         .rule-box { background-color: rgba(255, 255, 255, 0.03); border-left: 5px solid; padding: 15px 20px; margin: 20px 0; border-radius: 0 4px 4px 0; }
         .rule-arch { border-color: var(--tag-arch); }
         .rule-rule { border-color: var(--tag-rule); }
         .rule-warn { border-color: var(--tag-warn); background-color: rgba(244, 135, 113, 0.1); }
         .rule-api { border-color: var(--tag-api); }
-        .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.75em; font-weight: bold; margin-right: 8px; vertical-align: middle; color: #1e1e1e; }
+        .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.75em; font-weight: bold; margin-right: 8px; color: #1e1e1e; }
         .t-arch { background-color: var(--tag-arch); }
         .t-rule { background-color: var(--tag-rule); }
         .t-warn { background-color: var(--tag-warn); }
@@ -49,23 +49,24 @@
 <body>
 
     <h1>🤖 Development Context: Drive Shallow Mover</h1>
-    <p>This is the <strong>source of truth</strong> for technical specifications. All agents MUST consult this before making changes.</p>
+    <p>This document is the <strong>source of truth</strong> for technical specifications. All agents MUST consult this before making changes.</p>
 
-    <h2 id="architecture">1. System Architecture (Hybrid Loading)</h2>
+    <h2 id="architecture">1. System Architecture (Hybrid & Modular)</h2>
     <div class="rule-box rule-arch">
-        <h3><span class="tag t-arch">ARCH</span> Component Separation</h3>
+        <h3><span class="tag t-arch">ARCH</span> Routing & Components</h3>
         <ul>
-            <li><strong><code>Index.html</code></strong>: Structure and logic. <strong>No CSS.</strong> Uses <code>include('Stylesheet')</code>. Contains UI Mocks.</li>
-            <li><strong><code>Stylesheet.html</code></strong>: All CSS rules. Disconnected in Preview to keep logic lightweight.</li>
-            <li><strong><code>JavaScript.html</code></strong>: Real production logic overriding global window functions.</li>
-            <li><strong><code>Code.gs</code></strong>: Server-side Drive API logic and <code>include()</code> helper.</li>
+            <li><strong><code>Router.gs</code></strong>: Handles <code>doGet(e)</code>. Routes to HTML files based on <code>?p=...</code> parameter (e.g., <code>?p=Index</code>).</li>
+            <li><strong><code>Index.html</code></strong>: Logic Hub. <strong>NO CSS ALLOWED.</strong> Uses <code>include('Stylesheet')</code>. Contains UI Mocks.</li>
+            <li><strong><code>Stylesheet.html</code></strong>: All CSS rules. Disconnected in Preview.</li>
+            <li><strong><code>JavaScript.html</code></strong>: Production JS overriding mocks.</li>
+            <li><strong><code>Code.gs</code></strong>: Backend Drive API logic (v3 preferred).</li>
         </ul>
     </div>
 
     <h2 id="api-constraints">2. Drive API v3 Constraints</h2>
     <div class="rule-box rule-warn">
         <h3><span class="tag t-warn">CRITICAL</span> Update Signature</h3>
-        <p>Moving files: <code>Drive.Files.update({}, fileId, null, {addParents, removeParents})</code>. 3rd arg MUST be <code>null</code>.</p>
+        <p>Moving files: <code>Drive.Files.update({}, id, null, {addParents, removeParents})</code>. 3rd arg MUST be <code>null</code>.</p>
     </div>
 
     <div class="rule-box rule-api">
@@ -73,28 +74,40 @@
         <ul>
             <li><code>size</code>: ❌ Forbidden in search query. Filter post-fetch.</li>
             <li><code>description</code>: ❌ Forbidden. Use <code>fullText contains</code>.</li>
-            <li><code>'</code> (Quote): ⚠️ Always escape user input as <code>\'</code>.</li>
         </ul>
     </div>
 
-    <h2 id="concurrency">5. Concurrency & Performance Strategy</h2>
-    <div class="rule-box rule-arch">
-        <h3><span class="tag t-arch">PERF</span> Sequential Batch Processing (UPDATED)</h3>
-        <p>To optimize execution while maintaining UI responsiveness and avoiding script timeouts:</p>
-        <ul>
-            <li><strong>Client-Side Iteration</strong>: The client iterates over selected file IDs.</li>
-            <li><strong>Batching</strong>: IDs are grouped into <strong>chunks of 10</strong>.</li>
-            <li><strong>Single Request per Batch</strong>: Send one request (10 files) at a time to the server.</li>
-            <li><strong>Feedback</strong>: Progress bar and logs are updated after each batch (every 10 files).</li>
-        </ul>
-    </div>
-
+    <h2 id="query-specs">3. Search Query (q) Specifications</h2>
     <div class="rule-box rule-rule">
-        <h3><span class="tag t-rule">UI</span> State Rules</h3>
+        <h3><span class="tag t-rule">LOGIC</span> Assembly Rules</h3>
+        <table>
+            <thead><tr><th>UI Option</th><th>q Parameter Logic</th></tr></thead>
+            <tbody>
+                <tr><td>Anything except folders</td><td><code>mimeType != 'application/vnd.google-apps.folder'</code></td></tr>
+                <tr><td>Markdown</td><td>OR logic: <code>(mimeType = 'text/markdown' or (mimeType = 'text/plain' and name contains '.md'))</code></td></tr>
+                <tr><td>Relative Dates</td><td>Now - Days -> absolute ISO string -> <code>modifiedTime < 'ISO'</code></td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h2 id="ui-logic">4. UI Logic & Feedback Rules</h2>
+    <div class="rule-box rule-rule">
+        <h3><span class="tag t-rule">UI</span> Modal & Interaction</h3>
         <ul>
-            <li><strong>Reset-First</strong>: Disable/hide all groups before enabling the active mode.</li>
-            <li><strong>Checkboxes</strong>: Rows MUST set <code>value="${file.id}"</code>.</li>
-            <li><strong>Smart Picker</strong>: If ID exists, open its parent folder in the dialog.</li>
+            <li><strong>Reset-First Rule</strong>: Toggling conditional groups: Disable/hide all groups first, then enable the target. Set <code>disabled = true/false</code> directly.</li>
+            <li><strong>Checkbox Values</strong>: Dynamic rows MUST set <code>value="${file.id}"</code>.</li>
+            <li><strong>Smart Picker</strong>: If ID exists, <code>openPicker</code> calls <code>getParentId(value)</code>.</li>
+            <li><strong><span style="color:#ffeb3b">NEW</span> Inline Creation</strong>: The folder picker supports inline folder creation. After creation, the <code>CacheService</code> key for the parent folder MUST be removed, and the list refreshed using <code>bypassCache = true</code>.</li>
+            <li><strong>Elapsed Time Display</strong>: The action button must display elapsed time (e.g., <code>(15s elapsed)</code>) during long processes.</li>
+        </ul>
+    </div>
+
+    <h2 id="concurrency">5. Concurrency & Performance</h2>
+    <div class="rule-box rule-arch">
+        <h3><span class="tag t-arch">PERF</span> Batch Processing</h3>
+        <ul>
+            <li>Iterate in <strong>JavaScript</strong> on the client side.</li>
+            <li>IDs are grouped into <strong>batches of 10</strong> per server request to prevent timeout.</li>
         </ul>
     </div>
 

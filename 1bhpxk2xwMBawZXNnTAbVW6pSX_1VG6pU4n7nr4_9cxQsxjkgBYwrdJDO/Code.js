@@ -1,35 +1,36 @@
 /**
- * フォルダIDから親フォルダIDを取得するヘルパー
+ * 新しいフォルダを作成する
+ */
+function createNewFolder(folderName, parentId = 'root') {
+  const lock = LockService.getUserLock();
+  if (!lock.tryLock(5000)) throw new Error('SERVER_BUSY');
+  try {
+    const resource = { name: folderName, mimeType: 'application/vnd.google-apps.folder', parents: [parentId] };
+    const folder = Drive.Files.create(resource, null, { fields: 'id, name' });
+    CacheService.getUserCache().remove('folder_data_v3_' + parentId);
+    return folder;
+  } finally { lock.releaseLock(); }
+}
+
+/**
+ * フォルダIDから親フォルダIDを取得する
  */
 function getParentId(folderId) {
   try {
     const file = Drive.Files.get(folderId, { fields: 'parents' });
-    if (file.parents && file.parents.length > 0) {
-      return file.parents[0];
-    }
-  } catch (e) {
-    console.warn('Failed to fetch parent for: ' + folderId);
-  }
+    if (file.parents && file.parents.length > 0) return file.parents[0];
+  } catch (e) {}
   return 'root';
 }
 
-/**
- * (既存のコードも含め、完全なサーバーサイドロジック)
- */
-function doGet() {
-  return HtmlService.createTemplateFromFile('Index')
-    .evaluate()
-    .setTitle('Drive Shallow Mover')
-    .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL)
-    .addMetaTag('viewport', 'width=device-width, initial-scale=1');
-}
-
-function include(filename) {
-  return HtmlService.createHtmlOutputFromFile(filename).getContent();
-}
+function include(filename) { return HtmlService.createHtmlOutputFromFile(filename).getContent(); }
 
 function saveUserSettings(settings) {
-  PropertiesService.getUserProperties().setProperty('SEARCH_SETTINGS', JSON.stringify(settings));
+  const lock = LockService.getUserLock();
+  if (lock.tryLock(2000)) {
+    try { PropertiesService.getUserProperties().setProperty('SEARCH_SETTINGS', JSON.stringify(settings)); } 
+    finally { lock.releaseLock(); }
+  }
 }
 
 function loadUserSettings() {
@@ -38,44 +39,34 @@ function loadUserSettings() {
 }
 
 function getCurrentUserEmail() {
-  try {
-    let email = Session.getActiveUser().getEmail() || Session.getEffectiveUser().getEmail();
-    return email || "User";
-  } catch (e) { return "Error: " + e.message; }
+  try { return Session.getActiveUser().getEmail() || Session.getEffectiveUser().getEmail() || "User"; } 
+  catch (e) { return "User"; }
 }
 
 function getChildFolders(parentId = 'root', bypassCache = false) {
-  const lock = LockService.getUserLock();
-  try {
-    if (!lock.tryLock(2000)) throw new Error('SERVER_BUSY');
-    const cache = CacheService.getUserCache();
-    const cacheKey = 'folder_data_v3_' + parentId;
-    if (!bypassCache) {
-      const cachedData = cache.get(cacheKey);
-      if (cachedData) return JSON.parse(cachedData);
-    }
-    const query = `'${parentId}' in parents and mimeType = 'application/vnd.google-apps.folder' and trashed = false`;
-    const folders = [];
-    let pageToken = null;
-    do {
-      const response = Drive.Files.list({ q: query, pageToken: pageToken, fields: 'nextPageToken, files(id, name)', pageSize: 100 });
-      if (response.files) folders.push(...response.files);
-      pageToken = response.nextPageToken;
-    } while (pageToken);
-    const sortedFolders = folders.sort((a, b) => a.name.localeCompare(b.name));
-    let path = [];
-    if (parentId === 'root') {
-      path = [{id: 'root', name: 'マイドライブ'}];
-    } else {
-      path = getFolderPathInternal(parentId);
-      if(!path) path = [{id: parentId, name: 'Unknown'}];
-    }
-    const result = { items: sortedFolders, path: path, fromCache: false };
-    try { cache.put(cacheKey, JSON.stringify({ ...result, fromCache: true }), 600); } catch (e) {}
-    return result;
-  } catch (e) {
-    throw new Error('フォルダ取得エラー: ' + e.message);
-  } finally { lock.releaseLock(); }
+  const cache = CacheService.getUserCache();
+  const cacheKey = 'folder_data_v3_' + parentId;
+  if (!bypassCache) {
+    const cachedData = cache.get(cacheKey);
+    if (cachedData) return JSON.parse(cachedData);
+  }
+  
+  const query = `'${parentId}' in parents and mimeType = 'application/vnd.google-apps.folder' and trashed = false`;
+  const folders = [];
+  let pageToken = null;
+  do {
+    const response = Drive.Files.list({ q: query, pageToken: pageToken, fields: 'nextPageToken, files(id, name)', pageSize: 100 });
+    if (response.files) folders.push(...response.files);
+    pageToken = response.nextPageToken;
+  } while (pageToken);
+  const sortedFolders = folders.sort((a, b) => a.name.localeCompare(b.name));
+  
+  let path = (parentId === 'root') ? [{id: 'root', name: 'マイドライブ'}] : getFolderPathInternal(parentId);
+  if(!path) path = [{id: parentId, name: 'Unknown'}];
+  
+  const result = { items: sortedFolders, path: path, fromCache: false };
+  try { cache.put(cacheKey, JSON.stringify({ ...result, fromCache: true }), 600); } catch (e) {}
+  return result;
 }
 
 function getFolderPathInternal(folderId) {
@@ -100,57 +91,50 @@ function getFolderPath(folderId) {
 function formatFileSize(sizeBytes) {
   if (!sizeBytes) return '-';
   const bytes = parseInt(sizeBytes);
-  if (isNaN(bytes) || bytes === 0) return '0 B';
   const k = 1024;
-  const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
+  const sizes = ['B', 'KB', 'MB', 'GB'];
+  if (bytes === 0) return '0 B';
   const i = Math.floor(Math.log(bytes) / Math.log(k));
   return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 }
 
 function searchFiles(q, pageToken = null, pageSize = 10) {
-  const lock = LockService.getUserLock();
-  if (!lock.tryLock(2000)) throw new Error('SERVER_BUSY');
-  try {
-    const response = Drive.Files.list({ q: q, pageToken: pageToken, fields: 'nextPageToken, files(id, name, mimeType, modifiedTime, size)', pageSize: pageSize });
-    const files = (response.files || []).map(file => ({ id: file.id, name: file.name, mimeType: file.mimeType, modifiedTime: file.modifiedTime, size: formatFileSize(file.size) }));
-    return { files: files, nextPageToken: response.nextPageToken || null };
-  } catch (e) { throw new Error('検索エラー: ' + e.message); } finally { lock.releaseLock(); }
+  const response = Drive.Files.list({ q: q, pageToken: pageToken, fields: 'nextPageToken, files(id, name, mimeType, modifiedTime, size)', pageSize: pageSize });
+  const files = (response.files || []).map(file => ({ id: file.id, name: file.name, mimeType: file.mimeType, modifiedTime: file.modifiedTime, size: formatFileSize(file.size) }));
+  return { files: files, nextPageToken: response.nextPageToken || null };
 }
 
 function fetchFiles(q, initialPageToken, maxLimit = -1) {
-  const lock = LockService.getUserLock();
-  if (!lock.tryLock(2000)) throw new Error('SERVER_BUSY');
-  try {
-    const allResults = [];
-    let pageToken = initialPageToken;
-    do {
-      const response = Drive.Files.list({ q: q, pageToken: pageToken, fields: 'nextPageToken, files(id, name, mimeType, modifiedTime, size)', pageSize: 100 });
-      if (response.files) {
-        allResults.push(...response.files.map(file => ({ id: file.id, name: file.name, mimeType: file.mimeType, modifiedTime: file.modifiedTime, size: formatFileSize(file.size) })));
-      }
-      pageToken = response.nextPageToken;
-      if (maxLimit > 0 && allResults.length >= maxLimit) break;
-    } while (pageToken);
-    return { files: allResults, nextPageToken: pageToken || null };
-  } catch (e) { throw new Error('取得エラー: ' + e.message); } finally { lock.releaseLock(); }
+  const allResults = [];
+  let pageToken = initialPageToken;
+  do {
+    const response = Drive.Files.list({ q: q, pageToken: pageToken, fields: 'nextPageToken, files(id, name, mimeType, modifiedTime, size)', pageSize: 100 });
+    if (response.files) allResults.push(...response.files.map(file => ({ id: file.id, name: file.name, mimeType: file.mimeType, modifiedTime: file.modifiedTime, size: formatFileSize(file.size) })));
+    pageToken = response.nextPageToken;
+    if (maxLimit > 0 && allResults.length >= maxLimit) break;
+  } while (pageToken);
+  return { files: allResults, nextPageToken: pageToken || null };
 }
 
+/**
+ * 選択されたファイル群を目的のフォルダに移動する
+ * 高速化のため、ここでの LockService 適用は緩和し、クライアント側からの並列実行を許容する
+ */
 function moveFiles(fileIds, destinationId) {
-  const lock = LockService.getUserLock();
-  if (!lock.tryLock(2000)) throw new Error('SERVER_BUSY');
-  try {
-    const results = { success: 0, error: 0, details: [] };
-    fileIds.forEach(fileId => {
-      if (!fileId || fileId === 'on') return;
-      try {
-        const file = Drive.Files.get(fileId, { fields: 'parents' });
-        const previousParents = (file.parents || []).join(',');
-        Drive.Files.update({}, fileId, null, { addParents: destinationId, removeParents: previousParents });
-        results.success++;
-      } catch (e) { results.error++; results.details.push(`${e.message}`); }
-    });
-    return results;
-  } catch (e) { throw new Error('移動処理エラー: ' + e.message); } finally { lock.releaseLock(); }
+  const results = { success: 0, error: 0, details: [] };
+  fileIds.forEach(fileId => {
+    if (!fileId || fileId === 'on') return;
+    try {
+      const file = Drive.Files.get(fileId, { fields: 'parents' });
+      const previousParents = (file.parents || []).join(',');
+      Drive.Files.update({}, fileId, null, { addParents: destinationId, removeParents: previousParents });
+      results.success++;
+    } catch (e) {
+      results.error++;
+      results.details.push(`${e.message}`);
+    }
+  });
+  return results;
 }
 
 function getSingleFolderStats(folderId) {
