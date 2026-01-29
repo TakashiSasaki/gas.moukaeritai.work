@@ -1,7 +1,7 @@
 <script>
   /**
-   * GAS環境用: サーバー連携ロジック
-   * Index.htmlで定義されているモック関数を上書きして、本番の挙動を実現します。
+   * GAS環境用: サーバー連携ロジック (JavaScript.html)
+   * Index.htmlの同名関数(モック)を上書きして動作します。
    */
 
   // リトライロジック
@@ -9,164 +9,248 @@
     google.script.run
       .withSuccessHandler(onSuccess)
       .withFailureHandler(err => {
-        if (err.message.includes('SERVER_BUSY')) {
+        if (err.message && err.message.includes('SERVER_BUSY')) {
           if (onBusy) onBusy();
           setTimeout(() => runWithRetry(funcName, args, onSuccess, onFailure, onBusy), 1500);
         } else {
-          onFailure(err);
+          console.error(err);
+          if (onFailure) onFailure(err);
         }
       })[funcName](...args);
   }
 
-  // アプリケーション初期化（本番用: ユーザー情報と設定のロード）
-  // window.onloadから呼ばれる initApp を上書きします。
-  function initApp() {
-    console.log('App initialized in GAS environment (JavaScript.html)');
+  // アプリケーション初期化
+  window.initApp = function() {
+    console.log('App initialized in GAS environment');
     
-    // ユーザー情報取得
     google.script.run
-      .withSuccessHandler(email => { document.getElementById('userEmail').textContent = email; })
-      .withFailureHandler(err => { document.getElementById('userEmail').textContent = 'Error'; console.error(err); })
+      .withSuccessHandler(email => { 
+        const el = document.getElementById('userEmail');
+        if (el) el.textContent = email; 
+      })
+      .withFailureHandler(err => { console.error(err); })
       .getCurrentUserEmail();
 
-    // 設定読み込みとUI復元
     google.script.run.withSuccessHandler(settings => {
       if (settings) {
-        const ids = ['parentType', 'customParentId', 'fileName', 'fullText', 'description', 'mimeType', 'ownerType', 'destFolderId', 'dateAfter', 'dateBefore', 'relativeDays', 'relativeOperator', 'sizeLarger', 'sizeLargerUnit', 'sizeSmaller', 'sizeSmallerUnit'];
+        const ids = ['parentType', 'customParentId', 'fileName', 'fileNameExclude1', 'fileNameExclude2', 'fileNameExclude3', 'fileNameExclude4', 'fileNameExclude5', 'fullText', 'description', 'mimeType', 'ownerType', 'destFolderId', 'dateAfter', 'dateBefore', 'relativeDays', 'relativeOperator', 'sizeLarger', 'sizeLargerUnit', 'sizeSmaller', 'sizeSmallerUnit'];
+        
         ids.forEach(id => {
           const el = document.getElementById(id);
-          if (el) el.value = settings[id] || '';
+          if (el && settings[id] !== undefined) el.value = settings[id];
         });
-        // 複数除外設定
-        for (let i = 1; i <= 5; i++) {
-          if (settings['fileNameExclude' + i]) document.getElementById('fileNameExclude' + i).value = settings['fileNameExclude' + i];
-        }
-        // ラジオボタン
+
         if (settings.dateMode) {
           const rb = document.querySelector(`input[name="dateMode"][value="${settings.dateMode}"]`);
           if (rb) rb.checked = true;
         }
-        toggleDateInputs();
-        updateDestPath();
+        
+        if (typeof toggleDateInputs === 'function') toggleDateInputs();
+        if (typeof updateDestPath === 'function') updateDestPath();
       }
-      // UIに反映された値でクエリを構築（保存はしない）
-      updateQuery(false);
+      if (typeof updateQuery === 'function') updateQuery(false);
     }).loadUserSettings();
-  }
+  };
 
-  // 設定保存（本番用: モックの空関数を上書き）
-  // 入力があるたびに呼ばれ、サーバーに保存する
-  function debounceSave(settings) {
+  // 設定保存
+  window.debounceSave = function(settings) {
     clearTimeout(saveTimeout);
     const status = document.getElementById('saveStatus');
-    status.textContent = '入力を保存中...';
+    if(status) status.textContent = '保存中...';
+    
     saveTimeout = setTimeout(() => {
       google.script.run.withSuccessHandler(() => {
-        status.textContent = '設定を自動保存しました。';
-        setTimeout(() => status.textContent = '', 2000);
+        if(status) {
+          status.textContent = '設定を自動保存しました';
+          setTimeout(() => status.textContent = '', 2000);
+        }
       }).saveUserSettings(settings);
     }, 1000);
-  }
+  };
 
-  // フォルダ一覧取得（本番用: ピッカーの中身）
-  function loadFolderList(parentId, bypassCache = false) {
+  // --- Folder Picker Functions (Override Mocks) ---
+  window.openPicker = function(id) { 
+    currentTargetInputId = id; 
+    pickerStack = [{id:'root', name:'マイドライブ'}]; 
+    selectedFolderInfo = null;
+    
+    const btn = document.getElementById('confirmPickBtn');
+    if (btn) btn.disabled = true;
+    
+    const nameEl = document.getElementById('selectedFolderName');
+    if (nameEl) nameEl.textContent = '';
+    
+    const indicator = document.getElementById('cacheIndicator');
+    if (indicator) indicator.style.display = 'none';
+    
+    const modal = document.getElementById('folderPickerModal');
+    if (modal) {
+      modal.style.display = 'flex';
+      loadFolderList('root'); 
+    } else {
+      console.error('Modal element not found');
+    }
+  };
+
+  window.closePicker = function() { 
+    const modal = document.getElementById('folderPickerModal');
+    if (modal) modal.style.display = 'none'; 
+  };
+  
+  window.refreshPicker = function() { 
+    const currentParentId = pickerStack[pickerStack.length - 1].id; 
+    loadFolderList(currentParentId, true); 
+  };
+  
+  window.confirmPicker = function() { 
+    if (selectedFolderInfo) { 
+      const input = document.getElementById(currentTargetInputId);
+      if (input) input.value = selectedFolderInfo.id;
+      updateQuery(true); 
+      updateDestPath(); 
+      closePicker(); 
+    } 
+  };
+
+  window.loadFolderList = function(parentId, bypassCache = false) {
     const body = document.getElementById('pickerBody');
     const indicator = document.getElementById('cacheIndicator');
-    body.innerHTML = '<div style="padding:20px; text-align:center;">フォルダを取得中...</div>';
-    updateBreadcrumb();
+    if (body) body.innerHTML = '<div style="padding:20px; text-align:center;">読み込み中...</div>';
+    if (typeof updateBreadcrumb === 'function') updateBreadcrumb();
 
     runWithRetry('getChildFolders', [parentId, bypassCache],
       (response) => {
         const { items, fromCache } = response;
-        indicator.style.display = 'inline-block';
-        indicator.textContent = fromCache ? 'キャッシュ' : '最新';
-        indicator.className = fromCache ? 'cache-status status-cached' : 'cache-status status-live';
-        body.innerHTML = '';
-        if (items.length === 0) body.innerHTML = '<div style="padding:20px; text-align:center; color:#888;">サブフォルダはありません</div>';
-        items.forEach(f => {
-          const div = document.createElement('div');
-          div.className = 'folder-item';
-          div.innerHTML = `📁 <span>${f.name}</span>`;
-          div.onclick = () => selectFolderItem(f);
-          div.ondblclick = () => {
-            pickerStack.push(f);
-            loadFolderList(f.id);
-          };
-          body.appendChild(div);
-        });
+        if (indicator) {
+          indicator.style.display = 'inline-block';
+          indicator.textContent = fromCache ? 'キャッシュ' : '最新';
+          indicator.className = fromCache ? 'cache-status status-cached' : 'cache-status status-live';
+        }
+        
+        if (body) {
+          body.innerHTML = '';
+          if (items.length === 0) {
+            body.innerHTML = '<div style="padding:20px; text-align:center; color:#888;">フォルダなし</div>';
+          } else {
+            items.forEach(f => {
+              const div = document.createElement('div');
+              div.className = 'folder-item';
+              div.innerHTML = `📁 <span>${f.name}</span>`;
+              div.onclick = () => selectFolderItem(f);
+              div.ondblclick = () => {
+                pickerStack.push(f);
+                loadFolderList(f.id);
+              };
+              body.appendChild(div);
+            });
+          }
+        }
       },
       (err) => {
-        body.innerHTML = `<div style="padding:20px; color:red;">エラー: ${err.message}</div>`;
-        indicator.style.display = 'none';
+        if (body) body.innerHTML = `<div style="padding:20px; color:red;">エラー: ${err.message}</div>`;
+        if (indicator) indicator.style.display = 'none';
       },
-      () => { body.innerHTML = '<div style="padding:20px; text-align:center;">他の処理を待機中...</div>'; }
+      () => { if (body) body.innerHTML = '<div style="padding:20px; text-align:center;">待機中...</div>'; }
     );
-  }
+  };
 
-  // 検索実行（本番用）
-  function runSearch() {
+  // --- Path Display ---
+  window.updateDestPath = function() {
+    const folderId = document.getElementById('destFolderId').value;
+    const display = document.getElementById('destPathDisplay');
+    
+    if (!folderId) {
+      if (display) display.textContent = '';
+      return;
+    }
+
+    if (display) display.textContent = '確認中...';
+    clearTimeout(pathDebounceTimer);
+    
+    pathDebounceTimer = setTimeout(() => {
+        google.script.run
+            .withSuccessHandler(path => {
+                if (display) display.textContent = path ? '📂 ' + path.join(' > ') : '❌ フォルダが見つかりません';
+            })
+            .withFailureHandler(err => { if (display) display.textContent = '⚠️ エラー: ' + err.message; })
+            .getFolderPath(folderId);
+    }, 500);
+  };
+
+  // --- Search Functions ---
+  window.runSearch = function() {
     const q = document.getElementById('qResult').textContent;
     const btn = document.getElementById('searchBtn');
     const loading = document.getElementById('loadingSearch');
     
-    // UI初期化
     currentLastQuery = q; loadedFilesCount = 0; folderCount = 0; fileCount = 0; currentFolderIds = []; fileNamesMap = {};
     
-    btn.disabled = true;
-    loading.style.display = 'block';
-    document.getElementById('resultsSection').style.display = 'block';
-    document.getElementById('moveSection').style.display = 'block';
+    if (btn) btn.disabled = true;
+    if (loading) loading.style.display = 'block';
+    
+    const resultsSection = document.getElementById('resultsSection');
+    const moveSection = document.getElementById('moveSection');
+    if (resultsSection) resultsSection.style.display = 'block';
+    if (moveSection) moveSection.style.display = 'block';
     
     const searchSection = document.getElementById('searchSection');
     if (searchSection) searchSection.classList.add('accordion-collapsed');
+    
     toggleAccordion('resultsSection', true);
     
-    document.getElementById('selectAllFolders').checked = false;
-    document.getElementById('selectAllFiles').checked = false;
+    const checkFolders = document.getElementById('selectAllFolders');
+    const checkFiles = document.getElementById('selectAllFiles');
+    if (checkFolders) checkFolders.checked = false;
+    if (checkFiles) checkFiles.checked = false;
     updateSelectionCount();
 
     runWithRetry('searchFiles', [q, null, 20],
       (response) => {
-        btn.disabled = false;
-        loading.style.display = 'none';
+        if (btn) btn.disabled = false;
+        if (loading) loading.style.display = 'none';
         currentNextPageToken = response.nextPageToken;
         loadedFilesCount = response.files.length;
         renderTable(response.files, false);
-        document.getElementById('fetchMoreArea').style.display = currentNextPageToken ? 'block' : 'none';
-        btn.textContent = 'この条件で検索を実行 (最大20件)';
+        
+        const fetchMore = document.getElementById('fetchMoreArea');
+        if(fetchMore) fetchMore.style.display = currentNextPageToken ? 'block' : 'none';
+        
+        if (btn) btn.textContent = 'この条件で検索を実行 (最大20件)';
       },
       (err) => {
-        btn.disabled = false;
-        loading.style.display = 'none';
+        if (btn) btn.disabled = false;
+        if (loading) loading.style.display = 'none';
         alert(err.message);
-        btn.textContent = 'この条件で検索を実行 (最大20件)';
+        if (btn) btn.textContent = 'この条件で検索を実行 (最大20件)';
       },
-      () => { btn.textContent = '待機中...'; }
+      () => { if (btn) btn.textContent = '待機中...'; }
     );
-  }
+  };
 
-  // 追加読み込み（本番用）
-  function runFetchAll() {
+  window.runFetchAll = function() {
     const btn = document.getElementById('fetchAllBtn');
-    const loading = document.getElementById('loadingSearch');
-    const originalText = '追加で読み込む';
     const limit = parseInt(document.getElementById('fetchLimit').value);
+    const originalText = '追加で読み込む';
     
     let seconds = 0;
-    btn.disabled = true;
-    loading.style.display = 'block';
+    if (btn) btn.disabled = true;
+    
+    const loading = document.getElementById('loadingSearch');
+    if (loading) loading.style.display = 'block';
     
     if (fetchAllTimer) clearInterval(fetchAllTimer);
     fetchAllTimer = setInterval(() => {
       seconds++;
-      btn.textContent = `取得中... (${seconds}秒)`;
+      if (btn) btn.textContent = `取得中... (${seconds}秒)`;
     }, 1000);
 
     const finish = () => {
       clearInterval(fetchAllTimer);
-      btn.textContent = originalText;
-      btn.disabled = false;
-      loading.style.display = 'none';
+      if (btn) {
+          btn.textContent = originalText;
+          btn.disabled = false;
+      }
+      if (loading) loading.style.display = 'none';
     };
 
     runWithRetry('fetchFiles', [currentLastQuery, currentNextPageToken, limit],
@@ -174,21 +258,23 @@
         currentNextPageToken = res.nextPageToken;
         loadedFilesCount += res.files.length;
         renderTable(res.files, true);
-        document.getElementById('fetchMoreArea').style.display = currentNextPageToken ? 'block' : 'none';
+        const fetchMore = document.getElementById('fetchMoreArea');
+        if(fetchMore) fetchMore.style.display = currentNextPageToken ? 'block' : 'none';
         finish();
       },
       (err) => { alert(err.message); finish(); },
-      () => { }
+      () => {}
     );
-  }
+  };
 
-  // 内訳集計（本番用）
-  async function runAnalyzeFolders() {
+  window.runAnalyzeFolders = async function() {
     if (currentFolderIds.length === 0) return;
     const btn = document.getElementById('analyzeBtn');
-    const originalText = btn.textContent;
-    btn.disabled = true;
-    btn.textContent = '集計中...';
+    const originalText = btn ? btn.textContent : '';
+    if (btn) {
+        btn.disabled = true;
+        btn.textContent = '集計中...';
+    }
     
     for (const folderId of currentFolderIds) {
       const cell = document.getElementById(`stats-${folderId}`);
@@ -198,44 +284,31 @@
         google.script.run
           .withSuccessHandler(res => {
             if (res.error) {
-               cell.textContent = 'Err';
-               cell.title = res.error;
+               if (cell) {
+                   cell.textContent = 'Err';
+                   cell.title = res.error;
+               }
             } else {
                const details = Object.entries(res.counts || {})
                  .map(([type, count]) => `<span class="stat-item">${getFileIcon(type)} ${count}</span>`)
                  .join(' ');
-               cell.innerHTML = details || '(空)';
+               if (cell) cell.innerHTML = details || '(空)';
             }
             resolve();
           })
-          .withFailureHandler(() => { cell.textContent = 'Err'; resolve(); })
+          .withFailureHandler(() => { if (cell) cell.textContent = 'Err'; resolve(); })
           .getSingleFolderStats(folderId);
       });
     }
-    btn.disabled = false;
-    btn.textContent = originalText;
-  }
+    if (btn) {
+        btn.disabled = false;
+        btn.textContent = originalText;
+    }
+  };
 
-  // 移動先パス表示（本番用）
-  function updateDestPath() {
-    const folderId = document.getElementById('destFolderId').value;
-    const display = document.getElementById('destPathDisplay');
-    if (!folderId) { display.textContent = ''; return; }
-    display.textContent = 'パスを確認中...';
-    clearTimeout(pathDebounceTimer);
-    pathDebounceTimer = setTimeout(() => {
-        google.script.run
-            .withSuccessHandler(path => {
-                display.textContent = path ? '📂 ' + path.join(' > ') : '❌ フォルダが見つかりません';
-            })
-            .withFailureHandler(err => { display.textContent = '⚠️ エラー: ' + err.message; })
-            .getFolderPath(folderId);
-    }, 500);
-  }
-
-  // 移動実行（本番用）
-  async function runMove() {
-    const destId = document.getElementById('destFolderId').value;
+  window.runMove = async function() {
+    const destIdInput = document.getElementById('destFolderId');
+    const destId = destIdInput ? destIdInput.value : '';
     const selectedIds = Array.from(document.querySelectorAll('tbody .file-check:checked'))
                              .map(cb => cb.value)
                              .filter(val => val && val !== 'on');
@@ -253,11 +326,13 @@
     const logArea = document.getElementById('moveLog');
     const errorSummary = document.getElementById('moveErrorSummary');
 
-    btn.disabled = true;
-    progressArea.style.display = 'block';
-    logArea.innerHTML = '';
-    errorSummary.style.display = 'none';
-    errorSummary.innerHTML = '<h4>エラーレポート</h4><ul></ul>';
+    if (btn) btn.disabled = true;
+    if (progressArea) progressArea.style.display = 'block';
+    if (logArea) logArea.innerHTML = '';
+    if (errorSummary) {
+        errorSummary.style.display = 'none';
+        errorSummary.innerHTML = '<h4>エラーレポート</h4><ul></ul>';
+    }
     
     let successCount = 0;
     let errorCount = 0;
@@ -268,8 +343,8 @@
         const name = fileNamesMap[id] || id;
         const percent = Math.round(((i + 1) / selectedIds.length) * 100);
         
-        progressText.textContent = `${i + 1} / ${selectedIds.length} 件処理中...`;
-        progressBar.style.width = percent + '%';
+        if (progressText) progressText.textContent = `${i + 1} / ${selectedIds.length} 件処理中...`;
+        if (progressBar) progressBar.style.width = percent + '%';
 
         await new Promise(resolve => {
             runWithRetry('moveFiles', [[id], destId],
@@ -277,35 +352,37 @@
                     if (res.error > 0) {
                         errorCount++;
                         const msg = res.details[0] || 'Unknown error';
-                        logArea.innerHTML = `<div class="log-item">Moving "${name}"... <span class="log-error">Failed</span></div>` + logArea.innerHTML;
+                        if (logArea) logArea.innerHTML = `<div class="log-item">Moving "${name}"... <span class="log-error">Failed</span></div>` + logArea.innerHTML;
                         errors.push(`<li><strong>${name}</strong>: ${msg}</li>`);
                     } else {
                         successCount++;
-                        logArea.innerHTML = `<div class="log-item">Moving "${name}"... <span class="log-success">OK</span></div>` + logArea.innerHTML;
+                        if (logArea) logArea.innerHTML = `<div class="log-item">Moving "${name}"... <span class="log-success">OK</span></div>` + logArea.innerHTML;
                     }
                     resolve();
                 },
                 (err) => {
                     errorCount++;
-                    logArea.innerHTML = `<div class="log-item">Moving "${name}"... <span class="log-error">Error: ${err.message}</span></div>` + logArea.innerHTML;
+                    if (logArea) logArea.innerHTML = `<div class="log-item">Moving "${name}"... <span class="log-error">Error: ${err.message}</span></div>` + logArea.innerHTML;
                     errors.push(`<li><strong>${name}</strong>: ${err.message}</li>`);
                     resolve();
                 },
-                () => { logArea.innerHTML = `<div class="log-item" style="color:#f9a825;">Waiting for server lock...</div>` + logArea.innerHTML; }
+                () => { if (logArea) logArea.innerHTML = `<div class="log-item" style="color:#f9a825;">Waiting for server lock...</div>` + logArea.innerHTML; }
             );
         });
     }
 
-    btn.disabled = false;
-    progressText.textContent = '処理完了';
+    if (btn) btn.disabled = false;
+    if (progressText) progressText.textContent = '処理完了';
     
     if (errorCount > 0) {
-        errorSummary.querySelector('ul').innerHTML = errors.join('');
-        errorSummary.style.display = 'block';
+        if (errorSummary) {
+            errorSummary.querySelector('ul').innerHTML = errors.join('');
+            errorSummary.style.display = 'block';
+        }
         alert(`完了: 成功${successCount}件, 失敗${errorCount}件。\nエラー詳細は下部のレポートを確認してください。`);
     } else {
         alert(`すべて移動しました (成功: ${successCount}件)`);
         runSearch(); 
     }
-  }
+  };
 </script>

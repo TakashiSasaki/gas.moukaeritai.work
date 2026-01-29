@@ -4,7 +4,7 @@
   <base target="_top">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    /* CSSは前回と同じ */
+    /* CSSは変更なし */
     :root { --primary-color: #1a73e8; --bg-color: #f8f9fa; --border-color: #dadce0; --hover-color: #f1f3f4; --cache-color: #f29900; --live-color: #0f9d58; --error-color: #d93025; }
     * { box-sizing: border-box; }
     body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-color); margin: 0; padding: 20px; color: #3c4043; }
@@ -70,6 +70,8 @@
     .log-item { margin-bottom: 4px; } .log-error { color: var(--error-color); font-weight: bold; } .log-success { color: var(--live-color); }
     .error-summary { background-color: #fce8e6; color: #c5221f; padding: 10px; border-radius: 4px; margin-top: 10px; display: none; }
     .fetch-more-control { display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 10px; }
+    
+    /* Modal Styles */
     #folderPickerModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; }
     .modal-content { background: white; width: 95%; max-width: 500px; border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; max-height: 85vh; }
     .modal-header { padding: 12px 15px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
@@ -143,7 +145,7 @@
         </div>
         <div id="analyzeBtnContainer"><button class="btn btn-outline btn-small" id="analyzeBtn" onclick="runAnalyzeFolders()">📊 内訳を集計</button></div>
       </div>
-      <div id="foldersContent" class="tab-content"><table id="folderTable"><thead><tr><th style="width:40px;"><input type="checkbox" id="selectAllFolders" title="全選択/解除" onchange="toggleSelectAll('folders')"></th><th>フォルダ名</th><th>内訳 <small>(種別ごと)</small></th><th>最終更新</th></tr></thead><tbody></tbody></table></div>
+      <div id="foldersContent" class="tab-content"><table id="folderTable"><thead><tr><th style="width:40px;"><input type="checkbox" id="selectAllFolders" title="全選択/解除" onchange="toggleSelectAll('folders')"></th><th>フォルダ名</th><th>内訳</th><th>最終更新</th></tr></thead><tbody></tbody></table></div>
       <div id="filesContent" class="tab-content active"><table id="fileTable"><thead><tr><th style="width:40px;"><input type="checkbox" id="selectAllFiles" title="全選択/解除" onchange="toggleSelectAll('files')"></th><th>ファイル名</th><th>最終更新</th><th>サイズ</th></tr></thead><tbody></tbody></table></div>
       <div id="fetchMoreArea" class="fetch-more-area" style="display:none;"><div class="fetch-more-control"><span>取得件数:</span><select id="fetchLimit"><option value="100" selected>100件</option><option value="200">200件</option><option value="500">500件</option><option value="1000">1000件</option><option value="-1">全て</option></select><button class="btn btn-outline" id="fetchAllBtn" onclick="runFetchAll()">追加で読み込む</button></div><p style="font-size: 0.85em; color: #666;">※ さらに結果があります</p></div>
     </div>
@@ -161,6 +163,22 @@
       <div style="width:100%; background:#f1f3f4; height:20px; border-radius:4px; overflow:hidden;"><div id="moveProgressBar" style="height:100%; background:var(--primary-color); width:0%; transition:width 0.3s ease;"></div></div>
       <div id="moveLog" style="max-height:150px; overflow-y:auto; font-size:0.85em; border-top:1px dashed #ffe0b2; padding-top:10px; margin-top:10px;"></div>
       <div id="moveErrorSummary" style="background:#fce8e6; color:#c5221f; padding:10px; border-radius:4px; margin-top:10px; display:none;"></div>
+    </div>
+  </div>
+</div>
+
+<div id="folderPickerModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>フォルダを選択<span id="cacheIndicator" class="cache-status" style="display:none;"></span></h3>
+      <div><button class="btn btn-outline btn-small" onclick="refreshPicker()">🔄 更新</button><button class="btn btn-outline btn-small" onclick="closePicker()">×</button></div>
+    </div>
+    <div class="breadcrumb" id="pickerBreadcrumb"></div>
+    <div class="modal-body" id="pickerBody"><div style="padding:20px; text-align:center;">読み込み中...</div></div>
+    <div class="modal-footer">
+      <span id="selectedFolderName" style="margin-right:auto;font-weight:bold;"></span>
+      <button class="btn btn-secondary" onclick="closePicker()">キャンセル</button>
+      <button class="btn" id="confirmPickBtn" disabled onclick="confirmPicker()">決定</button>
     </div>
   </div>
 </div>
@@ -192,11 +210,9 @@
       if (typeof google === 'undefined' || !google.script || !google.script.run) {
           initApp(); return;
       }
-      // Trigger initialization if function available
       if (typeof initApp === 'function') initApp(); 
   };
 
-  // --- Common UI Functions ---
   function updateSelectionCount() {
     const count = document.querySelectorAll('.file-check:checked').length;
     const badge = document.getElementById('selectionCountBadge');
@@ -217,7 +233,7 @@
   function copyQueryToClipboard() {
     const text = document.getElementById('qResult').textContent;
     const temp = document.createElement("textarea"); temp.value = text; document.body.appendChild(temp); temp.select();
-    try { document.execCommand('copy'); const btn = document.getElementById('copyBtn'); const old = btn.textContent; btn.textContent = '✅'; setTimeout(() => btn.textContent = old, 1500); } catch (e) { alert('コピー失敗'); }
+    try { document.execCommand('copy'); const btn = document.getElementById('copyBtn'); const old = btn.textContent; btn.textContent = '✅ コピー完了'; setTimeout(() => btn.textContent = old, 1500); } catch (e) { alert('コピー失敗'); }
     document.body.removeChild(temp);
   }
   function toggleDateInputs() {
@@ -272,30 +288,7 @@
     if (shouldSave && typeof debounceSave === 'function') debounceSave({});
   }
 
-  // --- MOCK Functions for Preview ---
-  function openPicker(id) { 
-      // This function is SHARED logic in this version, calling loadFolderList
-      currentTargetInputId = id; pickerStack = [{id:'root', name:'マイドライブ'}]; document.getElementById('folderPickerModal').style.display = 'flex'; loadFolderList('root'); 
-  }
-  function closePicker() { document.getElementById('folderPickerModal').style.display = 'none'; }
-  function confirmPicker() { if (selectedFolderInfo) { document.getElementById(currentTargetInputId).value = selectedFolderInfo.id; updateQuery(true); updateDestPath(); closePicker(); } }
-  function refreshPicker() { loadFolderList(pickerStack[pickerStack.length - 1].id, true); }
-  
-  function loadFolderList(p) {
-    // Mock implementation for Preview
-    const body = document.getElementById('pickerBody'); const indicator = document.getElementById('cacheIndicator');
-    body.innerHTML = '読み込み中...';
-    setTimeout(() => {
-        const mockFolders = [{ id: 'f1', name: '📂 Documents' }, { id: 'f2', name: '🖼️ Images' }, { id: 'f3', name: '💼 Work' }];
-        indicator.style.display = 'inline-block'; indicator.textContent = 'ダミー'; indicator.className = 'cache-status status-live';
-        body.innerHTML = ''; mockFolders.forEach(f => {
-          const div = document.createElement('div'); div.className = 'folder-item'; div.innerHTML = `<span>${f.name}</span>`;
-          div.onclick = () => { selectedFolderInfo = f; document.getElementById('selectedFolderName').textContent = f.name; document.getElementById('confirmPickBtn').disabled = false; };
-          div.ondblclick = () => { pickerStack.push(f); loadFolderList(f.id); }; body.appendChild(div);
-        });
-    }, 300);
-  }
-  
+  // --- MOCK Functions ---
   function generateMockFiles(count, startId = 0) {
     const types = ['application/vnd.google-apps.folder', 'text/plain'];
     return Array.from({length: count}, (_, i) => ({
@@ -344,6 +337,26 @@
       document.getElementById('fileTabCount').textContent = fileCount;
       document.getElementById('itemCountBadge').textContent = folderCount + fileCount;
   }
+  
+  // Picker related mock functions
+  function openPicker(id) { currentTargetInputId = id; pickerStack = [{id:'root', name:'マイドライブ'}]; document.getElementById('folderPickerModal').style.display = 'flex'; loadFolderList('root'); }
+  function closePicker() { document.getElementById('folderPickerModal').style.display = 'none'; }
+  function confirmPicker() { if (selectedFolderInfo) { document.getElementById(currentTargetInputId).value = selectedFolderInfo.id; updateQuery(true); updateDestPath(); closePicker(); } }
+  function refreshPicker() { loadFolderList(pickerStack[pickerStack.length - 1].id, true); }
+  function loadFolderList(p) {
+    const body = document.getElementById('pickerBody'); const indicator = document.getElementById('cacheIndicator');
+    body.innerHTML = '読み込み中...';
+    setTimeout(() => {
+        const mockFolders = [{ id: 'f1', name: '📂 Documents' }, { id: 'f2', name: '🖼️ Images' }, { id: 'f3', name: '💼 Work' }];
+        indicator.style.display = 'inline-block'; indicator.textContent = 'ダミー'; indicator.className = 'cache-status status-live';
+        body.innerHTML = ''; mockFolders.forEach(f => {
+          const div = document.createElement('div'); div.className = 'folder-item'; div.innerHTML = `<span>${f.name}</span>`;
+          div.onclick = () => { selectedFolderInfo = f; document.getElementById('selectedFolderName').textContent = f.name; document.getElementById('confirmPickBtn').disabled = false; };
+          div.ondblclick = () => { pickerStack.push(f); loadFolderList(f.id); }; body.appendChild(div);
+        });
+    }, 300);
+  }
+
   function runMove() { alert('Mock Move'); }
   function runAnalyzeFolders() { alert('Mock Analyze'); }
   function updateDestPath() { document.getElementById('destPathDisplay').textContent = '📂 Mock Path'; }

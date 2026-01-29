@@ -11,7 +11,6 @@ function doGet() {
 
 /**
  * HTMLファイルの内容をインクルードするヘルパー関数
- * これがないと <?!= include('JavaScript'); ?> が動作しません
  */
 function include(filename) {
   return HtmlService.createHtmlOutputFromFile(filename).getContent();
@@ -246,11 +245,8 @@ function moveFiles(fileIds, destinationId) {
   try {
     const results = { success: 0, error: 0, details: [] };
     fileIds.forEach(fileId => {
-      if (!fileId || fileId === 'on') {
-        results.error++;
-        results.details.push(`Invalid ID: ${fileId}`);
-        return;
-      }
+      // 不正なIDをスキップ
+      if (!fileId || fileId === 'on') return;
 
       try {
         const file = Drive.Files.get(fileId, { fields: 'parents' });
