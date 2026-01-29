@@ -86,6 +86,7 @@
             <label class="filter-option-label"><input type="radio" name="dateMode" value="none" checked onchange="toggleDateInputs()"> 指定なし</label>
             <label class="filter-option-label"><input type="radio" name="dateMode" value="absolute" onchange="toggleDateInputs()"> 日付範囲</label>
             <label class="filter-option-label"><input type="radio" name="dateMode" value="relative" onchange="toggleDateInputs()"> 相対指定</label>
+            <label class="filter-option-label"><input type="radio" name="dateMode" value="year" onchange="toggleDateInputs()"> 年単位</label>
           </div>
           
           <div id="dateAbsolute" class="filter-inputs input-disabled" style="display:flex;">
@@ -102,6 +103,17 @@
                 <option value="older">以前</option>
                 <option value="newer">以後</option>
               </select>
+            </div>
+          </div>
+
+          <!-- Added: Year Selection Group -->
+          <div id="dateYear" class="filter-inputs input-disabled" style="display:none;">
+            <div class="filter-input-wrapper">
+              <span>対象年:</span>
+              <select id="selectedYear" onchange="updateQuery(true)">
+                <!-- JavaScript will populate years from 2010 to present -->
+              </select>
+              <span>(1/1 00:00 〜 12/31 23:59)</span>
             </div>
           </div>
         </div>
@@ -167,7 +179,7 @@
   </div>
 </div>
 
-<!-- Folder Picker Modal (Fixed) -->
+<!-- Folder Picker Modal -->
 <div id="folderPickerModal">
   <div class="modal-content">
     <div class="modal-header">
@@ -178,10 +190,7 @@
         <button class="btn btn-outline btn-small" onclick="closePicker()">×</button>
       </div>
     </div>
-    <!-- Permanent Breadcrumb -->
     <div class="breadcrumb" id="pickerBreadcrumb"></div>
-    
-    <!-- Added: Permanent Folder Creation UI -->
     <div id="createFolderArea" class="create-folder-bar">
       <div class="create-folder-input-group">
         <label for="newFolderNameInput">新規フォルダ:</label>
@@ -189,7 +198,6 @@
         <button id="newFolderSubmitBtn" class="btn btn-small" onclick="runCreateFolder()">作成</button>
       </div>
     </div>
-
     <div class="modal-body" id="pickerBody">
         <div id="folderListContainer"></div>
     </div>
@@ -220,8 +228,21 @@
 
   // --- Initialization ---
   function initApp() {
-    console.log('Preview Mode Initialized');
+    console.log('Preview Mode Initialized: Added Year-based search');
     document.getElementById('userEmail').textContent = 'preview_user@example.com';
+    
+    // Populate years from 2010 to present
+    const yearSelect = document.getElementById('selectedYear');
+    if (yearSelect) {
+        const currentYear = new Date().getFullYear();
+        for (let y = currentYear; y >= 2010; y--) {
+            const opt = document.createElement('option');
+            opt.value = y;
+            opt.textContent = y + '年';
+            yearSelect.appendChild(opt);
+        }
+    }
+    
     updateQuery(false);
   }
 
@@ -251,15 +272,33 @@
 
   function toggleDateInputs(shouldSave = true) {
     const mode = document.querySelector('input[name="dateMode"]:checked')?.value || 'none';
-    const abs = document.getElementById('dateAbsolute'), rel = document.getElementById('dateRelative');
+    const abs = document.getElementById('dateAbsolute');
+    const rel = document.getElementById('dateRelative');
+    const yearGrp = document.getElementById('dateYear');
+
     const setState = (el, enable) => {
+      if (!el) return;
       el.style.display = enable ? 'flex' : 'none';
       el.classList.toggle('input-disabled', !enable);
       el.querySelectorAll('input, select').forEach(i => i.disabled = !enable);
     };
-    setState(abs, mode === 'absolute' || mode === 'none'); 
-    setState(rel, mode === 'relative');
-    if(mode === 'none') { abs.querySelectorAll('input').forEach(i => i.disabled = true); abs.classList.add('input-disabled'); }
+
+    // Reset First Rule
+    setState(abs, false);
+    setState(rel, false);
+    setState(yearGrp, false);
+
+    // Enable target
+    if (mode === 'absolute') setState(abs, true);
+    else if (mode === 'relative') setState(rel, true);
+    else if (mode === 'year') setState(yearGrp, true);
+    else setState(abs, true); // Fallback to absolute (disabled) for 'none'
+
+    if(mode === 'none') {
+        abs.querySelectorAll('input').forEach(i => i.disabled = true);
+        abs.classList.add('input-disabled');
+    }
+
     updateQuery(shouldSave);
   }
 
@@ -293,6 +332,7 @@
     const btn = document.getElementById('copyBtn'); const old = btn.textContent; btn.textContent = '✅ コピー完了'; setTimeout(() => btn.textContent = old, 1500);
   }
 
+  // --- Core Query Assembly Logic ---
   function updateQuery(shouldSave) {
     let parts = ['trashed = false'];
     const val = id => {
@@ -300,15 +340,18 @@
       return el ? el.value.replace(/'/g, "\\'") : '';
     };
 
+    // Location
     const pType = document.getElementById('parentType').value;
     if (pType === 'root') parts.push("'root' in parents");
     else if (pType === 'custom' && val('customParentId')) parts.push(`'${val('customParentId')}' in parents`);
     const customArea = document.getElementById('customParentArea');
     if(customArea) customArea.style.display = pType === 'custom' ? 'flex' : 'none';
 
+    // Name
     if (val('fileName')) parts.push(`name contains '${val('fileName')}'`);
     for(let i=1; i<=5; i++) { if(val('fileNameExclude'+i)) parts.push(`not name contains '${val('fileNameExclude'+i)}'`); }
 
+    // MimeType
     const mime = document.getElementById('mimeType').value;
     if (mime) {
       if (mime === 'notFolder') parts.push("mimeType != 'application/vnd.google-apps.folder'");
@@ -317,12 +360,15 @@
       else parts.push(`mimeType = '${mime}'`);
     }
 
+    // Owner
     const owner = document.getElementById('ownerType').value;
     if (owner === 'me') parts.push("'me' in owners");
     else if (owner === 'notMe') parts.push("not 'me' in owners");
 
+    // FullText
     if (val('fullText')) parts.push(`fullText contains '${val('fullText')}'`);
 
+    // Modified Time Logic
     const dateMode = document.querySelector('input[name="dateMode"]:checked')?.value;
     if (dateMode === 'absolute') {
       if (val('dateAfter')) parts.push(`modifiedTime >= '${new Date(val('dateAfter')).toISOString()}'`);
@@ -335,13 +381,23 @@
       const op = document.getElementById('relativeOperator').value === 'older' ? '<' : '>';
       const targetDate = new Date(); targetDate.setDate(targetDate.getDate() - days);
       parts.push(`modifiedTime ${op} '${targetDate.toISOString()}'`);
+    } else if (dateMode === 'year') {
+      const year = val('selectedYear');
+      if (year) {
+        // Start: Year-01-01 00:00:00
+        const start = `${year}-01-01T00:00:00Z`;
+        // End: Year-12-31 23:59:59.999
+        const end = `${year}-12-31T23:59:59.999Z`;
+        parts.push(`modifiedTime >= '${start}'`);
+        parts.push(`modifiedTime <= '${end}'`);
+      }
     }
 
     document.getElementById('qResult').textContent = parts.join(' and ');
 
     if (shouldSave && typeof window.debounceSave === 'function') {
       const settings = {};
-      const ids = ['parentType', 'customParentId', 'fileName', 'fullText', 'mimeType', 'ownerType', 'destFolderId', 'dateAfter', 'dateBefore', 'relativeDays', 'relativeOperator'];
+      const ids = ['parentType', 'customParentId', 'fileName', 'fullText', 'mimeType', 'ownerType', 'destFolderId', 'dateAfter', 'dateBefore', 'relativeDays', 'relativeOperator', 'selectedYear'];
       ids.forEach(k => settings[k] = val(k));
       for(let i=1; i<=5; i++) settings['fileNameExclude'+i] = val('fileNameExclude'+i);
       settings.dateMode = dateMode;
@@ -386,8 +442,8 @@
   }
 
   // --- Mocks ---
-  function openPicker(id) { alert('Picker simulation mode'); }
-  function runCreateFolder() { alert('Simulated creation: ' + document.getElementById('newFolderNameInput').value); }
+  function openPicker(id) { alert('Picker simulation'); }
+  function runCreateFolder() { alert('Folder creation mock'); }
   function runSearch() { renderTable([{id:'m1', name:'Mock Folder', mimeType:'application/vnd.google-apps.folder'}], false); document.getElementById('resultsSection').style.display='block'; document.getElementById('moveSection').style.display='block'; }
   async function runMove() { 
     const btn = document.getElementById('moveBtn');

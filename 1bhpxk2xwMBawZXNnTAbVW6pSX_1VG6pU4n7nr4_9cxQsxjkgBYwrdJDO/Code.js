@@ -12,9 +12,6 @@ function createNewFolder(folderName, parentId = 'root') {
   } finally { lock.releaseLock(); }
 }
 
-/**
- * フォルダIDから親フォルダIDを取得する
- */
 function getParentId(folderId) {
   try {
     const file = Drive.Files.get(folderId, { fields: 'parents' });
@@ -50,7 +47,6 @@ function getChildFolders(parentId = 'root', bypassCache = false) {
     const cachedData = cache.get(cacheKey);
     if (cachedData) return JSON.parse(cachedData);
   }
-  
   const query = `'${parentId}' in parents and mimeType = 'application/vnd.google-apps.folder' and trashed = false`;
   const folders = [];
   let pageToken = null;
@@ -60,10 +56,8 @@ function getChildFolders(parentId = 'root', bypassCache = false) {
     pageToken = response.nextPageToken;
   } while (pageToken);
   const sortedFolders = folders.sort((a, b) => a.name.localeCompare(b.name));
-  
   let path = (parentId === 'root') ? [{id: 'root', name: 'マイドライブ'}] : getFolderPathInternal(parentId);
   if(!path) path = [{id: parentId, name: 'Unknown'}];
-  
   const result = { items: sortedFolders, path: path, fromCache: false };
   try { cache.put(cacheKey, JSON.stringify({ ...result, fromCache: true }), 600); } catch (e) {}
   return result;
@@ -116,10 +110,6 @@ function fetchFiles(q, initialPageToken, maxLimit = -1) {
   return { files: allResults, nextPageToken: pageToken || null };
 }
 
-/**
- * 選択されたファイル群を目的のフォルダに移動する
- * 高速化のため、ここでの LockService 適用は緩和し、クライアント側からの並列実行を許容する
- */
 function moveFiles(fileIds, destinationId) {
   const results = { success: 0, error: 0, details: [] };
   fileIds.forEach(fileId => {
@@ -129,10 +119,7 @@ function moveFiles(fileIds, destinationId) {
       const previousParents = (file.parents || []).join(',');
       Drive.Files.update({}, fileId, null, { addParents: destinationId, removeParents: previousParents });
       results.success++;
-    } catch (e) {
-      results.error++;
-      results.details.push(`${e.message}`);
-    }
+    } catch (e) { results.error++; results.details.push(`${e.message}`); }
   });
   return results;
 }

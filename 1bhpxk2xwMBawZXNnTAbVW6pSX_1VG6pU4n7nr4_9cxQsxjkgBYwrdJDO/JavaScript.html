@@ -1,33 +1,44 @@
 <script>
   (function() {
-    console.log('JavaScript.html loaded: Parallel Batch Move enabled');
+    console.log('JavaScript.html loaded: Parallel Batch Move (5 Workers/5 Batch) with Jitter active');
 
-    // 並列実行の設定
-    const CONCURRENCY_LIMIT = 3; // 同時に実行するサーバーリクエスト数
-    const BATCH_SIZE = 10;      // 1リクエストあたりの処理ファイル数
+    // 並列実行の設定 (ユーザー指定に基づき最適化)
+    const CONCURRENCY_LIMIT = 5; 
+    const BATCH_SIZE = 5;      
 
     window.runWithRetry = function(funcName, args, onSuccess, onFailure, onBusy) {
       google.script.run
         .withSuccessHandler(onSuccess)
         .withFailureHandler(err => {
-          if (err.message && err.message.includes('SERVER_BUSY')) {
+          const errorMsg = (err && err.message) ? err.message : 'Unknown Network or Server Error';
+          
+          if (errorMsg.includes('SERVER_BUSY') || errorMsg.includes('Service invoked too many times')) {
             if (onBusy) onBusy();
-            setTimeout(() => window.runWithRetry(funcName, args, onSuccess, onFailure, onBusy), 1500);
+            const delay = 1500 + Math.floor(Math.random() * 1000);
+            setTimeout(() => window.runWithRetry(funcName, args, onSuccess, onFailure, onBusy), delay);
           } else {
-            console.error(err);
-            if(onFailure) onFailure(err);
+            console.error('GAS Execution Error:', err);
+            if(onFailure) onFailure({ message: errorMsg });
           }
         })[funcName](...args);
     };
 
     window.initApp = function() {
+      const yearSelect = document.getElementById('selectedYear');
+      if (yearSelect) {
+          const currentYear = new Date().getFullYear();
+          for (let y = currentYear; y >= 2010; y--) {
+              const opt = document.createElement('option');
+              opt.value = y; opt.textContent = y + '年';
+              yearSelect.appendChild(opt);
+          }
+      }
       google.script.run.withSuccessHandler(email => { 
         const el = document.getElementById('userEmail'); if(el) el.textContent = email; 
       }).getCurrentUserEmail();
-
       google.script.run.withSuccessHandler(settings => {
         if (settings) {
-          const ids = ['parentType', 'customParentId', 'fileName', 'fullText', 'mimeType', 'ownerType', 'destFolderId', 'dateAfter', 'dateBefore', 'relativeDays', 'relativeOperator'];
+          const ids = ['parentType', 'customParentId', 'fileName', 'fullText', 'mimeType', 'ownerType', 'destFolderId', 'dateAfter', 'dateBefore', 'relativeDays', 'relativeOperator', 'selectedYear'];
           ids.forEach(id => {
             const el = document.getElementById(id);
             if (el && settings[id] !== undefined) el.value = settings[id];
@@ -55,8 +66,7 @@
     };
 
     window.openPicker = function(id) { 
-      window.currentTargetInputId = id; 
-      window.selectedFolderInfo = null;
+      window.currentTargetInputId = id; window.selectedFolderInfo = null;
       const btn = document.getElementById('confirmPickBtn'); if (btn) btn.disabled = true; 
       const nameEl = document.getElementById('selectedFolderName'); if (nameEl) nameEl.textContent = '未選択';
       const input = document.getElementById('newFolderNameInput'); if (input) input.value = '';
@@ -64,9 +74,7 @@
       const currentId = document.getElementById(id)?.value;
       if (currentId) {
           google.script.run.withSuccessHandler(parentId => window.loadFolderList(parentId)).withFailureHandler(() => window.loadFolderList('root')).getParentId(currentId);
-      } else {
-          window.loadFolderList('root');
-      }
+      } else { window.loadFolderList('root'); }
     };
 
     window.closePicker = function() { document.getElementById('folderPickerModal').style.display = 'none'; };
@@ -104,8 +112,7 @@
       const body = document.getElementById('pickerBody');
       const breadcrumb = document.getElementById('pickerBreadcrumb');
       const indicator = document.getElementById('cacheIndicator');
-      window.currentPickerFolderId = parentId; 
-      window.selectedFolderInfo = null; 
+      window.currentPickerFolderId = parentId; window.selectedFolderInfo = null; 
       document.getElementById('confirmPickBtn').disabled = true;
       document.getElementById('selectedFolderName').textContent = '未選択';
       if (body) body.innerHTML = '<div style="padding:20px; text-align:center;">読み込み中...</div>';
@@ -164,7 +171,7 @@
       window.pathDebounceTimer = setTimeout(() => {
           google.script.run.withSuccessHandler(path => {
               if (display) display.textContent = path ? '📂 ' + path.join(' > ') : '❌ フォルダが見つかりません';
-          }).withFailureHandler(err => { if (display) display.textContent = '⚠️ エラー: ' + err.message; }).getFolderPath(folderId);
+          }).withFailureHandler(err => { if (display) display.textContent = '⚠️ エラー: ' + (err.message || 'Unknown'); }).getFolderPath(folderId);
       }, 500);
     };
 
@@ -184,8 +191,7 @@
 
       window.runWithRetry('searchFiles', [q, null, 20], (res) => {
           if(btn) btn.disabled = false; if(loading) loading.style.display = 'none';
-          window.currentNextPageToken = res.nextPageToken;
-          window.loadedFilesCount = res.files.length;
+          window.currentNextPageToken = res.nextPageToken; window.loadedFilesCount = res.files.length;
           if(typeof renderTable === 'function') renderTable(res.files, false);
           document.getElementById('fetchMoreArea').style.display = window.currentNextPageToken ? 'block' : 'none';
           if(btn) btn.textContent = 'この条件で検索を実行 (最大20件)';
@@ -214,12 +220,12 @@
       }, (err) => { alert(err.message); finish(); }, () => {});
     };
 
-    // --- ENHANCED: Parallel Worker Execution for Moving Files ---
+    // --- ENHANCED: Parallel Batch Execution with Jitter ---
     window.runMove = async function() {
       const destId = document.getElementById('destFolderId').value;
       const selectedIds = Array.from(document.querySelectorAll('tbody .file-check:checked')).map(c => c.value).filter(v => v && v !== 'on');
       if (!destId || !selectedIds.length) { alert('移動先フォルダと対象アイテムを選択してください。'); return; }
-      if (!confirm(`${selectedIds.length} 件のアイテムを並列処理で移動しますか？`)) return;
+      if (!confirm(`${selectedIds.length} 件のアイテムを移動しますか？`)) return;
 
       const btn = document.getElementById('moveBtn');
       const startTime = Date.now();
@@ -240,36 +246,41 @@
       let s = 0, e = 0; const errs = [];
       const total = selectedIds.length;
 
-      // チャンク化（バッチのリスト作成）
       const chunks = [];
       for (let i = 0; i < total; i += BATCH_SIZE) {
         chunks.push(selectedIds.slice(i, i + BATCH_SIZE));
       }
 
-      // 並列ワーカーの実行
-      const executeWorker = async () => {
+      // ワーカーロジック (Jitterを追加)
+      const executeWorker = async (workerId) => {
+        // 0s to 3s random initial wait to prevent thundering herd on server
+        await new Promise(resolve => setTimeout(resolve, Math.random() * 3000));
+        console.log(`Worker ${workerId} started after jitter.`);
+
         while (chunks.length > 0) {
           const chunk = chunks.shift();
           await new Promise(resolve => {
             window.runWithRetry('moveFiles', [chunk, destId], res => {
-              s += res.success; e += res.error;
-              processedCount += chunk.length;
-              document.getElementById('moveProgressText').textContent = `${processedCount}/${total} 完了 (並列実行中)`;
+              s += res.success; e += res.error; processedCount += chunk.length;
+              document.getElementById('moveProgressText').textContent = `${processedCount}/${total} 完了`;
               document.getElementById('moveProgressBar').style.width = Math.round((processedCount / total) * 100) + '%';
               
               if(res.error > 0) {
                 res.details.forEach(msg => {
                   logArea.innerHTML = `<div class="log-item"><span class="log-error">Error</span>: ${msg}</div>` + logArea.innerHTML;
-                  errs.push(`<li>Error: ${msg}</li>`);
+                  errs.push(`<li>Batch Error: ${msg}</li>`);
                 });
               } else {
-                logArea.innerHTML = `<div class="log-item"><span class="log-success">Batch Success</span>: ${chunk.length} items</div>` + logArea.innerHTML;
+                logArea.innerHTML = `<div class="log-item"><span class="log-success">Success</span>: ${chunk.length} items</div>` + logArea.innerHTML;
               }
               resolve();
             }, err => {
+              const failMsg = (err && err.message) ? err.message : 'Unexpected Network Error';
               e += chunk.length; processedCount += chunk.length;
-              logArea.innerHTML = `<div class="log-item"><span class="log-error">Failure</span>: ${err.message}</div>` + logArea.innerHTML;
-              errs.push(`<li>Critical Failure: ${err.message}</li>`);
+              document.getElementById('moveProgressText').textContent = `${processedCount}/${total} 完了 (エラーあり)`;
+              document.getElementById('moveProgressBar').style.width = Math.round((processedCount / total) * 100) + '%';
+              logArea.innerHTML = `<div class="log-item"><span class="log-error">Failure</span>: ${failMsg}</div>` + logArea.innerHTML;
+              errs.push(`<li>Critical Error in batch: ${failMsg}</li>`);
               resolve();
             }, () => {});
           });
@@ -278,9 +289,7 @@
 
       try {
         const workers = [];
-        for (let j = 0; j < CONCURRENCY_LIMIT; j++) {
-          workers.push(executeWorker());
-        }
+        for (let j = 0; j < CONCURRENCY_LIMIT; j++) { workers.push(executeWorker(j)); }
         await Promise.all(workers);
       } finally {
         if(timerInterval) clearInterval(timerInterval);
