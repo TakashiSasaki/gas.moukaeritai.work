@@ -10,5 +10,9 @@
   {
     "version": 3,
     "description": "No description"
+  },
+  {
+    "version": 4,
+    "description": "バージョン４"
   }
 ]
