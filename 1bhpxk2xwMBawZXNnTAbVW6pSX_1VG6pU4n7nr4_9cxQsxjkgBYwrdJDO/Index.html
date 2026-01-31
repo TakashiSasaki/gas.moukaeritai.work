@@ -3,18 +3,66 @@
 <head>
   <base target="_top">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- Stylesheet separation maintains logic focus -->
   <?!= include('Stylesheet'); ?>
+  <script>
+    // Server-side injected URL
+    window.APP_URL = "<?= appUrl ?>";
+    window.helpWindowRef = null;
+
+    // --- Help UI Functions (Hybrid Strategy) ---
+    
+    // Proposal 3: In-App Modal with iframe
+    function openHelpModal(page) {
+      const modal = document.getElementById('helpModal');
+      const iframe = document.getElementById('helpFrame');
+      const title = document.getElementById('helpModalTitle');
+      if (modal && iframe) {
+        const targetUrl = (window.APP_URL !== '#' ? window.APP_URL : '') + '?p=' + page;
+        iframe.src = targetUrl;
+        title.textContent = page === 'README' ? 'ユーザーガイド' : '開発者情報';
+        modal.style.display = 'flex';
+      }
+    }
+
+    function closeHelpModal() {
+      const modal = document.getElementById('helpModal');
+      const iframe = document.getElementById('helpFrame');
+      if (modal) {
+        modal.style.display = 'none';
+        if (iframe) iframe.src = 'about:blank';
+      }
+    }
+
+    // Proposal 1: Separate Window with specific target
+    function openHelpWindow(page) {
+      const targetUrl = (window.APP_URL !== '#' ? window.APP_URL : '') + '?p=' + page;
+      const targetName = 'DriveShallowMoverHelp'; 
+      window.helpWindowRef = window.open(targetUrl, targetName);
+      if (window.helpWindowRef) window.helpWindowRef.focus();
+    }
+
+    // Sync closing
+    window.addEventListener('beforeunload', function() {
+      if (window.helpWindowRef && !window.helpWindowRef.closed) {
+        window.helpWindowRef.close();
+      }
+    });
+  </script>
 </head>
 <body>
 
 <div class="container">
+  <!-- Header with Icons -->
   <div class="header-container">
-    <h2>Drive Shallow Mover</h2>
+    <div style="display:flex; align-items:center; gap:12px;">
+      <h2>Drive Shallow Mover</h2>
+      <span class="header-icon" onclick="openHelpModal('README')" title="ユーザーガイドを表示">❓</span>
+      <span class="header-icon" onclick="openHelpModal('AGENTS')" title="開発者情報を表示">🛠️</span>
+    </div>
     <span id="userInfo" class="user-info">👤 <span id="userEmail">Loading...</span></span>
   </div>
 
-  <!-- 1. Search Settings -->
+  <!-- 1. Search Settings Section -->
   <div id="searchSection" class="section">
     <div class="accordion-header" onclick="toggleAccordion('searchSection')">
       <span class="section-title">1. 検索条件の設定 (GUI)</span>
@@ -37,7 +85,7 @@
         
         <div class="field"><label>🏷️ ファイル名 (Name contains)</label><input type="text" id="fileName" placeholder="例: 2025_レポート" oninput="updateQuery(true)"></div>
         
-        <div class="field"><label>🚫 除外するファイル名 (Name does not contain)</label>
+        <div class="field"><label>🚫 除外するファイル名</label>
           <div class="exclude-inputs">
             <input type="text" id="fileNameExclude1" placeholder="除外1" oninput="updateQuery(true)">
             <input type="text" id="fileNameExclude2" placeholder="除外2" oninput="updateQuery(true)">
@@ -61,10 +109,8 @@
             <option value="text/plain">プレーンテキスト</option>
             <option value="image/">画像全般</option>
             <option value="video/">動画全般</option>
-            <option value="application/zip">アーカイブ (zip等)</option>
             <option value="application/vnd.google-apps.folder">フォルダのみ</option>
             <option value="application/vnd.google-apps.script">Google Apps Script</option>
-            <option value="application/vnd.google-apps.shortcut">ショートカット</option>
           </select>
         </div>
         
@@ -87,6 +133,7 @@
             <label class="filter-option-label"><input type="radio" name="dateMode" value="relative" onchange="toggleDateInputs()"> 相対指定</label>
             <label class="filter-option-label"><input type="radio" name="dateMode" value="year" onchange="toggleDateInputs()"> 年単位</label>
           </div>
+          
           <div id="dateAbsolute" class="filter-inputs input-disabled" style="display:flex;">
             <div class="filter-input-wrapper"><span>👉 以後:</span><input type="date" id="dateAfter" oninput="updateQuery(true)"></div>
             <div class="filter-input-wrapper"><span>👈 以前:</span><input type="date" id="dateBefore" oninput="updateQuery(true)"></div>
@@ -95,13 +142,13 @@
             <div class="filter-input-wrapper"><span>現在から</span><input type="number" id="relativeDays" value="7" min="0" style="width:60px;" oninput="updateQuery(true)"><span>日</span><select id="relativeOperator" onchange="updateQuery(true)"><option value="older">以前</option><option value="newer">以後</option></select></div>
           </div>
           <div id="dateYear" class="filter-inputs input-disabled" style="display:none;">
-            <div class="filter-input-wrapper"><span>対象年:</span><select id="selectedYear" onchange="updateQuery(true)"></select><span>(1/1 00:00 〜 12/31 23:59)</span></div>
+            <div class="filter-input-wrapper"><span>対象年:</span><select id="selectedYear" onchange="updateQuery(true)"></select><span>(1/1 〜 12/31)</span></div>
           </div>
         </div>
       </div>
     </div>
     
-    <div class="query-display-wrapper" onclick="ensureSearchSectionOpen()" title="クリックして検索条件を表示">
+    <div class="query-display-wrapper" onclick="ensureSearchSectionOpen()">
       <div class="query-header"><label>組み立てられた q パラメータ:</label><button class="btn-copy" id="copyBtn" onclick="event.stopPropagation(); copyQueryToClipboard()">📋 コピー</button></div>
       <div class="query-content"><code id="qResult">trashed = false</code></div>
       <div id="saveStatus" class="status-msg"></div>
@@ -127,7 +174,7 @@
       <div id="foldersContent" class="tab-content"><table id="folderTable"><thead><tr><th style="width:40px;"><input type="checkbox" id="selectAllFolders" onchange="toggleSelectAll('folders')"></th><th>フォルダ名</th><th>内訳</th><th>最終更新</th></tr></thead><tbody></tbody></table></div>
       <div id="filesContent" class="tab-content active"><table id="fileTable"><thead><tr><th style="width:40px;"><input type="checkbox" id="selectAllFiles" onchange="toggleSelectAll('files')"></th><th>ファイル名</th><th>最終更新</th><th>サイズ</th></tr></thead><tbody></tbody></table></div>
       <div id="fetchMoreArea" class="fetch-more-area" style="display:none;">
-        <div class="fetch-more-control"><span>取得件数:</span><select id="fetchLimit"><option value="100" selected>100件</option><option value="200">200件</option><option value="500">500件</option><option value="1000">1000件</option><option value="-1">全て</option></select><button class="btn btn-outline" id="fetchAllBtn" onclick="runFetchAll()">追加で読み込む</button></div>
+        <div class="fetch-more-control"><span>取得件数:</span><select id="fetchLimit"><option value="100" selected>100件</option><option value="500">500件</option><option value="-1">全て</option></select><button class="btn btn-outline" id="fetchAllBtn" onclick="runFetchAll()">追加で読み込む</button></div>
       </div>
     </div>
   </div>
@@ -144,9 +191,15 @@
       <div id="moveErrorSummary" class="error-summary"></div>
     </div>
   </div>
+
+  <!-- Footer Links -->
+  <footer class="app-footer">
+    <a href="#" onclick="openHelpWindow('README'); return false;">📖 ユーザーガイド (別窓)</a> | 
+    <a href="#" onclick="openHelpWindow('AGENTS'); return false;">🤖 開発者情報 (別窓)</a>
+  </footer>
 </div>
 
-<!-- Folder Picker Modal -->
+<!-- Modal Dialogs -->
 <div id="folderPickerModal">
   <div class="modal-content">
     <div class="modal-header">
@@ -160,8 +213,21 @@
   </div>
 </div>
 
+<!-- Help Modal (Proposal 3) -->
+<div id="helpModal">
+  <div class="modal-content help-content">
+    <div class="modal-header">
+      <h3 id="helpModalTitle">ヘルプ</h3>
+      <button class="btn btn-outline btn-small" onclick="closeHelpModal()">×</button>
+    </div>
+    <div class="modal-body" style="padding:0; height:100%;">
+      <iframe id="helpFrame" src="about:blank" style="width:100%; height:100%; border:none;"></iframe>
+    </div>
+  </div>
+</div>
+
 <script>
-  // --- Global Shared State (Explicitly attached to window) ---
+  // --- Global Shared State (Attached to window for JavaScript.html access) ---
   window.currentFolderIds = [];
   window.fileNamesMap = {};
   window.currentNextPageToken = null;
@@ -176,12 +242,12 @@
   function initApp() {
     const yearSelect = document.getElementById('selectedYear');
     if (yearSelect) {
-        const currentYear = new Date().getFullYear();
-        for (let y = currentYear; y >= 2010; y--) {
-            const opt = document.createElement('option');
-            opt.value = y; opt.textContent = y + '年';
-            yearSelect.appendChild(opt);
-        }
+      const currentYear = new Date().getFullYear();
+      for (let y = currentYear; y >= 2010; y--) {
+        const opt = document.createElement('option');
+        opt.value = y; opt.textContent = y + '年';
+        yearSelect.appendChild(opt);
+      }
     }
     document.getElementById('userEmail').textContent = 'preview_user@example.com';
     updateQuery(false);
@@ -189,6 +255,7 @@
 
   window.onload = () => { if (typeof google === 'undefined') initApp(); else if (typeof window.initApp === 'function') window.initApp(); };
 
+  // --- Common UI Functions ---
   function toggleAccordion(id, forceOpen) {
     const el = document.getElementById(id);
     if (forceOpen === true) el.classList.remove('accordion-collapsed');
@@ -196,7 +263,7 @@
     else el.classList.toggle('accordion-collapsed');
   }
 
-  function ensureSearchSectionOpen() { toggleAccordion('searchSection', true); }
+  function ensureSearchSectionOpen() { document.getElementById('searchSection').classList.remove('accordion-collapsed'); }
 
   function switchResultTab(t) {
     document.querySelectorAll('.tab').forEach(el => el.classList.toggle('active', el.id === (t === 'folders' ? 'tabFolders' : 'tabFiles')));
@@ -227,8 +294,10 @@
     const tableId = type === 'folders' ? 'folderTable' : 'fileTable';
     const headerCheckbox = document.getElementById(type === 'folders' ? 'selectAllFolders' : 'selectAllFiles');
     const checkboxes = document.querySelectorAll(`#${tableId} tbody .file-check`);
-    if (checkboxes.length === 0) { headerCheckbox.checked = false; return; }
-    headerCheckbox.checked = Array.from(checkboxes).every(cb => cb.checked);
+    if (checkboxes.length === 0) { headerCheckbox.checked = false; headerCheckbox.indeterminate = false; return; }
+    const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+    const someChecked = Array.from(checkboxes).some(cb => cb.checked);
+    headerCheckbox.checked = allChecked; headerCheckbox.indeterminate = someChecked && !allChecked;
   }
 
   function toggleSelectAll(t) {
@@ -240,8 +309,8 @@
   function copyQueryToClipboard() {
     const text = document.getElementById('qResult').textContent;
     const temp = document.createElement("textarea"); temp.value = text; document.body.appendChild(temp); temp.select();
-    document.execCommand('copy'); document.body.removeChild(temp);
-    const btn = document.getElementById('copyBtn'); const old = btn.textContent; btn.textContent = '✅ コピー完了'; setTimeout(() => btn.textContent = old, 1500);
+    try { document.execCommand('copy'); const btn = document.getElementById('copyBtn'); const old = btn.textContent; btn.textContent = '✅ コピー完了'; setTimeout(() => btn.textContent = old, 1500); } catch (e) { alert('コピー失敗'); }
+    document.body.removeChild(temp);
   }
 
   function updateQuery(shouldSave) {
@@ -304,7 +373,7 @@
     return '📄';
   }
 
-  // --- Mocks ---
+  // Mocks for Preview environment
   function openPicker() {} function runCreateFolder() {} function runSearch() { renderTable([{id:'m1', name:'Folder', mimeType:'application/vnd.google-apps.folder'}], false); document.getElementById('resultsSection').style.display='block'; document.getElementById('moveSection').style.display='block'; }
   async function runMove() { alert('Mock Move'); } function runAnalyzeFolders() { alert('Mock Analyze'); } function updateDestPath() {}
 </script>
