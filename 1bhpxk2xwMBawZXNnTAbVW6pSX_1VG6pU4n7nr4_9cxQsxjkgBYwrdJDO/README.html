@@ -4,34 +4,149 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Drive Shallow Mover - ユーザーガイド</title>
-    <!-- CSS etc. (Simplified for guide) -->
+    <style>
+        :root {
+            --primary-color: #1a73e8;
+            --text-color: #3c4043;
+            --bg-color: #f8f9fa;
+            --border-color: #dadce0;
+            --accent-bg: #e8f0fe;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+        }
+        h1 {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+        h2 {
+            margin-top: 30px;
+            border-left: 5px solid var(--primary-color);
+            padding-left: 15px;
+            background: linear-gradient(to right, var(--accent-bg), transparent);
+            padding-top: 5px;
+            padding-bottom: 5px;
+        }
+        h3 {
+            color: #444;
+            margin-top: 25px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+        }
+        ul { padding-left: 20px; }
+        li { margin-bottom: 8px; }
+        strong { color: #202124; }
+        .badge {
+            display: inline-block;
+            background: #fbbc04;
+            color: #202124;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            font-weight: bold;
+            margin-right: 5px;
+            vertical-align: middle;
+        }
+        .note {
+            background-color: #fff8e1;
+            border: 1px solid #ffe0b2;
+            border-radius: 4px;
+            padding: 15px;
+            margin-top: 20px;
+            font-size: 0.95em;
+        }
+    </style>
 </head>
 <body>
-<div style="font-family: sans-serif; padding: 20px; max-width: 800px; margin: 0 auto; line-height: 1.6;">
-    <h1 style="color: #1a73e8; border-bottom: 2px solid #1a73e8;">Drive Shallow Mover ユーザーガイド</h1>
-    <p>高度な条件でファイルを検索し、指定したフォルダへ一括移動します。入力された設定は自動保存されます。</p>
 
-    <h2 style="border-left: 5px solid #1a73e8; padding-left: 10px;">1. 検索条件の設定</h2>
+<div class="container">
+    <h1>Drive Shallow Mover ユーザーガイド</h1>
+    <p><strong>Drive Shallow Mover</strong> は、Google ドライブ内のファイルを「再帰的ではなく（Shallow）」、「条件を指定して」、「一括で」整理するためのツールです。</p>
+    <p>指定したフォルダの<strong>直下にあるファイルだけ</strong>を操作対象とするため、意図せずサブフォルダの中身まで移動してしまう事故を防ぎながら、大量のファイルを効率的に整理できます。</p>
+
+    <h2>🚀 主な機能と特徴</h2>
     <ul>
-        <li><strong>場所</strong>: マイドライブ直下、または特定のフォルダID内を対象にできます。</li>
-        <li><strong>除外キーワード</strong>: 検索結果から除きたい言葉を5つまで指定できます。</li>
-        <li><strong>マークダウン検索</strong>: MIMEタイプと言語設定の両面からマークダウンを特定します。</li>
-        <li><strong>本文・説明文検索</strong>: ファイルの中身や、Googleドライブ上の「説明」欄に含まれる文字列を検索します。</li>
-        <li><strong>最終更新日時</strong>: 日付範囲指定、または「〇日以前」といった相対指定が可能です。</li>
+        <li><strong>安全な浅層移動</strong>: フォルダ階層を深く潜ることなく、指定場所の表面にあるファイルのみを扱います。</li>
+        <li><strong>高度な検索フィルター</strong>: ファイル名（除外条件含む）、更新日時（年単位・相対指定）、ファイル形式などで絞り込み可能です。</li>
+        <li><strong>高速な並列処理</strong>: ファイル移動などの重い処理は、並列バッチ処理により高速に実行されます。</li>
+        <li><strong>状態の自動保存</strong>: 入力した検索条件や移動先は自動的に保存され、次回起動時に復元されます。</li>
     </ul>
 
-    <h2 style="border-left: 5px solid #1a73e8; padding-left: 10px;">2. フォルダ選択</h2>
+    <h2>1. 検索条件の設定</h2>
+    <p>移動させたいファイルを特定するための条件を入力します。</p>
+
+    <h3>基本条件</h3>
     <ul>
-        <li>「選択」ボタンでダイアログが開きます。ダブルクリックで階層を降り、パンくずリストで戻ります。</li>
-        <li><strong>スマートオープン</strong>: すでにIDが入力されている場合、その隣接フォルダを探しやすいよう「親フォルダ」を表示した状態で開始します。</li>
+        <li><strong>場所</strong>: 「マイドライブ直下」または「特定のフォルダ内」を選択できます。</li>
+        <li><strong>ファイル名</strong>: 特定の文字を含むファイルを検索します。</li>
+        <li><strong>除外キーワード <span class="badge">New</span></strong>: ファイル名に特定の文字が含まれるものを<strong>除外</strong>します（最大5つまで指定可能）。「コピー」「古い版」などを除外するのに便利です。</li>
     </ul>
 
-    <h2 style="border-left: 5px solid #1a73e8; padding-left: 10px;">3. 移動の実行</h2>
-    <p>ファイルを選択して移動を開始すると、進捗状況がプログレスバーで表示されます。効率化のため、内部的に10件ずつのバッチ処理を行います。</p>
-    
-    <p style="font-size: 0.9em; color: #666; border-top: 1px solid #ccc; margin-top: 20px; padding-top: 10px;">
-        ※ ファイルサイズによる絞り込みは検索後のリストフィルタとして機能します。
-    </p>
+    <h3>高度な絞り込み</h3>
+    <ul>
+        <li><strong>ファイル形式</strong>: 
+            <ul>
+                <li>「フォルダ以外」: 整理の際にフォルダを残してファイルだけ動かしたい場合に最適です。</li>
+                <li>「マークダウン (.md)」: 拡張子だけでなく、Googleドライブ上のMIMEタイプも考慮して漏れなく検索します。</li>
+            </ul>
+        </li>
+        <li><strong>最終更新日時</strong>:
+            <ul>
+                <li><strong>日付範囲</strong>: カレンダーで期間を指定。</li>
+                <li><strong>相対指定</strong>: 「現在から 7日 以前」のような指定。</li>
+                <li><strong>年単位 <span class="badge">New</span></strong>: 「2024年」などを選ぶだけで、その年の1月1日〜12月31日を自動設定します。</li>
+            </ul>
+        </li>
+        <li><strong>本文・説明文</strong>: ファイルの中身や、プロパティの「説明」欄を検索します。</li>
+    </ul>
+
+    <h2>2. フォルダの選択・作成</h2>
+    <p>検索場所や移動先を指定するための「選択」ボタンを押すと、専用ダイアログが開きます。</p>
+    <ul>
+        <li><strong>階層移動</strong>: フォルダ名をダブルクリックで中に入り、上部のパンくずリストや「⬆️ 親へ」ボタンで戻ります。</li>
+        <li><strong>スマートオープン</strong>: すでにIDが入力されている場合、そのフォルダが見える階層（親フォルダ）を自動で開きます。</li>
+        <li><strong>新規フォルダ作成 <span class="badge">New</span></strong>: ダイアログ上部の入力欄から、その場ですぐに新しいフォルダを作成できます。作成後は即座にリストに反映されます。</li>
+    </ul>
+
+    <h2>3. 検索結果の確認と選択</h2>
+    <p>「検索を実行」すると、結果が「フォルダ」タブと「ファイル」タブに分かれて表示されます。</p>
+    <ul>
+        <li><strong>内訳を集計 <span class="badge">New</span></strong>: フォルダタブにあるこのボタンを押すと、各フォルダの中に「ファイルがいくつあるか」を集計して表示します。中身が空のフォルダを探す際などに役立ちます。</li>
+        <li><strong>件数指定読み込み <span class="badge">New</span></strong>: 検索結果が多い場合、リスト下部から「100件」「500件」など件数を指定して続きを読み込めます。</li>
+        <li><strong>一括選択</strong>: 表のヘッダーにあるチェックボックスで、表示されている全アイテムを選択／解除できます。</li>
+    </ul>
+
+    <h2>4. 移動の実行</h2>
+    <p>移動先フォルダIDを指定し、「選択したアイテムを移動する」ボタンを押すと処理が始まります。</p>
+    <ul>
+        <li><strong>進捗表示</strong>: ボタン上に「経過時間（秒）」が表示され、プログレスバーで全体の進捗が可視化されます。</li>
+        <li><strong>並列バッチ処理</strong>: 効率化のため、複数のファイルをまとめて並列に処理します。</li>
+        <li><strong>エラーレポート</strong>: 権限不足などで移動できなかったファイルがある場合、処理完了後に詳細なエラーリストが表示されます。</li>
+    </ul>
+
+    <div class="note">
+        <strong>⚠️ 制限事項</strong>
+        <ul>
+            <li><strong>ファイルサイズ検索</strong>: APIの仕様上、検索クエリでのサイズ絞り込みはできません。リスト取得後の目視確認が必要です。</li>
+            <li><strong>最大表示件数</strong>: ブラウザのパフォーマンスを維持するため、大量のファイルがある場合は「追加読み込み」を使って順次表示してください。</li>
+        </ul>
+    </div>
 </div>
+
 </body>
 </html>

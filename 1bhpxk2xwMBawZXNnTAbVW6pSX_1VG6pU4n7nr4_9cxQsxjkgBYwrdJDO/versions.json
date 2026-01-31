@@ -14,5 +14,9 @@
   {
     "version": 4,
     "description": "バージョン４"
+  },
+  {
+    "version": 5,
+    "description": "バージョン5"
   }
 ]

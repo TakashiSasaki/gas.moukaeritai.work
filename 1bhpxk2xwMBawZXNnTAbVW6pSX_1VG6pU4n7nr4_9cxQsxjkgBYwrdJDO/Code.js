@@ -1,4 +1,47 @@
 /**
+ * 指定したフォルダ単体のアイテム数（種別ごとの内訳）を集計する
+ */
+function getSingleFolderStats(folderId) {
+  const cache = CacheService.getUserCache();
+  const cacheKey = 'folder_stats_v2_' + folderId;
+  
+  const cachedData = cache.get(cacheKey);
+  if (cachedData) return JSON.parse(cachedData);
+
+  const counts = {};
+  let pageToken = null;
+  
+  try {
+    do {
+      const response = Drive.Files.list({
+        q: `'${folderId}' in parents and trashed = false`,
+        pageToken: pageToken,
+        fields: 'nextPageToken, files(mimeType, name)', 
+        pageSize: 1000
+      });
+      
+      if (response.files) {
+        response.files.forEach(f => {
+          let type = f.mimeType;
+          if (f.name && f.name.toLowerCase().endsWith('.md')) {
+            type = 'text/markdown';
+          }
+          counts[type] = (counts[type] || 0) + 1;
+        });
+      }
+      pageToken = response.nextPageToken;
+    } while (pageToken);
+    
+    const result = { folderId: folderId, counts: counts };
+    try { cache.put(cacheKey, JSON.stringify(result), 600); } catch (e) {}
+    
+    return result;
+  } catch (e) {
+    return { folderId: folderId, error: e.message };
+  }
+}
+
+/**
  * 新しいフォルダを作成する
  */
 function createNewFolder(folderName, parentId = 'root') {
@@ -12,6 +55,9 @@ function createNewFolder(folderName, parentId = 'root') {
   } finally { lock.releaseLock(); }
 }
 
+/**
+ * フォルダIDから親フォルダIDを取得する
+ */
 function getParentId(folderId) {
   try {
     const file = Drive.Files.get(folderId, { fields: 'parents' });
@@ -122,29 +168,4 @@ function moveFiles(fileIds, destinationId) {
     } catch (e) { results.error++; results.details.push(`${e.message}`); }
   });
   return results;
-}
-
-function getSingleFolderStats(folderId) {
-  const cache = CacheService.getUserCache();
-  const cacheKey = 'folder_stats_v2_' + folderId;
-  const cachedData = cache.get(cacheKey);
-  if (cachedData) return JSON.parse(cachedData);
-  const counts = {};
-  let pageToken = null;
-  try {
-    do {
-      const response = Drive.Files.list({ q: `'${folderId}' in parents and trashed = false`, pageToken: pageToken, fields: 'nextPageToken, files(mimeType, name)', pageSize: 1000 });
-      if (response.files) {
-        response.files.forEach(f => {
-          let type = f.mimeType;
-          if (f.name && f.name.toLowerCase().endsWith('.md')) type = 'text/markdown';
-          counts[type] = (counts[type] || 0) + 1;
-        });
-      }
-      pageToken = response.nextPageToken;
-    } while (pageToken);
-    const result = { folderId: folderId, counts: counts };
-    try { cache.put(cacheKey, JSON.stringify(result), 600); } catch (e) {}
-    return result;
-  } catch (e) { return { folderId: folderId, error: e.message }; }
 }

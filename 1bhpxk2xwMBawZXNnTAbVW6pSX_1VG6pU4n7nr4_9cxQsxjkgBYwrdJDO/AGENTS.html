@@ -49,65 +49,76 @@
 <body>
 
     <h1>🤖 Development Context: Drive Shallow Mover</h1>
-    <p>This document is the <strong>source of truth</strong> for technical specifications. All agents MUST consult this before making changes.</p>
+    <p>This document is the <strong>Absolute Source of Truth</strong>. All agents MUST strictly follow these rules to avoid regressions in error handling, UI state, and API compliance.</p>
 
-    <h2 id="architecture">1. System Architecture (Hybrid & Modular)</h2>
+    <h2 id="architecture">1. System Architecture (The Modular Pattern)</h2>
     <div class="rule-box rule-arch">
-        <h3><span class="tag t-arch">ARCH</span> Routing & Components</h3>
+        <h3><span class="tag t-arch">ARCH</span> Component Responsibility</h3>
         <ul>
-            <li><strong><code>Router.gs</code></strong>: Handles <code>doGet(e)</code>. Routes to HTML files based on <code>?p=...</code> parameter (e.g., <code>?p=Index</code>).</li>
-            <li><strong><code>Index.html</code></strong>: Logic Hub. <strong>NO CSS ALLOWED.</strong> Uses <code>include('Stylesheet')</code>. Contains UI Mocks.</li>
-            <li><strong><code>Stylesheet.html</code></strong>: All CSS rules. Disconnected in Preview.</li>
-            <li><strong><code>JavaScript.html</code></strong>: Production JS overriding mocks.</li>
-            <li><strong><code>Code.gs</code></strong>: Backend Drive API logic (v3 preferred).</li>
+            <li><strong><code>Router.gs</code></strong>: Handles <code>doGet(e)</code> and serves pages based on <code>?p=...</code> parameter. Required for future extensibility (e.g., Settings page).</li>
+            <li><strong><code>Index.html</code></strong>: Logic Hub. Contains DOM, <strong>Global State Declarations</strong>, and Mock functions. <strong>CSS is FORBIDDEN here.</strong></li>
+            <li><strong><code>Stylesheet.html</code></strong>: Dedicated CSS. Included via <code>&lt;?!= include('Stylesheet'); ?&gt;</code>. Ignored in Gemini Preview.</li>
+            <li><strong><code>JavaScript.html</code></strong>: Production Logic. Overrides <code>window</code> mocks.</li>
+            <li><strong><code>Code.gs</code></strong>: Backend API logic (v3). Single-purpose functions only.</li>
         </ul>
     </div>
 
-    <h2 id="api-constraints">2. Drive API v3 Constraints</h2>
+    <h2 id="state-management">2. Global State & Scoping Rules</h2>
     <div class="rule-box rule-warn">
-        <h3><span class="tag t-warn">CRITICAL</span> Update Signature</h3>
-        <p>Moving files: <code>Drive.Files.update({}, id, null, {addParents, removeParents})</code>. 3rd arg MUST be <code>null</code>.</p>
+        <h3><span class="tag t-warn">CRITICAL</span> Window-Bound State</h3>
+        <p>Because <code>JavaScript.html</code> is loaded into the template separately, shared state variables (e.g., <code>currentFolderIds</code>, <code>fileNamesMap</code>) MUST be explicitly attached to the <code>window</code> object in <code>Index.html</code>.</p>
+        <pre><code>// CORRECT in Index.html
+window.currentFolderIds = []; 
+window.fileNamesMap = {};
+
+// INCORRECT (may cause 'undefined' in JavaScript.html)
+let currentFolderIds = []; </code></pre>
     </div>
 
-    <div class="rule-box rule-api">
-        <h3><span class="tag t-api">API</span> Forbidden q-Fields</h3>
+    <h2 id="concurrency">3. Concurrency & Performance (The 5x5 Pattern)</h2>
+    <div class="rule-box rule-arch">
+        <h3><span class="tag t-arch">PERF</span> Parallel Batching Standards</h3>
         <ul>
-            <li><code>size</code>: ❌ Forbidden in search query. Filter post-fetch.</li>
-            <li><code>description</code>: ❌ Forbidden. Use <code>fullText contains</code>.</li>
+            <li><strong>Parameters</strong>: 5 concurrent workers, batch size of 5 items per request.</li>
+            <li><strong>Startup Jitter</strong>: Each worker MUST wait for a random duration (<strong>0ms to 3000ms</strong>) before the first request. This prevents the "Thundering Herd" effect on server resources.</li>
+            <li><strong>Analyze Concurrency</strong>: "Analyze Folders" must also use parallel workers (Limit: 3) to prevent UI blocking during massive folder counts.</li>
         </ul>
     </div>
 
-    <h2 id="query-specs">3. Search Query (q) Specifications</h2>
-    <div class="rule-box rule-rule">
-        <h3><span class="tag t-rule">LOGIC</span> Assembly Rules</h3>
+    <h2 id="error-mitigation">4. Robustness & Error Mitigation</h2>
+    <div class="rule-box rule-warn">
+        <h3><span class="tag t-warn">CRITICAL</span> Undefined Error Handling</h3>
+        <p>GAS <code>google.script.run</code> can fail non-deterministically (network blips), returning an <code>undefined</code> error object. Implementation requirements:</p>
+        <ul>
+            <li><strong>Sanitization</strong>: <code>runWithRetry</code> must sanitize errors. If <code>err.message</code> is missing, fallback to <code>"Unknown Network or Server Error"</code>.</li>
+            <li><strong>Jittered Retry</strong>: <code>SERVER_BUSY</code> retries must wait 1500ms + random(1000ms) to de-synchronize retrying clients.</li>
+        </ul>
+    </div>
+
+    <h2 id="api-constraints">5. Drive API v3 Restrictions (Avoid Invalid Value)</h2>
+    <div class="rule-box rule-api">
+        <h3><span class="tag t-api">API</span> Forbidden <code>q</code> Terms</h3>
         <table>
-            <thead><tr><th>UI Option</th><th>q Parameter Logic</th></tr></thead>
+            <thead><tr><th>Field</th><th>Status</th><th>Alternative / Required Logic</th></tr></thead>
             <tbody>
-                <tr><td>Anything except folders</td><td><code>mimeType != 'application/vnd.google-apps.folder'</code></td></tr>
-                <tr><td>Markdown</td><td>OR logic: <code>(mimeType = 'text/markdown' or (mimeType = 'text/plain' and name contains '.md'))</code></td></tr>
-                <tr><td>Relative Dates</td><td>Now - Days -> absolute ISO string -> <code>modifiedTime < 'ISO'</code></td></tr>
+                <tr><td><code>size</code></td><td>❌ Forbidden</td><td>Abolished in UI. No direct <code>q</code> support.</td></tr>
+                <tr><td><code>description</code></td><td>❌ Forbidden</td><td>Abolished in UI. Use <code>fullText contains</code>.</td></tr>
+                <tr><td><code>'</code> (Quote)</td><td>⚠️ Danger</td><td>MUST escape: <code>val.replace(/'/g, "\\'")</code>.</td></tr>
+                <tr><td><code>notFolder</code></td><td>✅ Logic</td><td>Maps to <code>mimeType != 'application/vnd.google-apps.folder'</code>.</td></tr>
+                <tr><td><code>year</code></td><td>✅ Logic</td><td>Maps to absolute RFC 3339 range (Jan 1st 00:00 to Dec 31st 23:59).</td></tr>
             </tbody>
         </table>
     </div>
 
-    <h2 id="ui-logic">4. UI Logic & Feedback Rules</h2>
+    <h2 id="ui-standard">6. UI Implementation Rules</h2>
     <div class="rule-box rule-rule">
-        <h3><span class="tag t-rule">UI</span> Modal & Interaction</h3>
+        <h3><span class="tag t-rule">UI</span> State & Modals</h3>
         <ul>
-            <li><strong>Reset-First Rule</strong>: Toggling conditional groups: Disable/hide all groups first, then enable the target. Set <code>disabled = true/false</code> directly.</li>
-            <li><strong>Checkbox Values</strong>: Dynamic rows MUST set <code>value="${file.id}"</code>.</li>
-            <li><strong>Smart Picker</strong>: If ID exists, <code>openPicker</code> calls <code>getParentId(value)</code>.</li>
-            <li><strong><span style="color:#ffeb3b">NEW</span> Inline Creation</strong>: The folder picker supports inline folder creation. After creation, the <code>CacheService</code> key for the parent folder MUST be removed, and the list refreshed using <code>bypassCache = true</code>.</li>
-            <li><strong>Elapsed Time Display</strong>: The action button must display elapsed time (e.g., <code>(15s elapsed)</code>) during long processes.</li>
-        </ul>
-    </div>
-
-    <h2 id="concurrency">5. Concurrency & Performance</h2>
-    <div class="rule-box rule-arch">
-        <h3><span class="tag t-arch">PERF</span> Batch Processing</h3>
-        <ul>
-            <li>Iterate in <strong>JavaScript</strong> on the client side.</li>
-            <li>IDs are grouped into <strong>batches of 10</strong> per server request to prevent timeout.</li>
+            <li><strong>Reset-First Rule</strong>: Before enabling a specific input group (e.g., Date Year mode), DISABLE and HIDE all others in that set.</li>
+            <li><strong>Dual-Lock</strong>: Apply both the <code>disabled</code> HTML attribute AND <code>.input-disabled</code> CSS class.</li>
+            <li><strong>Row Checkboxes</strong>: MUST include <code>value="${f.id}"</code>. If missing, selection counts will fail.</li>
+            <li><strong>Dynamic Init</strong>: Dropdowns like "Year Selection" (2010 to Present) MUST be generated dynamically in <code>initApp</code> to prevent maintenance rot.</li>
+            <li><strong>Elapsed Time</strong>: Every batch move MUST display elapsed seconds on the primary action button.</li>
         </ul>
     </div>
 

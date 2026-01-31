@@ -6,7 +6,16 @@ function doGet(e) {
   const page = (e && e.parameter && e.parameter.p) ? e.parameter.p : 'Index';
   
   try {
-    return HtmlService.createTemplateFromFile(page)
+    const template = HtmlService.createTemplateFromFile(page);
+    
+    // アプリ自身のURLをテンプレートに注入
+    try {
+      template.appUrl = ScriptApp.getService().getUrl();
+    } catch (err) {
+      template.appUrl = '#'; 
+    }
+
+    return template
       .evaluate()
       .setTitle('Drive Shallow Mover')
       .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL)
