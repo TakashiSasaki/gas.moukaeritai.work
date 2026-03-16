@@ -22,5 +22,9 @@
   {
     "version": 6,
     "description": "ミュージアム場所限定"
+  },
+  {
+    "version": 7,
+    "description": "mime=text/plain"
   }
 ]

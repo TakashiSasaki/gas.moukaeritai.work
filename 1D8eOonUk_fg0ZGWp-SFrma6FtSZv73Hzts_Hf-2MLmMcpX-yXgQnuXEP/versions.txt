@@ -1,7 +1,8 @@
-Found 6 versions.
+Found 7 versions.
 1 - 公開版
 2 - No description
 3 - モデル選択、テーマカラー
 4 - No description
 5 - 20000出力
 6 - ミュージアム場所限定
+7 - mime=text/plain

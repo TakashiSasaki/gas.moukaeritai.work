@@ -5,15 +5,31 @@
 
 function doGet(e) {
   const pageId = e.parameter.page;
+  const mimeType = e.parameter.mime; // 追加: mimeパラメータの取得
   const props = PropertiesService.getScriptProperties();
   
   if (pageId && FACILITY_CONFIG[pageId]) {
     const htmlContent = getLatestHtml(pageId);
+    
     if (htmlContent) {
+      // ----------------------------------------------------
+      // ▼ 追加: mime=text/plain が指定されている場合はプレーンテキストで返す
+      // ----------------------------------------------------
+      if (mimeType === 'text/plain') {
+        return ContentService.createTextOutput(htmlContent)
+          .setMimeType(ContentService.MimeType.TEXT);
+      }
+      
+      // デフォルト: ブラウザで表示するための HTML として返す
       return HtmlService.createHtmlOutput(htmlContent)
         .setTitle(FACILITY_CONFIG[pageId].name + " - 最新レポート")
         .addMetaTag('viewport', 'width=device-width, initial-scale=1');
     } else {
+      // データ未取得時のエラーメッセージもMIMEタイプに合わせる
+      if (mimeType === 'text/plain') {
+        return ContentService.createTextOutput("Error: まだデータが取得されていません。")
+          .setMimeType(ContentService.MimeType.TEXT);
+      }
       return HtmlService.createHtmlOutput("<h1>まだデータが取得されていません。</h1>");
     }
   } else {
