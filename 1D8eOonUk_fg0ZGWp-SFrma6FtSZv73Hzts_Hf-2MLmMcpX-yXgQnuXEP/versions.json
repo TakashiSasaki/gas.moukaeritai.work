@@ -10,5 +10,17 @@
   {
     "version": 3,
     "description": "モデル選択、テーマカラー"
+  },
+  {
+    "version": 4,
+    "description": "No description"
+  },
+  {
+    "version": 5,
+    "description": "20000出力"
+  },
+  {
+    "version": 6,
+    "description": "ミュージアム場所限定"
   }
 ]

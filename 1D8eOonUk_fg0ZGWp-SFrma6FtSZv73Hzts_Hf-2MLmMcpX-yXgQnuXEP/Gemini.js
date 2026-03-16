@@ -40,7 +40,7 @@ function generateFacilityHtml(targetPrompt) {
       "temperature": 0.2,
       "topP": 0.95,
       "topK": 40,
-      "maxOutputTokens": 15000
+      "maxOutputTokens": 20000
     }
   };
 

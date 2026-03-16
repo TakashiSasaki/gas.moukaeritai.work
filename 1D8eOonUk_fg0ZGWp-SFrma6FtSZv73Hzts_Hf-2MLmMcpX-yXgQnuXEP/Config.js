@@ -105,7 +105,7 @@ const FACILITY_CONFIG = {
       "https://calendar.google.com/calendar/ical/3i3h6inivi534ts4dib7dp7c2g%40group.calendar.google.com/public/basic.ics",
       "https://calendar.google.com/calendar/ical/vatb8njlusin7ifatop1putnf0%40group.calendar.google.com/public/basic.ics"
     ],
-    extra_instruction: "ギャラリートークの情報は不要です。この施設のデフォルトのテーマカラーは #aea356 です。"
+    extra_instruction: "ギャラリートークの情報は不要です。この施設のデフォルトのテーマカラーは #aea356 です。開催場所が愛媛大学あるいは愛媛大学ミュージアムあるいは愛大ミューズのものだけを出力に含めて下さい。"
   }
 };
 
