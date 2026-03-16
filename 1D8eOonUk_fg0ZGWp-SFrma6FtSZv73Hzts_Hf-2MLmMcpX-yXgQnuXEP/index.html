@@ -37,6 +37,37 @@
       margin-bottom: 30px;
       border-bottom: 2px solid #eee;
       padding-bottom: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+
+    .header-text {
+      flex: 1;
+      min-width: 250px;
+    }
+
+    .settings-group {
+      background: #f1f3f4;
+      padding: 10px 15px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      margin-top: 10px;
+    }
+
+    .settings-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+      color: var(--text-sub);
+    }
+
+    select {
+      width: 100%;
+      padding: 5px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
     }
 
     h1 {
@@ -93,11 +124,6 @@
       margin-top: 4px;
     }
 
-    .timestamp.new {
-      color: var(--success-color);
-      font-weight: bold;
-    }
-
     .create-btn {
       background-color: var(--success-color);
       color: white;
@@ -138,7 +164,6 @@
       text-decoration: underline;
     }
 
-    /* Status message for data creation */
     #status-bar {
       position: fixed;
       bottom: 20px;
@@ -165,6 +190,21 @@
       }, 5000);
     }
 
+    function onModelChange(select) {
+      const modelName = select.value;
+      showStatus("モデル設定を更新中...");
+      google.script.run
+        .withSuccessHandler(function(msg) {
+          showStatus(msg);
+          // 設定を反映させるためリロード
+          window.top.location.href = "<?= webAppUrl ?>";
+        })
+        .withFailureHandler(function(err) {
+          showStatus("設定失敗: " + err.message, true);
+        })
+        .updateModelSetting(modelName);
+    }
+
     function createFacilityData(pageId, btnElement) {
       btnElement.disabled = true;
       const originalText = btnElement.innerText;
@@ -177,9 +217,7 @@
           showStatus(message);
           btnElement.innerText = originalText;
           btnElement.disabled = false;
-          // ページをリロードして最新のタイムスタンプを反映させる
-          // (または特定の要素だけ更新する処理を書いても良いですが、リロードが確実です)
-          location.reload();
+          window.top.location.href = "<?= webAppUrl ?>"; 
         })
         .withFailureHandler(function(error) {
           showStatus("エラー: " + error.message, true);
@@ -194,8 +232,18 @@
 
   <div class="container">
     <header>
-      <h1>施設情報レポート一覧</h1>
-      <p class="description">最新の展示スケジュールと施設情報を自動生成します。</p>
+      <div class="header-text">
+        <h1>施設情報レポート一覧</h1>
+        <p class="description">最新の展示スケジュールと施設情報を自動生成します。</p>
+      </div>
+      <div class="settings-group">
+        <label for="model-select">使用モデル</label>
+        <select id="model-select" onchange="onModelChange(this)">
+          <? for (let m of availableModels) { ?>
+            <option value="<?= m ?>" <?= m === currentModel ? 'selected' : '' ?>><?= m ?></option>
+          <? } ?>
+        </select>
+      </div>
     </header>
 
     <ul>
