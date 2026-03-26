@@ -82,7 +82,6 @@ function triggerUpdateFromWeb(pageId) {
   }
 }
 
-// トリガー用
 function triggerSet1()  { executeAndSave(1); }
 function triggerSet2()  { executeAndSave(2); }
 function triggerSet3()  { executeAndSave(3); }
