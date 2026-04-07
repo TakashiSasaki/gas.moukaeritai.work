@@ -1,5 +1,6 @@
 function doGet() {
-  var textOutput = ContentService.createTextOutput();
-  textOutput.setMimeType(ContentService.MimeType.JAVASCRIPT);
-  return textOutput;
+  var htmlTemplate = HtmlService.createTemplateFromFile("index");
+  var htmlOutput = htmlTemplate.evaluate();
+  htmlOutput.setTitle("csvParser");
+  return htmlOutput;
 }
