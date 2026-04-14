@@ -10,6 +10,9 @@ on:
     workflows: ["list-by-drive-api"]  # trigger after the new housekeeping workflow completes
     types:
       - completed
+ 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   pull:
