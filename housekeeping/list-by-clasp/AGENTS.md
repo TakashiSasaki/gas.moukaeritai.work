@@ -4,12 +4,12 @@
 
 ## ツール
 
-### `fetch_clasp_list.py`
+### `fetchl.py`
 `clasp list --noShorten` の生出力をテキストファイルとして保存します。
 
 #### 使用方法
 ```bash
-python housekeeping/list-by-clasp/fetch_clasp_list.py [オプション]
+python housekeeping/list-by-clasp/fetchl.py [オプション]
 ```
 
 #### オプション
@@ -22,12 +22,12 @@ python housekeeping/list-by-clasp/fetch_clasp_list.py [オプション]
     - 保存後、ディレクトリ内に `YYYYMMDD-HHMMSS.txt` 形式のファイルが $N$ 個より多く存在する場合、古いものから順に削除されます。
     - デフォルト: 5件。
 
-### `test_clasp_list.py`
+### `test.py`
 最新のバックアップファイルからプロジェクト ID を抽出し、`projects/` ディレクトリに実体が存在するかを確認します。
 
 #### 使用方法
 ```bash
-python housekeeping/list-by-clasp/test_clasp_list.py [オプション]
+python housekeeping/list-by-clasp/test.py [オプション]
 ```
 
 #### オプション
@@ -59,6 +59,6 @@ python housekeeping/list-by-clasp/update_metadata.py [オプション]
 
 ## 運用ルール
 1. **定期的なバックアップ**: ワークフロー等で定期的に実行し、プロジェクトリストの変遷を記録します。
-2. **自動整理**: `fetch_clasp_list.py` の `-k` オプションにより、不要な古いバックアップが自動的に削除されるため、手動での削除は通常不要です。
-3. **整合性の検証**: 新しいプロジェクトを追加した後や定期メンテナンス時に `test_clasp_list.py` を実行し、リポジトリ内のディレクトリ構成と最新のプロジェクトリストに齟齬がないか確認します。
+2. **自動整理**: `fetchl.py` の `-k` オプションにより、不要な古いバックアップが自動的に削除されるため、手動での削除は通常不要です。
+3. **整合性の検証**: 新しいプロジェクトを追加した後や定期メンテナンス時に `test.py` を実行し、リポジトリ内のディレクトリ構成と最新のプロジェクトリストに齟齬がないか確認します。
 4. **メタデータの同期**: プロジェクト名の変更があった場合などは `update_metadata.py` を実行し、ローカルのメタデータに反映させます。
