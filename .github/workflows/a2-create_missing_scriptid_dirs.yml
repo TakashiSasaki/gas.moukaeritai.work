@@ -1,4 +1,4 @@
-name: create_missing_scriptid_dirs
+name: a2-create_missing_scriptid_dirs
 
 on:
   workflow_dispatch:  # allow manual runs

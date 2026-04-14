@@ -7,7 +7,7 @@ permissions:
 on:
   workflow_dispatch:
   workflow_run:
-    workflows: ["create_missing_scriptid_dirs"]  # trigger after this workflow completes
+    workflows: ["a2-create_missing_scriptid_dirs"]  # trigger after this workflow completes
     types:
       - completed
 

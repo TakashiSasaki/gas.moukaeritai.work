@@ -17,9 +17,9 @@ This chain is responsible for discovering all current GAS projects and pulling t
         - `clasp-list.txt`: Raw output from `clasp list`.
         - `clasp-list.json`: Structured array of `{ "name": "...", "id": "..." }`.
     - **Commit Logic**: Force-pushes to `gas-pull` branch if changes are detected in `clasp-list.txt`.
-    - **Next**: Triggers `create_missing_scriptid_dirs`.
+    - **Next**: Triggers `a2-create_missing_scriptid_dirs`.
 
-2.  **[create_missing_scriptid_dirs.yml](create_missing_scriptid_dirs.yml)**
+2.  **[a2-create_missing_scriptid_dirs.yml](a2-create_missing_scriptid_dirs.yml)**
     - **Trigger**: Completion of `a1-update-clasp-list`.
     - **Action**: Runs `create_missing_scriptid_dirs.py` using `clasp-list.txt`.
     - **Output**:
@@ -28,7 +28,7 @@ This chain is responsible for discovering all current GAS projects and pulling t
     - **Next**: Triggers `clasp-pull`.
 
 3.  **[clasp-pull.yml](clasp-pull.yml)**
-    - **Trigger**: Completion of `create_missing_scriptid_dirs`.
+    - **Trigger**: Completion of `a2-create_missing_scriptid_dirs`.
     - **Action**: Runs `clasp-pull.py`.
     - **Output**: 
         - Synchronizes GAS source files.
@@ -58,7 +58,7 @@ This chain fetches external tracking data and ensures directory-level metadata i
 ```mermaid
 graph TD
     subgraph "Chain A: GAS Sync Core"
-        A1["a1-update-clasp-list<br/>(Schedule: Every Hour:15)"] -->|workflow_run| A2["create_missing_scriptid_dirs"]
+        A1["a1-update-clasp-list<br/>(Schedule: Every Hour:15)"] -->|workflow_run| A2["a2-create_missing_scriptid_dirs"]
         A2 -->|workflow_run| A3["clasp-pull"]
     end
 
@@ -101,7 +101,7 @@ This workflow is the "heart" of the synchronization process. It ensures the repo
 
 ---
 
-### create_missing_scriptid_dirs.yml
+### a2-create_missing_scriptid_dirs.yml
 This workflow prepares the filesystem for new projects discovered in the previous step.
 
 #### Inputs & Dependencies
