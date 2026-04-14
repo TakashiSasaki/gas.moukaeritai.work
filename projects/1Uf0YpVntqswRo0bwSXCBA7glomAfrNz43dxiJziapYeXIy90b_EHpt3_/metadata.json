@@ -1,8 +1,6 @@
 {
-  "name": "Markdown2GoogleDocs",
   "id": "1Uf0YpVntqswRo0bwSXCBA7glomAfrNz43dxiJziapYeXIy90b_EHpt3_",
   "url": "https://script.google.com/d/1Uf0YpVntqswRo0bwSXCBA7glomAfrNz43dxiJziapYeXIy90b_EHpt3_/edit?usp=drivesdk",
-  "lastUpdated": "2025-04-10T05:35:32.523Z",
   "application.json": null,
   "deployments.json": [
     {
@@ -36,6 +34,9 @@
       "description": "QR code"
     }
   ],
-  "createdTime": "2025-04-10T00:36:02.620Z",
-  "modifiedTime": "2025-04-10T05:35:32.523Z"
+  "driveApi": {
+    "name": "Markdown2GoogleDocs",
+    "createdTime": "2025-04-10T00:36:02.620Z",
+    "modifiedTime": "2025-04-10T05:35:32.523Z"
+  }
 }

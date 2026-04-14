@@ -1,8 +1,6 @@
 {
-  "name": "Random",
   "id": "1NtKt5zOmO0Hvgx_6Jxfl1xyHSK4A65O9krJSfqUfdx-mfjp1fcqiRbSr",
   "url": "https://script.google.com/d/1NtKt5zOmO0Hvgx_6Jxfl1xyHSK4A65O9krJSfqUfdx-mfjp1fcqiRbSr/edit?usp=drivesdk",
-  "lastUpdated": "2019-12-06T10:19:09.295Z",
   "application.json": null,
   "deployments.json": [
     {
@@ -16,6 +14,9 @@
       "description": "web app meta-version"
     }
   ],
-  "createdTime": "2019-10-10T10:01:08.080Z",
-  "modifiedTime": "2019-12-06T10:19:09.295Z"
+  "driveApi": {
+    "name": "Random",
+    "createdTime": "2019-10-10T10:01:08.080Z",
+    "modifiedTime": "2019-12-06T10:19:09.295Z"
+  }
 }

@@ -1,8 +1,6 @@
 {
-  "name": "Snippets For DriveApp",
   "id": "1KmIn9qigeR161F2AoSp2Dltb5InjiUJ1AgmmOlyqYN1441K2ku8WNiiU",
   "url": "https://script.google.com/d/1KmIn9qigeR161F2AoSp2Dltb5InjiUJ1AgmmOlyqYN1441K2ku8WNiiU/edit?usp=drivesdk",
-  "lastUpdated": "2025-01-13T18:23:46.014Z",
   "application.json": null,
   "deployments.json": [
     {
@@ -16,6 +14,9 @@
       "description": "web app meta-version"
     }
   ],
-  "createdTime": "2019-09-13T03:55:15.257Z",
-  "modifiedTime": "2025-01-13T18:23:46.014Z"
+  "driveApi": {
+    "name": "Snippets For DriveApp",
+    "createdTime": "2019-09-13T03:55:15.257Z",
+    "modifiedTime": "2025-01-13T18:23:46.014Z"
+  }
 }

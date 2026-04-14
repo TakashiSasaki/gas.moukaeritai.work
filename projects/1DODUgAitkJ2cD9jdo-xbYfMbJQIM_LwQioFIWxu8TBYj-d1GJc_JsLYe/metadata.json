@@ -1,8 +1,6 @@
 {
-  "name": "Web Clipboard Reader",
   "id": "1DODUgAitkJ2cD9jdo-xbYfMbJQIM_LwQioFIWxu8TBYj-d1GJc_JsLYe",
   "url": "https://script.google.com/d/1DODUgAitkJ2cD9jdo-xbYfMbJQIM_LwQioFIWxu8TBYj-d1GJc_JsLYe/edit?usp=drivesdk",
-  "lastUpdated": "2020-08-10T09:16:33.634Z",
   "application.json": null,
   "deployments.json": [
     {
@@ -16,6 +14,9 @@
       "description": "web app meta-version"
     }
   ],
-  "createdTime": "2019-10-24T05:01:42.620Z",
-  "modifiedTime": "2020-08-10T09:16:33.634Z"
+  "driveApi": {
+    "name": "Web Clipboard Reader",
+    "createdTime": "2019-10-24T05:01:42.620Z",
+    "modifiedTime": "2020-08-10T09:16:33.634Z"
+  }
 }

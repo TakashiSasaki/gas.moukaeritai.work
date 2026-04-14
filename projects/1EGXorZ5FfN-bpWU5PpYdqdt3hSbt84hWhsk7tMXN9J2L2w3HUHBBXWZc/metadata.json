@@ -1,8 +1,6 @@
 {
-  "name": "UUID generator",
   "id": "1EGXorZ5FfN-bpWU5PpYdqdt3hSbt84hWhsk7tMXN9J2L2w3HUHBBXWZc",
   "url": "https://script.google.com/d/1EGXorZ5FfN-bpWU5PpYdqdt3hSbt84hWhsk7tMXN9J2L2w3HUHBBXWZc/edit?usp=drivesdk",
-  "lastUpdated": "2024-04-25T11:39:50.784Z",
   "application.json": null,
   "deployments.json": [
     {
@@ -86,6 +84,9 @@
       "description": ""
     }
   ],
-  "createdTime": "2024-04-25T01:34:13.603Z",
-  "modifiedTime": "2024-04-25T11:39:50.784Z"
+  "driveApi": {
+    "name": "UUID generator",
+    "createdTime": "2024-04-25T01:34:13.603Z",
+    "modifiedTime": "2024-04-25T11:39:50.784Z"
+  }
 }

@@ -1,8 +1,6 @@
 {
-  "name": "Understanding Third Party Cookie",
   "id": "1hAcanrB68UTn-SUi_5qMYErKZcnupVtz1YrxM9zzJaoIdKEt0r950dyI",
   "url": "https://script.google.com/d/1hAcanrB68UTn-SUi_5qMYErKZcnupVtz1YrxM9zzJaoIdKEt0r950dyI/edit?usp=drivesdk",
-  "lastUpdated": "2021-11-30T08:47:47.006Z",
   "application.json": null,
   "deployments.json": [
     {
@@ -21,6 +19,9 @@
       "description": "web app meta-version"
     }
   ],
-  "createdTime": "2021-11-30T01:49:22.150Z",
-  "modifiedTime": "2021-11-30T08:47:47.006Z"
+  "driveApi": {
+    "name": "Understanding Third Party Cookie",
+    "createdTime": "2021-11-30T01:49:22.150Z",
+    "modifiedTime": "2021-11-30T08:47:47.006Z"
+  }
 }

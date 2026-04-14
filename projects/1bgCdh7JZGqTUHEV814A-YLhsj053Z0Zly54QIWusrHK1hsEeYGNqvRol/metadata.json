@@ -1,8 +1,6 @@
 {
-  "name": "String Utility Library",
   "id": "1bgCdh7JZGqTUHEV814A-YLhsj053Z0Zly54QIWusrHK1hsEeYGNqvRol",
   "url": "https://script.google.com/d/1bgCdh7JZGqTUHEV814A-YLhsj053Z0Zly54QIWusrHK1hsEeYGNqvRol/edit?usp=drivesdk",
-  "lastUpdated": "2021-08-05T17:21:11.753Z",
   "application.json": null,
   "deployments.json": [
     {
@@ -11,6 +9,9 @@
       "description": ""
     }
   ],
-  "createdTime": "2018-06-11T03:55:09.036Z",
-  "modifiedTime": "2021-08-05T17:21:11.753Z"
+  "driveApi": {
+    "name": "String Utility Library",
+    "createdTime": "2018-06-11T03:55:09.036Z",
+    "modifiedTime": "2021-08-05T17:21:11.753Z"
+  }
 }

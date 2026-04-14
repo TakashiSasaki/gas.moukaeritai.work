@@ -1,8 +1,6 @@
 {
-  "name": "kenqweb2 to researchmap CSV converter",
   "id": "1OFyuUHAA2lLSjmadG07uEnafWEoRj18X5FqpFk2Oi1Z0xtFXCKx7g0es",
   "url": "https://script.google.com/d/1OFyuUHAA2lLSjmadG07uEnafWEoRj18X5FqpFk2Oi1Z0xtFXCKx7g0es/edit?usp=drivesdk",
-  "lastUpdated": "2018-01-22T03:00:34.124Z",
   "application.json": null,
   "deployments.json": [
     {
@@ -16,6 +14,9 @@
       "description": "web app meta-version"
     }
   ],
-  "createdTime": "2017-11-14T01:09:03.223Z",
-  "modifiedTime": "2018-01-22T03:00:34.124Z"
+  "driveApi": {
+    "name": "kenqweb2 to researchmap CSV converter",
+    "createdTime": "2017-11-14T01:09:03.223Z",
+    "modifiedTime": "2018-01-22T03:00:34.124Z"
+  }
 }

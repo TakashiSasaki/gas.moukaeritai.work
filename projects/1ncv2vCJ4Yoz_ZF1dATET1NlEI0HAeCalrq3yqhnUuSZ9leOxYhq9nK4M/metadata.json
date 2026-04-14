@@ -1,8 +1,6 @@
 {
-  "name": "dns.moukaeritai.work",
   "id": "1ncv2vCJ4Yoz_ZF1dATET1NlEI0HAeCalrq3yqhnUuSZ9leOxYhq9nK4M",
   "url": "https://script.google.com/d/1ncv2vCJ4Yoz_ZF1dATET1NlEI0HAeCalrq3yqhnUuSZ9leOxYhq9nK4M/edit?usp=drivesdk",
-  "lastUpdated": "2025-06-21T02:17:39.046Z",
   "application.json": null,
   "deployments.json": [
     {
@@ -16,6 +14,9 @@
       "description": "release v5"
     }
   ],
-  "createdTime": "2025-06-13T03:57:23.424Z",
-  "modifiedTime": "2025-06-21T02:17:39.046Z"
+  "driveApi": {
+    "name": "dns.moukaeritai.work",
+    "createdTime": "2025-06-13T03:57:23.424Z",
+    "modifiedTime": "2025-06-21T02:17:39.046Z"
+  }
 }

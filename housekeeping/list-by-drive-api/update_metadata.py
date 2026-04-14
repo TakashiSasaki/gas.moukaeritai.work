@@ -59,12 +59,15 @@ def update_metadata(backup_file: Path, projects_dir: Path):
         if not meta_file.exists():
             print(f"  Initializing new metadata.json: {script_id}")
             meta_data = {
-                "name": name,
                 "id": script_id,
                 "url": f"https://script.google.com/d/{script_id}/edit?usp=drivesdk",
-                "lastUpdated": modified_time,
                 "application.json": None,
-                "deployments.json": []
+                "deployments.json": [],
+                "driveApi": {
+                    "name": name,
+                    "createdTime": created_time,
+                    "modifiedTime": modified_time
+                }
             }
         else:
             try:
@@ -72,18 +75,24 @@ def update_metadata(backup_file: Path, projects_dir: Path):
                     meta_data = json.load(f)
             except Exception as e:
                 print(f"  Error reading {script_id}: {e}", file=sys.stderr)
-                meta_data = {} # Fallback
+                meta_data = {"id": script_id} # Fallback
 
-        # Update main properties using Drive API names
-        meta_data["name"] = name
+        # Ensure driveApi block exists
+        if "driveApi" not in meta_data or not isinstance(meta_data["driveApi"], dict):
+            meta_data["driveApi"] = {}
+            
+        # Update Drive API properties
+        meta_data["driveApi"]["name"] = name
         if created_time:
-            meta_data["createdTime"] = created_time
+            meta_data["driveApi"]["createdTime"] = created_time
         if modified_time:
-            meta_data["modifiedTime"] = modified_time
+            meta_data["driveApi"]["modifiedTime"] = modified_time
         
-        # Cleanup redundant properties
-        meta_data.pop("titleByClaspList", None)
-        meta_data.pop("titleByDriveApi", None)
+        # Cleanup root properties (Migration to Drive API block or deletion)
+        # We keep 'id' and 'url' at the root.
+        root_to_remove = ["name", "createdTime", "modifiedTime", "lastUpdated", "titleByClaspList", "titleByDriveApi"]
+        for prop in root_to_remove:
+            meta_data.pop(prop, None)
         
         try:
             with open(meta_file, "w", encoding="utf-8") as f:

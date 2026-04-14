@@ -1,8 +1,6 @@
 {
-  "name": "Web Clip Stash",
   "id": "1qBif_0AXBT0X8-joKtQlP1ZRlrpcGTOuqOSWLpONoHkl21FhDoICeSWM",
   "url": "https://script.google.com/d/1qBif_0AXBT0X8-joKtQlP1ZRlrpcGTOuqOSWLpONoHkl21FhDoICeSWM/edit?usp=drivesdk",
-  "lastUpdated": "2025-12-16T02:18:16.020Z",
   "application.json": null,
   "deployments.json": [
     {
@@ -16,6 +14,9 @@
       "description": "リリース版"
     }
   ],
-  "createdTime": "2025-12-16T00:00:17.137Z",
-  "modifiedTime": "2025-12-16T02:18:16.020Z"
+  "driveApi": {
+    "name": "Web Clip Stash",
+    "createdTime": "2025-12-16T00:00:17.137Z",
+    "modifiedTime": "2025-12-16T02:18:16.020Z"
+  }
 }

@@ -1,8 +1,6 @@
 {
-  "name": "Unicode Normalization Sandbox",
   "id": "1lG3a8hUu7QGk0rJ6RFycFl0p7YoZIHjn9k6SWeXEPryUvW-GKupvITNp",
   "url": "https://script.google.com/d/1lG3a8hUu7QGk0rJ6RFycFl0p7YoZIHjn9k6SWeXEPryUvW-GKupvITNp/edit?usp=drivesdk",
-  "lastUpdated": "2017-09-27T09:43:37.165Z",
   "application.json": null,
   "deployments.json": [
     {
@@ -16,6 +14,9 @@
       "description": "web app meta-version"
     }
   ],
-  "createdTime": "2017-09-25T07:33:27.898Z",
-  "modifiedTime": "2017-09-27T09:43:37.165Z"
+  "driveApi": {
+    "name": "Unicode Normalization Sandbox",
+    "createdTime": "2017-09-25T07:33:27.898Z",
+    "modifiedTime": "2017-09-27T09:43:37.165Z"
+  }
 }

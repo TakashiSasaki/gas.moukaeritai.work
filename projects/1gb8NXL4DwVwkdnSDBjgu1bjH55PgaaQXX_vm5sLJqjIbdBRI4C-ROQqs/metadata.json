@@ -1,8 +1,6 @@
 {
-  "name": "Bookmark Spreadsheet",
   "id": "1gb8NXL4DwVwkdnSDBjgu1bjH55PgaaQXX_vm5sLJqjIbdBRI4C-ROQqs",
   "url": "https://script.google.com/d/1gb8NXL4DwVwkdnSDBjgu1bjH55PgaaQXX_vm5sLJqjIbdBRI4C-ROQqs/edit?usp=drivesdk",
-  "lastUpdated": "2025-06-20T00:24:23.023Z",
   "application.json": null,
   "deployments.json": [
     {
@@ -21,6 +19,9 @@
       "description": "プレビュー用"
     }
   ],
-  "createdTime": "2025-06-18T04:19:16.462Z",
-  "modifiedTime": "2025-06-20T00:24:23.023Z"
+  "driveApi": {
+    "name": "Bookmark Spreadsheet",
+    "createdTime": "2025-06-18T04:19:16.462Z",
+    "modifiedTime": "2025-06-20T00:24:23.023Z"
+  }
 }

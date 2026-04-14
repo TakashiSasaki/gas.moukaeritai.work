@@ -1,8 +1,6 @@
 {
-  "name": "Sticker Voting v1",
   "id": "1ZoVS-ez7yPdNhbknvqjotEMC3p5xDrmzvTwgIo_mmMd2Y3DhyqVzRYiS",
   "url": "https://script.google.com/d/1ZoVS-ez7yPdNhbknvqjotEMC3p5xDrmzvTwgIo_mmMd2Y3DhyqVzRYiS/edit?usp=drivesdk",
-  "lastUpdated": "2023-08-02T03:00:17.259Z",
   "application.json": null,
   "deployments.json": [
     {
@@ -21,6 +19,9 @@
       "description": "クラウド同期、全画面対応"
     }
   ],
-  "createdTime": "2023-07-31T23:34:32.289Z",
-  "modifiedTime": "2023-08-02T03:00:17.259Z"
+  "driveApi": {
+    "name": "Sticker Voting v1",
+    "createdTime": "2023-07-31T23:34:32.289Z",
+    "modifiedTime": "2023-08-02T03:00:17.259Z"
+  }
 }

@@ -1,8 +1,6 @@
 {
-  "name": "Kakaku Library",
   "id": "1L9H8eQdinme63XIk8TtgfH5u-zn0KVqw4UnwWUj6yhW3SMJlXJkq7AKm",
   "url": "https://script.google.com/d/1L9H8eQdinme63XIk8TtgfH5u-zn0KVqw4UnwWUj6yhW3SMJlXJkq7AKm/edit?usp=drivesdk",
-  "lastUpdated": "2025-01-21T18:01:18.421Z",
   "application.json": null,
   "deployments.json": [
     {
@@ -16,6 +14,9 @@
       "description": "web app meta-version"
     }
   ],
-  "createdTime": "2017-03-23T10:28:34.507Z",
-  "modifiedTime": "2025-01-21T18:01:18.421Z"
+  "driveApi": {
+    "name": "Kakaku Library",
+    "createdTime": "2017-03-23T10:28:34.507Z",
+    "modifiedTime": "2025-01-21T18:01:18.421Z"
+  }
 }

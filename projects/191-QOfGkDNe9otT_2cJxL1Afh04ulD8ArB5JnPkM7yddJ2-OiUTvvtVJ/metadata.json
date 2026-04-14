@@ -1,8 +1,6 @@
 {
-  "name": "GasOAuthLibrary",
   "id": "191-QOfGkDNe9otT_2cJxL1Afh04ulD8ArB5JnPkM7yddJ2-OiUTvvtVJ",
   "url": "https://script.google.com/d/191-QOfGkDNe9otT_2cJxL1Afh04ulD8ArB5JnPkM7yddJ2-OiUTvvtVJ/edit?usp=drivesdk",
-  "lastUpdated": "2025-01-13T18:43:29.583Z",
   "application.json": null,
   "deployments.json": [
     {
@@ -16,6 +14,9 @@
       "description": "web app meta-version"
     }
   ],
-  "createdTime": "2017-06-22T09:28:52.472Z",
-  "modifiedTime": "2025-01-13T18:43:29.583Z"
+  "driveApi": {
+    "name": "GasOAuthLibrary",
+    "createdTime": "2017-06-22T09:28:52.472Z",
+    "modifiedTime": "2025-01-13T18:43:29.583Z"
+  }
 }

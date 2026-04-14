@@ -1,8 +1,6 @@
 {
-  "name": "GAS Project Finder",
   "id": "16bdYnyvTFOjko1J10ysGHbq0mNkwBzFFyf81VuCWoM7E_-1Y44KN2IX4",
   "url": "https://script.google.com/d/16bdYnyvTFOjko1J10ysGHbq0mNkwBzFFyf81VuCWoM7E_-1Y44KN2IX4/edit?usp=drivesdk",
-  "lastUpdated": "2025-06-20T01:03:21.643Z",
   "application.json": null,
   "deployments.json": [
     {
@@ -16,6 +14,9 @@
       "description": "公開用 Version 9"
     }
   ],
-  "createdTime": "2025-06-19T01:17:42.360Z",
-  "modifiedTime": "2025-06-20T01:03:21.643Z"
+  "driveApi": {
+    "name": "GAS Project Finder",
+    "createdTime": "2025-06-19T01:17:42.360Z",
+    "modifiedTime": "2025-06-20T01:03:21.643Z"
+  }
 }

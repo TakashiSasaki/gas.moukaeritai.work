@@ -1,8 +1,6 @@
 {
-  "name": "Docs to Blogger Publisher",
   "id": "1kyutOmJc6hFapZJ_U6e6QztZbBfDTQr111ohzW9dEApFfvG_Ig8_Y12v",
   "url": "https://script.google.com/d/1kyutOmJc6hFapZJ_U6e6QztZbBfDTQr111ohzW9dEApFfvG_Ig8_Y12v/edit?usp=drivesdk",
-  "lastUpdated": "2025-12-22T01:33:24.416Z",
   "application.json": null,
   "deployments.json": [
     {
@@ -16,6 +14,9 @@
       "description": "公開用"
     }
   ],
-  "createdTime": "2025-12-22T00:36:19.283Z",
-  "modifiedTime": "2025-12-22T01:33:24.416Z"
+  "driveApi": {
+    "name": "Docs to Blogger Publisher",
+    "createdTime": "2025-12-22T00:36:19.283Z",
+    "modifiedTime": "2025-12-22T01:33:24.416Z"
+  }
 }

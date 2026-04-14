@@ -1,8 +1,6 @@
 {
-  "name": "ImeDictionary Library",
   "id": "1OcQHj6g4a4jpoBpIKeacLAv1j9t-I6vGn2t91zyRqL3MHZC8inEUcpSb",
   "url": "https://script.google.com/d/1OcQHj6g4a4jpoBpIKeacLAv1j9t-I6vGn2t91zyRqL3MHZC8inEUcpSb/edit?usp=drivesdk",
-  "lastUpdated": "2025-04-18T08:35:16.314Z",
   "application.json": null,
   "deployments.json": [
     {
@@ -21,6 +19,9 @@
       "description": "ライブラリとして使えるレベルになった"
     }
   ],
-  "createdTime": "2025-04-15T04:49:24.657Z",
-  "modifiedTime": "2025-04-18T08:35:16.314Z"
+  "driveApi": {
+    "name": "ImeDictionary Library",
+    "createdTime": "2025-04-15T04:49:24.657Z",
+    "modifiedTime": "2025-04-18T08:35:16.314Z"
+  }
 }

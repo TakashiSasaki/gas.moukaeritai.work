@@ -1,8 +1,6 @@
 {
-  "name": "WebClipboard",
   "id": "1glSqRTMOxnhV3fGvaiuoJRMW0EM1bHIDurZbjph6lmp8bZYKOcP5s9WP",
   "url": "https://script.google.com/d/1glSqRTMOxnhV3fGvaiuoJRMW0EM1bHIDurZbjph6lmp8bZYKOcP5s9WP/edit?usp=drivesdk",
-  "lastUpdated": "2023-06-06T03:07:05.002Z",
   "application.json": null,
   "deployments.json": [
     {
@@ -16,6 +14,9 @@
       "description": ""
     }
   ],
-  "createdTime": "2023-06-06T03:05:06.682Z",
-  "modifiedTime": "2023-06-06T03:07:05.002Z"
+  "driveApi": {
+    "name": "WebClipboard",
+    "createdTime": "2023-06-06T03:05:06.682Z",
+    "modifiedTime": "2023-06-06T03:07:05.002Z"
+  }
 }

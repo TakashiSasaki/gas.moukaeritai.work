@@ -1,8 +1,6 @@
 {
-  "name": "Google Keep to Google Tasks",
   "id": "13rMvpSI80JS1Hq3MMwLOwGBZmIWHX71VDyq8Gj8o2P3X_YS-jLV313Xs",
   "url": "https://script.google.com/d/13rMvpSI80JS1Hq3MMwLOwGBZmIWHX71VDyq8Gj8o2P3X_YS-jLV313Xs/edit?usp=drivesdk",
-  "lastUpdated": "2021-08-14T13:59:07.317Z",
   "application.json": null,
   "deployments.json": [
     {
@@ -11,6 +9,9 @@
       "description": ""
     }
   ],
-  "createdTime": "2019-06-04T00:30:21.700Z",
-  "modifiedTime": "2021-08-14T13:59:07.317Z"
+  "driveApi": {
+    "name": "Google Keep to Google Tasks",
+    "createdTime": "2019-06-04T00:30:21.700Z",
+    "modifiedTime": "2021-08-14T13:59:07.317Z"
+  }
 }

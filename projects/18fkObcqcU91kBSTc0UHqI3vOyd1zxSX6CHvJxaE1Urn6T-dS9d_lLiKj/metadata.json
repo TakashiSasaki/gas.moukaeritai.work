@@ -1,8 +1,6 @@
 {
-  "name": "DriveMetaViewer",
   "id": "18fkObcqcU91kBSTc0UHqI3vOyd1zxSX6CHvJxaE1Urn6T-dS9d_lLiKj",
   "url": "https://script.google.com/d/18fkObcqcU91kBSTc0UHqI3vOyd1zxSX6CHvJxaE1Urn6T-dS9d_lLiKj/edit?usp=drivesdk",
-  "lastUpdated": "2025-04-08T03:46:15.914Z",
   "application.json": null,
   "deployments.json": [
     {
@@ -26,6 +24,9 @@
       "description": "mock"
     }
   ],
-  "createdTime": "2025-04-08T02:10:33.551Z",
-  "modifiedTime": "2025-04-08T03:46:15.914Z"
+  "driveApi": {
+    "name": "DriveMetaViewer",
+    "createdTime": "2025-04-08T02:10:33.551Z",
+    "modifiedTime": "2025-04-08T03:46:15.914Z"
+  }
 }

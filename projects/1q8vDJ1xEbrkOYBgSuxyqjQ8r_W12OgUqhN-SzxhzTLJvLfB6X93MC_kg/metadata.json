@@ -1,8 +1,6 @@
 {
-  "name": "MyProgressStrip",
   "id": "1q8vDJ1xEbrkOYBgSuxyqjQ8r_W12OgUqhN-SzxhzTLJvLfB6X93MC_kg",
   "url": "https://script.google.com/d/1q8vDJ1xEbrkOYBgSuxyqjQ8r_W12OgUqhN-SzxhzTLJvLfB6X93MC_kg/edit?usp=drivesdk",
-  "lastUpdated": "2025-01-23T18:41:28.184Z",
   "application.json": null,
   "deployments.json": [
     {
@@ -16,6 +14,9 @@
       "description": "web app meta-version"
     }
   ],
-  "createdTime": "2018-02-26T11:01:35.449Z",
-  "modifiedTime": "2025-01-23T18:41:28.184Z"
+  "driveApi": {
+    "name": "MyProgressStrip",
+    "createdTime": "2018-02-26T11:01:35.449Z",
+    "modifiedTime": "2025-01-23T18:41:28.184Z"
+  }
 }

@@ -1,8 +1,6 @@
 {
-  "name": "ObjectsSheet",
   "id": "1Q2CN9ciOLohbeWioR_RSv-OszsVlN2-S1FtzugY0ZoR77sgWiTlCaZbG",
   "url": "https://script.google.com/d/1Q2CN9ciOLohbeWioR_RSv-OszsVlN2-S1FtzugY0ZoR77sgWiTlCaZbG/edit?usp=drivesdk",
-  "lastUpdated": "2021-07-07T12:26:06.927Z",
   "application.json": null,
   "deployments.json": [
     {
@@ -21,6 +19,9 @@
       "description": "Basic functions work"
     }
   ],
-  "createdTime": "2021-03-11T09:19:20.296Z",
-  "modifiedTime": "2021-07-07T12:26:06.927Z"
+  "driveApi": {
+    "name": "ObjectsSheet",
+    "createdTime": "2021-03-11T09:19:20.296Z",
+    "modifiedTime": "2021-07-07T12:26:06.927Z"
+  }
 }

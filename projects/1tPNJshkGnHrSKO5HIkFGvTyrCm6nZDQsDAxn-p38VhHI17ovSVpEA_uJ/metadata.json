@@ -1,8 +1,6 @@
 {
-  "name": "Xor",
   "id": "1tPNJshkGnHrSKO5HIkFGvTyrCm6nZDQsDAxn-p38VhHI17ovSVpEA_uJ",
   "url": "https://script.google.com/d/1tPNJshkGnHrSKO5HIkFGvTyrCm6nZDQsDAxn-p38VhHI17ovSVpEA_uJ/edit?usp=drivesdk",
-  "lastUpdated": "2017-12-13T01:08:17.597Z",
   "application.json": null,
   "deployments.json": [
     {
@@ -21,6 +19,9 @@
       "description": "web app meta-version"
     }
   ],
-  "createdTime": "2017-10-19T11:19:54.737Z",
-  "modifiedTime": "2017-12-13T01:08:17.597Z"
+  "driveApi": {
+    "name": "Xor",
+    "createdTime": "2017-10-19T11:19:54.737Z",
+    "modifiedTime": "2017-12-13T01:08:17.597Z"
+  }
 }

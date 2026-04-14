@@ -1,8 +1,6 @@
 {
-  "name": "File Triage",
   "id": "1DJbk8E57h7UVVXyzS9PIDn_iL0ZJf39VRdLepQbf_DDI9WPVkzVlSN2Z",
   "url": "https://script.google.com/d/1DJbk8E57h7UVVXyzS9PIDn_iL0ZJf39VRdLepQbf_DDI9WPVkzVlSN2Z/edit?usp=drivesdk",
-  "lastUpdated": "2025-06-13T11:56:14.511Z",
   "application.json": null,
   "deployments.json": [
     {
@@ -21,6 +19,9 @@
       "description": "devなURLを開くにはまず一度はデプロイしないといかんらしい"
     }
   ],
-  "createdTime": "2025-06-13T08:19:57.424Z",
-  "modifiedTime": "2025-06-13T11:56:14.511Z"
+  "driveApi": {
+    "name": "File Triage",
+    "createdTime": "2025-06-13T08:19:57.424Z",
+    "modifiedTime": "2025-06-13T11:56:14.511Z"
+  }
 }

@@ -1,8 +1,6 @@
 {
-  "name": "Download Items from Pocket.com",
   "id": "1p7R-6QdWJBVNQHYeLgL-0shyTRhOuZ_nrMVYLqX3M6rdv6Ot2nABez0n",
   "url": "https://script.google.com/d/1p7R-6QdWJBVNQHYeLgL-0shyTRhOuZ_nrMVYLqX3M6rdv6Ot2nABez0n/edit?usp=drivesdk",
-  "lastUpdated": "2024-09-12T09:33:01.785Z",
   "application.json": null,
   "deployments.json": [
     {
@@ -16,6 +14,9 @@
       "description": "Pocketで認可してアイテムを取得できるところまで確認"
     }
   ],
-  "createdTime": "2024-09-12T02:18:04.346Z",
-  "modifiedTime": "2024-09-12T09:33:01.785Z"
+  "driveApi": {
+    "name": "Download Items from Pocket.com",
+    "createdTime": "2024-09-12T02:18:04.346Z",
+    "modifiedTime": "2024-09-12T09:33:01.785Z"
+  }
 }

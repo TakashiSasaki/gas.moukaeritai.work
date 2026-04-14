@@ -1,8 +1,6 @@
 {
-  "name": "PubCache",
   "id": "18adAHG43To87g8tgWJ0KwVg9gpE09gLTm9Fogw2R7YK28Gl_NG9hODlc",
   "url": "https://script.google.com/d/18adAHG43To87g8tgWJ0KwVg9gpE09gLTm9Fogw2R7YK28Gl_NG9hODlc/edit?usp=drivesdk",
-  "lastUpdated": "2025-06-21T00:46:09.475Z",
   "application.json": null,
   "deployments.json": [
     {
@@ -16,6 +14,9 @@
       "description": "release v4"
     }
   ],
-  "createdTime": "2025-06-20T21:42:23.560Z",
-  "modifiedTime": "2025-06-21T00:46:09.475Z"
+  "driveApi": {
+    "name": "PubCache",
+    "createdTime": "2025-06-20T21:42:23.560Z",
+    "modifiedTime": "2025-06-21T00:46:09.475Z"
+  }
 }

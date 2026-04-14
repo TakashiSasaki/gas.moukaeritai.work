@@ -1,8 +1,6 @@
 {
-  "name": "Addon Helper",
   "id": "1ryBTdV-IJH57QxJefgX334JWuJ7KHLjpT43v45VAqwAmFSKqkXkMFnAY",
   "url": "https://script.google.com/d/1ryBTdV-IJH57QxJefgX334JWuJ7KHLjpT43v45VAqwAmFSKqkXkMFnAY/edit?usp=drivesdk",
-  "lastUpdated": "2021-02-06T05:20:17.969Z",
   "application.json": null,
   "deployments.json": [
     {
@@ -11,6 +9,9 @@
       "description": ""
     }
   ],
-  "createdTime": "2018-01-16T09:12:04.030Z",
-  "modifiedTime": "2021-02-06T05:20:17.969Z"
+  "driveApi": {
+    "name": "Addon Helper",
+    "createdTime": "2018-01-16T09:12:04.030Z",
+    "modifiedTime": "2021-02-06T05:20:17.969Z"
+  }
 }

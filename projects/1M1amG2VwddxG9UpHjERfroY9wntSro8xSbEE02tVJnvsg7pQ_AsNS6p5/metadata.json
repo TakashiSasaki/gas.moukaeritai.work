@@ -1,8 +1,6 @@
 {
-  "name": "Automate flows",
   "id": "1M1amG2VwddxG9UpHjERfroY9wntSro8xSbEE02tVJnvsg7pQ_AsNS6p5",
   "url": "https://script.google.com/d/1M1amG2VwddxG9UpHjERfroY9wntSro8xSbEE02tVJnvsg7pQ_AsNS6p5/edit?usp=drivesdk",
-  "lastUpdated": "2025-01-21T18:11:09.267Z",
   "application.json": null,
   "deployments.json": [
     {
@@ -11,6 +9,9 @@
       "description": ""
     }
   ],
-  "createdTime": "2018-06-11T03:55:00.906Z",
-  "modifiedTime": "2025-01-21T18:11:09.267Z"
+  "driveApi": {
+    "name": "Automate flows",
+    "createdTime": "2018-06-11T03:55:00.906Z",
+    "modifiedTime": "2025-01-21T18:11:09.267Z"
+  }
 }

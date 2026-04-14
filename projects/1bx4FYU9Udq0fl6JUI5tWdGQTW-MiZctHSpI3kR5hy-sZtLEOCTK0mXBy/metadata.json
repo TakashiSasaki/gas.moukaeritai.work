@@ -1,8 +1,6 @@
 {
-  "name": "Pocket to Sheets Addon",
   "id": "1bx4FYU9Udq0fl6JUI5tWdGQTW-MiZctHSpI3kR5hy-sZtLEOCTK0mXBy",
   "url": "https://script.google.com/d/1bx4FYU9Udq0fl6JUI5tWdGQTW-MiZctHSpI3kR5hy-sZtLEOCTK0mXBy/edit?usp=drivesdk",
-  "lastUpdated": "2023-08-09T01:41:54.462Z",
   "application.json": null,
   "deployments.json": [
     {
@@ -21,6 +19,9 @@
       "description": "Web app"
     }
   ],
-  "createdTime": "2022-09-12T12:39:16.758Z",
-  "modifiedTime": "2023-08-09T01:41:54.462Z"
+  "driveApi": {
+    "name": "Pocket to Sheets Addon",
+    "createdTime": "2022-09-12T12:39:16.758Z",
+    "modifiedTime": "2023-08-09T01:41:54.462Z"
+  }
 }

@@ -1,8 +1,6 @@
 {
-  "name": "Gmail Search Sheets",
   "id": "19gfPoC2um5FcDCPyzHenOg_MUHsJruM9X82VQqeR9zxdZEg0wnbWRwQM",
   "url": "https://script.google.com/d/19gfPoC2um5FcDCPyzHenOg_MUHsJruM9X82VQqeR9zxdZEg0wnbWRwQM/edit?usp=drivesdk",
-  "lastUpdated": "2023-05-02T20:50:33.501Z",
   "application.json": null,
   "deployments.json": [
     {
@@ -11,6 +9,9 @@
       "description": ""
     }
   ],
-  "createdTime": "2018-10-03T01:54:06.002Z",
-  "modifiedTime": "2023-05-02T20:50:33.501Z"
+  "driveApi": {
+    "name": "Gmail Search Sheets",
+    "createdTime": "2018-10-03T01:54:06.002Z",
+    "modifiedTime": "2023-05-02T20:50:33.501Z"
+  }
 }

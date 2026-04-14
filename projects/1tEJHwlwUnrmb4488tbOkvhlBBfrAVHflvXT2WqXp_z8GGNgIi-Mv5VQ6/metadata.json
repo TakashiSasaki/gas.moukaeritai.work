@@ -1,8 +1,6 @@
 {
-  "name": "感情分析",
   "id": "1tEJHwlwUnrmb4488tbOkvhlBBfrAVHflvXT2WqXp_z8GGNgIi-Mv5VQ6",
   "url": "https://script.google.com/d/1tEJHwlwUnrmb4488tbOkvhlBBfrAVHflvXT2WqXp_z8GGNgIi-Mv5VQ6/edit?usp=drivesdk",
-  "lastUpdated": "2023-06-08T04:36:51.310Z",
   "application.json": null,
   "deployments.json": [
     {
@@ -16,6 +14,9 @@
       "description": ""
     }
   ],
-  "createdTime": "2023-06-08T00:19:45.356Z",
-  "modifiedTime": "2023-06-08T04:36:51.310Z"
+  "driveApi": {
+    "name": "感情分析",
+    "createdTime": "2023-06-08T00:19:45.356Z",
+    "modifiedTime": "2023-06-08T04:36:51.310Z"
+  }
 }

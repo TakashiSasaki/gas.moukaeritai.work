@@ -1,8 +1,6 @@
 {
-  "name": "Google Apps Script Project Browser",
   "id": "17SmjkOHGM7bAnLPoePgH-hC45i6YCAgORgTA66hdmqqnMm2p7_goR8C1",
   "url": "https://script.google.com/d/17SmjkOHGM7bAnLPoePgH-hC45i6YCAgORgTA66hdmqqnMm2p7_goR8C1/edit?usp=drivesdk",
-  "lastUpdated": "2025-01-24T18:03:46.782Z",
   "application.json": null,
   "deployments.json": [
     {
@@ -16,6 +14,9 @@
       "description": "web app meta-version"
     }
   ],
-  "createdTime": "2019-11-09T07:43:35.485Z",
-  "modifiedTime": "2025-01-24T18:03:46.782Z"
+  "driveApi": {
+    "name": "Google Apps Script Project Browser",
+    "createdTime": "2019-11-09T07:43:35.485Z",
+    "modifiedTime": "2025-01-24T18:03:46.782Z"
+  }
 }

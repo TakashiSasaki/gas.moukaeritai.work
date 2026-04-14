@@ -1,8 +1,6 @@
 {
-  "name": "Hash",
   "id": "1nH20n09gtpxjWEo5FUv9Ixor2nIO0Et0GJ8emW6dIOsgYQf7LXBUwNG0",
   "url": "https://script.google.com/d/1nH20n09gtpxjWEo5FUv9Ixor2nIO0Et0GJ8emW6dIOsgYQf7LXBUwNG0/edit?usp=drivesdk",
-  "lastUpdated": "2025-01-22T18:31:58.330Z",
   "application.json": null,
   "deployments.json": [
     {
@@ -21,6 +19,9 @@
       "description": "web app meta-version"
     }
   ],
-  "createdTime": "2017-10-19T10:23:03.666Z",
-  "modifiedTime": "2025-01-22T18:31:58.330Z"
+  "driveApi": {
+    "name": "Hash",
+    "createdTime": "2017-10-19T10:23:03.666Z",
+    "modifiedTime": "2025-01-22T18:31:58.330Z"
+  }
 }

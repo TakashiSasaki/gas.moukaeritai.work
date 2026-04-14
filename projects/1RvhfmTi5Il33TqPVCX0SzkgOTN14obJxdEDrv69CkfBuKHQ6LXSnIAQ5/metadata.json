@@ -1,8 +1,6 @@
 {
-  "name": "Cache Clipboard",
   "id": "1RvhfmTi5Il33TqPVCX0SzkgOTN14obJxdEDrv69CkfBuKHQ6LXSnIAQ5",
   "url": "https://script.google.com/d/1RvhfmTi5Il33TqPVCX0SzkgOTN14obJxdEDrv69CkfBuKHQ6LXSnIAQ5/edit?usp=drivesdk",
-  "lastUpdated": "2018-02-22T06:21:19.162Z",
   "application.json": null,
   "deployments.json": [
     {
@@ -16,6 +14,9 @@
       "description": "web app meta-version"
     }
   ],
-  "createdTime": "2018-02-21T10:02:30.166Z",
-  "modifiedTime": "2018-02-22T06:21:19.162Z"
+  "driveApi": {
+    "name": "Cache Clipboard",
+    "createdTime": "2018-02-21T10:02:30.166Z",
+    "modifiedTime": "2018-02-22T06:21:19.162Z"
+  }
 }

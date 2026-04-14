@@ -1,8 +1,6 @@
 {
-  "name": "Web Clipboard Writer",
   "id": "14OUFXtFBsyL7_H3lGOSzCTPlSegMO3VE2fN6ZuW4t6FDexc6370Fl1CJ",
   "url": "https://script.google.com/d/14OUFXtFBsyL7_H3lGOSzCTPlSegMO3VE2fN6ZuW4t6FDexc6370Fl1CJ/edit?usp=drivesdk",
-  "lastUpdated": "2020-08-10T13:11:53.604Z",
   "application.json": null,
   "deployments.json": [
     {
@@ -16,6 +14,9 @@
       "description": "web app meta-version"
     }
   ],
-  "createdTime": "2019-10-24T04:02:47.788Z",
-  "modifiedTime": "2020-08-10T13:11:53.604Z"
+  "driveApi": {
+    "name": "Web Clipboard Writer",
+    "createdTime": "2019-10-24T04:02:47.788Z",
+    "modifiedTime": "2020-08-10T13:11:53.604Z"
+  }
 }

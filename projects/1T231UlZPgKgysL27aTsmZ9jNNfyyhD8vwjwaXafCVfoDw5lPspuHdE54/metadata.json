@@ -1,8 +1,6 @@
 {
-  "name": " Apps Script デプロイメント マネージャ データ更新 キャッシュクリア & 再取得",
   "id": "1T231UlZPgKgysL27aTsmZ9jNNfyyhD8vwjwaXafCVfoDw5lPspuHdE54",
   "url": "https://script.google.com/d/1T231UlZPgKgysL27aTsmZ9jNNfyyhD8vwjwaXafCVfoDw5lPspuHdE54/edit?usp=drivesdk",
-  "lastUpdated": "2025-11-08T17:37:30.571Z",
   "application.json": null,
   "deployments.json": [
     {
@@ -16,6 +14,9 @@
       "description": "公開版"
     }
   ],
-  "createdTime": "2025-11-08T15:34:09.174Z",
-  "modifiedTime": "2025-11-08T17:37:30.571Z"
+  "driveApi": {
+    "name": " Apps Script デプロイメント マネージャ データ更新 キャッシュクリア & 再取得",
+    "createdTime": "2025-11-08T15:34:09.174Z",
+    "modifiedTime": "2025-11-08T17:37:30.571Z"
+  }
 }

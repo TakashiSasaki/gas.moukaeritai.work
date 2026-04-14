@@ -1,8 +1,6 @@
 {
-  "name": "Snippets For Spreadsheet",
   "id": "1Y1_JzAgUas7Wi8Wou9aASAMaBNNc19zDuIOJdkKGrt9GZAYltA7EMDeQ",
   "url": "https://script.google.com/d/1Y1_JzAgUas7Wi8Wou9aASAMaBNNc19zDuIOJdkKGrt9GZAYltA7EMDeQ/edit?usp=drivesdk",
-  "lastUpdated": "2021-03-11T17:34:16.668Z",
   "application.json": null,
   "deployments.json": [
     {
@@ -11,6 +9,9 @@
       "description": ""
     }
   ],
-  "createdTime": "2019-09-10T06:11:32.283Z",
-  "modifiedTime": "2021-03-11T17:34:16.668Z"
+  "driveApi": {
+    "name": "Snippets For Spreadsheet",
+    "createdTime": "2019-09-10T06:11:32.283Z",
+    "modifiedTime": "2021-03-11T17:34:16.668Z"
+  }
 }

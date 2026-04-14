@@ -1,8 +1,6 @@
 {
-  "name": "Copy of Public ScriptCache",
   "id": "1-0bJIb3TYc29MosGWLbTUl12TuVC7_W_BccV_moQwZX9HXqR8bnb6wcs",
   "url": "https://script.google.com/d/1-0bJIb3TYc29MosGWLbTUl12TuVC7_W_BccV_moQwZX9HXqR8bnb6wcs/edit?usp=drivesdk",
-  "lastUpdated": "2023-08-14T23:05:58.288Z",
   "application.json": null,
   "deployments.json": [
     {
@@ -11,6 +9,9 @@
       "description": ""
     }
   ],
-  "createdTime": "2023-08-14T23:05:57.168Z",
-  "modifiedTime": "2023-08-14T23:05:58.288Z"
+  "driveApi": {
+    "name": "Copy of Public ScriptCache",
+    "createdTime": "2023-08-14T23:05:57.168Z",
+    "modifiedTime": "2023-08-14T23:05:58.288Z"
+  }
 }

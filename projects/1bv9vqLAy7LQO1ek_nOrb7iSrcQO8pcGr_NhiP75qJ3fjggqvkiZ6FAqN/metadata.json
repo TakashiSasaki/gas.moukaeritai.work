@@ -1,8 +1,6 @@
 {
-  "name": "ImeDictionary Aggregator",
   "id": "1bv9vqLAy7LQO1ek_nOrb7iSrcQO8pcGr_NhiP75qJ3fjggqvkiZ6FAqN",
   "url": "https://script.google.com/d/1bv9vqLAy7LQO1ek_nOrb7iSrcQO8pcGr_NhiP75qJ3fjggqvkiZ6FAqN/edit?usp=drivesdk",
-  "lastUpdated": "2025-04-18T08:51:33.103Z",
   "application.json": null,
   "deployments.json": [
     {
@@ -21,6 +19,9 @@
       "description": "作り始め"
     }
   ],
-  "createdTime": "2025-04-16T00:42:06.736Z",
-  "modifiedTime": "2025-04-18T08:51:33.103Z"
+  "driveApi": {
+    "name": "ImeDictionary Aggregator",
+    "createdTime": "2025-04-16T00:42:06.736Z",
+    "modifiedTime": "2025-04-18T08:51:33.103Z"
+  }
 }

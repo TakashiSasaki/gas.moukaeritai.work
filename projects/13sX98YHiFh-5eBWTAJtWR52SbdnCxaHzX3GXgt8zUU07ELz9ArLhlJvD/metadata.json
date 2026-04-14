@@ -1,8 +1,6 @@
 {
-  "name": "Str",
   "id": "13sX98YHiFh-5eBWTAJtWR52SbdnCxaHzX3GXgt8zUU07ELz9ArLhlJvD",
   "url": "https://script.google.com/d/13sX98YHiFh-5eBWTAJtWR52SbdnCxaHzX3GXgt8zUU07ELz9ArLhlJvD/edit?usp=drivesdk",
-  "lastUpdated": "2019-12-06T10:00:29.520Z",
   "application.json": null,
   "deployments.json": [
     {
@@ -16,6 +14,9 @@
       "description": "web app meta-version"
     }
   ],
-  "createdTime": "2019-11-21T12:57:34.357Z",
-  "modifiedTime": "2019-12-06T10:00:29.520Z"
+  "driveApi": {
+    "name": "Str",
+    "createdTime": "2019-11-21T12:57:34.357Z",
+    "modifiedTime": "2019-12-06T10:00:29.520Z"
+  }
 }

@@ -1,8 +1,6 @@
 {
-  "name": "Document Saver",
   "id": "11rpH01pllhsLXw8piWIWlI06yc_BrfqQ4sAP9jxRMgbq1mXrg3mHVmzQ",
   "url": "https://script.google.com/d/11rpH01pllhsLXw8piWIWlI06yc_BrfqQ4sAP9jxRMgbq1mXrg3mHVmzQ/edit?usp=drivesdk",
-  "lastUpdated": "2025-05-23T12:16:46.492Z",
   "application.json": null,
   "deployments.json": [
     {
@@ -16,6 +14,9 @@
       "description": "UIとりあえずできたよ"
     }
   ],
-  "createdTime": "2025-05-23T08:57:59.295Z",
-  "modifiedTime": "2025-05-23T12:16:46.492Z"
+  "driveApi": {
+    "name": "Document Saver",
+    "createdTime": "2025-05-23T08:57:59.295Z",
+    "modifiedTime": "2025-05-23T12:16:46.492Z"
+  }
 }

@@ -1,8 +1,6 @@
 {
-  "name": "Calendar Log",
   "id": "1DzGVrsZvn5Svk_I7f48AiSeYrzDP0wIWsCxkHrS6B5ZFThcamXB0wwo0",
   "url": "https://script.google.com/d/1DzGVrsZvn5Svk_I7f48AiSeYrzDP0wIWsCxkHrS6B5ZFThcamXB0wwo0/edit?usp=drivesdk",
-  "lastUpdated": "2025-06-18T04:16:10.439Z",
   "application.json": null,
   "deployments.json": [
     {
@@ -16,6 +14,9 @@
       "description": "公開用 Version 5"
     }
   ],
-  "createdTime": "2025-06-17T22:57:39.153Z",
-  "modifiedTime": "2025-06-18T04:16:10.439Z"
+  "driveApi": {
+    "name": "Calendar Log",
+    "createdTime": "2025-06-17T22:57:39.153Z",
+    "modifiedTime": "2025-06-18T04:16:10.439Z"
+  }
 }

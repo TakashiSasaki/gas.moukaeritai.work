@@ -1,8 +1,6 @@
 {
-  "name": "Google日本語入力ユーザー辞書ユーティリティ",
   "id": "1AavEYmp44tHxyqTvV8kBTHM26zOaUdsVDjr6KMnKojbV5kPwr2EJ6LLi",
   "url": "https://script.google.com/d/1AavEYmp44tHxyqTvV8kBTHM26zOaUdsVDjr6KMnKojbV5kPwr2EJ6LLi/edit?usp=drivesdk",
-  "lastUpdated": "2025-01-23T19:10:40.880Z",
   "application.json": null,
   "deployments.json": [
     {
@@ -16,6 +14,9 @@
       "description": "web app meta-version"
     }
   ],
-  "createdTime": "2017-02-22T11:05:43.627Z",
-  "modifiedTime": "2025-01-23T19:10:40.880Z"
+  "driveApi": {
+    "name": "Google日本語入力ユーザー辞書ユーティリティ",
+    "createdTime": "2017-02-22T11:05:43.627Z",
+    "modifiedTime": "2025-01-23T19:10:40.880Z"
+  }
 }

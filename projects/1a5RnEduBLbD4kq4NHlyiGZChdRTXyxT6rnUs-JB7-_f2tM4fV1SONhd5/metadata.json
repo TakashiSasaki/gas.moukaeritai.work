@@ -1,8 +1,6 @@
 {
-  "name": "send-to-kindle",
   "id": "1a5RnEduBLbD4kq4NHlyiGZChdRTXyxT6rnUs-JB7-_f2tM4fV1SONhd5",
   "url": "https://script.google.com/d/1a5RnEduBLbD4kq4NHlyiGZChdRTXyxT6rnUs-JB7-_f2tM4fV1SONhd5/edit?usp=drivesdk",
-  "lastUpdated": "2025-01-13T18:47:11.338Z",
   "application.json": null,
   "deployments.json": [
     {
@@ -16,6 +14,9 @@
       "description": "web app meta-version"
     }
   ],
-  "createdTime": "2020-01-15T00:53:52.814Z",
-  "modifiedTime": "2025-01-13T18:47:11.338Z"
+  "driveApi": {
+    "name": "send-to-kindle",
+    "createdTime": "2020-01-15T00:53:52.814Z",
+    "modifiedTime": "2025-01-13T18:47:11.338Z"
+  }
 }

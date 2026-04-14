@@ -1,8 +1,6 @@
 {
-  "name": "Spreadsheet Addon（すぷれ）",
   "id": "1LSYokZ_LmtIkXv-URsN99givIHlIkDNHwQjkLAo6JkzwLvsbagpdbTaE",
   "url": "https://script.google.com/d/1LSYokZ_LmtIkXv-URsN99givIHlIkDNHwQjkLAo6JkzwLvsbagpdbTaE/edit?usp=drivesdk",
-  "lastUpdated": "2025-01-22T18:32:42.929Z",
   "application.json": null,
   "deployments.json": [
     {
@@ -16,6 +14,9 @@
       "description": "web app meta-version"
     }
   ],
-  "createdTime": "2017-08-28T04:28:59.547Z",
-  "modifiedTime": "2025-01-22T18:32:42.929Z"
+  "driveApi": {
+    "name": "Spreadsheet Addon（すぷれ）",
+    "createdTime": "2017-08-28T04:28:59.547Z",
+    "modifiedTime": "2025-01-22T18:32:42.929Z"
+  }
 }

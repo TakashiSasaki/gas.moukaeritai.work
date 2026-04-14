@@ -65,89 +65,84 @@ def refresh_clasp_token():
 def get_access_token():
     """Read access token from ~/.clasprc.json"""
     rc_path = os.path.expanduser('~/.clasprc.json')
-    print(f"Debug: Checking for credentials at {rc_path}", file=sys.stderr)
+    # print(f"Debug: Checking for credentials at {rc_path}", file=sys.stderr)
 
     if not os.path.exists(rc_path):
-        print(f"Debug: File {rc_path} does not exist.", file=sys.stderr)
         return None
 
     try:
-        with open(rc_path, 'r') as f:
+        with open(rc_path, 'r', encoding='utf-8') as f:
             content = f.read()
             if not content.strip():
-                print("Debug: .clasprc.json is empty.", file=sys.stderr)
                 return None
             data = json.loads(content)
         
-        # Log top-level keys safely
-        print(f"Debug: .clasprc.json top-level keys: {list(data.keys())}", file=sys.stderr)
-
         # Try to find 'access_token' in common structures
         access_token_found = None
         if 'token' in data and isinstance(data['token'], dict) and 'access_token' in data['token']:
             access_token_found = data['token']['access_token']
-            print(f"Debug: 'access_token' found inside 'token' object.", file=sys.stderr)
         elif 'access_token' in data:
             access_token_found = data['access_token']
-            print(f"Debug: 'access_token' found at root level.", file=sys.stderr)
         elif 'tokens' in data and isinstance(data['tokens'], dict):
-            print(f"Debug: Top-level 'tokens' key found. Iterating through values.", file=sys.stderr)
             for key, token_data in data['tokens'].items():
                 if isinstance(token_data, dict) and 'access_token' in token_data:
                     access_token_found = token_data['access_token']
-                    print(f"Debug: 'access_token' found in tokens['{key}'] object.", file=sys.stderr)
                     break
-            if not access_token_found:
-                print("Debug: No 'access_token' found within any token object under 'tokens'.", file=sys.stderr)
         
-        if access_token_found:
-            return access_token_found
-        else:
-            print("Debug: Could not find 'access_token' in any expected location.", file=sys.stderr)
+        return access_token_found
 
-    except json.JSONDecodeError as e:
-        print(f"Error parsing .clasprc.json: {e}", file=sys.stderr)
     except Exception as e:
         print(f"Error reading .clasprc.json: {e}", file=sys.stderr)
     return None
 
-def get_remote_update_time(script_id, access_token):
-    """Fetch updateTime from Apps Script API."""
+def get_remote_project_metadata(script_id, access_token):
+    """Fetch full project resource from Apps Script API."""
     url = f"https://script.googleapis.com/v1/projects/{script_id}"
     req = urllib.request.Request(url)
     req.add_header("Authorization", f"Bearer {access_token}")
     try:
         with urllib.request.urlopen(req) as res:
-            data = json.load(res)
-            return data.get('updateTime')
+            return json.load(res)
     except Exception as e:
         print(f"Error fetching metadata for {script_id}: {e}", file=sys.stderr)
         return None
 
-def get_local_last_updated(project_dir):
+def get_local_apps_script_update_time(project_dir):
+    """Get updateTime from local metadata.json (appsScriptApi block)."""
     meta_path = os.path.join(project_dir, 'metadata.json')
     if os.path.exists(meta_path):
         try:
-            with open(meta_path, 'r') as f:
+            with open(meta_path, 'r', encoding='utf-8') as f:
                 data = json.load(f)
+            # Try nested structure first
+            if "appsScriptApi" in data and isinstance(data["appsScriptApi"], dict):
+                return data["appsScriptApi"].get('updateTime')
+            # Fallback for migration
             return data.get('lastUpdated')
         except:
             return None
     return None
 
-def update_local_metadata(project_dir, update_time):
+def update_local_metadata(project_dir, api_metadata):
+    """Merge Apps Script API metadata into metadata.json and clean up old properties."""
     meta_path = os.path.join(project_dir, 'metadata.json')
     data = {}
     if os.path.exists(meta_path):
         try:
-            with open(meta_path, 'r') as f:
+            with open(meta_path, 'r', encoding='utf-8') as f:
                 data = json.load(f)
         except:
             pass
     
-    data['lastUpdated'] = update_time
+    # Save full response under appsScriptApi
+    data['appsScriptApi'] = api_metadata
     
-    with open(meta_path, 'w') as f:
+    # Cleanup root properties as requested (consolidation)
+    root_to_remove = ["lastUpdated", "name", "createdTime", "modifiedTime", "titleByClaspList", "titleByDriveApi"]
+    for prop in root_to_remove:
+        data.pop(prop, None)
+    
+    with open(meta_path, 'w', encoding='utf-8') as f:
         json.dump(data, f, indent=2, ensure_ascii=False)
 
 def run_clasp_with_retry(cmd, cwd=None, capture_output=False, retries=3):
@@ -179,7 +174,6 @@ def run_clasp_with_retry(cmd, cwd=None, capture_output=False, retries=3):
                 print(f"    Stderr: {e.stderr}", file=sys.stderr)
             
             # If it's an auth error, try to refresh
-            # We suspect "Request is missing required authentication credential" or similar
             if attempt < retries:
                 print("    Attempting to refresh token via `clasp list`...", file=sys.stderr)
                 try:
@@ -198,14 +192,14 @@ def main():
     try:
         subprocess.run('clasp -v', shell=True, check=True)
     except:
-        print("Warning: could not check clasp version.")
+        pass
 
     # Refresh token once at the start
     refresh_clasp_token()
     access_token = get_access_token()
     
     if not access_token:
-        print("Warning: Could not read access token from .clasprc.json. Optimization (skipping unchanged projects) will be disabled. Proceeding with full pull.", file=sys.stderr)
+        print("Warning: Could not read access token from .clasprc.json. Optimization disabled. Proceeding with full pull.", file=sys.stderr)
 
     for project_dir in project_dirs:
         entry = os.path.relpath(project_dir, base_dir)
@@ -214,19 +208,20 @@ def main():
 
         should_pull = True
         script_id = None
-        remote_update_time = None
+        remote_metadata = None
 
         if access_token:
             try:
-                with open(clasp_config, 'r') as f:
+                with open(clasp_config, 'r', encoding='utf-8') as f:
                     cfg = json.load(f)
                     script_id = cfg.get('scriptId')
             except:
                 pass
 
             if script_id:
-                remote_update_time = get_remote_update_time(script_id, access_token)
-                local_last_updated = get_local_last_updated(project_dir)
+                remote_metadata = get_remote_project_metadata(script_id, access_token)
+                remote_update_time = remote_metadata.get('updateTime') if remote_metadata else None
+                local_last_updated = get_local_apps_script_update_time(project_dir)
 
                 if remote_update_time and local_last_updated:
                     if remote_update_time <= local_last_updated:
@@ -241,11 +236,15 @@ def main():
 
         if should_pull:
             try:
-                # 1) Pull latest files via shell
+                # 1) Refresh metadata if not already fetched
+                if access_token and script_id and not remote_metadata:
+                    remote_metadata = get_remote_project_metadata(script_id, access_token)
+
+                # 2) Pull latest files via shell
                 print("  Running `clasp pull` via shell...")
                 run_clasp_with_retry('clasp pull', cwd=project_dir)
 
-                # 2) Fetch deployments via shell
+                # 3) Fetch deployments via shell
                 print("  Fetching deployments via shell...")
                 proc_dep = run_clasp_with_retry(
                     'clasp deployments',
@@ -259,7 +258,7 @@ def main():
                 with open(os.path.join(project_dir, 'deployments.json'), 'w', encoding='utf-8') as f:
                     json.dump(deps, f, ensure_ascii=False, indent=2)
 
-                # 3) Fetch versions via shell
+                # 4) Fetch versions via shell
                 print("  Fetching versions via shell...")
                 proc_ver = run_clasp_with_retry(
                     'clasp versions',
@@ -273,16 +272,16 @@ def main():
                 with open(os.path.join(project_dir, 'versions.json'), 'w', encoding='utf-8') as f:
                     json.dump(vers, f, ensure_ascii=False, indent=2)
 
-                # Update metadata if we have the time
-                if remote_update_time:
-                    update_local_metadata(project_dir, remote_update_time)
+                # Update metadata if we have the info
+                if remote_metadata:
+                    update_local_metadata(project_dir, remote_metadata)
 
                 print(f"  Completed project '{entry}'.")
 
             except subprocess.CalledProcessError as e:
                 print(f"Error: command failed in {entry}: {e}", file=sys.stderr)
             finally:
-                pass  # We used cwd argument, so we don't need to chdir back
+                pass
 
     print("All projects processed.")
 

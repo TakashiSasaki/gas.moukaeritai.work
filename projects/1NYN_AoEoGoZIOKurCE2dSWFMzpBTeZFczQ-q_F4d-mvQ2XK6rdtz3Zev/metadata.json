@@ -1,8 +1,6 @@
 {
-  "name": "Hash Wrapper",
   "id": "1NYN_AoEoGoZIOKurCE2dSWFMzpBTeZFczQ-q_F4d-mvQ2XK6rdtz3Zev",
   "url": "https://script.google.com/d/1NYN_AoEoGoZIOKurCE2dSWFMzpBTeZFczQ-q_F4d-mvQ2XK6rdtz3Zev/edit?usp=drivesdk",
-  "lastUpdated": "2025-01-22T19:21:11.220Z",
   "application.json": null,
   "deployments.json": [
     {
@@ -21,6 +19,9 @@
       "description": "web app meta-version"
     }
   ],
-  "createdTime": "2017-05-30T10:20:33.090Z",
-  "modifiedTime": "2025-01-22T19:21:11.220Z"
+  "driveApi": {
+    "name": "Hash Wrapper",
+    "createdTime": "2017-05-30T10:20:33.090Z",
+    "modifiedTime": "2025-01-22T19:21:11.220Z"
+  }
 }
