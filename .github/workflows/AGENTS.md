@@ -7,7 +7,7 @@ This repository uses GitHub Actions to automatically sync Google Apps Script (GA
 ### Chain A: GAS Repository Sync (Main Chain)
 This chain is responsible for discovering all current GAS projects and pulling their source code into the repository.
 
-1.  **[update-clasp-list.yml](update-clasp-list.yml)**
+1.  **[a1-update-clasp-list.yml](a1-update-clasp-list.yml)**
     - **Trigger**: Hourly schedule (`15 * * * *`) or manual dispatch.
     - **Action**:
         - Authenticates using `CLASPRC_JSON` secret.
@@ -20,7 +20,7 @@ This chain is responsible for discovering all current GAS projects and pulling t
     - **Next**: Triggers `create_missing_scriptid_dirs`.
 
 2.  **[create_missing_scriptid_dirs.yml](create_missing_scriptid_dirs.yml)**
-    - **Trigger**: Completion of `update-clasp-list`.
+    - **Trigger**: Completion of `a1-update-clasp-list`.
     - **Action**: Runs `create_missing_scriptid_dirs.py` using `clasp-list.txt`.
     - **Output**:
         - Creates new subdirectories named by `ScriptID`.
@@ -58,7 +58,7 @@ This chain fetches external tracking data and ensures directory-level metadata i
 ```mermaid
 graph TD
     subgraph "Chain A: GAS Sync Core"
-        A1["update-clasp-list<br/>(Schedule: Every Hour:15)"] -->|workflow_run| A2["create_missing_scriptid_dirs"]
+        A1["a1-update-clasp-list<br/>(Schedule: Every Hour:15)"] -->|workflow_run| A2["create_missing_scriptid_dirs"]
         A2 -->|workflow_run| A3["clasp-pull"]
     end
 
@@ -76,7 +76,7 @@ graph TD
 
 ## Detailed Component Analysis
 
-### update-clasp-list.yml
+### a1-update-clasp-list.yml
 This workflow is the "heart" of the synchronization process. It ensures the repository knows about every project in the Google account.
 
 #### Inputs & Dependencies
@@ -105,7 +105,7 @@ This workflow is the "heart" of the synchronization process. It ensures the repo
 This workflow prepares the filesystem for new projects discovered in the previous step.
 
 #### Inputs & Dependencies
-- **Primary Input**: `clasp-list.txt` — The raw text output from the `update-clasp-list` workflow containing names and script URLs.
+- **Primary Input**: `clasp-list.txt` — The raw text output from the `a1-update-clasp-list` workflow containing names and script URLs.
 - **State Dependency**:
   - Existing subdirectories in the repository root.
   - `.clasp.json` files within those subdirectories to extract currently tracked `scriptId`s.
@@ -204,5 +204,5 @@ This workflow compiles various data sources into a per-directory `metadata.json`
 
 ## Maintenance Notes
 - All changes are pushed to the **`gas-pull`** branch by `github-actions[bot]`.
-- Failure in an upstream workflow (e.g., `update-clasp-list`) will prevent downstream workflows from running (conditions check for `conclusion == 'success'`).
+- Failure in an upstream workflow (e.g., `a1-update-clasp-list`) will prevent downstream workflows from running (conditions check for `conclusion == 'success'`).
 - Manual runs via `workflow_dispatch` are available for all components.

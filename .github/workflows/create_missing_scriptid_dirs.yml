@@ -3,7 +3,7 @@ name: create_missing_scriptid_dirs
 on:
   workflow_dispatch:  # allow manual runs
   workflow_run:
-    workflows: ["update-clasp-list"]  # trigger after this workflow completes
+    workflows: ["a1-update-clasp-list"]  # trigger after this workflow completes
     types:
       - completed
 

@@ -1,4 +1,4 @@
-name: update-clasp-list
+name: a1-update-clasp-list
 on:
   schedule:
     - cron: '15 * * * *'
