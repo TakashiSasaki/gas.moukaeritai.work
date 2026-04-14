@@ -61,7 +61,7 @@
             <h1 class="mb-3">もう帰りたいGAS</h1>
             <p class="lead">各プロジェクトのREADMEが閲覧できます。</p>
             <a target="_blank" href="https://script.google.com/macros/s/AKfycbzzUFRxBjCOm7FFcOqC6KVd5n94r_5_PPwVn6WKd4lDkZRVQcAAfyk9hF7vnGFB2qtpOw/exec" class="btn btn-light btn-lg mt-3">GASプロジェクト管理アプリを開く</a>
-            <a target="_blank" href="https://github.com/TakashiSasaki/gas-moukaeritai-work" class="btn btn-outline-light btn-lg mt-3 ms-2">GitHub</a>
+            <a target="_blank" href="https://github.com/TakashiSasaki/gas.moukaeritai.work" class="btn btn-outline-light btn-lg mt-3 ms-2">GitHub</a>
         </div>
     </header>
 
@@ -99,10 +99,10 @@
             const readmeTitleEl = document.getElementById('readme-title');
             const projectSearchEl = document.getElementById('project-search');
 
-            // 1. clasp-list.jsonを読み込む
-            fetch('clasp-list.json')
+            // 1. projects.jsonを読み込む
+            fetch('projects.json')
                 .then(response => {
-                    if (!response.ok) throw new Error('clasp-list.json not found');
+                    if (!response.ok) throw new Error('projects.json not found');
                     return response.json();
                 })
                 .then(projects => {
@@ -151,7 +151,7 @@
                     markdownContentEl.innerHTML = '<p class="text-muted">読み込み中...</p>';
 
                     // 4. 対応するREADME.mdを読み込む
-                    fetch(`${projectId}/README.md`)
+                    fetch(`../projects/${projectId}/README.md`)
                         .then(response => {
                             if (!response.ok) {
                                 if(response.status === 404) {

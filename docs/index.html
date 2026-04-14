@@ -60,9 +60,6 @@
             <li class="nav-item" role="presentation">
                 <button class="nav-link" id="find-tab" data-bs-toggle="tab" data-bs-target="#find" type="button" role="tab" aria-controls="find" aria-selected="false">検索 (Find)</button>
             </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="readme-tab" data-bs-toggle="tab" data-bs-target="#readme" type="button" role="tab" aria-controls="readme" aria-selected="false">README.md</button>
-            </li>
         </ul>
 
         <!-- Tabs Content -->
@@ -113,20 +110,6 @@
                 </div>
             </div>
 
-            <!-- README Tab -->
-            <div class="tab-pane fade" id="readme" role="tabpanel" aria-labelledby="readme-tab">
-                <div class="card">
-                    <div class="card-body">
-                        <div id="readme-content">
-                            <div class="d-flex justify-content-center p-5">
-                                <div class="spinner-border text-primary" role="status">
-                                    <span class="visually-hidden">Loading...</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 
@@ -153,10 +136,6 @@
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const readmeTab = document.getElementById('readme-tab');
-            const readmeContent = document.getElementById('readme-content');
-            let readmeLoaded = false;
-            
             const findTab = document.getElementById('find-tab');
             const findIframe = document.getElementById('find-iframe');
 
@@ -195,23 +174,6 @@
                 });
             }
 
-            readmeTab.addEventListener('shown.bs.tab', function (event) {
-                if (!readmeLoaded) {
-                    fetch('README.md')
-                        .then(response => {
-                            if (!response.ok) throw new Error('README.md not found');
-                            return response.text();
-                        })
-                        .then(text => {
-                            readmeContent.innerHTML = marked.parse(text);
-                            readmeLoaded = true;
-                        })
-                        .catch(error => {
-                            console.error('Error loading README:', error);
-                            readmeContent.innerHTML = '<div class="alert alert-danger">README.md の読み込みに失敗しました。</div>';
-                        });
-                }
-            });
         });
     </script>
     <script>

@@ -1,9 +1,10 @@
-const CACHE_NAME = 'moukaeritai-work-v20251222-0741';
+const CACHE_NAME = 'moukaeritai-work-v20260414-0800';
 const urlsToCache = [
   './',
   './index.html',
-  './README.md',
   './find.html',
+  './projects.json',
+  './style.css',
   './moukaeritai-pictgram/64x64.webp/gold_green.webp',
   'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css',
   'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js',

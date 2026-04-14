@@ -144,10 +144,58 @@ def update_metadata(backup_file: Path, projects_dir: Path):
         except Exception as e:
             print(f"  Error writing {script_id}: {e}", file=sys.stderr)
 
+    # Generate projects.json for the website
+    generate_projects_summary(projects_dir)
+
     print(f"\nUpdate Summary:")
     print(f"  Total projects in backup: {len(files_list)}")
     print(f"  Successfully updated:     {updated_count}")
     print(f"  Skipped (not in repo):    {skipped_count}")
+
+def generate_projects_summary(projects_dir: Path):
+    """Generate docs/projects.json with id and name for the search UI."""
+    print("Generating projects summary (docs/projects.json)...")
+    projects = []
+    
+    for project_path in projects_dir.iterdir():
+        if not project_path.is_dir():
+            continue
+            
+        meta_file = project_path / "metadata.json"
+        if meta_file.exists():
+            try:
+                with open(meta_file, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+                    
+                # Look for name in driveApi or appsScriptApi
+                name = None
+                if "driveApi" in data and isinstance(data["driveApi"], dict):
+                    name = data["driveApi"].get("name")
+                if not name and "appsScriptApi" in data and isinstance(data["appsScriptApi"], dict):
+                    name = data["appsScriptApi"].get("title")
+                
+                if name:
+                    projects.append({
+                        "id": project_path.name,
+                        "name": name
+                    })
+            except Exception:
+                pass
+    
+    # Sort by name
+    projects.sort(key=lambda x: x["name"].lower())
+    
+    # Destination in docs/
+    docs_dir = projects_dir.parent / "docs"
+    docs_dir.mkdir(exist_ok=True)
+    summary_file = docs_dir / "projects.json"
+    
+    try:
+        with open(summary_file, "w", encoding="utf-8") as f:
+            json.dump(projects, f, indent=2, ensure_ascii=False)
+        print(f"  Successfully wrote {len(projects)} projects to {summary_file}")
+    except Exception as e:
+        print(f"  Error writing projects.json: {e}", file=sys.stderr)
 
 def main():
     parser = argparse.ArgumentParser(description="Update project metadata titles from Drive API JSON backups.")
