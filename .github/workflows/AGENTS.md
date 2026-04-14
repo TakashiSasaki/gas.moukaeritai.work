@@ -53,6 +53,22 @@ This chain fetches external tracking data and ensures directory-level metadata i
 
 ---
 
+### Chain H: Automated Housekeeping
+This chain consolidates project discovery and metadata maintenance using the Drive API, running automatically on a scheduled basis.
+
+1.  **[h1-update-drive-api-list.yml](h1-update-drive-api-list.yml)**
+    - **Trigger**: Scheduled (every 3 hours) or manual dispatch.
+    - **Action**:
+        - Executes `housekeeping/list-by-drive-api/fetch-list.py` to get the master project list.
+        - Executes `housekeeping/list-by-drive-api/update_metadata.py` to sync directory structure and metadata.
+    - **Output**:
+        - Timestamped JSON backups in `housekeeping/list-by-drive-api/`.
+        - Newly created project directories in `projects/` for any newly discovered scripts.
+        - Initialized or updated `metadata.json` for all projects (synced with Drive API `name`, `createdTime`, `modifiedTime`).
+    - **Commit Logic**: Pushes to the default branch if changes are detected in JSON backups or project metadata.
+
+---
+
 ## Summary Diagram
 
 ```mermaid
@@ -66,8 +82,13 @@ graph TD
         B1["b1-gas-project-finder<br/>(Manual)"] -->|workflow_run| B2["b2-generate-metadata"]
     end
 
+    subgraph "Chain H: Automated Housekeeping"
+        H1["h1-update-drive-api-list<br/>(Cron 3hrs)"]
+    end
+
     style A1 fill:#d4f1f9,stroke:#333
     style B1 fill:#d4f1f9,stroke:#333
+    style H1 fill:#f9d4f1,stroke:#333
     style A3 fill:#d4f9d4,stroke:#333
     style B2 fill:#d4f9d4,stroke:#333
 ```

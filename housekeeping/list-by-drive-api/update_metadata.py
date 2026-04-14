@@ -47,33 +47,52 @@ def update_metadata(backup_file: Path, projects_dir: Path):
             
         # Locate project directory
         project_path = projects_dir / script_id
+        
+        # Create directory if missing
+        if not project_path.exists():
+            print(f"  Creating missing directory: {script_id}")
+            project_path.mkdir(parents=True, exist_ok=True)
+            
         meta_file = project_path / "metadata.json"
         
-        if meta_file.exists():
+        # Initialize or load metadata.json
+        if not meta_file.exists():
+            print(f"  Initializing new metadata.json: {script_id}")
+            meta_data = {
+                "name": name,
+                "id": script_id,
+                "url": f"https://script.google.com/d/{script_id}/edit?usp=drivesdk",
+                "lastUpdated": modified_time,
+                "application.json": None,
+                "deployments.json": []
+            }
+        else:
             try:
                 with open(meta_file, "r", encoding="utf-8") as f:
                     meta_data = json.load(f)
-                
-                # Update main properties using Drive API names
-                meta_data["name"] = name
-                if created_time:
-                    meta_data["createdTime"] = created_time
-                if modified_time:
-                    meta_data["modifiedTime"] = modified_time
-                
-                # Cleanup redundant properties
-                meta_data.pop("titleByClaspList", None)
-                meta_data.pop("titleByDriveApi", None)
-                
-                with open(meta_file, "w", encoding="utf-8") as f:
-                    json.dump(meta_data, f, indent=2, ensure_ascii=False)
-                
-                print(f"  Updated & Cleaned: {script_id} -> {name}")
-                updated_count += 1
             except Exception as e:
-                print(f"  Error updating {script_id}: {e}", file=sys.stderr)
-        else:
-            skipped_count += 1
+                print(f"  Error reading {script_id}: {e}", file=sys.stderr)
+                meta_data = {} # Fallback
+
+        # Update main properties using Drive API names
+        meta_data["name"] = name
+        if created_time:
+            meta_data["createdTime"] = created_time
+        if modified_time:
+            meta_data["modifiedTime"] = modified_time
+        
+        # Cleanup redundant properties
+        meta_data.pop("titleByClaspList", None)
+        meta_data.pop("titleByDriveApi", None)
+        
+        try:
+            with open(meta_file, "w", encoding="utf-8") as f:
+                json.dump(meta_data, f, indent=2, ensure_ascii=False)
+            
+            # print(f"  Sync: {script_id} -> {name}")
+            updated_count += 1
+        except Exception as e:
+            print(f"  Error writing {script_id}: {e}", file=sys.stderr)
 
     print(f"\nUpdate Summary:")
     print(f"  Total projects in backup: {len(files_list)}")

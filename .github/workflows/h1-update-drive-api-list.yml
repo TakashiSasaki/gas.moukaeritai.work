@@ -1,0 +1,50 @@
+name: h1-update-drive-api-list
+
+on:
+  schedule:
+    - cron: '0 */3 * * *' # Every 3 hours
+  workflow_dispatch: # Allow manual triggering
+
+jobs:
+  housekeeping:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout default branch
+        uses: actions/checkout@v4
+        with:
+          ref: gas.moukaeritai.work
+
+      - name: Restore clasp credentials
+        run: |
+          echo '${{ secrets.CLASPRC_JSON }}' > ~/.clasprc.json
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Fetch project list from Drive API
+        run: python housekeeping/list-by-drive-api/fetch-list.py
+
+      - name: Update project metadata and create missing directories
+        run: python housekeeping/list-by-drive-api/update_metadata.py
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add housekeeping/list-by-drive-api/*.json
+          git add projects/
+          # Only commit if there are changes
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: automated project list update and metadata synchronization"
+            git push origin HEAD:gas.moukaeritai.work
+          else
+            echo "No changes to commit"
+          fi
