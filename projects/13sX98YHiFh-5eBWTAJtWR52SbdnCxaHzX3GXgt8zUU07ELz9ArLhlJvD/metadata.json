@@ -1,10 +1,9 @@
 {
-  "id": "13sX98YHiFh-5eBWTAJtWR52SbdnCxaHzX3GXgt8zUU07ELz9ArLhlJvD",
-  "url": "https://script.google.com/d/13sX98YHiFh-5eBWTAJtWR52SbdnCxaHzX3GXgt8zUU07ELz9ArLhlJvD/edit?usp=drivesdk",
   "driveApi": {
     "name": "Str",
     "createdTime": "2019-11-21T12:57:34.357Z",
-    "modifiedTime": "2019-12-06T10:00:29.520Z"
+    "modifiedTime": "2019-12-06T10:00:29.520Z",
+    "id": "13sX98YHiFh-5eBWTAJtWR52SbdnCxaHzX3GXgt8zUU07ELz9ArLhlJvD"
   },
   "deployments": [
     {

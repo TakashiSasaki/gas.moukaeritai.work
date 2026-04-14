@@ -1,10 +1,9 @@
 {
-  "id": "19gfPoC2um5FcDCPyzHenOg_MUHsJruM9X82VQqeR9zxdZEg0wnbWRwQM",
-  "url": "https://script.google.com/d/19gfPoC2um5FcDCPyzHenOg_MUHsJruM9X82VQqeR9zxdZEg0wnbWRwQM/edit?usp=drivesdk",
   "driveApi": {
     "name": "Gmail Search Sheets",
     "createdTime": "2018-10-03T01:54:06.002Z",
-    "modifiedTime": "2023-05-02T20:50:33.501Z"
+    "modifiedTime": "2023-05-02T20:50:33.501Z",
+    "id": "19gfPoC2um5FcDCPyzHenOg_MUHsJruM9X82VQqeR9zxdZEg0wnbWRwQM"
   },
   "deployments": [
     {

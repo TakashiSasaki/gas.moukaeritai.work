@@ -1,10 +1,9 @@
 {
-  "id": "1Bxt-4ULv8Rh0aAmltAcAUZpOmp8ifF5d_9f-DzASSJkDEAtSHNwlm1Gh",
-  "url": "https://script.google.com/d/1Bxt-4ULv8Rh0aAmltAcAUZpOmp8ifF5d_9f-DzASSJkDEAtSHNwlm1Gh/edit?usp=drivesdk",
   "driveApi": {
     "name": "URI",
     "createdTime": "2020-08-10T13:10:36.163Z",
-    "modifiedTime": "2021-03-12T13:01:27.608Z"
+    "modifiedTime": "2021-03-12T13:01:27.608Z",
+    "id": "1Bxt-4ULv8Rh0aAmltAcAUZpOmp8ifF5d_9f-DzASSJkDEAtSHNwlm1Gh"
   },
   "deployments": [
     {

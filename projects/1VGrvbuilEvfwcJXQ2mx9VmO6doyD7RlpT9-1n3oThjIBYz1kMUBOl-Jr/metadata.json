@@ -1,10 +1,9 @@
 {
-  "id": "1VGrvbuilEvfwcJXQ2mx9VmO6doyD7RlpT9-1n3oThjIBYz1kMUBOl-Jr",
-  "url": "https://script.google.com/d/1VGrvbuilEvfwcJXQ2mx9VmO6doyD7RlpT9-1n3oThjIBYz1kMUBOl-Jr/edit?usp=drivesdk",
   "driveApi": {
     "name": "物件選択アンケート",
     "createdTime": "2017-11-18T09:07:51.998Z",
-    "modifiedTime": "2025-01-24T18:07:35.470Z"
+    "modifiedTime": "2025-01-24T18:07:35.470Z",
+    "id": "1VGrvbuilEvfwcJXQ2mx9VmO6doyD7RlpT9-1n3oThjIBYz1kMUBOl-Jr"
   },
   "deployments": [
     {

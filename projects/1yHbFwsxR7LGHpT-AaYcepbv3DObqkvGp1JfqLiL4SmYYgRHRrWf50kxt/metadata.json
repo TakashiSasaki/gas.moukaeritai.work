@@ -1,10 +1,9 @@
 {
-  "id": "1yHbFwsxR7LGHpT-AaYcepbv3DObqkvGp1JfqLiL4SmYYgRHRrWf50kxt",
-  "url": "https://script.google.com/d/1yHbFwsxR7LGHpT-AaYcepbv3DObqkvGp1JfqLiL4SmYYgRHRrWf50kxt/edit?usp=drivesdk",
   "driveApi": {
     "name": "SheetHelper",
     "createdTime": "2024-10-01T01:42:41.943Z",
-    "modifiedTime": "2024-10-01T04:31:29.806Z"
+    "modifiedTime": "2024-10-01T04:31:29.806Z",
+    "id": "1yHbFwsxR7LGHpT-AaYcepbv3DObqkvGp1JfqLiL4SmYYgRHRrWf50kxt"
   },
   "deployments": [
     {

@@ -1,10 +1,9 @@
 {
-  "id": "1RvhfmTi5Il33TqPVCX0SzkgOTN14obJxdEDrv69CkfBuKHQ6LXSnIAQ5",
-  "url": "https://script.google.com/d/1RvhfmTi5Il33TqPVCX0SzkgOTN14obJxdEDrv69CkfBuKHQ6LXSnIAQ5/edit?usp=drivesdk",
   "driveApi": {
     "name": "Cache Clipboard",
     "createdTime": "2018-02-21T10:02:30.166Z",
-    "modifiedTime": "2018-02-22T06:21:19.162Z"
+    "modifiedTime": "2018-02-22T06:21:19.162Z",
+    "id": "1RvhfmTi5Il33TqPVCX0SzkgOTN14obJxdEDrv69CkfBuKHQ6LXSnIAQ5"
   },
   "deployments": [
     {

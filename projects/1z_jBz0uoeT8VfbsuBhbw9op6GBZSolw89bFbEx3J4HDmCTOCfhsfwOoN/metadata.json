@@ -1,10 +1,9 @@
 {
-  "id": "1z_jBz0uoeT8VfbsuBhbw9op6GBZSolw89bFbEx3J4HDmCTOCfhsfwOoN",
-  "url": "https://script.google.com/d/1z_jBz0uoeT8VfbsuBhbw9op6GBZSolw89bFbEx3J4HDmCTOCfhsfwOoN/edit?usp=drivesdk",
   "driveApi": {
     "name": "Google Takeout File Browser",
     "createdTime": "2022-10-11T11:02:35.412Z",
-    "modifiedTime": "2022-10-11T12:45:34.441Z"
+    "modifiedTime": "2022-10-11T12:45:34.441Z",
+    "id": "1z_jBz0uoeT8VfbsuBhbw9op6GBZSolw89bFbEx3J4HDmCTOCfhsfwOoN"
   },
   "deployments": [
     {

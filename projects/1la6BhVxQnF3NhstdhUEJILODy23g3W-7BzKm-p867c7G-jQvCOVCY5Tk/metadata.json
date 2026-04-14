@@ -1,10 +1,9 @@
 {
-  "id": "1la6BhVxQnF3NhstdhUEJILODy23g3W-7BzKm-p867c7G-jQvCOVCY5Tk",
-  "url": "https://script.google.com/d/1la6BhVxQnF3NhstdhUEJILODy23g3W-7BzKm-p867c7G-jQvCOVCY5Tk/edit?usp=drivesdk",
   "driveApi": {
     "name": "Base32",
     "createdTime": "2018-01-14T07:57:03.396Z",
-    "modifiedTime": "2024-04-09T17:33:50.091Z"
+    "modifiedTime": "2024-04-09T17:33:50.091Z",
+    "id": "1la6BhVxQnF3NhstdhUEJILODy23g3W-7BzKm-p867c7G-jQvCOVCY5Tk"
   },
   "deployments": [
     {

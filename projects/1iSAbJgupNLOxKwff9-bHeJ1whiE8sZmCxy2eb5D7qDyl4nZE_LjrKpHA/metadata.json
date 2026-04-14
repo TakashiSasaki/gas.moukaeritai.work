@@ -1,10 +1,9 @@
 {
-  "id": "1iSAbJgupNLOxKwff9-bHeJ1whiE8sZmCxy2eb5D7qDyl4nZE_LjrKpHA",
-  "url": "https://script.google.com/d/1iSAbJgupNLOxKwff9-bHeJ1whiE8sZmCxy2eb5D7qDyl4nZE_LjrKpHA/edit?usp=drivesdk",
   "driveApi": {
     "name": "ArecXのスター表示に関するテスト",
     "createdTime": "2016-04-27T05:05:14.278Z",
-    "modifiedTime": "2025-01-13T17:35:23.531Z"
+    "modifiedTime": "2025-01-13T17:35:23.531Z",
+    "id": "1iSAbJgupNLOxKwff9-bHeJ1whiE8sZmCxy2eb5D7qDyl4nZE_LjrKpHA"
   },
   "deployments": [
     {

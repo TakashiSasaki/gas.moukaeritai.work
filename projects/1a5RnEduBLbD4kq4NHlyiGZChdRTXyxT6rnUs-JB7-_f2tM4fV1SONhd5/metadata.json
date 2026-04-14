@@ -1,10 +1,9 @@
 {
-  "id": "1a5RnEduBLbD4kq4NHlyiGZChdRTXyxT6rnUs-JB7-_f2tM4fV1SONhd5",
-  "url": "https://script.google.com/d/1a5RnEduBLbD4kq4NHlyiGZChdRTXyxT6rnUs-JB7-_f2tM4fV1SONhd5/edit?usp=drivesdk",
   "driveApi": {
     "name": "send-to-kindle",
     "createdTime": "2020-01-15T00:53:52.814Z",
-    "modifiedTime": "2025-01-13T18:47:11.338Z"
+    "modifiedTime": "2025-01-13T18:47:11.338Z",
+    "id": "1a5RnEduBLbD4kq4NHlyiGZChdRTXyxT6rnUs-JB7-_f2tM4fV1SONhd5"
   },
   "deployments": [
     {

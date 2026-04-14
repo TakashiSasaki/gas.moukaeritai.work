@@ -1,10 +1,9 @@
 {
-  "id": "1A_kkWBH9eqn08Rir8tv_KdaVyYZkJt487UD69qAbQ0fGHCjKKTPwhC0H",
-  "url": "https://script.google.com/d/1A_kkWBH9eqn08Rir8tv_KdaVyYZkJt487UD69qAbQ0fGHCjKKTPwhC0H/edit?usp=drivesdk",
   "driveApi": {
     "name": "GetFragmentPartOfUrlTest",
     "createdTime": "2015-12-17T05:21:17.380Z",
-    "modifiedTime": "2025-01-22T18:41:49.705Z"
+    "modifiedTime": "2025-01-22T18:41:49.705Z",
+    "id": "1A_kkWBH9eqn08Rir8tv_KdaVyYZkJt487UD69qAbQ0fGHCjKKTPwhC0H"
   },
   "deployments": [
     {

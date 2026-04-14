@@ -27,9 +27,8 @@ def main():
 
         metadata: Dict[str, Any] = {}
         if script_id and script_id in finder_map:
+        if script_id and script_id in finder_map:
             metadata.update(finder_map[script_id])
-        if script_id and 'id' not in metadata:
-            metadata['id'] = script_id
 
         # Standalone files only - exclude from metadata.json consolidation
         # metadata['application.json'] = load_json(os.path.join(project_dir, 'application.json'))

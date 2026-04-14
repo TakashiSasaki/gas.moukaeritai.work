@@ -1,10 +1,9 @@
 {
-  "id": "1fWFGiC7PwwYBmNTY12zxbSdBqkgP6RKta-bGSFDD90jliFIYOqxHbYEg",
-  "url": "https://script.google.com/d/1fWFGiC7PwwYBmNTY12zxbSdBqkgP6RKta-bGSFDD90jliFIYOqxHbYEg/edit?usp=drivesdk",
   "driveApi": {
     "name": "DocImageResizer",
     "createdTime": "2025-03-26T05:19:10.635Z",
-    "modifiedTime": "2025-03-28T08:52:30.661Z"
+    "modifiedTime": "2025-03-28T08:52:30.661Z",
+    "id": "1fWFGiC7PwwYBmNTY12zxbSdBqkgP6RKta-bGSFDD90jliFIYOqxHbYEg"
   },
   "deployments": [
     {

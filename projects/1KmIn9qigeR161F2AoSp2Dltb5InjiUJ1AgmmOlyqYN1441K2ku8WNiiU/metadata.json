@@ -1,10 +1,9 @@
 {
-  "id": "1KmIn9qigeR161F2AoSp2Dltb5InjiUJ1AgmmOlyqYN1441K2ku8WNiiU",
-  "url": "https://script.google.com/d/1KmIn9qigeR161F2AoSp2Dltb5InjiUJ1AgmmOlyqYN1441K2ku8WNiiU/edit?usp=drivesdk",
   "driveApi": {
     "name": "Snippets For DriveApp",
     "createdTime": "2019-09-13T03:55:15.257Z",
-    "modifiedTime": "2025-01-13T18:23:46.014Z"
+    "modifiedTime": "2025-01-13T18:23:46.014Z",
+    "id": "1KmIn9qigeR161F2AoSp2Dltb5InjiUJ1AgmmOlyqYN1441K2ku8WNiiU"
   },
   "deployments": [
     {

@@ -1,10 +1,9 @@
 {
-  "id": "1DzGVrsZvn5Svk_I7f48AiSeYrzDP0wIWsCxkHrS6B5ZFThcamXB0wwo0",
-  "url": "https://script.google.com/d/1DzGVrsZvn5Svk_I7f48AiSeYrzDP0wIWsCxkHrS6B5ZFThcamXB0wwo0/edit?usp=drivesdk",
   "driveApi": {
     "name": "Calendar Log",
     "createdTime": "2025-06-17T22:57:39.153Z",
-    "modifiedTime": "2025-06-18T04:16:10.439Z"
+    "modifiedTime": "2025-06-18T04:16:10.439Z",
+    "id": "1DzGVrsZvn5Svk_I7f48AiSeYrzDP0wIWsCxkHrS6B5ZFThcamXB0wwo0"
   },
   "deployments": [
     {

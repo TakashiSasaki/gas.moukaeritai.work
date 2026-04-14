@@ -1,10 +1,9 @@
 {
-  "id": "107QMAgKGFZ6dXRCrA7mpN9aSapN0fZlXw57ipPZREt5zSQ0UNSTLEH50",
-  "url": "https://script.google.com/d/107QMAgKGFZ6dXRCrA7mpN9aSapN0fZlXw57ipPZREt5zSQ0UNSTLEH50/edit?usp=drivesdk",
   "driveApi": {
     "name": "Android package list",
     "createdTime": "2025-07-10T03:48:50.935Z",
-    "modifiedTime": "2025-07-10T06:45:54.297Z"
+    "modifiedTime": "2025-07-10T06:45:54.297Z",
+    "id": "107QMAgKGFZ6dXRCrA7mpN9aSapN0fZlXw57ipPZREt5zSQ0UNSTLEH50"
   },
   "deployments": [
     {

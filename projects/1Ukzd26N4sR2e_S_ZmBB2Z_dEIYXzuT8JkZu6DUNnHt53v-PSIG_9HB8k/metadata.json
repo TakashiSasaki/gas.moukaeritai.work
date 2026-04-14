@@ -1,10 +1,9 @@
 {
-  "id": "1Ukzd26N4sR2e_S_ZmBB2Z_dEIYXzuT8JkZu6DUNnHt53v-PSIG_9HB8k",
-  "url": "https://script.google.com/d/1Ukzd26N4sR2e_S_ZmBB2Z_dEIYXzuT8JkZu6DUNnHt53v-PSIG_9HB8k/edit?usp=drivesdk",
   "driveApi": {
     "name": "Google Cloud Resource Manager Sandbox",
     "createdTime": "2021-03-18T04:47:16.104Z",
-    "modifiedTime": "2021-07-07T03:40:01.992Z"
+    "modifiedTime": "2021-07-07T03:40:01.992Z",
+    "id": "1Ukzd26N4sR2e_S_ZmBB2Z_dEIYXzuT8JkZu6DUNnHt53v-PSIG_9HB8k"
   },
   "deployments": [
     {

@@ -1,10 +1,9 @@
 {
-  "id": "1RsAjkBTBEy4w8Q0kdStuJAXbAIcrnVqXvMGDj5nhQJkmZuMT3tBFTFoE",
-  "url": "https://script.google.com/d/1RsAjkBTBEy4w8Q0kdStuJAXbAIcrnVqXvMGDj5nhQJkmZuMT3tBFTFoE/edit?usp=drivesdk",
   "driveApi": {
     "name": "HelloJwt",
     "createdTime": "2015-12-21T10:26:18.283Z",
-    "modifiedTime": "2025-01-21T19:05:31.962Z"
+    "modifiedTime": "2025-01-21T19:05:31.962Z",
+    "id": "1RsAjkBTBEy4w8Q0kdStuJAXbAIcrnVqXvMGDj5nhQJkmZuMT3tBFTFoE"
   },
   "deployments": [
     {

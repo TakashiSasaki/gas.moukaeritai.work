@@ -1,10 +1,9 @@
 {
-  "id": "1T231UlZPgKgysL27aTsmZ9jNNfyyhD8vwjwaXafCVfoDw5lPspuHdE54",
-  "url": "https://script.google.com/d/1T231UlZPgKgysL27aTsmZ9jNNfyyhD8vwjwaXafCVfoDw5lPspuHdE54/edit?usp=drivesdk",
   "driveApi": {
     "name": " Apps Script デプロイメント マネージャ データ更新 キャッシュクリア & 再取得",
     "createdTime": "2025-11-08T15:34:09.174Z",
-    "modifiedTime": "2025-11-08T17:37:30.571Z"
+    "modifiedTime": "2025-11-08T17:37:30.571Z",
+    "id": "1T231UlZPgKgysL27aTsmZ9jNNfyyhD8vwjwaXafCVfoDw5lPspuHdE54"
   },
   "deployments": [
     {

@@ -59,9 +59,8 @@ def update_metadata(backup_file: Path, projects_dir: Path):
         if not meta_file.exists():
             print(f"  Initializing new metadata.json: {script_id}")
             meta_data = {
-                "id": script_id,
-                "url": f"https://script.google.com/d/{script_id}/edit?usp=drivesdk",
                 "driveApi": {
+                    "id": script_id,
                     "name": name,
                     "createdTime": created_time,
                     "modifiedTime": modified_time
@@ -73,13 +72,14 @@ def update_metadata(backup_file: Path, projects_dir: Path):
                     meta_data = json.load(f)
             except Exception as e:
                 print(f"  Error reading {script_id}: {e}", file=sys.stderr)
-                meta_data = {"id": script_id} # Fallback
+                meta_data = {} # Fallback
 
         # Ensure driveApi block exists
         if "driveApi" not in meta_data or not isinstance(meta_data["driveApi"], dict):
             meta_data["driveApi"] = {}
             
         # Update Drive API properties
+        meta_data["driveApi"]["id"] = script_id
         meta_data["driveApi"]["name"] = name
         if created_time:
             meta_data["driveApi"]["createdTime"] = created_time
@@ -87,8 +87,9 @@ def update_metadata(backup_file: Path, projects_dir: Path):
             meta_data["driveApi"]["modifiedTime"] = modified_time
         
         # Cleanup root properties (Migration to Drive API block or deletion)
-        # We keep 'id' and 'url' at the root.
+        # We don't keep 'id' and 'url' at the root anymore.
         root_to_remove = [
+            "id", "url",
             "name", "createdTime", "modifiedTime", "lastUpdated", 
             "titleByClaspList", "titleByDriveApi",
             "application.json", "deployments.json", "versions.json"

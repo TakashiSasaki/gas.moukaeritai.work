@@ -1,10 +1,9 @@
 {
-  "id": "1gb8NXL4DwVwkdnSDBjgu1bjH55PgaaQXX_vm5sLJqjIbdBRI4C-ROQqs",
-  "url": "https://script.google.com/d/1gb8NXL4DwVwkdnSDBjgu1bjH55PgaaQXX_vm5sLJqjIbdBRI4C-ROQqs/edit?usp=drivesdk",
   "driveApi": {
     "name": "Bookmark Spreadsheet",
     "createdTime": "2025-06-18T04:19:16.462Z",
-    "modifiedTime": "2025-06-20T00:24:23.023Z"
+    "modifiedTime": "2025-06-20T00:24:23.023Z",
+    "id": "1gb8NXL4DwVwkdnSDBjgu1bjH55PgaaQXX_vm5sLJqjIbdBRI4C-ROQqs"
   },
   "deployments": [
     {

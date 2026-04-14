@@ -1,10 +1,9 @@
 {
-  "id": "1DODUgAitkJ2cD9jdo-xbYfMbJQIM_LwQioFIWxu8TBYj-d1GJc_JsLYe",
-  "url": "https://script.google.com/d/1DODUgAitkJ2cD9jdo-xbYfMbJQIM_LwQioFIWxu8TBYj-d1GJc_JsLYe/edit?usp=drivesdk",
   "driveApi": {
     "name": "Web Clipboard Reader",
     "createdTime": "2019-10-24T05:01:42.620Z",
-    "modifiedTime": "2020-08-10T09:16:33.634Z"
+    "modifiedTime": "2020-08-10T09:16:33.634Z",
+    "id": "1DODUgAitkJ2cD9jdo-xbYfMbJQIM_LwQioFIWxu8TBYj-d1GJc_JsLYe"
   },
   "deployments": [
     {

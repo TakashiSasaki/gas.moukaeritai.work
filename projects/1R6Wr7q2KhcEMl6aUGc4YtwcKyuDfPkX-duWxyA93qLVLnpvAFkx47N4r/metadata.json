@@ -1,10 +1,9 @@
 {
-  "id": "1R6Wr7q2KhcEMl6aUGc4YtwcKyuDfPkX-duWxyA93qLVLnpvAFkx47N4r",
-  "url": "https://script.google.com/d/1R6Wr7q2KhcEMl6aUGc4YtwcKyuDfPkX-duWxyA93qLVLnpvAFkx47N4r/edit?usp=drivesdk",
   "driveApi": {
     "name": "Google Colaboratory Cell Link",
     "createdTime": "2023-11-28T09:25:42.130Z",
-    "modifiedTime": "2023-12-01T11:29:22.789Z"
+    "modifiedTime": "2023-12-01T11:29:22.789Z",
+    "id": "1R6Wr7q2KhcEMl6aUGc4YtwcKyuDfPkX-duWxyA93qLVLnpvAFkx47N4r"
   },
   "deployments": [
     {

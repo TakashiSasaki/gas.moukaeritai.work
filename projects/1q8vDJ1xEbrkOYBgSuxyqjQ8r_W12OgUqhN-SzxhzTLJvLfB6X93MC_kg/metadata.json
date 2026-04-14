@@ -1,10 +1,9 @@
 {
-  "id": "1q8vDJ1xEbrkOYBgSuxyqjQ8r_W12OgUqhN-SzxhzTLJvLfB6X93MC_kg",
-  "url": "https://script.google.com/d/1q8vDJ1xEbrkOYBgSuxyqjQ8r_W12OgUqhN-SzxhzTLJvLfB6X93MC_kg/edit?usp=drivesdk",
   "driveApi": {
     "name": "MyProgressStrip",
     "createdTime": "2018-02-26T11:01:35.449Z",
-    "modifiedTime": "2025-01-23T18:41:28.184Z"
+    "modifiedTime": "2025-01-23T18:41:28.184Z",
+    "id": "1q8vDJ1xEbrkOYBgSuxyqjQ8r_W12OgUqhN-SzxhzTLJvLfB6X93MC_kg"
   },
   "deployments": [
     {

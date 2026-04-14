@@ -1,10 +1,9 @@
 {
-  "id": "155SE7dCPH52t6l_we4avFQGhawNVjChOTiMdRC8UYuniDb_UWwW-yIx8",
-  "url": "https://script.google.com/d/155SE7dCPH52t6l_we4avFQGhawNVjChOTiMdRC8UYuniDb_UWwW-yIx8/edit?usp=drivesdk",
   "driveApi": {
     "name": "Markdown in Sheet addon",
     "createdTime": "2020-01-20T01:50:42.575Z",
-    "modifiedTime": "2025-01-24T18:19:53.560Z"
+    "modifiedTime": "2025-01-24T18:19:53.560Z",
+    "id": "155SE7dCPH52t6l_we4avFQGhawNVjChOTiMdRC8UYuniDb_UWwW-yIx8"
   },
   "deployments": [
     {

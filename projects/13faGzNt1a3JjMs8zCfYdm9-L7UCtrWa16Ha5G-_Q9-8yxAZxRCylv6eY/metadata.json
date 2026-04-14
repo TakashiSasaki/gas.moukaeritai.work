@@ -1,10 +1,9 @@
 {
-  "id": "13faGzNt1a3JjMs8zCfYdm9-L7UCtrWa16Ha5G-_Q9-8yxAZxRCylv6eY",
-  "url": "https://script.google.com/d/13faGzNt1a3JjMs8zCfYdm9-L7UCtrWa16Ha5G-_Q9-8yxAZxRCylv6eY/edit?usp=drivesdk",
   "driveApi": {
     "name": "Google Driveの一覧を取得するアドオン",
     "createdTime": "2016-12-27T08:08:44.585Z",
-    "modifiedTime": "2024-05-22T18:03:09.527Z"
+    "modifiedTime": "2024-05-22T18:03:09.527Z",
+    "id": "13faGzNt1a3JjMs8zCfYdm9-L7UCtrWa16Ha5G-_Q9-8yxAZxRCylv6eY"
   },
   "deployments": [
     {

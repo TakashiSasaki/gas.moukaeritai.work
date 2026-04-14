@@ -1,10 +1,9 @@
 {
-  "id": "1_Pws6hwzU2G6N2zzPciAzafjlpLnVdXX6KUbfr6Hco7JNLfeQGsWYiqJ",
-  "url": "https://script.google.com/d/1_Pws6hwzU2G6N2zzPciAzafjlpLnVdXX6KUbfr6Hco7JNLfeQGsWYiqJ/edit?usp=drivesdk",
   "driveApi": {
     "name": "Googleドライブ内文書一覧",
     "createdTime": "2025-11-08T01:33:09.425Z",
-    "modifiedTime": "2025-11-08T02:52:34.749Z"
+    "modifiedTime": "2025-11-08T02:52:34.749Z",
+    "id": "1_Pws6hwzU2G6N2zzPciAzafjlpLnVdXX6KUbfr6Hco7JNLfeQGsWYiqJ"
   },
   "deployments": [
     {

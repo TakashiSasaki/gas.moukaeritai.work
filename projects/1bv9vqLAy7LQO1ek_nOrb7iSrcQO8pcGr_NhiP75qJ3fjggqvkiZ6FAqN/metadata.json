@@ -1,10 +1,9 @@
 {
-  "id": "1bv9vqLAy7LQO1ek_nOrb7iSrcQO8pcGr_NhiP75qJ3fjggqvkiZ6FAqN",
-  "url": "https://script.google.com/d/1bv9vqLAy7LQO1ek_nOrb7iSrcQO8pcGr_NhiP75qJ3fjggqvkiZ6FAqN/edit?usp=drivesdk",
   "driveApi": {
     "name": "ImeDictionary Aggregator",
     "createdTime": "2025-04-16T00:42:06.736Z",
-    "modifiedTime": "2025-04-18T08:51:33.103Z"
+    "modifiedTime": "2025-04-18T08:51:33.103Z",
+    "id": "1bv9vqLAy7LQO1ek_nOrb7iSrcQO8pcGr_NhiP75qJ3fjggqvkiZ6FAqN"
   },
   "deployments": [
     {

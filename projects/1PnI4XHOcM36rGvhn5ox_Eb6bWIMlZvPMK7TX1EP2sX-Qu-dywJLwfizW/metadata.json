@@ -1,10 +1,9 @@
 {
-  "id": "1PnI4XHOcM36rGvhn5ox_Eb6bWIMlZvPMK7TX1EP2sX-Qu-dywJLwfizW",
-  "url": "https://script.google.com/d/1PnI4XHOcM36rGvhn5ox_Eb6bWIMlZvPMK7TX1EP2sX-Qu-dywJLwfizW/edit?usp=drivesdk",
   "driveApi": {
     "name": "Slack Playground",
     "createdTime": "2022-01-24T05:41:55.797Z",
-    "modifiedTime": "2022-01-25T11:10:02.631Z"
+    "modifiedTime": "2022-01-25T11:10:02.631Z",
+    "id": "1PnI4XHOcM36rGvhn5ox_Eb6bWIMlZvPMK7TX1EP2sX-Qu-dywJLwfizW"
   },
   "deployments": [
     {

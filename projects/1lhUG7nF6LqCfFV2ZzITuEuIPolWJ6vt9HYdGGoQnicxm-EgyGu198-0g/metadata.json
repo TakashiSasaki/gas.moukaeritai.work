@@ -1,10 +1,9 @@
 {
-  "id": "1lhUG7nF6LqCfFV2ZzITuEuIPolWJ6vt9HYdGGoQnicxm-EgyGu198-0g",
-  "url": "https://script.google.com/d/1lhUG7nF6LqCfFV2ZzITuEuIPolWJ6vt9HYdGGoQnicxm-EgyGu198-0g/edit?usp=drivesdk",
   "driveApi": {
     "name": "松山市プレミアム商品券",
     "createdTime": "2015-09-24T18:53:09.355Z",
-    "modifiedTime": "2025-01-13T18:12:05.903Z"
+    "modifiedTime": "2025-01-13T18:12:05.903Z",
+    "id": "1lhUG7nF6LqCfFV2ZzITuEuIPolWJ6vt9HYdGGoQnicxm-EgyGu198-0g"
   },
   "deployments": [
     {

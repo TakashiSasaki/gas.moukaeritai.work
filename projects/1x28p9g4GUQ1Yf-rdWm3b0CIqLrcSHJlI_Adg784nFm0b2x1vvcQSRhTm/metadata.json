@@ -1,10 +1,9 @@
 {
-  "id": "1x28p9g4GUQ1Yf-rdWm3b0CIqLrcSHJlI_Adg784nFm0b2x1vvcQSRhTm",
-  "url": "https://script.google.com/d/1x28p9g4GUQ1Yf-rdWm3b0CIqLrcSHJlI_Adg784nFm0b2x1vvcQSRhTm/edit?usp=drivesdk",
   "driveApi": {
     "name": "ChatGPI Archives",
     "createdTime": "2023-06-26T00:07:20.927Z",
-    "modifiedTime": "2023-06-27T10:38:36.031Z"
+    "modifiedTime": "2023-06-27T10:38:36.031Z",
+    "id": "1x28p9g4GUQ1Yf-rdWm3b0CIqLrcSHJlI_Adg784nFm0b2x1vvcQSRhTm"
   },
   "deployments": [
     {

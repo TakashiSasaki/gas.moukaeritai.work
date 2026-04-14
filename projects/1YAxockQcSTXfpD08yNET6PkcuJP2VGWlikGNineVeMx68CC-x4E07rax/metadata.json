@@ -1,10 +1,9 @@
 {
-  "id": "1YAxockQcSTXfpD08yNET6PkcuJP2VGWlikGNineVeMx68CC-x4E07rax",
-  "url": "https://script.google.com/d/1YAxockQcSTXfpD08yNET6PkcuJP2VGWlikGNineVeMx68CC-x4E07rax/edit?usp=drivesdk",
   "driveApi": {
     "name": "GAS Library Viewer",
     "createdTime": "2018-06-11T03:54:27.127Z",
-    "modifiedTime": "2025-01-23T17:48:27.449Z"
+    "modifiedTime": "2025-01-23T17:48:27.449Z",
+    "id": "1YAxockQcSTXfpD08yNET6PkcuJP2VGWlikGNineVeMx68CC-x4E07rax"
   },
   "deployments": [
     {

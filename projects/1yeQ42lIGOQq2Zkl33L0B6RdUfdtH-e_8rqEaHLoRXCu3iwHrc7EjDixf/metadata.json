@@ -1,10 +1,9 @@
 {
-  "id": "1yeQ42lIGOQq2Zkl33L0B6RdUfdtH-e_8rqEaHLoRXCu3iwHrc7EjDixf",
-  "url": "https://script.google.com/d/1yeQ42lIGOQq2Zkl33L0B6RdUfdtH-e_8rqEaHLoRXCu3iwHrc7EjDixf/edit?usp=drivesdk",
   "driveApi": {
     "name": "Moodle true/false quiz validator",
     "createdTime": "2025-05-21T05:01:47.595Z",
-    "modifiedTime": "2025-05-21T11:18:27.179Z"
+    "modifiedTime": "2025-05-21T11:18:27.179Z",
+    "id": "1yeQ42lIGOQq2Zkl33L0B6RdUfdtH-e_8rqEaHLoRXCu3iwHrc7EjDixf"
   },
   "deployments": [
     {

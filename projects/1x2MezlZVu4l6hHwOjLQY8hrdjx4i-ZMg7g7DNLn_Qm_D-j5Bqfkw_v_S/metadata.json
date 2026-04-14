@@ -1,10 +1,9 @@
 {
-  "id": "1x2MezlZVu4l6hHwOjLQY8hrdjx4i-ZMg7g7DNLn_Qm_D-j5Bqfkw_v_S",
-  "url": "https://script.google.com/d/1x2MezlZVu4l6hHwOjLQY8hrdjx4i-ZMg7g7DNLn_Qm_D-j5Bqfkw_v_S/edit?usp=drivesdk",
   "driveApi": {
     "name": "GPT with memopad",
     "createdTime": "2024-01-22T03:31:15.658Z",
-    "modifiedTime": "2024-01-29T12:10:42.718Z"
+    "modifiedTime": "2024-01-29T12:10:42.718Z",
+    "id": "1x2MezlZVu4l6hHwOjLQY8hrdjx4i-ZMg7g7DNLn_Qm_D-j5Bqfkw_v_S"
   },
   "deployments": [
     {

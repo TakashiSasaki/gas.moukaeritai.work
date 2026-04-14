@@ -1,10 +1,9 @@
 {
-  "id": "1lNnrAhYlTFhmxDlSI-HRypOATxNcsujO3hpUMK5MJTl-Ozt_CjRFE08c",
-  "url": "https://script.google.com/d/1lNnrAhYlTFhmxDlSI-HRypOATxNcsujO3hpUMK5MJTl-Ozt_CjRFE08c/edit?usp=drivesdk",
   "driveApi": {
     "name": "CsvParser",
     "createdTime": "2017-08-25T02:21:43.847Z",
-    "modifiedTime": "2025-01-23T20:34:32.842Z"
+    "modifiedTime": "2025-01-23T20:34:32.842Z",
+    "id": "1lNnrAhYlTFhmxDlSI-HRypOATxNcsujO3hpUMK5MJTl-Ozt_CjRFE08c"
   },
   "deployments": [
     {
