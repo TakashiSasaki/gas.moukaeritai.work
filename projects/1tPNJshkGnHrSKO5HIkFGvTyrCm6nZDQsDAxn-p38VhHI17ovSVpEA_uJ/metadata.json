@@ -5,5 +5,56 @@
     "name": "Xor",
     "createdTime": "2017-10-19T11:19:54.737Z",
     "modifiedTime": "2017-12-13T01:08:17.597Z"
-  }
+  },
+  "deployments": [
+    {
+      "id": "AKfycbyT2wk0k1QsrkICaKiXsu1pYbh0mgKqAW8jz_3yfEHx",
+      "target": "HEAD",
+      "description": ""
+    },
+    {
+      "id": "AKfycbxdWdovzteS3K8cGeeGdIuacnCsA9F4i5efP1gEp2HbaSYQknPQ",
+      "target": "7",
+      "description": "oneplatform api meta-version"
+    },
+    {
+      "id": "AKfycbwrYfAhXvMYRPqHcWvjAbBOTZSPQv1ofnhw2XPeQUd3fXb6KJO6",
+      "target": "8",
+      "description": "web app meta-version"
+    }
+  ],
+  "versions": [
+    {
+      "version": 1,
+      "description": "No description"
+    },
+    {
+      "version": 2,
+      "description": "No description"
+    },
+    {
+      "version": 3,
+      "description": "No description"
+    },
+    {
+      "version": 4,
+      "description": "No description"
+    },
+    {
+      "version": 5,
+      "description": "No description"
+    },
+    {
+      "version": 6,
+      "description": "first release"
+    },
+    {
+      "version": 7,
+      "description": "aaa"
+    },
+    {
+      "version": 8,
+      "description": "No description"
+    }
+  ]
 }

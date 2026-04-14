@@ -1,5 +1,0 @@
-Found 4 versions.
-1 - 動くものができた。
-2 - 公開
-3 - Sentiment
-4 - No description

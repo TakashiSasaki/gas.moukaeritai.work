@@ -5,5 +5,43 @@
     "name": "Unicode Normalization Sandbox",
     "createdTime": "2017-09-25T07:33:27.898Z",
     "modifiedTime": "2017-09-27T09:43:37.165Z"
-  }
+  },
+  "deployments": [
+    {
+      "id": "AKfycbw1Eqea8v8ILJy01ro2wmLZsrvtvnHRlTRIDtJZjw",
+      "target": "HEAD",
+      "description": ""
+    },
+    {
+      "id": "AKfycbzVXHmCamcn2ib_PQbWxmq8i8I_usAmoOPAUOJlEHAunojV0Q",
+      "target": "6",
+      "description": "web app meta-version"
+    }
+  ],
+  "versions": [
+    {
+      "version": 1,
+      "description": "No description"
+    },
+    {
+      "version": 2,
+      "description": "No description"
+    },
+    {
+      "version": 3,
+      "description": "No description"
+    },
+    {
+      "version": 4,
+      "description": "No description"
+    },
+    {
+      "version": 5,
+      "description": "No description"
+    },
+    {
+      "version": 6,
+      "description": "No description"
+    }
+  ]
 }

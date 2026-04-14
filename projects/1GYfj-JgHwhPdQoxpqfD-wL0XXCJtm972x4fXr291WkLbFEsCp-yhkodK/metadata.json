@@ -5,5 +5,13 @@
     "name": "StringEx",
     "createdTime": "2019-10-11T07:52:30.230Z",
     "modifiedTime": "2023-05-08T20:48:57.657Z"
-  }
+  },
+  "deployments": [
+    {
+      "id": "AKfycby18sjoSVF5F0l-V05w0Z4-G8v2QhTslcGp9NGW3CY",
+      "target": "HEAD",
+      "description": ""
+    }
+  ],
+  "versions": []
 }

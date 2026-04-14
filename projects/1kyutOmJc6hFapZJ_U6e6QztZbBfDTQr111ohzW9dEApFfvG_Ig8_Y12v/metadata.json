@@ -5,5 +5,59 @@
     "name": "Docs to Blogger Publisher",
     "createdTime": "2025-12-22T00:36:19.283Z",
     "modifiedTime": "2025-12-22T01:33:24.416Z"
-  }
+  },
+  "deployments": [
+    {
+      "id": "AKfycbz5Bzx1OfIyA_OwodjOky8yLl-CWVfp6tc3Ain_Vr0",
+      "target": "HEAD",
+      "description": ""
+    },
+    {
+      "id": "AKfycbxx25j5cJZlaPNnf6js9-MchBhZ3yxTbdflxI57vnl3oggYPaT--utvJbDFrU3RxvdW",
+      "target": "10",
+      "description": "公開用"
+    }
+  ],
+  "versions": [
+    {
+      "version": 1,
+      "description": "公開用"
+    },
+    {
+      "version": 2,
+      "description": "公開用"
+    },
+    {
+      "version": 3,
+      "description": "公開用"
+    },
+    {
+      "version": 4,
+      "description": "公開用"
+    },
+    {
+      "version": 5,
+      "description": "公開用"
+    },
+    {
+      "version": 6,
+      "description": "公開用"
+    },
+    {
+      "version": 7,
+      "description": "公開用"
+    },
+    {
+      "version": 8,
+      "description": "No description"
+    },
+    {
+      "version": 9,
+      "description": "公開用"
+    },
+    {
+      "version": 10,
+      "description": "公開用"
+    }
+  ]
 }

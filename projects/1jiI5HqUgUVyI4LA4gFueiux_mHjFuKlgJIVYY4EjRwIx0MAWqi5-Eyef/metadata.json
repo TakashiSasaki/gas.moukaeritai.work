@@ -5,5 +5,39 @@
     "name": "Html",
     "createdTime": "2019-11-16T06:30:31.111Z",
     "modifiedTime": "2025-01-23T17:48:17.632Z"
-  }
+  },
+  "deployments": [
+    {
+      "id": "AKfycbye6El4kJTJLktLMJPZ5zM6XySIGetctwecvTzYc44",
+      "target": "HEAD",
+      "description": ""
+    },
+    {
+      "id": "AKfycbx79PNe1CHv5o5rgos0slKmG5uEC873UDW4WGmhmHA-4-XpVfo",
+      "target": "5",
+      "description": "web app meta-version"
+    }
+  ],
+  "versions": [
+    {
+      "version": 1,
+      "description": "No description"
+    },
+    {
+      "version": 2,
+      "description": "No description"
+    },
+    {
+      "version": 3,
+      "description": "No description"
+    },
+    {
+      "version": 4,
+      "description": "No description"
+    },
+    {
+      "version": 5,
+      "description": "No description"
+    }
+  ]
 }

@@ -5,5 +5,47 @@
     "name": "Published Form Parser Demo",
     "createdTime": "2015-06-24T09:41:26.324Z",
     "modifiedTime": "2025-01-24T18:57:31.899Z"
-  }
+  },
+  "deployments": [
+    {
+      "id": "AKfycbxfDzf5pj2lQXBiYOqmsgMUEg5aWNePd_6bQRGb9cCb",
+      "target": "HEAD",
+      "description": ""
+    },
+    {
+      "id": "AKfycbz7dM0aEbHVZSMVICnGl3f26gzs85YFBqRcvgr9NJl5l1ePxaMB",
+      "target": "6",
+      "description": "web app meta-version"
+    }
+  ],
+  "versions": [
+    {
+      "version": 1,
+      "description": "No description"
+    },
+    {
+      "version": 2,
+      "description": "No description"
+    },
+    {
+      "version": 3,
+      "description": "No description"
+    },
+    {
+      "version": 4,
+      "description": "No description"
+    },
+    {
+      "version": 5,
+      "description": "No description"
+    },
+    {
+      "version": 6,
+      "description": "No description"
+    },
+    {
+      "version": 7,
+      "description": "No description"
+    }
+  ]
 }

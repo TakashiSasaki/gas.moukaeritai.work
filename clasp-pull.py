@@ -123,7 +123,18 @@ def get_local_apps_script_update_time(project_dir):
             return None
     return None
 
-def update_local_metadata(project_dir, api_metadata):
+def cleanup_standalone_files(project_dir):
+    """Remove obsolete standalone files now merged into metadata.json."""
+    files_to_remove = ["deployments.json", "deployments.txt", "versions.json", "versions.txt"]
+    for filename in files_to_remove:
+        file_path = os.path.join(project_dir, filename)
+        if os.path.exists(file_path):
+            try:
+                os.remove(file_path)
+            except Exception:
+                pass
+
+def update_local_metadata(project_dir, api_metadata, deployments=None, versions=None):
     """Merge Apps Script API metadata into metadata.json and clean up old properties."""
     meta_path = os.path.join(project_dir, 'metadata.json')
     data = {}
@@ -134,8 +145,14 @@ def update_local_metadata(project_dir, api_metadata):
         except:
             pass
     
-    # Save full response under appsScriptApi
-    data['appsScriptApi'] = api_metadata
+    if api_metadata:
+        # Save full response under appsScriptApi
+        data['appsScriptApi'] = api_metadata
+        
+    if deployments is not None:
+        data['deployments'] = deployments
+    if versions is not None:
+        data['versions'] = versions
     
     # Cleanup root properties as requested (consolidation)
     root_to_remove = [
@@ -256,11 +273,7 @@ def main():
                     capture_output=True
                 )
                 raw_dep = proc_dep.stdout
-                with open(os.path.join(project_dir, 'deployments.txt'), 'w', encoding='utf-8') as f:
-                    f.write(raw_dep)
                 deps = parse_deployments(raw_dep)
-                with open(os.path.join(project_dir, 'deployments.json'), 'w', encoding='utf-8') as f:
-                    json.dump(deps, f, ensure_ascii=False, indent=2)
 
                 # 4) Fetch versions via shell
                 print("  Fetching versions via shell...")
@@ -270,15 +283,11 @@ def main():
                     capture_output=True
                 )
                 raw_ver = proc_ver.stdout
-                with open(os.path.join(project_dir, 'versions.txt'), 'w', encoding='utf-8') as f:
-                    f.write(raw_ver)
                 vers = parse_versions(raw_ver)
-                with open(os.path.join(project_dir, 'versions.json'), 'w', encoding='utf-8') as f:
-                    json.dump(vers, f, ensure_ascii=False, indent=2)
 
-                # Update metadata if we have the info
-                if remote_metadata:
-                    update_local_metadata(project_dir, remote_metadata)
+                # Update metadata directly in-memory and clean up old files
+                update_local_metadata(project_dir, remote_metadata, deps, vers)
+                cleanup_standalone_files(project_dir)
 
                 print(f"  Completed project '{entry}'.")
 

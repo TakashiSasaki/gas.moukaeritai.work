@@ -1,3 +1,0 @@
-Found 2 deployments.
-- AKfycbz2nrQV1jYJdGyVpBwGC28ab1AK-cnSvJaoEVewZ6Ia @HEAD 
-- AKfycbyQvhgOh_W_5Jxedba6cFc9cHdlpVjN57NCogO5RZYNoTXNiCvL @18 - web app meta-version

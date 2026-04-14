@@ -5,5 +5,32 @@
     "name": "Understanding Third Party Cookie",
     "createdTime": "2021-11-30T01:49:22.150Z",
     "modifiedTime": "2021-11-30T08:47:47.006Z"
-  }
+  },
+  "deployments": [
+    {
+      "id": "AKfycbwdJ92698TcK9c2q9gV5xrI-JVdQ2vUbHyQVrSiJTc",
+      "target": "HEAD",
+      "description": ""
+    },
+    {
+      "id": "AKfycbyMoLCtO1fY2gbX1sFdWQcOJCqIvQqggtsUP9stSvZxIRBREx4DemFnvGy8eEynCBgy",
+      "target": "2",
+      "description": "認証なしで"
+    },
+    {
+      "id": "AKfycbx-VSmL2tjiKQgAUSBSsBQoSjl0xfZBxMtp5VQbdFWyGvQu3Zo",
+      "target": "1",
+      "description": "web app meta-version"
+    }
+  ],
+  "versions": [
+    {
+      "version": 1,
+      "description": "No description"
+    },
+    {
+      "version": 2,
+      "description": "認証なしで"
+    }
+  ]
 }

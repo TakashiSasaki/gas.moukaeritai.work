@@ -5,5 +5,31 @@
     "name": "Google Tasks Viewer",
     "createdTime": "2025-12-22T03:48:48.748Z",
     "modifiedTime": "2025-12-22T06:16:24.151Z"
-  }
+  },
+  "deployments": [
+    {
+      "id": "AKfycbw6_qvBk-0WWRAVupQoPc2CLK5WTUtCz6yl6k0aUto",
+      "target": "HEAD",
+      "description": ""
+    },
+    {
+      "id": "AKfycbyMZbdLYodeSIYINsaaia6s06PqqF5Yvj80wj-zlDpd14Ef-C8CH8puoKAL7voUI73Z",
+      "target": "3",
+      "description": "Published"
+    }
+  ],
+  "versions": [
+    {
+      "version": 1,
+      "description": "Published"
+    },
+    {
+      "version": 2,
+      "description": "Published"
+    },
+    {
+      "version": 3,
+      "description": "Published"
+    }
+  ]
 }

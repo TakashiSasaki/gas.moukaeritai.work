@@ -5,5 +5,13 @@
     "name": "Show Google Tasks",
     "createdTime": "2025-06-02T00:23:28.401Z",
     "modifiedTime": "2025-06-02T00:25:18.419Z"
-  }
+  },
+  "deployments": [
+    {
+      "id": "AKfycbxRtaUHkV8L2S7TsZ0dm97mojhzLcAtmI5zknc1UX8",
+      "target": "HEAD",
+      "description": ""
+    }
+  ],
+  "versions": []
 }

@@ -5,5 +5,27 @@
     "name": "Kakaku Library",
     "createdTime": "2017-03-23T10:28:34.507Z",
     "modifiedTime": "2025-01-21T18:01:18.421Z"
-  }
+  },
+  "deployments": [
+    {
+      "id": "AKfycbwfkl54qpmtTETas1aWuadE5soa8PNxrFjjB7BsBbxg",
+      "target": "HEAD",
+      "description": ""
+    },
+    {
+      "id": "AKfycbwjcS0vNrNYhC5Y9E1kqR4x7lmmgVB78nyyie9gaY6myZ9Bl0sN",
+      "target": "4",
+      "description": "web app meta-version"
+    }
+  ],
+  "versions": [
+    {
+      "version": 4,
+      "description": "No description"
+    },
+    {
+      "version": 6,
+      "description": "No description"
+    }
+  ]
 }

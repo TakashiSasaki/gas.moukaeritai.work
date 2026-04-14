@@ -5,5 +5,31 @@
     "name": "Web Clipboard Writer",
     "createdTime": "2019-10-24T04:02:47.788Z",
     "modifiedTime": "2020-08-10T13:11:53.604Z"
-  }
+  },
+  "deployments": [
+    {
+      "id": "AKfycbz2BbGaug7HXHvK3clmNrqntzvBG2xFm32O0KZDNHc",
+      "target": "HEAD",
+      "description": ""
+    },
+    {
+      "id": "AKfycbz2Cu276-_R_zlS_fO1yN35FHUI9_I7MrPYfEHgTjMw6iWo1YU",
+      "target": "75",
+      "description": "web app meta-version"
+    }
+  ],
+  "versions": [
+    {
+      "version": 51,
+      "description": "No description"
+    },
+    {
+      "version": 74,
+      "description": "No description"
+    },
+    {
+      "version": 75,
+      "description": "No description"
+    }
+  ]
 }

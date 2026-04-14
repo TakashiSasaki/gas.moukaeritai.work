@@ -5,5 +5,55 @@
     "name": "CsvParser",
     "createdTime": "2017-08-25T02:21:43.847Z",
     "modifiedTime": "2025-01-23T20:34:32.842Z"
-  }
+  },
+  "deployments": [
+    {
+      "id": "AKfycbwXw1G-wqBlOd9vNgQm9CxBQw4FJyiV9d3NB9SlA9s1",
+      "target": "HEAD",
+      "description": ""
+    },
+    {
+      "id": "AKfycbxjRHum2GkmTSgxgXtdDgdm2rCVUmYuoypMuYL_1iJwe2cdlQEm",
+      "target": "9",
+      "description": "web app meta-version"
+    }
+  ],
+  "versions": [
+    {
+      "version": 1,
+      "description": "No description"
+    },
+    {
+      "version": 2,
+      "description": "No description"
+    },
+    {
+      "version": 3,
+      "description": "No description"
+    },
+    {
+      "version": 4,
+      "description": "No description"
+    },
+    {
+      "version": 5,
+      "description": "No description"
+    },
+    {
+      "version": 6,
+      "description": "No description"
+    },
+    {
+      "version": 7,
+      "description": "No description"
+    },
+    {
+      "version": 8,
+      "description": "No description"
+    },
+    {
+      "version": 9,
+      "description": "No description"
+    }
+  ]
 }

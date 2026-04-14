@@ -5,5 +5,31 @@
     "name": "Markdown in Sheet addon",
     "createdTime": "2020-01-20T01:50:42.575Z",
     "modifiedTime": "2025-01-24T18:19:53.560Z"
-  }
+  },
+  "deployments": [
+    {
+      "id": "AKfycbx7jRVuS8qDFwALc2pfuxI8ZzIMjWAyEZU1WWDwWo3O",
+      "target": "HEAD",
+      "description": ""
+    },
+    {
+      "id": "AKfycbxVjczfHJ6xR7moBtgeMAmkQ8CI1LmvwpR7489iUlzB9JlscpPO",
+      "target": "1",
+      "description": "web app meta-version"
+    }
+  ],
+  "versions": [
+    {
+      "version": 1,
+      "description": "No description"
+    },
+    {
+      "version": 2,
+      "description": "2"
+    },
+    {
+      "version": 3,
+      "description": "No description"
+    }
+  ]
 }

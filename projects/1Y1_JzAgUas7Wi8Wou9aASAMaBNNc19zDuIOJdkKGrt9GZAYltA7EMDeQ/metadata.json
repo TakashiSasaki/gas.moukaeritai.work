@@ -5,5 +5,22 @@
     "name": "Snippets For Spreadsheet",
     "createdTime": "2019-09-10T06:11:32.283Z",
     "modifiedTime": "2021-03-11T17:34:16.668Z"
-  }
+  },
+  "deployments": [
+    {
+      "id": "AKfycbwtGs5WGzf4ILh3cooBAP70b1JUd9wFTqd7TaW_h-a6",
+      "target": "HEAD",
+      "description": ""
+    }
+  ],
+  "versions": [
+    {
+      "version": 1,
+      "description": "No description"
+    },
+    {
+      "version": 2,
+      "description": "No description"
+    }
+  ]
 }

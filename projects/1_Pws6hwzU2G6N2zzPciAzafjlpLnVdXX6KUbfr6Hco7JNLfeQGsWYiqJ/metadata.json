@@ -5,5 +5,23 @@
     "name": "Googleドライブ内文書一覧",
     "createdTime": "2025-11-08T01:33:09.425Z",
     "modifiedTime": "2025-11-08T02:52:34.749Z"
-  }
+  },
+  "deployments": [
+    {
+      "id": "AKfycbxvla1TFBCxMc-pwNtur6vPRYXQeijTdaQGKGRuJ5A",
+      "target": "HEAD",
+      "description": ""
+    },
+    {
+      "id": "AKfycbwefkE_shQ5fBiQweCvLuFKflh5a5FjJprLQwQtv59PGzZNsEc3poqgtaBilJBKZ-KI",
+      "target": "1",
+      "description": ""
+    }
+  ],
+  "versions": [
+    {
+      "version": 1,
+      "description": "No description"
+    }
+  ]
 }

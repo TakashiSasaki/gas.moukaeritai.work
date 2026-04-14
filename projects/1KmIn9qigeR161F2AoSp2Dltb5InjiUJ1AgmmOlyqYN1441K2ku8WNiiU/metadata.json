@@ -5,5 +5,23 @@
     "name": "Snippets For DriveApp",
     "createdTime": "2019-09-13T03:55:15.257Z",
     "modifiedTime": "2025-01-13T18:23:46.014Z"
-  }
+  },
+  "deployments": [
+    {
+      "id": "AKfycbxBlRdNyvugILCRzDttaRYjfg4rCP9_4I0XcBtIReU",
+      "target": "HEAD",
+      "description": ""
+    },
+    {
+      "id": "AKfycbzRpCLwcID55XEjOryn-n5rEJNjHbzZnOvCAUaE7vy0rToO66A",
+      "target": "1",
+      "description": "web app meta-version"
+    }
+  ],
+  "versions": [
+    {
+      "version": 1,
+      "description": "No description"
+    }
+  ]
 }

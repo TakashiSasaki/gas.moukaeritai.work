@@ -5,5 +5,55 @@
     "name": "GAS Project Finder",
     "createdTime": "2025-06-19T01:17:42.360Z",
     "modifiedTime": "2025-06-20T01:03:21.643Z"
-  }
+  },
+  "deployments": [
+    {
+      "id": "AKfycbxTdjPOI6Jr_AWz3lfAxhwokuP3r3HvtYO-vgWMc_-w",
+      "target": "HEAD",
+      "description": ""
+    },
+    {
+      "id": "AKfycbz0a4RTpHE5Bxn3AeHWEAD7QHreptLqpa3HLxatARciZwYLJk8jd494G3Dd5_PF3WsJFg",
+      "target": "9",
+      "description": "公開用 Version 9"
+    }
+  ],
+  "versions": [
+    {
+      "version": 1,
+      "description": "公開用"
+    },
+    {
+      "version": 2,
+      "description": "No description"
+    },
+    {
+      "version": 3,
+      "description": "No description"
+    },
+    {
+      "version": 4,
+      "description": "公開用 Version 4"
+    },
+    {
+      "version": 5,
+      "description": "No description"
+    },
+    {
+      "version": 6,
+      "description": "公開用 Version 6"
+    },
+    {
+      "version": 7,
+      "description": "公開用 Version 7"
+    },
+    {
+      "version": 8,
+      "description": "公開用 Version 8"
+    },
+    {
+      "version": 9,
+      "description": "公開用 Version 9"
+    }
+  ]
 }

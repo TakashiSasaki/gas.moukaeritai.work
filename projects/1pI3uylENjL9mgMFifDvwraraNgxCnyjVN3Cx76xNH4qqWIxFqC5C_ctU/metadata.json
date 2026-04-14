@@ -5,5 +5,23 @@
     "name": "Outlook Web App Folder List",
     "createdTime": "2020-12-21T04:29:20.984Z",
     "modifiedTime": "2020-12-21T05:23:50.796Z"
-  }
+  },
+  "deployments": [
+    {
+      "id": "AKfycbxx6NIIILIRoRGnK1JJJGePL5DDFJaU8xih4ByZn4c",
+      "target": "HEAD",
+      "description": ""
+    },
+    {
+      "id": "AKfycbxhdFGx1Fp5ZE8pRomz3Zz0vMhmjuM6usyfRnBTvV4ts4ic0hQ",
+      "target": "1",
+      "description": "web app meta-version"
+    }
+  ],
+  "versions": [
+    {
+      "version": 1,
+      "description": "No description"
+    }
+  ]
 }

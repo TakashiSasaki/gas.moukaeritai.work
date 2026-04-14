@@ -5,5 +5,27 @@
     "name": "Google Apps Script Project Browser",
     "createdTime": "2019-11-09T07:43:35.485Z",
     "modifiedTime": "2025-01-24T18:03:46.782Z"
-  }
+  },
+  "deployments": [
+    {
+      "id": "AKfycbydTvvCh6BhKQWPX5XYU0baBLb5BOuhDaSIvirVjsC1",
+      "target": "HEAD",
+      "description": ""
+    },
+    {
+      "id": "AKfycbwQJNC35zwtEUGqnoQRwNQX-ALYtMHOQMw7Hz0BGFOIgyF1H4t3",
+      "target": "2",
+      "description": "web app meta-version"
+    }
+  ],
+  "versions": [
+    {
+      "version": 1,
+      "description": "No description"
+    },
+    {
+      "version": 2,
+      "description": "No description"
+    }
+  ]
 }

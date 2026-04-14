@@ -5,5 +5,43 @@
     "name": "Random",
     "createdTime": "2019-10-10T10:01:08.080Z",
     "modifiedTime": "2019-12-06T10:19:09.295Z"
-  }
+  },
+  "deployments": [
+    {
+      "id": "AKfycbzn1v1t80Mi14_us-OavdkbQsvw2E4G240mJ8gIajBW",
+      "target": "HEAD",
+      "description": ""
+    },
+    {
+      "id": "AKfycbyuozxZBLDWPjordLuqG3BerMK52zqSmnji9EFLjWGSWoP9EFLU",
+      "target": "7",
+      "description": "web app meta-version"
+    }
+  ],
+  "versions": [
+    {
+      "version": 2,
+      "description": "No description"
+    },
+    {
+      "version": 3,
+      "description": "No description"
+    },
+    {
+      "version": 4,
+      "description": "No description"
+    },
+    {
+      "version": 5,
+      "description": "No description"
+    },
+    {
+      "version": 6,
+      "description": "No description"
+    },
+    {
+      "version": 7,
+      "description": "No description"
+    }
+  ]
 }

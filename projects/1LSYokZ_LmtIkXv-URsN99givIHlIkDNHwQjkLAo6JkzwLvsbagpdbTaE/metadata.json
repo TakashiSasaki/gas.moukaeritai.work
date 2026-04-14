@@ -5,5 +5,67 @@
     "name": "Spreadsheet Addon（すぷれ）",
     "createdTime": "2017-08-28T04:28:59.547Z",
     "modifiedTime": "2025-01-22T18:32:42.929Z"
-  }
+  },
+  "deployments": [
+    {
+      "id": "AKfycbwsy3-sNbx3Twj5sJd6ZUIo-kZ6KYAqEb842Kvkqdw",
+      "target": "HEAD",
+      "description": ""
+    },
+    {
+      "id": "AKfycbwuZ6LOWFTlx8Ra6L-JGOE8NBu8NwFTd6cGf023ZJIPx5o0zkQ",
+      "target": "32",
+      "description": "web app meta-version"
+    }
+  ],
+  "versions": [
+    {
+      "version": 21,
+      "description": "No description"
+    },
+    {
+      "version": 22,
+      "description": "republish"
+    },
+    {
+      "version": 23,
+      "description": "republish2"
+    },
+    {
+      "version": 24,
+      "description": "No description"
+    },
+    {
+      "version": 25,
+      "description": "No description"
+    },
+    {
+      "version": 26,
+      "description": "No description"
+    },
+    {
+      "version": 27,
+      "description": "No description"
+    },
+    {
+      "version": 28,
+      "description": "sidebar"
+    },
+    {
+      "version": 29,
+      "description": "update"
+    },
+    {
+      "version": 30,
+      "description": "getTriggerBuilder"
+    },
+    {
+      "version": 31,
+      "description": "newTrigger"
+    },
+    {
+      "version": 32,
+      "description": "No description"
+    }
+  ]
 }

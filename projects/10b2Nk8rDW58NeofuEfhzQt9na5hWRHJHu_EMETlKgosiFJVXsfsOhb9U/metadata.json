@@ -5,5 +5,35 @@
     "name": "ContentService Test",
     "createdTime": "2025-06-20T00:53:47.111Z",
     "modifiedTime": "2025-06-20T00:59:41.321Z"
-  }
+  },
+  "deployments": [
+    {
+      "id": "AKfycbyK8QNnR7M6TSBxhI2EHjSkBP9BEZHcGYWeQFeQZXVv",
+      "target": "HEAD",
+      "description": ""
+    },
+    {
+      "id": "AKfycbw53bZLwRzvyDnK7xBArzfDnJ6ZcdZk7NAo9jl_UjxWAmPGS5QcX3QLsLPwa5p1DEHaMA",
+      "target": "4",
+      "description": ""
+    }
+  ],
+  "versions": [
+    {
+      "version": 1,
+      "description": "公開用"
+    },
+    {
+      "version": 2,
+      "description": "公開用 Version 2"
+    },
+    {
+      "version": 3,
+      "description": "公開用 Version 3"
+    },
+    {
+      "version": 4,
+      "description": "No description"
+    }
+  ]
 }

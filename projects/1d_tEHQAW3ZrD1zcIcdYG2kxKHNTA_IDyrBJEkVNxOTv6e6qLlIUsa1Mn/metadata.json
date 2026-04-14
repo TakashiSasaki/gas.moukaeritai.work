@@ -5,5 +5,27 @@
     "name": "HOTP",
     "createdTime": "2018-01-12T01:31:13.655Z",
     "modifiedTime": "2021-03-16T09:37:43.455Z"
-  }
+  },
+  "deployments": [
+    {
+      "id": "AKfycbwgopPvcgHbAjE1m0jN_9aSulK8czWby8zdx_bG5pyd",
+      "target": "HEAD",
+      "description": ""
+    },
+    {
+      "id": "AKfycbyYu40SlSY-3k6MCUFkf9Fx3NzGzz2IiKLuUgt8AuUgqI1dphdO",
+      "target": "2",
+      "description": "web app meta-version"
+    }
+  ],
+  "versions": [
+    {
+      "version": 1,
+      "description": "No description"
+    },
+    {
+      "version": 2,
+      "description": "No description"
+    }
+  ]
 }

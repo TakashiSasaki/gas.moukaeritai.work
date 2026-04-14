@@ -5,5 +5,47 @@
     "name": "Download Items from Pocket.com",
     "createdTime": "2024-09-12T02:18:04.346Z",
     "modifiedTime": "2024-09-12T09:33:01.785Z"
-  }
+  },
+  "deployments": [
+    {
+      "id": "AKfycbyn2ggsYDyhNj6RJ-aJRbE6qjvijvtRe5nkIoXu-R4",
+      "target": "HEAD",
+      "description": ""
+    },
+    {
+      "id": "AKfycbyBD73dWM5lqWyd1h0C3oOQlfgXwrTfnOQPUDg0Tqiywq5AZ6PIr6stbCnDrpk3c5Jp",
+      "target": "7",
+      "description": "Pocketで認可してアイテムを取得できるところまで確認"
+    }
+  ],
+  "versions": [
+    {
+      "version": 1,
+      "description": "No description"
+    },
+    {
+      "version": 2,
+      "description": "No description"
+    },
+    {
+      "version": 3,
+      "description": "No description"
+    },
+    {
+      "version": 4,
+      "description": "No description"
+    },
+    {
+      "version": 5,
+      "description": "No description"
+    },
+    {
+      "version": 6,
+      "description": "No description"
+    },
+    {
+      "version": 7,
+      "description": "Pocketで認可してアイテムを取得できるところまで確認"
+    }
+  ]
 }

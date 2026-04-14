@@ -5,5 +5,23 @@
     "name": "Docs Headings Addon",
     "createdTime": "2021-09-27T06:40:07.006Z",
     "modifiedTime": "2021-10-07T10:39:06.143Z"
-  }
+  },
+  "deployments": [
+    {
+      "id": "AKfycbw-ntLrWW9s6k5_MQX9ZpmLJvf5-CSSogQfMAyOxOaM",
+      "target": "HEAD",
+      "description": ""
+    },
+    {
+      "id": "AKfycbzf_HlO0hdFtbnPVqfpprD10MMsKJ2dyDE-rZoC06yAyu8thdB9n8-4FrAGAJZ6RdcXQA",
+      "target": "1",
+      "description": ""
+    }
+  ],
+  "versions": [
+    {
+      "version": 1,
+      "description": "No description"
+    }
+  ]
 }

@@ -5,5 +5,23 @@
     "name": "HelloJwt",
     "createdTime": "2015-12-21T10:26:18.283Z",
     "modifiedTime": "2025-01-21T19:05:31.962Z"
-  }
+  },
+  "deployments": [
+    {
+      "id": "AKfycbzcE3giVJRdG8U5CpuYfX34rnBYSWHiQEj1A7uRjycU",
+      "target": "HEAD",
+      "description": ""
+    },
+    {
+      "id": "AKfycbwYYTltOaKzGwc9mqNK-6Pd8j4yMb5TS96h0i2mhh1V85fULffp",
+      "target": "1",
+      "description": "web app meta-version"
+    }
+  ],
+  "versions": [
+    {
+      "version": 1,
+      "description": "No description"
+    }
+  ]
 }

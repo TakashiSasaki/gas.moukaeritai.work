@@ -5,5 +5,63 @@
     "name": "物件選択アンケート",
     "createdTime": "2017-11-18T09:07:51.998Z",
     "modifiedTime": "2025-01-24T18:07:35.470Z"
-  }
+  },
+  "deployments": [
+    {
+      "id": "AKfycbwII4BHZbgpwPcEUc0iQu0Ks0OftjKwwn5zSO_skyQ",
+      "target": "HEAD",
+      "description": ""
+    },
+    {
+      "id": "AKfycbzeGbJwCa36rSEB60hvIiTQzkpqsjHVgxarhxvKpgFVzTHLZPQ",
+      "target": "15",
+      "description": "web app meta-version"
+    }
+  ],
+  "versions": [
+    {
+      "version": 1,
+      "description": "ABC"
+    },
+    {
+      "version": 6,
+      "description": "No description"
+    },
+    {
+      "version": 7,
+      "description": "No description"
+    },
+    {
+      "version": 8,
+      "description": "No description"
+    },
+    {
+      "version": 9,
+      "description": "No description"
+    },
+    {
+      "version": 10,
+      "description": "No description"
+    },
+    {
+      "version": 11,
+      "description": "No description"
+    },
+    {
+      "version": 12,
+      "description": "No description"
+    },
+    {
+      "version": 13,
+      "description": "No description"
+    },
+    {
+      "version": 14,
+      "description": "完成"
+    },
+    {
+      "version": 15,
+      "description": "完成2"
+    }
+  ]
 }

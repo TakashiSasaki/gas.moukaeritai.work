@@ -5,5 +5,22 @@
     "name": "String Utility",
     "createdTime": "2017-02-02T14:37:00.860Z",
     "modifiedTime": "2021-01-17T12:01:00.483Z"
-  }
+  },
+  "deployments": [
+    {
+      "id": "AKfycbyKLsnZ4dm6Dc2QiNyQkrL5D1Balmi7-McpGkAv1Ru2",
+      "target": "HEAD",
+      "description": ""
+    }
+  ],
+  "versions": [
+    {
+      "version": 20,
+      "description": "No description"
+    },
+    {
+      "version": 22,
+      "description": "No description"
+    }
+  ]
 }

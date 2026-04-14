@@ -5,5 +5,35 @@
     "name": " Apps Script デプロイメント マネージャ データ更新 キャッシュクリア & 再取得",
     "createdTime": "2025-11-08T15:34:09.174Z",
     "modifiedTime": "2025-11-08T17:37:30.571Z"
-  }
+  },
+  "deployments": [
+    {
+      "id": "AKfycbxVLc_Z3Frvgvx8xozPZ7ntXPx05lJMvegJ9sE4HhVq",
+      "target": "HEAD",
+      "description": ""
+    },
+    {
+      "id": "AKfycbzzUFRxBjCOm7FFcOqC6KVd5n94r_5_PPwVn6WKd4lDkZRVQcAAfyk9hF7vnGFB2qtpOw",
+      "target": "4",
+      "description": "公開版"
+    }
+  ],
+  "versions": [
+    {
+      "version": 1,
+      "description": "No description"
+    },
+    {
+      "version": 2,
+      "description": "公開版"
+    },
+    {
+      "version": 3,
+      "description": "公開版"
+    },
+    {
+      "version": 4,
+      "description": "公開版"
+    }
+  ]
 }

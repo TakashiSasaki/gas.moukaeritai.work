@@ -5,5 +5,55 @@
     "name": "GetFragmentPartOfUrlTest",
     "createdTime": "2015-12-17T05:21:17.380Z",
     "modifiedTime": "2025-01-22T18:41:49.705Z"
-  }
+  },
+  "deployments": [
+    {
+      "id": "AKfycbxSsq557h5yz-o_1dGIoZPy1GR1caRJZIu1NeHdbqo",
+      "target": "HEAD",
+      "description": ""
+    },
+    {
+      "id": "AKfycbxyrBwHW1Fa89GlU06QJ8RRgc0WWr6p_S3czBghW_1E5QQgP3U",
+      "target": "28",
+      "description": "web app meta-version"
+    }
+  ],
+  "versions": [
+    {
+      "version": 17,
+      "description": "No description"
+    },
+    {
+      "version": 19,
+      "description": "No description"
+    },
+    {
+      "version": 22,
+      "description": "No description"
+    },
+    {
+      "version": 23,
+      "description": "No description"
+    },
+    {
+      "version": 24,
+      "description": "No description"
+    },
+    {
+      "version": 25,
+      "description": "No description"
+    },
+    {
+      "version": 26,
+      "description": "No description"
+    },
+    {
+      "version": 27,
+      "description": "No description"
+    },
+    {
+      "version": 28,
+      "description": "No description"
+    }
+  ]
 }

@@ -5,5 +5,55 @@
     "name": "Docsタイトル提案アドイン",
     "createdTime": "2025-10-14T03:32:25.496Z",
     "modifiedTime": "2025-12-16T07:48:20.808Z"
-  }
+  },
+  "deployments": [
+    {
+      "id": "AKfycbyqPxeTHiJ69dE01XR8MLEVVemvCF8OGJHREElb-ug",
+      "target": "HEAD",
+      "description": ""
+    },
+    {
+      "id": "AKfycbxrdaRkaIRc9Gp18u3cuZbKNy0w5Ctn5j5otUXo_BjAu3pa3ShslcJHuGMomM8zkgLP",
+      "target": "13",
+      "description": "更新更新更新"
+    }
+  ],
+  "versions": [
+    {
+      "version": 5,
+      "description": "削除"
+    },
+    {
+      "version": 6,
+      "description": "公開用"
+    },
+    {
+      "version": 7,
+      "description": "公開用２"
+    },
+    {
+      "version": 8,
+      "description": "公開用３"
+    },
+    {
+      "version": 9,
+      "description": "No description"
+    },
+    {
+      "version": 10,
+      "description": "公開用"
+    },
+    {
+      "version": 11,
+      "description": "とにかくこのデプロイメントのバージョンを更新し続ける"
+    },
+    {
+      "version": 12,
+      "description": "No description"
+    },
+    {
+      "version": 13,
+      "description": "更新更新更新"
+    }
+  ]
 }

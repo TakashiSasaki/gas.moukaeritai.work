@@ -5,5 +5,13 @@
     "name": "Google Driveの一覧を取得するアドオン",
     "createdTime": "2016-12-27T08:08:44.585Z",
     "modifiedTime": "2024-05-22T18:03:09.527Z"
-  }
+  },
+  "deployments": [
+    {
+      "id": "AKfycbwIx-zFrVXeK9sDpnYijuiszhppkONeADQ3oCcuUuQ",
+      "target": "HEAD",
+      "description": ""
+    }
+  ],
+  "versions": []
 }

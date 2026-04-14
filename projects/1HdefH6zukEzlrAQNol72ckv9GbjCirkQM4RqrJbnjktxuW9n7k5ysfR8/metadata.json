@@ -5,5 +5,13 @@
     "name": "Spreadsheet Utility Library",
     "createdTime": "2018-10-17T02:26:00.943Z",
     "modifiedTime": "2025-01-22T21:54:24.093Z"
-  }
+  },
+  "deployments": [
+    {
+      "id": "AKfycbzJZEifaJTQpGfAS9_i9WHmPtGydwJIScM9hbFEDcSd",
+      "target": "HEAD",
+      "description": ""
+    }
+  ],
+  "versions": []
 }

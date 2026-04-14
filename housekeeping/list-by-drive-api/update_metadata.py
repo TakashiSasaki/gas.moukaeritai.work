@@ -95,6 +95,33 @@ def update_metadata(backup_file: Path, projects_dir: Path):
         ]
         for prop in root_to_remove:
             meta_data.pop(prop, None)
+            
+        # Migration: Extract standalone files and put them in metadata.json
+        deps_file = project_path / "deployments.json"
+        if deps_file.exists():
+            try:
+                with open(deps_file, "r", encoding="utf-8") as f:
+                    meta_data["deployments"] = json.load(f)
+            except Exception:
+                pass
+
+        vers_file = project_path / "versions.json"
+        if vers_file.exists():
+            try:
+                with open(vers_file, "r", encoding="utf-8") as f:
+                    meta_data["versions"] = json.load(f)
+            except Exception:
+                pass
+                
+        # Clean up standalone files
+        files_to_remove = ["deployments.json", "deployments.txt", "versions.json", "versions.txt"]
+        for filename in files_to_remove:
+            target_file = project_path / filename
+            if target_file.exists():
+                try:
+                    target_file.unlink()
+                except Exception:
+                    pass
         
         try:
             with open(meta_file, "w", encoding="utf-8") as f:

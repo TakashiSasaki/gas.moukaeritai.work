@@ -1,2 +1,0 @@
-Found 1 deployment.
-- AKfycbzPcLGsStrAq5Z6CFYXZINE-pYX9vb96Tqg_r8ALGs @HEAD 

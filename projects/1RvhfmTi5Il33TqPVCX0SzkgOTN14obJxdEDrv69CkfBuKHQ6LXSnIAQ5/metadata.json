@@ -5,5 +5,27 @@
     "name": "Cache Clipboard",
     "createdTime": "2018-02-21T10:02:30.166Z",
     "modifiedTime": "2018-02-22T06:21:19.162Z"
-  }
+  },
+  "deployments": [
+    {
+      "id": "AKfycbwTvn3g19jJ96jlnksFFXMZxvxX2F_jz8enYgIctT88",
+      "target": "HEAD",
+      "description": ""
+    },
+    {
+      "id": "AKfycbzh3Mavd-EIq1sVBS16jv1hPJezIl59cZD-tp8TJCVMhhpWgJ3o",
+      "target": "2",
+      "description": "web app meta-version"
+    }
+  ],
+  "versions": [
+    {
+      "version": 1,
+      "description": "No description"
+    },
+    {
+      "version": 2,
+      "description": "No description"
+    }
+  ]
 }

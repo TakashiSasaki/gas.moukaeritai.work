@@ -1,3 +1,0 @@
-Found 2 versions.
-1 - initial commit
-2 - ライブラリとして使えるレベルになった

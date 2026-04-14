@@ -5,5 +5,13 @@
     "name": "notion-page-title-exporter",
     "createdTime": "2024-01-30T02:25:01.844Z",
     "modifiedTime": "2024-01-30T02:25:01.844Z"
-  }
+  },
+  "deployments": [
+    {
+      "id": "AKfycbypi8Zs5Z4xBWbLkOHi5uzwGmVk3_fjk68dmTkio35l",
+      "target": "HEAD",
+      "description": ""
+    }
+  ],
+  "versions": []
 }

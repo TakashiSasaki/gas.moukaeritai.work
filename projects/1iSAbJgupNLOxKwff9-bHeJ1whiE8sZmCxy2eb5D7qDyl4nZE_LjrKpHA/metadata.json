@@ -5,5 +5,23 @@
     "name": "ArecXのスター表示に関するテスト",
     "createdTime": "2016-04-27T05:05:14.278Z",
     "modifiedTime": "2025-01-13T17:35:23.531Z"
-  }
+  },
+  "deployments": [
+    {
+      "id": "AKfycbw4NDrkymMtj1_jF5tT5emKpm2Si5pEJZGOOm69zNIW",
+      "target": "HEAD",
+      "description": ""
+    },
+    {
+      "id": "AKfycbwleNQ2aLMg4bRGhiSESkDOxbLHCa0OqaheVI08zsl5Ue0kwMaQ",
+      "target": "1",
+      "description": "web app meta-version"
+    }
+  ],
+  "versions": [
+    {
+      "version": 1,
+      "description": "No description"
+    }
+  ]
 }

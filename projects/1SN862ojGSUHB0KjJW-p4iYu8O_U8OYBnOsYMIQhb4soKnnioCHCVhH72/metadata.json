@@ -5,5 +5,18 @@
     "name": "GmailThreadTable",
     "createdTime": "2019-09-10T06:19:18.172Z",
     "modifiedTime": "2019-10-10T09:56:16.448Z"
-  }
+  },
+  "deployments": [
+    {
+      "id": "AKfycbxAYs1QIFJXKc9oWI-OdySfLVUKNFdRS4qg6tM-ktUa",
+      "target": "HEAD",
+      "description": ""
+    }
+  ],
+  "versions": [
+    {
+      "version": 2,
+      "description": "No description"
+    }
+  ]
 }

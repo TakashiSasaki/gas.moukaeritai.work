@@ -1,3 +1,0 @@
-Found 2 deployments.
-- AKfycbxvla1TFBCxMc-pwNtur6vPRYXQeijTdaQGKGRuJ5A @HEAD 
-- AKfycbwefkE_shQ5fBiQweCvLuFKflh5a5FjJprLQwQtv59PGzZNsEc3poqgtaBilJBKZ-KI @1 

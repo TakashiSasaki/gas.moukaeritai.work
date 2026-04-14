@@ -5,5 +5,39 @@
     "name": "Drive Shallow Mover",
     "createdTime": "2026-01-28T10:48:09.574Z",
     "modifiedTime": "2026-01-31T03:18:46.776Z"
-  }
+  },
+  "deployments": [
+    {
+      "id": "AKfycbyVplN2_YKjBksTfGGG6U2WIPwmf15KJzkeBSj-Ifkj",
+      "target": "HEAD",
+      "description": ""
+    },
+    {
+      "id": "AKfycbyhxxFtBaXstAo3E0ycj15x4nzFWJsYBaiSSn1GJFo4XMnilU4vZn-9hB32VFcy8wuTMw",
+      "target": "5",
+      "description": "バージョン5"
+    }
+  ],
+  "versions": [
+    {
+      "version": 1,
+      "description": "公開"
+    },
+    {
+      "version": 2,
+      "description": "No description"
+    },
+    {
+      "version": 3,
+      "description": "No description"
+    },
+    {
+      "version": 4,
+      "description": "バージョン４"
+    },
+    {
+      "version": 5,
+      "description": "バージョン5"
+    }
+  ]
 }

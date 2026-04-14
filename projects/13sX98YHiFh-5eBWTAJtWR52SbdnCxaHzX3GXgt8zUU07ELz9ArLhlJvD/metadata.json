@@ -5,5 +5,75 @@
     "name": "Str",
     "createdTime": "2019-11-21T12:57:34.357Z",
     "modifiedTime": "2019-12-06T10:00:29.520Z"
-  }
+  },
+  "deployments": [
+    {
+      "id": "AKfycbxtIqTYinDNeC_gSQwpSijQm6QkSUD1RtNelJyoiegW",
+      "target": "HEAD",
+      "description": ""
+    },
+    {
+      "id": "AKfycbxq3vGTmk3kCQ2Yc-Z4kBjlmWCdaoYA07aWQNXO2BU55e6ITBCG",
+      "target": "18",
+      "description": "web app meta-version"
+    }
+  ],
+  "versions": [
+    {
+      "version": 2,
+      "description": "No description"
+    },
+    {
+      "version": 3,
+      "description": "No description"
+    },
+    {
+      "version": 5,
+      "description": "No description"
+    },
+    {
+      "version": 8,
+      "description": "No description"
+    },
+    {
+      "version": 9,
+      "description": "No description"
+    },
+    {
+      "version": 10,
+      "description": "No description"
+    },
+    {
+      "version": 11,
+      "description": "No description"
+    },
+    {
+      "version": 12,
+      "description": "No description"
+    },
+    {
+      "version": 13,
+      "description": "No description"
+    },
+    {
+      "version": 14,
+      "description": "No description"
+    },
+    {
+      "version": 15,
+      "description": "No description"
+    },
+    {
+      "version": 16,
+      "description": "No description"
+    },
+    {
+      "version": 17,
+      "description": "No description"
+    },
+    {
+      "version": 18,
+      "description": "No description"
+    }
+  ]
 }

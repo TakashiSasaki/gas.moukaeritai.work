@@ -5,5 +5,13 @@
     "name": "Copy of Public ScriptCache",
     "createdTime": "2023-08-14T23:05:57.168Z",
     "modifiedTime": "2023-08-14T23:05:58.288Z"
-  }
+  },
+  "deployments": [
+    {
+      "id": "AKfycbxCcFLzmwYXdewtCRB2tBrF3ETmlszs3uaVeWWbyMI",
+      "target": "HEAD",
+      "description": ""
+    }
+  ],
+  "versions": []
 }

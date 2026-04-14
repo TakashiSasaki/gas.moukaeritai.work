@@ -5,5 +5,36 @@
     "name": "Hash",
     "createdTime": "2017-10-19T10:23:03.666Z",
     "modifiedTime": "2025-01-22T18:31:58.330Z"
-  }
+  },
+  "deployments": [
+    {
+      "id": "AKfycbwf__dsRUurgP50dNYbepWMC6Rr19O33uQAg9VjVo1I",
+      "target": "HEAD",
+      "description": ""
+    },
+    {
+      "id": "AKfycbzTkvoMjAorRMIQXxobvkFVV1RXWTxucFDJbuUtM0PMdoSseVnE",
+      "target": "6",
+      "description": "oneplatform api meta-version"
+    },
+    {
+      "id": "AKfycbydGLY1njb3VM_Y8O9XeGAc5sCZsXLvFeA5KToEDOTFC2JCrFti",
+      "target": "5",
+      "description": "web app meta-version"
+    }
+  ],
+  "versions": [
+    {
+      "version": 5,
+      "description": "No description"
+    },
+    {
+      "version": 6,
+      "description": "aaa"
+    },
+    {
+      "version": 8,
+      "description": "No description"
+    }
+  ]
 }

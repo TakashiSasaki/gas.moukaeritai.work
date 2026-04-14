@@ -5,5 +5,47 @@
     "name": "Android package list",
     "createdTime": "2025-07-10T03:48:50.935Z",
     "modifiedTime": "2025-07-10T06:45:54.297Z"
-  }
+  },
+  "deployments": [
+    {
+      "id": "AKfycbyPnFuvxjOVBuHtapNumQ4PwYKpP3SVOJdAxLBR64Q",
+      "target": "HEAD",
+      "description": ""
+    },
+    {
+      "id": "AKfycbyEi5YGu-xDJWIgdUgY54DwZaBG2gCCbxUgmPSxIDtG5W5uVVG91vyp2M8S54shI2Ng",
+      "target": "7",
+      "description": "公開用 v7"
+    }
+  ],
+  "versions": [
+    {
+      "version": 1,
+      "description": "公開用"
+    },
+    {
+      "version": 2,
+      "description": "公開用 v2"
+    },
+    {
+      "version": 3,
+      "description": "公開用 v3"
+    },
+    {
+      "version": 4,
+      "description": "公開用 v4"
+    },
+    {
+      "version": 5,
+      "description": "公開用 v5"
+    },
+    {
+      "version": 6,
+      "description": "公開用 v6"
+    },
+    {
+      "version": 7,
+      "description": "公開用 v7"
+    }
+  ]
 }

@@ -5,5 +5,27 @@
     "name": "Github Repository Summary",
     "createdTime": "2014-10-02T04:05:47.405Z",
     "modifiedTime": "2018-01-01T10:27:33.746Z"
-  }
+  },
+  "deployments": [
+    {
+      "id": "AKfycbynkdJ6-Vs7nv5zInNGOe-gFU3T2JHgAzoIg8XPt9cI",
+      "target": "HEAD",
+      "description": ""
+    },
+    {
+      "id": "AKfycbwHjMPqB1FrhaEgbXUSolRteEISWTzcqhtHe02hKhb88fFqRUiB",
+      "target": "1",
+      "description": "web app meta-version"
+    }
+  ],
+  "versions": [
+    {
+      "version": 1,
+      "description": "No description"
+    },
+    {
+      "version": 2,
+      "description": "No description"
+    }
+  ]
 }

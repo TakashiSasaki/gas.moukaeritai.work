@@ -5,5 +5,31 @@
     "name": "ContentService test",
     "createdTime": "2023-12-01T11:20:33.651Z",
     "modifiedTime": "2023-12-01T11:42:53.091Z"
-  }
+  },
+  "deployments": [
+    {
+      "id": "AKfycbz2gjv0c7aInZKHUFdXNZZCYQLRG-AVuCCI0MgMsTwf",
+      "target": "HEAD",
+      "description": ""
+    },
+    {
+      "id": "AKfycbxFGtAf1bGMiFt4jygazAIDQxUnaujiW0YFuIz-Ym4-hu11BT7AZJYOrZNSipQh4ugC2A",
+      "target": "3",
+      "description": ""
+    }
+  ],
+  "versions": [
+    {
+      "version": 1,
+      "description": "No description"
+    },
+    {
+      "version": 2,
+      "description": "No description"
+    },
+    {
+      "version": 3,
+      "description": "No description"
+    }
+  ]
 }

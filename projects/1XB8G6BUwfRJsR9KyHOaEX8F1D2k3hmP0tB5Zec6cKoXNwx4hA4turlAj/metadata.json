@@ -5,5 +5,23 @@
     "name": "(obsoleted) Html Template Library",
     "createdTime": "2017-06-15T10:55:33.917Z",
     "modifiedTime": "2025-01-23T19:53:53.278Z"
-  }
+  },
+  "deployments": [
+    {
+      "id": "AKfycbwtkIyaTSM3aNe0elFHW1-C_s2Ru2drUXPd0xBFBC8",
+      "target": "HEAD",
+      "description": ""
+    },
+    {
+      "id": "AKfycbzR9MuWARcNJG9mHUqd_qGjx3q-RiULlRGE4fa9rniz7H7tukg",
+      "target": "31",
+      "description": "web app meta-version"
+    }
+  ],
+  "versions": [
+    {
+      "version": 31,
+      "description": "No description"
+    }
+  ]
 }

@@ -5,5 +5,44 @@
     "name": "Hash Wrapper",
     "createdTime": "2017-05-30T10:20:33.090Z",
     "modifiedTime": "2025-01-22T19:21:11.220Z"
-  }
+  },
+  "deployments": [
+    {
+      "id": "AKfycbzN3EprRxzthI8QJFL1mnd9S2vV0_5crQCksMCEC81F",
+      "target": "HEAD",
+      "description": ""
+    },
+    {
+      "id": "AKfycbxeukaRObdGUHHn5KocWnl-6GPZOeSGyHTC1v3GngshkdUUL8G7",
+      "target": "55",
+      "description": "oneplatform api meta-version"
+    },
+    {
+      "id": "AKfycbylYjBfxU1LAtgRl55okTs0IJSL-7d7QGDqTlySojiAO320uAWV",
+      "target": "69",
+      "description": "web app meta-version"
+    }
+  ],
+  "versions": [
+    {
+      "version": 55,
+      "description": "No description"
+    },
+    {
+      "version": 66,
+      "description": "No description"
+    },
+    {
+      "version": 67,
+      "description": "No description"
+    },
+    {
+      "version": 68,
+      "description": "No description"
+    },
+    {
+      "version": 69,
+      "description": "No description"
+    }
+  ]
 }

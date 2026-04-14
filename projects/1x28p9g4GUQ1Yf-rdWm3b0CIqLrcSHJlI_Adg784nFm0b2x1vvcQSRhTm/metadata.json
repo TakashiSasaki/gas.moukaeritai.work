@@ -5,5 +5,23 @@
     "name": "ChatGPI Archives",
     "createdTime": "2023-06-26T00:07:20.927Z",
     "modifiedTime": "2023-06-27T10:38:36.031Z"
-  }
+  },
+  "deployments": [
+    {
+      "id": "AKfycbwwPXCLFezk1rlb4z4ZBXRbo4WeZkfqAgtAb_57XfU",
+      "target": "HEAD",
+      "description": ""
+    },
+    {
+      "id": "AKfycbzVyMnsZqo0e5QAbVGudKv7gfL5VfFh31ho9eJrQZ2uOXFlr-Yo7WlK2F6Vh97Zq_WU",
+      "target": "1",
+      "description": ""
+    }
+  ],
+  "versions": [
+    {
+      "version": 1,
+      "description": "No description"
+    }
+  ]
 }

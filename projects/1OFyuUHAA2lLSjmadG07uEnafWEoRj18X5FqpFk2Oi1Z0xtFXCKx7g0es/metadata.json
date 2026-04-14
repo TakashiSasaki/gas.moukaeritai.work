@@ -5,5 +5,79 @@
     "name": "kenqweb2 to researchmap CSV converter",
     "createdTime": "2017-11-14T01:09:03.223Z",
     "modifiedTime": "2018-01-22T03:00:34.124Z"
-  }
+  },
+  "deployments": [
+    {
+      "id": "AKfycbyY7Ic4lNEEerYyEpoBwQd4QqxkpN9lcHfzOGub26EJ",
+      "target": "HEAD",
+      "description": ""
+    },
+    {
+      "id": "AKfycbxdw3BZaL_-41CpRKqwpu733q1O043YBo3fenkmII1fqtR7A6RB",
+      "target": "15",
+      "description": "web app meta-version"
+    }
+  ],
+  "versions": [
+    {
+      "version": 1,
+      "description": "No description"
+    },
+    {
+      "version": 2,
+      "description": "No description"
+    },
+    {
+      "version": 3,
+      "description": "No description"
+    },
+    {
+      "version": 4,
+      "description": "No description"
+    },
+    {
+      "version": 5,
+      "description": "No description"
+    },
+    {
+      "version": 6,
+      "description": "No description"
+    },
+    {
+      "version": 7,
+      "description": "No description"
+    },
+    {
+      "version": 8,
+      "description": "No description"
+    },
+    {
+      "version": 9,
+      "description": "No description"
+    },
+    {
+      "version": 10,
+      "description": "No description"
+    },
+    {
+      "version": 11,
+      "description": "No description"
+    },
+    {
+      "version": 12,
+      "description": "No description"
+    },
+    {
+      "version": 13,
+      "description": "No description"
+    },
+    {
+      "version": 14,
+      "description": "No description"
+    },
+    {
+      "version": 15,
+      "description": "No description"
+    }
+  ]
 }

@@ -5,5 +5,51 @@
     "name": "GasOAuthLibrary",
     "createdTime": "2017-06-22T09:28:52.472Z",
     "modifiedTime": "2025-01-13T18:43:29.583Z"
-  }
+  },
+  "deployments": [
+    {
+      "id": "AKfycbx0Oggfb8v4_2wRERB5KIOXvDb0pQr0Zno_lcFI8VaE",
+      "target": "HEAD",
+      "description": ""
+    },
+    {
+      "id": "AKfycbxv8IbZj04X0f-P7vY2S8gfLyBsCTmy9eMyBcoUEHwwbyzi8IFY",
+      "target": "29",
+      "description": "web app meta-version"
+    }
+  ],
+  "versions": [
+    {
+      "version": 29,
+      "description": "No description"
+    },
+    {
+      "version": 30,
+      "description": "No description"
+    },
+    {
+      "version": 31,
+      "description": "No description"
+    },
+    {
+      "version": 32,
+      "description": "No description"
+    },
+    {
+      "version": 33,
+      "description": "No description"
+    },
+    {
+      "version": 34,
+      "description": "No description"
+    },
+    {
+      "version": 35,
+      "description": "No description"
+    },
+    {
+      "version": 36,
+      "description": "ｓｑｗ"
+    }
+  ]
 }
