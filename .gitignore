@@ -6,3 +6,4 @@ create_symlinks.py
 copy_readmes.py
 generate_readme_list.py
 .gemini/
+commit_message.txt

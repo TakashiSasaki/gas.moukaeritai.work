@@ -1,5 +1,0 @@
-Rename generate-metadata workflow to b2-generate-metadata
-
-- rename .github/workflows/generate-metadata.yml to .github/workflows/b2-generate-metadata.yml
-- update workflow name to b2-generate-metadata
-- refresh .github/workflows/AGENTS.md references for the new workflow name
