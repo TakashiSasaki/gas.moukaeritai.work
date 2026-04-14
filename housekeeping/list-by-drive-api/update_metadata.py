@@ -66,6 +66,17 @@ def update_metadata(backup_file: Path, projects_dir: Path):
                     "modifiedTime": modified_time
                 }
             }
+            
+            # Create .clasp.json for new directories
+            clasp_file = project_path / ".clasp.json"
+            if not clasp_file.exists():
+                print(f"  Creating .clasp.json: {script_id}")
+                clasp_config = {"scriptId": script_id}
+                try:
+                    with open(clasp_file, "w", encoding="utf-8") as f:
+                        json.dump(clasp_config, f, indent=2)
+                except Exception as e:
+                    print(f"  Error creating .clasp.json: {e}", file=sys.stderr)
         else:
             try:
                 with open(meta_file, "r", encoding="utf-8") as f:
