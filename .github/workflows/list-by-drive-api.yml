@@ -1,4 +1,4 @@
-name: h1-update-drive-api-list
+name: list-by-drive-api
 
 on:
   schedule:
