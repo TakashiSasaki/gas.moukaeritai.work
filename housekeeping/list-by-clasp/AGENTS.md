@@ -1,15 +1,15 @@
-# Housekeeping: by-clasp-list
+# Housekeeping: list-by-clasp
 
 このディレクトリは、Google Apps Script プロジェクトの一覧（`clasp list`）の履歴を管理し、リポジトリの状態を維持するためのツールとデータを格納します。
 
 ## ツール
 
-### `save_clasp_list.py`
+### `fetch_clasp_list.py`
 `clasp list --noShorten` の生出力をテキストファイルとして保存します。
 
 #### 使用方法
 ```bash
-python housekeeping/by-clasp-list/save_clasp_list.py [オプション]
+python housekeeping/list-by-clasp/fetch_clasp_list.py [オプション]
 ```
 
 #### オプション
@@ -27,7 +27,7 @@ python housekeeping/by-clasp-list/save_clasp_list.py [オプション]
 
 #### 使用方法
 ```bash
-python housekeeping/by-clasp-list/test_clasp_list.py [オプション]
+python housekeeping/list-by-clasp/test_clasp_list.py [オプション]
 ```
 
 #### オプション
@@ -40,12 +40,12 @@ python housekeeping/by-clasp-list/test_clasp_list.py [オプション]
 - URL からパスの一部（ID）を取り出し、ローカルの `projects/` フォルダと突き合わせます。
 - 欠落しているプロジェクトや、逆にリポジトリにのみ存在する（clasp list にない）フォルダを報告します。
 
-### `update_metadata_titles.py`
+### `update_metadata.py`
 最新のバックアップファイルからプロジェクト名（タイトル）を抽出し、各プロジェクトの `metadata.json` を更新します。
 
 #### 使用方法
 ```bash
-python housekeeping/by-clasp-list/update_metadata_titles.py [オプション]
+python housekeeping/list-by-clasp/update_metadata.py [オプション]
 ```
 
 #### オプション
@@ -59,6 +59,6 @@ python housekeeping/by-clasp-list/update_metadata_titles.py [オプション]
 
 ## 運用ルール
 1. **定期的なバックアップ**: ワークフロー等で定期的に実行し、プロジェクトリストの変遷を記録します。
-2. **自動整理**: `save_clasp_list.py` の `-k` オプションにより、不要な古いバックアップが自動的に削除されるため、手動での削除は通常不要です。
+2. **自動整理**: `fetch_clasp_list.py` の `-k` オプションにより、不要な古いバックアップが自動的に削除されるため、手動での削除は通常不要です。
 3. **整合性の検証**: 新しいプロジェクトを追加した後や定期メンテナンス時に `test_clasp_list.py` を実行し、リポジトリ内のディレクトリ構成と最新のプロジェクトリストに齟齬がないか確認します。
-4. **メタデータの同期**: プロジェクト名の変更があった場合などは `update_metadata_titles.py` を実行し、ローカルのメタデータに反映させます。
+4. **メタデータの同期**: プロジェクト名の変更があった場合などは `update_metadata.py` を実行し、ローカルのメタデータに反映させます。
