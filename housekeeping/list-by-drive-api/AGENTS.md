@@ -4,7 +4,7 @@
 
 ## ツール
 
-### `fetch.py`
+### `fetch-list.py`
 Google Drive API v3 を使用して、所有している Google Apps Script プロジェクトの一覧を全件取得し、JSON 形式で保存します。
 
 #### 特徴
@@ -18,15 +18,15 @@ Google Drive API v3 を使用して、所有している Google Apps Script プ�
 このスクリプトは `requests` ライブラリに依存しています。`uv` を使用して以下のように実行することを推奨します：
 
 ```bash
-uv run --with requests housekeeping/list-by-drive-api/fetch.py
+uv run --with requests housekeeping/list-by-drive-api/fetch-list.py
 ```
 
 ### `update_metadata.py`
-最新の JSON バックアップファイルからプロジェクト名（タイトル）を抽出し、各プロジェクトの `metadata.json` を更新します。
+最新の JSON バックアップファイルから最新のプロジェクト情報を抽出し、各プロジェクトの `metadata.json` を更新します。
 
 #### 特徴
-- 各プロジェクトのフォルダ内にある `metadata.json` に **`"titleByDriveApi"`** プロパティを追加または更新します。
-- これにより、Drive API から得られた最新のプロジェクト名を各プロジェクトのメタデータに同期できます。
+- 各プロジェクトのフォルダ内にある `metadata.json` の **`"name"`**, **`"createdTime"`**, **`"modifiedTime"`** プロパティを Drive API の情報で更新します。
+- これにより、Drive API から得られた最新のプロジェクト情報を各プロジェクトのメタデータに同期できます。
 
 #### 使用方法
 ```bash
@@ -35,5 +35,5 @@ uv run python housekeeping/list-by-drive-api/update_metadata.py
 
 ## 運用ルール
 1. **API 利用の健全性**: `clasp list` プロセスを介さず直接 API を叩くため、より詳細な情報取得や自動化に適しています。
-2. **メタデータの同期**: プロジェクト名の変更があった場合などは `update_metadata.py` を実行し、ローカルのメタデータに反映させます。
+2. **メタデータの同期**: プロジェクト情報の変更があった場合などは `update_metadata.py` を実行し、ローカルのメタデータに反映させます。
 3. **依存関係の管理**: ライブラリが必要な場合は、`uv run` による動的な実行を前提とします。
