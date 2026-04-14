@@ -74,6 +74,16 @@ graph TD
 
 ---
 
+## Naming Conventions
+
+### Workflow Naming
+To maintain clarity and consistency across the CI/CD pipeline, the following naming convention is enforced:
+- **Workflow Name**: The `name` field within the YAML file **must exactly match the stem** (filename without extension) of the workflow file.
+  - *Example*: The file `a1-update-clasp-list.yml` must have `name: a1-update-clasp-list` at the top.
+- **Prefixes**: Workflows are prefixed with a letter and number (e.g., `a1-`, `b1-`) to indicate their execution order within a specific chain.
+
+---
+
 ## Detailed Component Analysis
 
 ### a1-update-clasp-list.yml
