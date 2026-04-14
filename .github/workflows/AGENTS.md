@@ -25,9 +25,9 @@ This chain is responsible for discovering all current GAS projects and pulling t
     - **Output**:
         - Creates new subdirectories named by `ScriptID`.
         - Initializes `.clasp.json` in each new directory.
-    - **Next**: Triggers `clasp-pull`.
+    - **Next**: Triggers `a3-clasp-pull`.
 
-3.  **[clasp-pull.yml](clasp-pull.yml)**
+3.  **[a3-clasp-pull.yml](a3-clasp-pull.yml)**
     - **Trigger**: Completion of `a2-create_missing_scriptid_dirs`.
     - **Action**: Runs `clasp-pull.py`.
     - **Output**: 
@@ -59,7 +59,7 @@ This chain fetches external tracking data and ensures directory-level metadata i
 graph TD
     subgraph "Chain A: GAS Sync Core"
         A1["a1-update-clasp-list<br/>(Schedule: Every Hour:15)"] -->|workflow_run| A2["a2-create_missing_scriptid_dirs"]
-        A2 -->|workflow_run| A3["clasp-pull"]
+        A2 -->|workflow_run| A3["a3-clasp-pull"]
     end
 
     subgraph "Chain B: Metadata & Discovery"
@@ -127,7 +127,7 @@ This workflow prepares the filesystem for new projects discovered in the previou
 
 ---
 
-### clasp-pull.yml
+### a3-clasp-pull.yml
 This workflow is responsible for the actual synchronization of code and metadata for all tracked projects.
 
 #### Inputs & Dependencies

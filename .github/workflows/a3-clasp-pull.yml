@@ -1,4 +1,4 @@
-name: clasp-pull
+name: a3-clasp-pull
 
 # Ensure GITHUB_TOKEN can write to the repo
 permissions:
