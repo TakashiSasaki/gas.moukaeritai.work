@@ -15,5 +15,6 @@
       "target": "6",
       "description": "web app meta-version"
     }
-  ]
+  ],
+  "titleByClaspList": "Unicode Normalization Sandbox"
 }

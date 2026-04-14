@@ -15,5 +15,6 @@
       "target": "10",
       "description": "web app meta-version"
     }
-  ]
+  ],
+  "titleByClaspList": "Javascript Proxy"
 }

@@ -15,5 +15,6 @@
       "target": "7",
       "description": "Pocketで認可してアイテムを取得できるところまで確認"
     }
-  ]
+  ],
+  "titleByClaspList": "Download Items from Pocket.com"
 }

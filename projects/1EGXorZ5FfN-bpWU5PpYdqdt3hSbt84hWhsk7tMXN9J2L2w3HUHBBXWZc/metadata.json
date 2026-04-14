@@ -85,5 +85,6 @@
       "target": "3",
       "description": ""
     }
-  ]
+  ],
+  "titleByClaspList": "UUID generator"
 }

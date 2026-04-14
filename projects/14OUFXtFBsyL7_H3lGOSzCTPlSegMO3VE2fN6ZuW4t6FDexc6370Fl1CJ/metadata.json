@@ -15,5 +15,6 @@
       "target": "75",
       "description": "web app meta-version"
     }
-  ]
+  ],
+  "titleByClaspList": "Web Clipboard Writer"
 }

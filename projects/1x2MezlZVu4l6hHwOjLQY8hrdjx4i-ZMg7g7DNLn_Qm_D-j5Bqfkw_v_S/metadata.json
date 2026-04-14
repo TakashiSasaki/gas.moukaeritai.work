@@ -50,5 +50,6 @@
       "target": "1",
       "description": "Dummy doGet returns \"Hello\" mesasge"
     }
-  ]
+  ],
+  "titleByClaspList": "GPT with memopad"
 }

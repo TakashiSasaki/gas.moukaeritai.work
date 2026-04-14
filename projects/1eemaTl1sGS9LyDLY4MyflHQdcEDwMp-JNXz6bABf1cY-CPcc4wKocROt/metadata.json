@@ -15,5 +15,6 @@
       "target": "4",
       "description": "公開 v4"
     }
-  ]
+  ],
+  "titleByClaspList": "rename-by-gemini"
 }

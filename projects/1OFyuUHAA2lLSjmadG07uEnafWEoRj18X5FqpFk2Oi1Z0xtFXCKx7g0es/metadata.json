@@ -15,5 +15,6 @@
       "target": "15",
       "description": "web app meta-version"
     }
-  ]
+  ],
+  "titleByClaspList": "kenqweb2 to researchmap CSV converter"
 }
