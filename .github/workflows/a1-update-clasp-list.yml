@@ -1,8 +1,5 @@
 name: a1-update-clasp-list
 on:
-  schedule:
-    - cron: '15 * * * *'
-  # 手動実行も可能にする
   workflow_dispatch:
 
 jobs:
