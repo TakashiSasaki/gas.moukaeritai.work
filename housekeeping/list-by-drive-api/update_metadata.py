@@ -38,16 +38,15 @@ def update_metadata(backup_file: Path, projects_dir: Path):
 
     for item in files_list:
         script_id = item.get("id")
-        title = item.get("name")
+        name = item.get("name")
+        created_time = item.get("createdTime")
+        modified_time = item.get("modifiedTime")
         
-        if not script_id or not title:
+        if not script_id or not name:
             continue
             
         # Locate project directory
-        # The directory name starts with 1_ and usually matches the scriptId
-        # Or look for projects/{ID}
         project_path = projects_dir / script_id
-        
         meta_file = project_path / "metadata.json"
         
         if meta_file.exists():
@@ -55,18 +54,25 @@ def update_metadata(backup_file: Path, projects_dir: Path):
                 with open(meta_file, "r", encoding="utf-8") as f:
                     meta_data = json.load(f)
                 
-                # Update property
-                meta_data["titleByDriveApi"] = title
+                # Update main properties using Drive API names
+                meta_data["name"] = name
+                if created_time:
+                    meta_data["createdTime"] = created_time
+                if modified_time:
+                    meta_data["modifiedTime"] = modified_time
+                
+                # Cleanup redundant properties
+                meta_data.pop("titleByClaspList", None)
+                meta_data.pop("titleByDriveApi", None)
                 
                 with open(meta_file, "w", encoding="utf-8") as f:
                     json.dump(meta_data, f, indent=2, ensure_ascii=False)
                 
-                print(f"  Updated: {script_id} -> {title}")
+                print(f"  Updated & Cleaned: {script_id} -> {name}")
                 updated_count += 1
             except Exception as e:
                 print(f"  Error updating {script_id}: {e}", file=sys.stderr)
         else:
-            # print(f"  Skipped: {script_id} (Directory not found)")
             skipped_count += 1
 
     print(f"\nUpdate Summary:")
