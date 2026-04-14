@@ -7,7 +7,7 @@ permissions:
 on:
   workflow_dispatch:
   workflow_run:
-    workflows: ["a2-create_missing_scriptid_dirs"]  # trigger after this workflow completes
+    workflows: ["h1-update-drive-api-list"]  # trigger after the new housekeeping workflow completes
     types:
       - completed
 
@@ -17,7 +17,7 @@ jobs:
 
     steps:
       - name: Checkout default branch
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: gas.moukaeritai.work
           persist-credentials: true
@@ -35,7 +35,7 @@ jobs:
         run: echo '${{ secrets.CLASPRC_JSON }}' > ~/.clasprc.json
 
       - name: Pull all Apps Script projects
-        run: python3 clasp-pull.py
+        run: python3 housekeeping/pull-by-clasp/clasp-pull.py
 
       - name: Commit & Push changes if any
         run: |
