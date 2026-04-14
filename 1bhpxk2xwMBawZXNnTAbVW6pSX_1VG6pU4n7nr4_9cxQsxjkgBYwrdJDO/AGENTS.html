@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Development Context & Rules - Drive Shallow Mover</title>
+    <style>
+        :root {
+            --bg-color: #1e1e1e;
+            --text-color: #d4d4d4;
+            --heading-color: #569cd6;
+            --code-bg: #252526;
+            --border-color: #454545;
+            --tag-arch: #ce9178;
+            --tag-rule: #4ec9b0;
+            --tag-warn: #f48771;
+            --tag-api: #6a9955;
+        }
+        body {
+            font-family: 'Segoe UI', 'Consolas', monospace;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding: 40px;
+            line-height: 1.6;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        h1, h2, h3 { color: var(--heading-color); border-bottom: 1px solid var(--border-color); padding-bottom: 0.3em; }
+        h1 { font-size: 2.2em; border-bottom: 2px solid var(--heading-color); }
+        h2 { margin-top: 2.5em; font-size: 1.5em; }
+        h3 { margin-top: 1.5em; font-size: 1.2em; border: none; color: #dcdcaa; }
+        code { font-family: 'Consolas', monospace; background-color: var(--code-bg); padding: 2px 5px; border-radius: 4px; color: #9cdcfe; }
+        pre { background-color: var(--code-bg); padding: 15px; border-radius: 6px; border: 1px solid var(--border-color); overflow-x: auto; margin: 10px 0; }
+        .rule-box { background-color: rgba(255, 255, 255, 0.03); border-left: 5px solid; padding: 15px 20px; margin: 20px 0; border-radius: 0 4px 4px 0; }
+        .rule-arch { border-color: var(--tag-arch); }
+        .rule-rule { border-color: var(--tag-rule); }
+        .rule-warn { border-color: var(--tag-warn); background-color: rgba(244, 135, 113, 0.1); }
+        .rule-api { border-color: var(--tag-api); }
+        .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.75em; font-weight: bold; margin-right: 8px; vertical-align: middle; color: #1e1e1e; }
+        .t-arch { background-color: var(--tag-arch); }
+        .t-rule { background-color: var(--tag-rule); }
+        .t-warn { background-color: var(--tag-warn); }
+        .t-api { background-color: var(--tag-api); }
+        table { width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 0.9em; background: rgba(0,0,0,0.2); }
+        th, td { border: 1px solid var(--border-color); padding: 10px; text-align: left; }
+        th { background-color: #333; color: var(--heading-color); }
+        strong { color: #fff; }
+    </style>
+</head>
+<body>
+
+    <h1>🤖 Development Context: Drive Shallow Mover</h1>
+    <p>This document is the <strong>Absolute Source of Truth</strong>. All agents MUST strictly follow these specifications to maintain stability and prevent regressions.</p>
+
+    <h2 id="architecture">1. System Architecture (Modular Hub)</h2>
+    <div class="rule-box rule-arch">
+        <h3><span class="tag t-arch">ARCH</span> Component Separation</h3>
+        <ul>
+            <li><strong><code>Router.gs</code></strong>: Entry point (<code>doGet</code>). Responsible for page routing via <code>?p=...</code> and injecting <code>appUrl</code> into templates.</li>
+            <li><strong><code>Index.html</code></strong>: Main UI structure & logic hub. <strong>CSS is strictly forbidden</strong> (use Stylesheet.html). Holds <strong>Global State</strong>.</li>
+            <li><strong><code>Stylesheet.html</code></strong>: All CSS rules. Disconnected in Gemini Preview to keep files lightweight.</li>
+            <li><strong><code>JavaScript.html</code></strong>: Production JavaScript. Communicates with backend and manages parallel worker pools.</li>
+            <li><strong><code>Code.gs</code></strong>: Backend Drive API (v3) functions. Sequential, stateless, and performance-optimized.</li>
+        </ul>
+    </div>
+
+    <h2 id="state-management">2. Global State & Scoping Rules</h2>
+    <div class="rule-box rule-warn">
+        <h3><span class="tag t-warn">CRITICAL</span> Variable Scoping</h3>
+        <p>Because logic is split between <code>Index.html</code> and <code>JavaScript.html</code>, all shared data MUST be explicitly bound to the <code>window</code> object in <code>Index.html</code> to ensure cross-file visibility.</p>
+        <pre><code>// CORRECT: Declarations in Index.html
+window.currentFolderIds = []; 
+window.fileNamesMap = {};
+
+// INCORRECT: Avoid 'let' at top-level if accessed by other .html files
+let folderResults = [];</code></pre>
+    </div>
+
+    <h2 id="concurrency">3. Concurrency & Performance Strategy</h2>
+    <div class="rule-box rule-arch">
+        <h3><span class="tag t-arch">PERF</span> Parallel Batching (The 5x5 Pattern)</h3>
+        <p>To bypass GAS execution limits and maximize throughput:</p>
+        <ul>
+            <li><strong>Move Operation</strong>: 5 simultaneous workers. Batch size: 5 IDs per server request.</li>
+            <li><strong>Startup Jitter</strong>: Each worker MUST wait <strong>0ms to 3000ms (Random)</strong> before its first request to prevent initial server saturation.</li>
+            <li><strong>Analyze Operation</strong>: 3 simultaneous workers. Updates <code>stats-{id}</code> cells individually to keep UI responsive.</li>
+            <li><strong>Locking</strong>: <code>LockService</code> is avoided in <code>moveFiles</code> to allow true concurrency, as the client guarantees batch isolation.</li>
+        </ul>
+    </div>
+
+    <h2 id="error-mitigation">4. Robustness & Error Mitigation</h2>
+    <div class="rule-box rule-warn">
+        <h3><span class="tag t-warn">CRITICAL</span> Undefined Error Sanitization</h3>
+        <p>GAS <code>google.script.run</code> can fail without an error object (network blip). <code>runWithRetry</code> MUST:</p>
+        <ul>
+            <li>Check if <code>err</code> or <code>err.message</code> is null/undefined.</li>
+            <li>Provide a fallback message: <code>"Unknown Network or Server Error"</code>.</li>
+            <li>Apply <strong>Jittered Retries</strong> (1500ms + random 1000ms) for <code>SERVER_BUSY</code> or <code>Quota</code> errors.</li>
+        </ul>
+    </div>
+
+    <h2 id="api-constraints">5. Drive API v3 Constraints & Mappings</h2>
+    <div class="rule-box rule-api">
+        <h3><span class="tag t-api">API</span> Forbidden q-Fields & Logic</h3>
+        <table>
+            <thead><tr><th>Condition</th><th>q Parameter Implementation</th><th>Note</th></tr></thead>
+            <tbody>
+                <tr><td><strong>Size</strong></td><td>❌ Abolished</td><td>Not supported in Drive search query.</td></tr>
+                <tr><td><strong>Description</strong></td><td>✅ <code>fullText contains '...'</code></td><td><code>description</code> field is forbidden. Use <code>fullText</code>.</td></tr>
+                <tr><td><strong>Not Folder</strong></td><td>✅ <code>mimeType != 'application/vnd.google-apps.folder'</code></td><td>Correct way to exclude folders.</td></tr>
+                <tr><td><strong>Markdown</strong></td><td>✅ <code>(mimeType = 'text/markdown' or (mimeType = 'text/plain' and name contains '.md'))</code></td><td>Comprehensive OR logic required.</td></tr>
+                <tr><td><strong>Year</strong></td><td>✅ <code>modifiedTime >= 'YYYY-01-01...' and <= 'YYYY-12-31...'</code></td><td>Must use absolute RFC 3339 timestamps.</td></tr>
+                <tr><td><strong>Quoting</strong></td><td>⚠️ <code>.replace(/'/g, "\\'")</code></td><td><strong>MANDATORY</strong> escaping for all user inputs.</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h2 id="ui-logic">6. UI Implementation & Help Strategy</h2>
+    <div class="rule-box rule-rule">
+        <h3><span class="tag t-rule">UI</span> Hybrid Help System</h3>
+        <ul>
+            <li><strong>In-App Modal (❓, 🛠️)</strong>: Uses an iframe pointing to <code>?p=README</code> or <code>?p=AGENTS</code>. Preferred for context preservation.</li>
+            <li><strong>Separate Window (Footer)</strong>: Uses <code>window.open(url, 'DriveShallowMoverHelp')</code>. Named target ensures tab reuse.</li>
+            <li><strong>Auto-Close</strong>: Main window attempts <code>helpWindowRef.close()</code> on <code>beforeunload</code>.</li>
+        </ul>
+    </div>
+
+    <div class="rule-box rule-rule">
+        <h3><span class="tag t-rule">UI</span> State Rules</h3>
+        <ul>
+            <li><strong>Reset-First</strong>: Before enabling a new input mode (Date range vs Year), disable and hide ALL other related groups.</li>
+            <li><strong>Permanent UI</strong>: The folder creation bar in the picker dialog is <strong>always visible</strong>. No toggle required.</li>
+            <li><strong>Dynamic Init</strong>: Dropdowns (like Year list) MUST be generated in <code>initApp</code> to stay current (e.g., up to current year).</li>
+            <li><strong>Visual Depth</strong>: Apply <code>disabled</code> attribute AND <code>.input-disabled</code> class for clarity.</li>
+        </ul>
+    </div>
+
+</body>
+</html>

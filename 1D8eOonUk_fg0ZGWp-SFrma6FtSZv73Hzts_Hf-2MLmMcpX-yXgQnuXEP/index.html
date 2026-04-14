@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <base target="_top">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>施設情報レポート一覧</title>
+  <style>
+    :root {
+      --primary-color: #1a73e8;
+      --success-color: #34a853;
+      --error-color: #d93025;
+      --text-main: #3c4043;
+      --text-sub: #70757a;
+      --bg-color: #f8f9fa;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      margin: 0;
+      padding: 20px;
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    }
+
+    header {
+      margin-bottom: 30px;
+      border-bottom: 2px solid #eee;
+      padding-bottom: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+
+    .header-text {
+      flex: 1;
+      min-width: 250px;
+    }
+
+    .settings-group {
+      background: #f1f3f4;
+      padding: 10px 15px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      margin-top: 10px;
+    }
+
+    .settings-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+      color: var(--text-sub);
+    }
+
+    select {
+      width: 100%;
+      padding: 5px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 1.5rem;
+      color: #202124;
+    }
+
+    .description {
+      color: var(--text-sub);
+      font-size: 0.95rem;
+      margin-top: 8px;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    li {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 15px;
+      margin-bottom: 12px;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      transition: background-color 0.2s;
+    }
+
+    li:hover {
+      background-color: #fcfcfc;
+    }
+
+    .info-group {
+      flex-grow: 1;
+      padding-right: 20px;
+    }
+
+    .facility-link {
+      text-decoration: none;
+      color: var(--primary-color);
+      font-weight: 600;
+      font-size: 1.1rem;
+    }
+
+    .facility-link:hover {
+      text-decoration: underline;
+    }
+
+    .timestamp {
+      font-size: 0.8rem;
+      color: var(--text-sub);
+      margin-top: 4px;
+    }
+
+    .create-btn {
+      background-color: var(--success-color);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      white-space: nowrap;
+      transition: opacity 0.2s;
+    }
+
+    .create-btn:hover {
+      opacity: 0.9;
+    }
+
+    .create-btn:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+
+    .admin-section {
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 1px dashed #ccc;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .ss-link {
+      font-size: 0.85rem;
+      color: var(--text-sub);
+      text-decoration: none;
+    }
+
+    .ss-link:hover {
+      text-decoration: underline;
+    }
+
+    #status-bar {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 10px 20px;
+      border-radius: 20px;
+      color: white;
+      font-size: 0.9rem;
+      display: none;
+      z-index: 1000;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+  </style>
+
+  <script>
+    function showStatus(message, isError = false) {
+      const bar = document.getElementById('status-bar');
+      bar.innerText = message;
+      bar.style.backgroundColor = isError ? '#d93025' : '#3c4043';
+      bar.style.display = 'block';
+      setTimeout(() => {
+        bar.style.display = 'none';
+      }, 5000);
+    }
+
+    function onModelChange(select) {
+      const modelName = select.value;
+      showStatus("モデル設定を更新中...");
+      google.script.run
+        .withSuccessHandler(function(msg) {
+          showStatus(msg);
+          // 設定を反映させるためリロード
+          window.top.location.href = "<?= webAppUrl ?>";
+        })
+        .withFailureHandler(function(err) {
+          showStatus("設定失敗: " + err.message, true);
+        })
+        .updateModelSetting(modelName);
+    }
+
+    function createFacilityData(pageId, btnElement) {
+      btnElement.disabled = true;
+      const originalText = btnElement.innerText;
+      btnElement.innerText = "生成中...";
+      
+      showStatus("データを生成しています。しばらくお待ちください...");
+
+      google.script.run
+        .withSuccessHandler(function(message) {
+          showStatus(message);
+          btnElement.innerText = originalText;
+          btnElement.disabled = false;
+          window.top.location.href = "<?= webAppUrl ?>"; 
+        })
+        .withFailureHandler(function(error) {
+          showStatus("エラー: " + error.message, true);
+          btnElement.innerText = originalText;
+          btnElement.disabled = false;
+        })
+        .triggerUpdateFromWeb(pageId);
+    }
+  </script>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <div class="header-text">
+        <h1>施設情報レポート一覧</h1>
+        <p class="description">最新の展示スケジュールと施設情報を自動生成します。</p>
+      </div>
+      <div class="settings-group">
+        <label for="model-select">使用モデル</label>
+        <select id="model-select" onchange="onModelChange(this)">
+          <? for (let m of availableModels) { ?>
+            <option value="<?= m ?>" <?= m === currentModel ? 'selected' : '' ?>><?= m ?></option>
+          <? } ?>
+        </select>
+      </div>
+    </header>
+
+    <ul>
+      <? for (let id in facilities) { ?>
+        <li>
+          <div class="info-group">
+            <a class="facility-link" href="<?= webAppUrl ?>?page=<?= id ?>">
+              <?= id ?>. <?= facilities[id].name ?>
+            </a>
+            <div class="timestamp">
+              最終更新: <?= timestamps[id] ? timestamps[id] : "未取得" ?>
+            </div>
+          </div>
+          <button class="create-btn" onclick="createFacilityData(<?= id ?>, this)">
+            データ作成
+          </button>
+        </li>
+      <? } ?>
+    </ul>
+
+    <div class="admin-section">
+      <a class="ss-link" href="<?= ssUrl ?>" target="_blank">
+        📊 保存先スプレッドシートを開く (管理)
+      </a>
+      <span style="font-size: 0.75rem; color: #aaa;">
+        System Status: Active
+      </span>
+    </div>
+  </div>
+
+  <div id="status-bar"></div>
+
+</body>
+</html>

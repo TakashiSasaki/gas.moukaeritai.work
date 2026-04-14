@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <?!= include('Stylesheet'); ?>
+  <script>
+    // Server-side injected URL
+    window.APP_URL = "<?= appUrl ?>";
+    window.helpWindowRef = null;
+
+    // --- Help UI Functions (Hybrid Strategy) ---
+    
+    // Proposal 3: In-App Modal with iframe
+    function openHelpModal(page) {
+      const modal = document.getElementById('helpModal');
+      const iframe = document.getElementById('helpFrame');
+      const title = document.getElementById('helpModalTitle');
+      if (modal && iframe) {
+        const targetUrl = (window.APP_URL !== '#' ? window.APP_URL : '') + '?p=' + page;
+        iframe.src = targetUrl;
+        title.textContent = page === 'README' ? 'ユーザーガイド' : '開発者情報';
+        modal.style.display = 'flex';
+      }
+    }
+
+    function closeHelpModal() {
+      const modal = document.getElementById('helpModal');
+      const iframe = document.getElementById('helpFrame');
+      if (modal) {
+        modal.style.display = 'none';
+        if (iframe) iframe.src = 'about:blank';
+      }
+    }
+
+    // Proposal 1: Separate Window with specific target
+    function openHelpWindow(page) {
+      const targetUrl = (window.APP_URL !== '#' ? window.APP_URL : '') + '?p=' + page;
+      const targetName = 'DriveShallowMoverHelp'; 
+      window.helpWindowRef = window.open(targetUrl, targetName);
+      if (window.helpWindowRef) window.helpWindowRef.focus();
+    }
+
+    // Sync closing
+    window.addEventListener('beforeunload', function() {
+      if (window.helpWindowRef && !window.helpWindowRef.closed) {
+        window.helpWindowRef.close();
+      }
+    });
+  </script>
+</head>
+<body>
+
+<div class="container">
+  <!-- Header with Icons -->
+  <div class="header-container">
+    <div style="display:flex; align-items:center; gap:12px;">
+      <h2>Drive Shallow Mover</h2>
+      <span class="header-icon" onclick="openHelpModal('README')" title="ユーザーガイドを表示">❓</span>
+      <span class="header-icon" onclick="openHelpModal('AGENTS')" title="開発者情報を表示">🛠️</span>
+    </div>
+    <span id="userInfo" class="user-info">👤 <span id="userEmail">Loading...</span></span>
+  </div>
+
+  <!-- 1. Search Settings Section -->
+  <div id="searchSection" class="section">
+    <div class="accordion-header" onclick="toggleAccordion('searchSection')">
+      <span class="section-title">1. 検索条件の設定 (GUI)</span>
+      <span class="accordion-arrow">▼</span>
+    </div>
+    <div class="results-content">
+      <div class="grid" style="margin-top: 15px;">
+        <div class="field">
+          <label>📂 場所 (Location)</label>
+          <select id="parentType" onchange="updateQuery(true)">
+            <option value="root">マイドライブ直下 ('root')</option>
+            <option value="custom">特定のフォルダID直下</option>
+            <option value="any">場所を問わない</option>
+          </select>
+          <div id="customParentArea" style="display:none; margin-top:5px;" class="input-with-btn">
+            <input type="text" id="customParentId" placeholder="フォルダIDを入力" oninput="updateQuery(true)">
+            <button class="btn btn-outline btn-small" onclick="openPicker('customParentId')">選択</button>
+          </div>
+        </div>
+        
+        <div class="field"><label>🏷️ ファイル名 (Name contains)</label><input type="text" id="fileName" placeholder="例: 2025_レポート" oninput="updateQuery(true)"></div>
+        
+        <div class="field"><label>🚫 除外するファイル名</label>
+          <div class="exclude-inputs">
+            <input type="text" id="fileNameExclude1" placeholder="除外1" oninput="updateQuery(true)">
+            <input type="text" id="fileNameExclude2" placeholder="除外2" oninput="updateQuery(true)">
+            <input type="text" id="fileNameExclude3" placeholder="除外3" oninput="updateQuery(true)">
+            <input type="text" id="fileNameExclude4" placeholder="除外4" oninput="updateQuery(true)">
+            <input type="text" id="fileNameExclude5" placeholder="除外5" oninput="updateQuery(true)">
+          </div>
+        </div>
+        
+        <div class="field">
+          <label>🧩 ファイル形式 (MimeType)</label>
+          <select id="mimeType" onchange="updateQuery(true)">
+            <option value="">すべて</option>
+            <option value="notFolder">フォルダ以外</option>
+            <option value="text/markdown">マークダウン (.md)</option>
+            <option value="application/vnd.google-apps.spreadsheet">スプレッドシート</option>
+            <option value="application/vnd.google-apps.document">ドキュメント</option>
+            <option value="application/vnd.google-apps.presentation">スライド</option>
+            <option value="application/vnd.google-apps.form">Google フォーム</option>
+            <option value="application/pdf">PDF</option>
+            <option value="text/plain">プレーンテキスト</option>
+            <option value="image/">画像全般</option>
+            <option value="video/">動画全般</option>
+            <option value="application/vnd.google-apps.folder">フォルダのみ</option>
+            <option value="application/vnd.google-apps.script">Google Apps Script</option>
+          </select>
+        </div>
+        
+        <div class="field">
+          <label>👤 所有者 (Owner)</label>
+          <select id="ownerType" onchange="updateQuery(true)">
+            <option value="">指定なし</option>
+            <option value="me">自分が所有</option>
+            <option value="notMe">自分以外が所有</option>
+          </select>
+        </div>
+        
+        <div class="field"><label>📝 本文・説明文 (Full text contains)</label><input type="text" id="fullText" placeholder="例: 重要機密" oninput="updateQuery(true)"></div>
+        
+        <div class="filter-group">
+          <label>📅 最終更新日時 (Modified Time)</label>
+          <div class="filter-options">
+            <label class="filter-option-label"><input type="radio" name="dateMode" value="none" checked onchange="toggleDateInputs()"> 指定なし</label>
+            <label class="filter-option-label"><input type="radio" name="dateMode" value="absolute" onchange="toggleDateInputs()"> 日付範囲</label>
+            <label class="filter-option-label"><input type="radio" name="dateMode" value="relative" onchange="toggleDateInputs()"> 相対指定</label>
+            <label class="filter-option-label"><input type="radio" name="dateMode" value="year" onchange="toggleDateInputs()"> 年単位</label>
+          </div>
+          
+          <div id="dateAbsolute" class="filter-inputs input-disabled" style="display:flex;">
+            <div class="filter-input-wrapper"><span>👉 以後:</span><input type="date" id="dateAfter" oninput="updateQuery(true)"></div>
+            <div class="filter-input-wrapper"><span>👈 以前:</span><input type="date" id="dateBefore" oninput="updateQuery(true)"></div>
+          </div>
+          <div id="dateRelative" class="filter-inputs input-disabled" style="display:none;">
+            <div class="filter-input-wrapper"><span>現在から</span><input type="number" id="relativeDays" value="7" min="0" style="width:60px;" oninput="updateQuery(true)"><span>日</span><select id="relativeOperator" onchange="updateQuery(true)"><option value="older">以前</option><option value="newer">以後</option></select></div>
+          </div>
+          <div id="dateYear" class="filter-inputs input-disabled" style="display:none;">
+            <div class="filter-input-wrapper"><span>対象年:</span><select id="selectedYear" onchange="updateQuery(true)"></select><span>(1/1 〜 12/31)</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="query-display-wrapper" onclick="ensureSearchSectionOpen()">
+      <div class="query-header"><label>組み立てられた q パラメータ:</label><button class="btn-copy" id="copyBtn" onclick="event.stopPropagation(); copyQueryToClipboard()">📋 コピー</button></div>
+      <div class="query-content"><code id="qResult">trashed = false</code></div>
+      <div id="saveStatus" class="status-msg"></div>
+    </div>
+    <button class="btn" id="searchBtn" style="margin-top:20px;" onclick="runSearch()">この条件で検索を実行 (最大20件)</button>
+  </div>
+
+  <!-- 2. Results Section -->
+  <div id="resultsSection" class="section" style="display:none;">
+    <div class="accordion-header" onclick="toggleAccordion('resultsSection')">
+      <span class="section-title">2. 検索結果・対象の選択 <span id="itemCountBadge" class="count-badge" style="display:none;">0</span> <span id="selectionCountBadge" class="count-badge" style="display:none;">選択中: 0</span></span>
+      <span class="accordion-arrow">▼</span>
+    </div>
+    <div class="results-content">
+      <div id="loadingSearch" class="loading">検索中...</div>
+      <div class="tabs-container">
+        <div class="tabs">
+          <div id="tabFolders" class="tab" onclick="switchResultTab('folders')">フォルダ <span id="folderTabCount" class="count-badge">0</span></div>
+          <div id="tabFiles" class="tab active" onclick="switchResultTab('files')">ファイル <span id="fileTabCount" class="count-badge">0</span></div>
+        </div>
+        <div id="analyzeBtnContainer"><button class="btn btn-outline btn-small" id="analyzeBtn" onclick="runAnalyzeFolders()">📊 内訳を集計</button></div>
+      </div>
+      <div id="foldersContent" class="tab-content"><table id="folderTable"><thead><tr><th style="width:40px;"><input type="checkbox" id="selectAllFolders" onchange="toggleSelectAll('folders')"></th><th>フォルダ名</th><th>内訳</th><th>最終更新</th></tr></thead><tbody></tbody></table></div>
+      <div id="filesContent" class="tab-content active"><table id="fileTable"><thead><tr><th style="width:40px;"><input type="checkbox" id="selectAllFiles" onchange="toggleSelectAll('files')"></th><th>ファイル名</th><th>最終更新</th><th>サイズ</th></tr></thead><tbody></tbody></table></div>
+      <div id="fetchMoreArea" class="fetch-more-area" style="display:none;">
+        <div class="fetch-more-control"><span>取得件数:</span><select id="fetchLimit"><option value="100" selected>100件</option><option value="500">500件</option><option value="-1">全て</option></select><button class="btn btn-outline" id="fetchAllBtn" onclick="runFetchAll()">追加で読み込む</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Move Section -->
+  <div id="moveSection" class="section" style="display:none;">
+    <span class="section-title">3. ファイルの移動</span>
+    <div class="field"><label>移動先フォルダID</label><div class="input-with-btn"><input type="text" id="destFolderId" placeholder="フォルダIDを入力" oninput="updateDestPath(); updateQuery(true)"><button class="btn btn-outline btn-small" onclick="openPicker('destFolderId')">選択</button></div><div id="destPathDisplay" class="path-display"></div></div>
+    <button class="btn btn-secondary" id="moveBtn" style="margin-top:10px;" onclick="runMove()">選択したアイテムを移動する</button>
+    <div id="moveProgressArea" style="display:none; margin-top:15px; background:#fff; padding:15px; border-radius:4px; border:1px solid #ffe0b2;">
+      <div class="progress-text" id="moveProgressText">準備中...</div>
+      <div class="progress-bar-container"><div id="moveProgressBar" class="progress-bar"></div></div>
+      <div id="moveLog" class="log-area"></div>
+      <div id="moveErrorSummary" class="error-summary"></div>
+    </div>
+  </div>
+
+  <!-- Footer Links -->
+  <footer class="app-footer">
+    <a href="#" onclick="openHelpWindow('README'); return false;">📖 ユーザーガイド (別窓)</a> | 
+    <a href="#" onclick="openHelpWindow('AGENTS'); return false;">🤖 開発者情報 (別窓)</a>
+  </footer>
+</div>
+
+<!-- Modal Dialogs -->
+<div id="folderPickerModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>フォルダを選択<span id="cacheIndicator" class="cache-status" style="display:none;"></span></h3>
+      <div style="display:flex; gap:5px;"><button id="pickerUpBtn" class="btn btn-outline btn-small" disabled>⬆️ 親へ</button><button class="btn btn-outline btn-small" onclick="refreshPicker()">🔄 更新</button><button class="btn btn-outline btn-small" onclick="closePicker()">×</button></div>
+    </div>
+    <div class="breadcrumb" id="pickerBreadcrumb"></div>
+    <div id="createFolderArea" class="create-folder-bar"><div class="create-folder-input-group"><label for="newFolderNameInput">新規フォルダ:</label><input type="text" id="newFolderNameInput" placeholder="フォルダ名を入力"><button id="newFolderSubmitBtn" class="btn btn-small" onclick="runCreateFolder()">作成</button></div></div>
+    <div class="modal-body" id="pickerBody"><div id="folderListContainer"></div></div>
+    <div class="modal-footer"><span id="selectedFolderName" style="margin-right:auto;font-weight:bold;">未選択</span><button class="btn btn-secondary" onclick="closePicker()">キャンセル</button><button class="btn" id="confirmPickBtn" disabled onclick="confirmPicker()">決定</button></div>
+  </div>
+</div>
+
+<!-- Help Modal (Proposal 3) -->
+<div id="helpModal">
+  <div class="modal-content help-content">
+    <div class="modal-header">
+      <h3 id="helpModalTitle">ヘルプ</h3>
+      <button class="btn btn-outline btn-small" onclick="closeHelpModal()">×</button>
+    </div>
+    <div class="modal-body" style="padding:0; height:100%;">
+      <iframe id="helpFrame" src="about:blank" style="width:100%; height:100%; border:none;"></iframe>
+    </div>
+  </div>
+</div>
+
+<script>
+  // --- Global Shared State (Attached to window for JavaScript.html access) ---
+  window.currentFolderIds = [];
+  window.fileNamesMap = {};
+  window.currentNextPageToken = null;
+  window.currentLastQuery = '';
+  window.loadedFilesCount = 0;
+  window.folderCount = 0;
+  window.fileCount = 0;
+  window.currentTargetInputId = '';
+  window.selectedFolderInfo = null;
+  window.currentPickerFolderId = 'root';
+
+  function initApp() {
+    const yearSelect = document.getElementById('selectedYear');
+    if (yearSelect) {
+      const currentYear = new Date().getFullYear();
+      for (let y = currentYear; y >= 2010; y--) {
+        const opt = document.createElement('option');
+        opt.value = y; opt.textContent = y + '年';
+        yearSelect.appendChild(opt);
+      }
+    }
+    document.getElementById('userEmail').textContent = 'preview_user@example.com';
+    updateQuery(false);
+  }
+
+  window.onload = () => { if (typeof google === 'undefined') initApp(); else if (typeof window.initApp === 'function') window.initApp(); };
+
+  // --- Common UI Functions ---
+  function toggleAccordion(id, forceOpen) {
+    const el = document.getElementById(id);
+    if (forceOpen === true) el.classList.remove('accordion-collapsed');
+    else if (forceOpen === false) el.classList.add('accordion-collapsed');
+    else el.classList.toggle('accordion-collapsed');
+  }
+
+  function ensureSearchSectionOpen() { document.getElementById('searchSection').classList.remove('accordion-collapsed'); }
+
+  function switchResultTab(t) {
+    document.querySelectorAll('.tab').forEach(el => el.classList.toggle('active', el.id === (t === 'folders' ? 'tabFolders' : 'tabFiles')));
+    document.getElementById('foldersContent').classList.toggle('active', t === 'folders');
+    document.getElementById('filesContent').classList.toggle('active', t === 'files');
+    document.getElementById('analyzeBtnContainer').style.display = t === 'folders' ? 'block' : 'none';
+  }
+
+  function toggleDateInputs(shouldSave = true) {
+    const mode = document.querySelector('input[name="dateMode"]:checked')?.value || 'none';
+    const groups = { absolute: document.getElementById('dateAbsolute'), relative: document.getElementById('dateRelative'), year: document.getElementById('dateYear') };
+    Object.values(groups).forEach(el => { el.style.display = 'none'; el.classList.add('input-disabled'); el.querySelectorAll('input, select').forEach(i => i.disabled = true); });
+    const target = groups[mode] || groups.absolute;
+    target.style.display = 'flex';
+    if(mode !== 'none') { target.classList.remove('input-disabled'); target.querySelectorAll('input, select').forEach(i => i.disabled = false); }
+    updateQuery(shouldSave);
+  }
+
+  function updateSelectionCount() {
+    const count = document.querySelectorAll('.file-check:checked').length;
+    const badge = document.getElementById('selectionCountBadge');
+    badge.textContent = `選択中: ${count}`;
+    badge.style.display = count > 0 ? 'inline-block' : 'none';
+    ['folders', 'files'].forEach(syncSelectAllCheckbox);
+  }
+
+  function syncSelectAllCheckbox(type) {
+    const tableId = type === 'folders' ? 'folderTable' : 'fileTable';
+    const headerCheckbox = document.getElementById(type === 'folders' ? 'selectAllFolders' : 'selectAllFiles');
+    const checkboxes = document.querySelectorAll(`#${tableId} tbody .file-check`);
+    if (checkboxes.length === 0) { headerCheckbox.checked = false; headerCheckbox.indeterminate = false; return; }
+    const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+    const someChecked = Array.from(checkboxes).some(cb => cb.checked);
+    headerCheckbox.checked = allChecked; headerCheckbox.indeterminate = someChecked && !allChecked;
+  }
+
+  function toggleSelectAll(t) {
+    const checked = document.getElementById(t === 'folders' ? 'selectAllFolders' : 'selectAllFiles').checked;
+    document.querySelectorAll(`#${t === 'folders' ? 'folderTable' : 'fileTable'} tbody .file-check`).forEach(cb => cb.checked = checked);
+    updateSelectionCount();
+  }
+
+  function copyQueryToClipboard() {
+    const text = document.getElementById('qResult').textContent;
+    const temp = document.createElement("textarea"); temp.value = text; document.body.appendChild(temp); temp.select();
+    try { document.execCommand('copy'); const btn = document.getElementById('copyBtn'); const old = btn.textContent; btn.textContent = '✅ コピー完了'; setTimeout(() => btn.textContent = old, 1500); } catch (e) { alert('コピー失敗'); }
+    document.body.removeChild(temp);
+  }
+
+  function updateQuery(shouldSave) {
+    let parts = ['trashed = false'];
+    const val = id => document.getElementById(id)?.value.replace(/'/g, "\\'") || '';
+    const pType = document.getElementById('parentType').value;
+    if (pType === 'root') parts.push("'root' in parents"); else if (pType === 'custom' && val('customParentId')) parts.push(`'${val('customParentId')}' in parents`);
+    document.getElementById('customParentArea').style.display = pType === 'custom' ? 'flex' : 'none';
+    if (val('fileName')) parts.push(`name contains '${val('fileName')}'`);
+    for(let i=1; i<=5; i++) if(val('fileNameExclude'+i)) parts.push(`not name contains '${val('fileNameExclude'+i)}'`);
+    const mime = document.getElementById('mimeType').value;
+    if (mime) {
+      if (mime === 'notFolder') parts.push("mimeType != 'application/vnd.google-apps.folder'");
+      else if (mime === 'text/markdown') parts.push("(mimeType = 'text/markdown' or (mimeType = 'text/plain' and name contains '.md'))");
+      else if (mime.endsWith('/')) parts.push(`mimeType contains '${mime}'`);
+      else parts.push(`mimeType = '${mime}'`);
+    }
+    const owner = document.getElementById('ownerType').value;
+    if (owner === 'me') parts.push("'me' in owners"); else if (owner === 'notMe') parts.push("not 'me' in owners");
+    if (val('fullText')) parts.push(`fullText contains '${val('fullText')}'`);
+    const dateMode = document.querySelector('input[name="dateMode"]:checked')?.value;
+    if (dateMode === 'absolute') {
+      if (val('dateAfter')) parts.push(`modifiedTime >= '${new Date(val('dateAfter')).toISOString()}'`);
+      if (val('dateBefore')) { let d = new Date(val('dateBefore')); d.setHours(23, 59, 59, 999); parts.push(`modifiedTime <= '${d.toISOString()}'`); }
+    } else if (dateMode === 'relative') {
+      const days = parseInt(val('relativeDays')) || 0;
+      const op = document.getElementById('relativeOperator').value === 'older' ? '<' : '>';
+      const targetDate = new Date(); targetDate.setDate(targetDate.getDate() - days);
+      parts.push(`modifiedTime ${op} '${targetDate.toISOString()}'`);
+    } else if (dateMode === 'year') {
+      const year = val('selectedYear');
+      if (year) { parts.push(`modifiedTime >= '${year}-01-01T00:00:00Z'`); parts.push(`modifiedTime <= '${year}-12-31T23:59:59.999Z'`); }
+    }
+    document.getElementById('qResult').textContent = parts.join(' and ');
+    if (shouldSave && typeof window.debounceSave === 'function') window.debounceSave({parentType:pType, customParentId:val('customParentId'), fileName:val('fileName'), fullText:val('fullText'), mimeType:mime, ownerType:owner, destFolderId:val('destFolderId'), dateAfter:val('dateAfter'), dateBefore:val('dateBefore'), relativeDays:val('relativeDays'), relativeOperator:document.getElementById('relativeOperator').value, selectedYear:val('selectedYear'), dateMode:dateMode});
+  }
+
+  function renderTable(files, append) {
+    const ft = document.querySelector('#folderTable tbody'), flt = document.querySelector('#fileTable tbody');
+    if (!append) { ft.innerHTML = ''; flt.innerHTML = ''; window.folderCount = 0; window.fileCount = 0; window.currentFolderIds = []; window.fileNamesMap = {}; }
+    files.forEach(f => {
+      const isF = f.mimeType === 'application/vnd.google-apps.folder';
+      const target = isF ? ft : flt;
+      if (isF) { window.folderCount++; window.currentFolderIds.push(f.id); } else { window.fileCount++; }
+      window.fileNamesMap[f.id] = f.name;
+      const row = document.createElement('tr');
+      row.innerHTML = `<td><input type="checkbox" class="file-check" value="${f.id}" onchange="updateSelectionCount()"></td><td><div class="file-name-container"><span class="file-icon">${getFileIcon(f.mimeType, f.name)}</span><span>${f.name}</span></div></td>${isF ? `<td id="stats-${f.id}" class="stats-cell">-</td>` : ''}<td>${f.modifiedTime ? new Date(f.modifiedTime).toLocaleString() : '-'}</td>${!isF ? `<td>${f.size || '-'}</td>` : ''}`;
+      target.appendChild(row);
+    });
+    document.getElementById('folderTabCount').textContent = window.folderCount; document.getElementById('fileTabCount').textContent = window.fileCount;
+    document.getElementById('itemCountBadge').textContent = window.folderCount + window.fileCount; document.getElementById('itemCountBadge').style.display = 'inline-block';
+    updateSelectionCount();
+    if(!append) switchResultTab(window.fileCount > 0 ? 'files' : 'folders');
+  }
+
+  function getFileIcon(mime, name) {
+    if (mime === 'application/vnd.google-apps.folder') return '📁';
+    if (mime === 'text/markdown' || (name && name.toLowerCase().endsWith('.md'))) return 'Ⓜ️';
+    if (mime.startsWith('image/')) return '📷';
+    return '📄';
+  }
+
+  // Mocks for Preview environment
+  function openPicker() {} function runCreateFolder() {} function runSearch() { renderTable([{id:'m1', name:'Folder', mimeType:'application/vnd.google-apps.folder'}], false); document.getElementById('resultsSection').style.display='block'; document.getElementById('moveSection').style.display='block'; }
+  async function runMove() { alert('Mock Move'); } function runAnalyzeFolders() { alert('Mock Analyze'); } function updateDestPath() {}
+</script>
+
+<?!= include('JavaScript'); ?>
+</body>
+</html>

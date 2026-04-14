@@ -1,0 +1,176 @@
+<script>
+  (function() {
+    console.log('JavaScript.html loaded: Full Production Logic Active');
+
+    const CONCURRENCY_LIMIT = 5;
+    const BATCH_SIZE = 5;
+
+    window.runWithRetry = function(funcName, args, onSuccess, onFailure, onBusy) {
+      google.script.run
+        .withSuccessHandler(onSuccess)
+        .withFailureHandler(err => {
+          const errorMsg = (err && err.message) ? err.message : 'Unknown Network or Server Error';
+          if (errorMsg.includes('SERVER_BUSY') || errorMsg.includes('Service invoked too many times')) {
+            if (onBusy) onBusy();
+            const delay = 1500 + Math.floor(Math.random() * 1000);
+            setTimeout(() => window.runWithRetry(funcName, args, onSuccess, onFailure, onBusy), delay);
+          } else {
+            console.error('GAS Error:', err);
+            if(onFailure) onFailure({ message: errorMsg });
+          }
+        })[funcName](...args);
+    };
+
+    window.initApp = function() {
+      // Dynamic Year Generation
+      const yearSelect = document.getElementById('selectedYear');
+      if (yearSelect) {
+        const currentYear = new Date().getFullYear();
+        for (let y = currentYear; y >= 2010; y--) {
+          const opt = document.createElement('option'); opt.value = y; opt.textContent = y + '年';
+          yearSelect.appendChild(opt);
+        }
+      }
+      // Info & Settings Restore
+      google.script.run.withSuccessHandler(email => { document.getElementById('userEmail').textContent = email; }).getCurrentUserEmail();
+      google.script.run.withSuccessHandler(settings => {
+        if (settings) {
+          const ids = ['parentType', 'customParentId', 'fileName', 'fullText', 'mimeType', 'ownerType', 'destFolderId', 'dateAfter', 'dateBefore', 'relativeDays', 'relativeOperator', 'selectedYear'];
+          ids.forEach(id => { const el = document.getElementById(id); if (el && settings[id] !== undefined) el.value = settings[id]; });
+          if (settings.dateMode) { const rb = document.querySelector(`input[name="dateMode"][value="${settings.dateMode}"]`); if (rb) rb.checked = true; }
+          if (typeof toggleDateInputs === 'function') toggleDateInputs(false);
+          if (typeof updateDestPath === 'function') updateDestPath();
+        }
+        if (typeof updateQuery === 'function') updateQuery(false);
+      }).loadUserSettings();
+    };
+
+    window.debounceSave = function(settings) {
+      if (window.saveTimeout) clearTimeout(window.saveTimeout);
+      const status = document.getElementById('saveStatus'); if(status) status.textContent = '保存中...';
+      window.saveTimeout = setTimeout(() => {
+        google.script.run.withSuccessHandler(() => { if(status) { status.textContent = '設定を自動保存しました'; setTimeout(() => status.textContent = '', 2000); } }).saveUserSettings(settings);
+      }, 1000);
+    };
+
+    // --- Parallel Move with Jitter ---
+    window.runMove = async function() {
+      const destId = document.getElementById('destFolderId').value;
+      const selectedIds = Array.from(document.querySelectorAll('tbody .file-check:checked')).map(c => c.value).filter(v => v && v !== 'on');
+      if (!destId || !selectedIds.length) { alert('移動先フォルダと対象アイテムを選択してください。'); return; }
+      if (!confirm(`${selectedIds.length} 件のアイテムを移動しますか？`)) return;
+
+      const btn = document.getElementById('moveBtn');
+      const startTime = Date.now();
+      const originalBtnText = btn.textContent;
+      let timerInterval = setInterval(() => { btn.textContent = `移動中... (${Math.floor((Date.now() - startTime) / 1000)}秒経過)`; }, 1000);
+      btn.disabled = true;
+
+      document.getElementById('moveProgressArea').style.display = 'block';
+      const logArea = document.getElementById('moveLog'); logArea.innerHTML = ''; 
+      
+      let processedCount = 0, s = 0, e = 0; const errs = [];
+      const chunks = [];
+      for (let i = 0; i < selectedIds.length; i += BATCH_SIZE) chunks.push(selectedIds.slice(i, i + BATCH_SIZE));
+
+      const executeWorker = async (id) => {
+        await new Promise(r => setTimeout(r, Math.random() * 3000)); // Startup Jitter
+        while (chunks.length > 0) {
+          const chunk = chunks.shift();
+          await new Promise(resolve => {
+            window.runWithRetry('moveFiles', [chunk, destId], res => {
+              s += res.success; e += res.error; processedCount += chunk.length;
+              document.getElementById('moveProgressText').textContent = `${processedCount}/${selectedIds.length} 完了`;
+              document.getElementById('moveProgressBar').style.width = Math.round((processedCount / selectedIds.length) * 100) + '%';
+              if(res.error > 0) res.details.forEach(m => { logArea.innerHTML = `<div class="log-item"><span class="log-error">Error</span>: ${m}</div>` + logArea.innerHTML; errs.push(`<li>Batch Error: ${m}</li>`); });
+              resolve();
+            }, err => {
+              const m = err.message || 'Unexpected Error'; e += chunk.length; processedCount += chunk.length;
+              logArea.innerHTML = `<div class="log-item"><span class="log-error">Failure</span>: ${m}</div>` + logArea.innerHTML; errs.push(`<li>Critical Failure: ${m}</li>`);
+              resolve();
+            });
+          });
+        }
+      };
+
+      const workers = []; for (let j = 0; j < CONCURRENCY_LIMIT; j++) workers.push(executeWorker(j));
+      await Promise.all(workers);
+      clearInterval(timerInterval); btn.disabled = false; btn.textContent = originalBtnText;
+
+      if(e > 0) { document.getElementById('moveErrorSummary').innerHTML = '<h4>エラーレポート</h4><ul>' + errs.join('') + '</ul>'; document.getElementById('moveErrorSummary').style.display = 'block'; alert(`完了: 成功${s} 失敗${e}`); }
+      else { alert(`移動成功 (${s}件)`); window.runSearch(); }
+    };
+
+    // Analyze Logic
+    window.runAnalyzeFolders = async function() {
+      if (!window.currentFolderIds || window.currentFolderIds.length === 0) return;
+      const btn = document.getElementById('analyzeBtn'); const orig = btn.textContent;
+      btn.disabled = true; btn.textContent = '集計中...';
+      const ids = [...window.currentFolderIds];
+      const executeWorker = async () => {
+        while (ids.length > 0) {
+          const fid = ids.shift(); const cell = document.getElementById(`stats-${fid}`); if(cell) cell.textContent = '...';
+          await new Promise(resolve => {
+            window.runWithRetry('getSingleFolderStats', [fid], res => {
+              if (res.error) { cell.textContent = 'Err'; } 
+              else { const d = Object.entries(res.counts || {}).map(([t, c]) => `<span class="stat-item">${getFileIcon(t)} ${c}</span>`).join(' '); if(cell) cell.innerHTML = d || '(空)'; }
+              resolve();
+            }, () => { if(cell) cell.textContent = 'Err'; resolve(); });
+          });
+        }
+      };
+      await Promise.all([executeWorker(), executeWorker(), executeWorker()]);
+      btn.disabled = false; btn.textContent = orig;
+    };
+
+    // Picker Logic
+    window.openPicker = function(id) { 
+      window.currentTargetInputId = id; window.selectedFolderInfo = null;
+      document.getElementById('confirmPickBtn').disabled = true; document.getElementById('selectedFolderName').textContent = '未選択';
+      document.getElementById('newFolderNameInput').value = ''; document.getElementById('folderPickerModal').style.display = 'flex';
+      const cur = document.getElementById(id)?.value;
+      if (cur) google.script.run.withSuccessHandler(p => window.loadFolderList(p)).withFailureHandler(() => window.loadFolderList('root')).getParentId(cur);
+      else window.loadFolderList('root');
+    };
+    window.closePicker = function() { document.getElementById('folderPickerModal').style.display = 'none'; };
+    window.refreshPicker = function() { window.loadFolderList(window.currentPickerFolderId || 'root', true); };
+    window.runCreateFolder = function() {
+      const inp = document.getElementById('newFolderNameInput'); const name = inp.value; if (!name) return;
+      const btn = document.getElementById('newFolderSubmitBtn'); const orig = btn.textContent;
+      btn.disabled = true; btn.textContent = '...';
+      window.runWithRetry('createNewFolder', [name, window.currentPickerFolderId || 'root'], () => {
+        btn.disabled = false; btn.textContent = orig; inp.value = ''; window.loadFolderList(window.currentPickerFolderId || 'root', true);
+      }, (e) => { alert(e.message); btn.disabled = false; btn.textContent = orig; });
+    };
+    window.selectFolderItem = function(id, name) {
+      window.selectedFolderInfo = { id, name }; document.getElementById('selectedFolderName').textContent = `選択中: ${name}`;
+      document.getElementById('confirmPickBtn').disabled = false;
+      document.querySelectorAll('.folder-item').forEach(el => el.classList.toggle('selected', el.dataset.id === id));
+    };
+    window.confirmPicker = function() { if (window.selectedFolderInfo) { const inp = document.getElementById(window.currentTargetInputId); if (inp) { inp.value = window.selectedFolderInfo.id; updateQuery(true); updateDestPath(); } window.closePicker(); } };
+    window.loadFolderList = function(pid, bypass = false) {
+      const body = document.getElementById('pickerBody'); const bread = document.getElementById('pickerBreadcrumb'); const ind = document.getElementById('cacheIndicator');
+      window.currentPickerFolderId = pid; window.selectedFolderInfo = null; document.getElementById('confirmPickBtn').disabled = true; document.getElementById('selectedFolderName').textContent = '未選択';
+      body.innerHTML = '<div style="padding:20px; text-align:center;">読み込み中...</div>';
+      window.runWithRetry('getChildFolders', [pid, bypass], (res) => {
+        const { items, path, fromCache } = res;
+        if (ind) { ind.style.display = 'inline-block'; ind.textContent = fromCache ? 'キャッシュ' : '最新'; ind.className = fromCache ? 'cache-status status-cached' : 'cache-status status-live'; }
+        bread.innerHTML = ''; const upBtn = document.getElementById('pickerUpBtn');
+        if (path.length > 1) { const p = path[path.length - 2]; upBtn.onclick = () => window.loadFolderList(p.id); upBtn.disabled = false; } else upBtn.disabled = true;
+        path.forEach((p, idx) => {
+          const s = document.createElement('span'); s.textContent = p.name;
+          if (idx < path.length - 1) { s.className = 'crumb-link'; s.onclick = () => window.loadFolderList(p.id); bread.appendChild(s); bread.appendChild(document.createTextNode(' > ')); } 
+          else { s.style.fontWeight = 'bold'; bread.appendChild(s); }
+        });
+        body.innerHTML = items.length === 0 ? '<div style="padding:20px; text-align:center; color:#888;">フォルダなし</div>' : '';
+        items.forEach(f => { const d = document.createElement('div'); d.className = 'folder-item'; d.dataset.id = f.id; d.innerHTML = `📁 <span>${f.name}</span>`; d.onclick = () => window.selectFolderItem(f.id, f.name); d.ondblclick = () => window.loadFolderList(f.id); body.appendChild(d); });
+      }, e => { body.innerHTML = `<div style="padding:20px; color:red;">エラー: ${e.message}</div>`; });
+    };
+    window.updateDestPath = function() {
+      const fid = document.getElementById('destFolderId').value; const disp = document.getElementById('destPathDisplay');
+      if (!fid) { disp.textContent = ''; return; } disp.textContent = '確認中...';
+      if (window.pathDebounceTimer) clearTimeout(window.pathDebounceTimer);
+      window.pathDebounceTimer = setTimeout(() => { google.script.run.withSuccessHandler(p => { disp.textContent = p ? '📂 ' + p.join(' > ') : '❌ エラー'; }).withFailureHandler(() => { disp.textContent = '❌ エラー'; }).getFolderPath(fid); }, 500);
+    };
+  })();
+</script>
