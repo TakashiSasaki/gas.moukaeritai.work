@@ -17,10 +17,10 @@ jobs:
       (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success')
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout gas-pull branch
+      - name: Checkout default branch
         uses: actions/checkout@v4
         with:
-          ref: gas-pull
+          ref: gas.moukaeritai.work
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -37,7 +37,7 @@ jobs:
           if [ -n "$(git status --porcelain)" ]; then
             git add .
             git commit -m "Update metadata.json files"
-            git push origin gas-pull
+            git push origin HEAD:gas.moukaeritai.work
           else
             echo "No changes detected, skipping commit"
           fi

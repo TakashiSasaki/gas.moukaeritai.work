@@ -9,14 +9,10 @@ jobs:
       contents: write # リポジトリへの書き込み権限を許可
 
     steps:
-      - name: Checkout gas-pull branch
+      - name: Checkout default branch
         uses: actions/checkout@v4
         with:
-          ref: gas-pull # 必ず gas-pull ブランチをチェックアウト
-          # gas-pull ブランチが存在しない場合でもエラーにならないように設定
-          # fetch-depth: 0 はすべてのブランチと履歴を取得
-          # fetch-depth: 1 は最新コミットのみを取得
-          # ブランチが存在しない場合は fetch-depth: 1 を試します。
+          ref: gas.moukaeritai.work
           fetch-depth: 1
 
       - name: Setup Node.js
@@ -56,12 +52,11 @@ jobs:
             echo "changed=false"
           fi
 
-      - name: Commit and push changes to gas-pull branch
+      - name: Commit and push changes to the default branch
         if: steps.check-changed.outputs.changed == 'true'
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add clasp-list.txt clasp-list.json
           git commit -m "Update Apps Script projects list and JSON"
-          # gas-pull ブランチに強制プッシュ
-          git push origin gas-pull --force
+          git push origin HEAD:gas.moukaeritai.work

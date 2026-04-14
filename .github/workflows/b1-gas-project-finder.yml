@@ -7,10 +7,10 @@ jobs:
   fetch_and_commit:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout gas-pull branch
+      - name: Checkout default branch
         uses: actions/checkout@v3
         with:
-          ref: gas-pull
+          ref: gas.moukaeritai.work
 
       - name: Fetch JSON data
         id: fetch_json
@@ -47,6 +47,6 @@ jobs:
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           git add gas-project-finder.json
           git commit -m "Update gas-project-finder.json with new data"
-          git push origin gas-pull
+          git push origin HEAD:gas.moukaeritai.work
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

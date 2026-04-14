@@ -2,9 +2,9 @@
 """
 clasp-pull.py
 
-Iterate over all immediate subdirectories of the current working directory.
-For each subdirectory containing a .clasp.json file, check if update is needed.
-If needed, change into that directory and execute `clasp pull`, then fetch and save 
+Iterate over all known Apps Script project directories in the repository.
+For each directory containing a .clasp.json file, check if update is needed.
+If needed, change into that directory and execute `clasp pull`, then fetch and save
 deployments and versions.
 """
 import os
@@ -15,6 +15,8 @@ import re
 import urllib.request
 import urllib.error
 import time
+
+from project_paths import iter_project_dirs
 
 def parse_deployments(raw_text):
     """
@@ -190,7 +192,7 @@ def run_clasp_with_retry(cmd, cwd=None, capture_output=False, retries=3):
 
 def main():
     base_dir = os.getcwd()
-    entries = os.listdir(base_dir)
+    project_dirs = list(iter_project_dirs(base_dir))
     
     # Check clasp version
     try:
@@ -205,84 +207,82 @@ def main():
     if not access_token:
         print("Warning: Could not read access token from .clasprc.json. Optimization (skipping unchanged projects) will be disabled. Proceeding with full pull.", file=sys.stderr)
 
-    for entry in entries:
-        project_dir = os.path.join(base_dir, entry)
+    for project_dir in project_dirs:
+        entry = os.path.relpath(project_dir, base_dir)
         clasp_config = os.path.join(project_dir, '.clasp.json')
+        print(f"Processing project '{entry}'...")
 
-        if os.path.isdir(project_dir) and os.path.isfile(clasp_config):
-            print(f"Processing project '{entry}'...")
-            
-            should_pull = True
-            script_id = None
-            remote_update_time = None
-            
-            if access_token:
-                try:
-                    with open(clasp_config, 'r') as f:
-                        cfg = json.load(f)
-                        script_id = cfg.get('scriptId')
-                except:
-                    pass
-                
-                if script_id:
-                    remote_update_time = get_remote_update_time(script_id, access_token)
-                    local_last_updated = get_local_last_updated(project_dir)
-                    
-                    if remote_update_time and local_last_updated:
-                        if remote_update_time <= local_last_updated:
-                             print(f"  Skipping pull: Remote ({remote_update_time}) <= Local ({local_last_updated})")
-                             should_pull = False
-                        else:
-                             print(f"  Update needed: Remote ({remote_update_time}) > Local ({local_last_updated})")
-                    elif not remote_update_time:
-                         print("  Pulling: Could not fetch remote metadata.")
-                    elif not local_last_updated:
-                         print("  Pulling: No local metadata.")
+        should_pull = True
+        script_id = None
+        remote_update_time = None
 
-            if should_pull:
-                try:
-                    # 1) Pull latest files via shell
-                    print("  Running `clasp pull` via shell...")
-                    run_clasp_with_retry('clasp pull', cwd=project_dir)
+        if access_token:
+            try:
+                with open(clasp_config, 'r') as f:
+                    cfg = json.load(f)
+                    script_id = cfg.get('scriptId')
+            except:
+                pass
 
-                    # 2) Fetch deployments via shell
-                    print("  Fetching deployments via shell...")
-                    proc_dep = run_clasp_with_retry(
-                        'clasp deployments',
-                        cwd=project_dir,
-                        capture_output=True
-                    )
-                    raw_dep = proc_dep.stdout
-                    with open(os.path.join(project_dir, 'deployments.txt'), 'w', encoding='utf-8') as f:
-                        f.write(raw_dep)
-                    deps = parse_deployments(raw_dep)
-                    with open(os.path.join(project_dir, 'deployments.json'), 'w', encoding='utf-8') as f:
-                        json.dump(deps, f, ensure_ascii=False, indent=2)
+            if script_id:
+                remote_update_time = get_remote_update_time(script_id, access_token)
+                local_last_updated = get_local_last_updated(project_dir)
 
-                    # 3) Fetch versions via shell
-                    print("  Fetching versions via shell...")
-                    proc_ver = run_clasp_with_retry(
-                        'clasp versions',
-                        cwd=project_dir,
-                        capture_output=True
-                    )
-                    raw_ver = proc_ver.stdout
-                    with open(os.path.join(project_dir, 'versions.txt'), 'w', encoding='utf-8') as f:
-                        f.write(raw_ver)
-                    vers = parse_versions(raw_ver)
-                    with open(os.path.join(project_dir, 'versions.json'), 'w', encoding='utf-8') as f:
-                        json.dump(vers, f, ensure_ascii=False, indent=2)
-                    
-                    # Update metadata if we have the time
-                    if remote_update_time:
-                        update_local_metadata(project_dir, remote_update_time)
+                if remote_update_time and local_last_updated:
+                    if remote_update_time <= local_last_updated:
+                         print(f"  Skipping pull: Remote ({remote_update_time}) <= Local ({local_last_updated})")
+                         should_pull = False
+                    else:
+                         print(f"  Update needed: Remote ({remote_update_time}) > Local ({local_last_updated})")
+                elif not remote_update_time:
+                     print("  Pulling: Could not fetch remote metadata.")
+                elif not local_last_updated:
+                     print("  Pulling: No local metadata.")
 
-                    print(f"  Completed project '{entry}'.")
+        if should_pull:
+            try:
+                # 1) Pull latest files via shell
+                print("  Running `clasp pull` via shell...")
+                run_clasp_with_retry('clasp pull', cwd=project_dir)
 
-                except subprocess.CalledProcessError as e:
-                    print(f"Error: command failed in {entry}: {e}", file=sys.stderr)
-                finally:
-                    pass  # We used cwd argument, so we don't need to chdir back
+                # 2) Fetch deployments via shell
+                print("  Fetching deployments via shell...")
+                proc_dep = run_clasp_with_retry(
+                    'clasp deployments',
+                    cwd=project_dir,
+                    capture_output=True
+                )
+                raw_dep = proc_dep.stdout
+                with open(os.path.join(project_dir, 'deployments.txt'), 'w', encoding='utf-8') as f:
+                    f.write(raw_dep)
+                deps = parse_deployments(raw_dep)
+                with open(os.path.join(project_dir, 'deployments.json'), 'w', encoding='utf-8') as f:
+                    json.dump(deps, f, ensure_ascii=False, indent=2)
+
+                # 3) Fetch versions via shell
+                print("  Fetching versions via shell...")
+                proc_ver = run_clasp_with_retry(
+                    'clasp versions',
+                    cwd=project_dir,
+                    capture_output=True
+                )
+                raw_ver = proc_ver.stdout
+                with open(os.path.join(project_dir, 'versions.txt'), 'w', encoding='utf-8') as f:
+                    f.write(raw_ver)
+                vers = parse_versions(raw_ver)
+                with open(os.path.join(project_dir, 'versions.json'), 'w', encoding='utf-8') as f:
+                    json.dump(vers, f, ensure_ascii=False, indent=2)
+
+                # Update metadata if we have the time
+                if remote_update_time:
+                    update_local_metadata(project_dir, remote_update_time)
+
+                print(f"  Completed project '{entry}'.")
+
+            except subprocess.CalledProcessError as e:
+                print(f"Error: command failed in {entry}: {e}", file=sys.stderr)
+            finally:
+                pass  # We used cwd argument, so we don't need to chdir back
 
     print("All projects processed.")
 

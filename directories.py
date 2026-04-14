@@ -5,23 +5,24 @@ import os
 import json
 import sys
 
+from project_paths import iter_project_dirs
+
 def main():
     result = {}
     base_dir = os.getcwd()
 
-    for entry in os.listdir(base_dir):
-        subdir_path = os.path.join(base_dir, entry)
+    for subdir_path in iter_project_dirs(base_dir):
+        entry = os.path.basename(subdir_path)
         clasp_path = os.path.join(subdir_path, '.clasp.json')
 
-        if os.path.isdir(subdir_path) and os.path.isfile(clasp_path):
-            try:
-                with open(clasp_path, 'r', encoding='utf-8') as f:
-                    data = json.load(f)
-                    script_id = data.get('scriptId')
-                    if script_id:
-                        result[entry] = script_id
-            except (json.JSONDecodeError, IOError) as e:
-                print(f"Warning: Failed to read {clasp_path}: {e}", file=sys.stderr)
+        try:
+            with open(clasp_path, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                script_id = data.get('scriptId')
+                if script_id:
+                    result[entry] = script_id
+        except (json.JSONDecodeError, IOError) as e:
+            print(f"Warning: Failed to read {clasp_path}: {e}", file=sys.stderr)
 
     print(json.dumps(result, ensure_ascii=False, indent=2))
 

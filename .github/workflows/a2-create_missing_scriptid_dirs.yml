@@ -15,10 +15,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout gas-pull branch
+      - name: Checkout default branch
         uses: actions/checkout@v4
         with:
-          ref: gas-pull
+          ref: gas.moukaeritai.work
           fetch-depth: 1
 
       - name: Set up Python
@@ -47,6 +47,6 @@ jobs:
           if git diff --cached --exit-code; then
             echo "No new files to commit."
           else
-            git commit -m "Add missing ScriptID directories and .clasp.json files"
-            git push origin gas-pull
+            git commit -m "Add missing projects directories and .clasp.json files"
+            git push origin HEAD:gas.moukaeritai.work
           fi

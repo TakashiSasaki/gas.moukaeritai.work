@@ -18,6 +18,8 @@ import json
 import argparse
 import sys
 
+from project_paths import get_projects_root, iter_project_dirs
+
 
 def parse_input_file(input_path):
     """
@@ -33,6 +35,8 @@ def parse_input_file(input_path):
             line = line.strip()
             if not line:
                 continue
+            if "https://script.google.com/d/" not in line:
+                continue
             parts = line.split()
             human_name = parts[0]
             url = parts[-1]
@@ -47,23 +51,18 @@ def parse_input_file(input_path):
 
 def load_existing_scriptids(base_path=os.getcwd()):
     """
-    Scan each subdirectory under base_path, load .clasp.json if present,
-    and collect the ScriptIDs found.
+    Scan known project directories under base_path and collect tracked ScriptIDs.
     """
     existing = set()
-    for entry in os.listdir(base_path):
-        dir_path = os.path.join(base_path, entry)
-        if not os.path.isdir(dir_path):
-            continue
+    for dir_path in iter_project_dirs(base_path):
         config_path = os.path.join(dir_path, '.clasp.json')
-        if os.path.isfile(config_path):
-            try:
-                data = json.load(open(config_path, encoding='utf-8'))
-                sid = data.get('scriptId')
-                if sid:
-                    existing.add(sid)
-            except json.JSONDecodeError:
-                print(f"Warning: invalid JSON in {config_path}", file=sys.stderr)
+        try:
+            data = json.load(open(config_path, encoding='utf-8'))
+            sid = data.get('scriptId')
+            if sid:
+                existing.add(sid)
+        except json.JSONDecodeError:
+            print(f"Warning: invalid JSON in {config_path}", file=sys.stderr)
     return existing
 
 
@@ -86,6 +85,7 @@ def main():
         return
 
     existing_ids = load_existing_scriptids()
+    projects_root = get_projects_root()
 
     missing = [ (sid, name) for sid, name in entries if sid not in existing_ids ]
     count = len(missing)
@@ -93,7 +93,7 @@ def main():
 
     for idx, (script_id, human_name) in enumerate(missing, start=1):
         print(f"[{idx}/{count}] Missing: {script_id} ({human_name})")
-        dir_name = script_id
+        dir_name = os.path.join(projects_root, script_id)
         if args.dry_run:
             continue
         # Create the directory

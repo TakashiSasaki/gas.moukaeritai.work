@@ -16,10 +16,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout gas-pull branch
+      - name: Checkout default branch
         uses: actions/checkout@v3
         with:
-          ref: gas-pull
+          ref: gas.moukaeritai.work
           persist-credentials: true
           fetch-depth: 0
 
@@ -43,8 +43,8 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           if [ -n "$(git status --porcelain)" ]; then
             git add .
-            git commit -m "chore: daily sync GAS → gas-pull"
-            git push origin gas-pull
+            git commit -m "chore: sync GAS projects"
+            git push origin HEAD:gas.moukaeritai.work
           else
             echo "No changes detected, skipping commit"
           fi
