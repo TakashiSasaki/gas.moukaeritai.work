@@ -44,9 +44,9 @@ This chain fetches external tracking data and ensures directory-level metadata i
     - **Trigger**: 3 times daily (`45 8,16,0 * * *`) or manual dispatch.
     - **Action**: Fetches remote tracking data from a web app.
     - **Output**: Updates `gas-project-finder.json`.
-    - **Next**: Triggers `generate-metadata`.
+    - **Next**: Triggers `b2-generate-metadata`.
 
-2.  **[generate-metadata.yml](generate-metadata.yml)**
+2.  **[b2-generate-metadata.yml](b2-generate-metadata.yml)**
     - **Trigger**: Completion of `b1-gas-project-finder`.
     - **Action**: Runs `manifest.py`.
     - **Output**: Updates `metadata.json` files within each project directory.
@@ -63,7 +63,7 @@ graph TD
     end
 
     subgraph "Chain B: Metadata & Discovery"
-        B1["b1-gas-project-finder<br/>(Schedule: 3x/day)"] -->|workflow_run| B2["generate-metadata"]
+        B1["b1-gas-project-finder<br/>(Schedule: 3x/day)"] -->|workflow_run| B2["b2-generate-metadata"]
     end
 
     style A1 fill:#d4f1f9,stroke:#333
@@ -175,7 +175,7 @@ This workflow fetches high-level project metadata from an external Google Apps S
 
 ---
 
-### generate-metadata.yml
+### b2-generate-metadata.yml
 This workflow compiles various data sources into a per-directory `metadata.json` for easy access by other tools or the UI.
 
 #### Inputs & Dependencies
