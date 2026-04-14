@@ -16,5 +16,6 @@
       "description": "web app meta-version"
     }
   ],
-  "titleByClaspList": "Unicode Normalization Sandbox"
+  "titleByClaspList": "Unicode Normalization Sandbox",
+  "titleByDriveApi": "Unicode Normalization Sandbox"
 }

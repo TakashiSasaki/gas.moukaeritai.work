@@ -16,5 +16,6 @@
       "description": ""
     }
   ],
-  "titleByClaspList": "read-only-datastore-admin"
+  "titleByClaspList": "read-only-datastore-admin",
+  "titleByDriveApi": "read-only-datastore-admin"
 }

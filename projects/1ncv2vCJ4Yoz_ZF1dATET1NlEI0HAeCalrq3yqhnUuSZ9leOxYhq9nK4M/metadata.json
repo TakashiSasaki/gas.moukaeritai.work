@@ -16,5 +16,6 @@
       "description": "release v5"
     }
   ],
-  "titleByClaspList": "dns.moukaeritai.work"
+  "titleByClaspList": "dns.moukaeritai.work",
+  "titleByDriveApi": "dns.moukaeritai.work"
 }

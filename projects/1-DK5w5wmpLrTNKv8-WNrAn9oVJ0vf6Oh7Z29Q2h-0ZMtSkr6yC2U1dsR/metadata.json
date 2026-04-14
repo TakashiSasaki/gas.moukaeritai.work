@@ -11,5 +11,6 @@
       "description": ""
     }
   ],
-  "titleByClaspList": "URL Bookmark parser"
+  "titleByClaspList": "URL Bookmark parser",
+  "titleByDriveApi": "URL Bookmark parser"
 }

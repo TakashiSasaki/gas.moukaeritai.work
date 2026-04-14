@@ -11,5 +11,6 @@
       "description": ""
     }
   ],
-  "titleByClaspList": "notion-page-title-exporter"
+  "titleByClaspList": "notion-page-title-exporter",
+  "titleByDriveApi": "notion-page-title-exporter"
 }

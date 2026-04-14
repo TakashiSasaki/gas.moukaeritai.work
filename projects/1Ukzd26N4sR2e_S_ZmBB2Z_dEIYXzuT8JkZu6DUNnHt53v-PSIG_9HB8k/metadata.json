@@ -16,5 +16,6 @@
       "description": "testing authorization URL"
     }
   ],
-  "titleByClaspList": "Google Cloud Resource Manager Sandbox"
+  "titleByClaspList": "Google Cloud Resource Manager Sandbox",
+  "titleByDriveApi": "Google Cloud Resource Manager Sandbox"
 }

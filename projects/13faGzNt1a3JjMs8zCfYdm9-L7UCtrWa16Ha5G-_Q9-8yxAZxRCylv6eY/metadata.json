@@ -11,5 +11,6 @@
       "description": ""
     }
   ],
-  "titleByClaspList": "Google Driveの一覧を取得するアドオン"
+  "titleByClaspList": "Google Driveの一覧を取得するアドオン",
+  "titleByDriveApi": "Google Driveの一覧を取得するアドオン"
 }

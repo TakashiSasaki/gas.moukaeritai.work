@@ -16,5 +16,6 @@
       "description": "web app meta-version"
     }
   ],
-  "titleByClaspList": "Google Apps Script Project Browser"
+  "titleByClaspList": "Google Apps Script Project Browser",
+  "titleByDriveApi": "Google Apps Script Project Browser"
 }

@@ -16,5 +16,6 @@
       "description": "公開用 Version 5"
     }
   ],
-  "titleByClaspList": "Calendar Log"
+  "titleByClaspList": "Calendar Log",
+  "titleByDriveApi": "Calendar Log"
 }

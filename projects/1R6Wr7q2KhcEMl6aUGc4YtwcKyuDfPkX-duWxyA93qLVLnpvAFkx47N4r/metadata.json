@@ -16,5 +16,6 @@
       "description": "Web app only"
     }
   ],
-  "titleByClaspList": "Google Colaboratory Cell Link"
+  "titleByClaspList": "Google Colaboratory Cell Link",
+  "titleByDriveApi": "Google Colaboratory Cell Link"
 }

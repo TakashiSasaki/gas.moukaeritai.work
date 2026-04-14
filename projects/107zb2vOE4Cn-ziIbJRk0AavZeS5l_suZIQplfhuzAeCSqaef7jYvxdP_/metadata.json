@@ -26,5 +26,6 @@
       "description": ""
     }
   ],
-  "titleByClaspList": "Public ScriptCache"
+  "titleByClaspList": "Public ScriptCache",
+  "titleByDriveApi": "Public ScriptCache"
 }

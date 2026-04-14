@@ -16,5 +16,6 @@
       "description": "web app meta-version"
     }
   ],
-  "titleByClaspList": "Javascript Proxy"
+  "titleByClaspList": "Javascript Proxy",
+  "titleByDriveApi": "Javascript Proxy"
 }

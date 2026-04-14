@@ -16,5 +16,6 @@
       "description": "web app meta-version"
     }
   ],
-  "titleByClaspList": "kenqweb2 to researchmap CSV converter"
+  "titleByClaspList": "kenqweb2 to researchmap CSV converter",
+  "titleByDriveApi": "kenqweb2 to researchmap CSV converter"
 }

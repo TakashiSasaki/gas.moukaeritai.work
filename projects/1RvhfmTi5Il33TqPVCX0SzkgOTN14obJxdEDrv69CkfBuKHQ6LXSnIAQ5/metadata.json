@@ -16,5 +16,6 @@
       "description": "web app meta-version"
     }
   ],
-  "titleByClaspList": "Cache Clipboard"
+  "titleByClaspList": "Cache Clipboard",
+  "titleByDriveApi": "Cache Clipboard"
 }

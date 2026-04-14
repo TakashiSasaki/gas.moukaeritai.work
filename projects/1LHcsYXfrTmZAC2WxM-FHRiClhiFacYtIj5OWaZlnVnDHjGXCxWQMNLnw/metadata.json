@@ -16,5 +16,6 @@
       "description": "web app meta-version"
     }
   ],
-  "titleByClaspList": "Mozilla PDF.js"
+  "titleByClaspList": "Mozilla PDF.js",
+  "titleByDriveApi": "Mozilla PDF.js"
 }

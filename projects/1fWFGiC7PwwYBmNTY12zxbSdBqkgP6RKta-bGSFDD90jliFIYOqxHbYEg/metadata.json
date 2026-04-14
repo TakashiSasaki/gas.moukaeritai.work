@@ -16,5 +16,6 @@
       "description": "initial deployment"
     }
   ],
-  "titleByClaspList": "DocImageResizer"
+  "titleByClaspList": "DocImageResizer",
+  "titleByDriveApi": "DocImageResizer"
 }

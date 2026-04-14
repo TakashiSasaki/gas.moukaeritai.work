@@ -21,5 +21,6 @@
       "description": "Basic functions work"
     }
   ],
-  "titleByClaspList": "ObjectsSheet"
+  "titleByClaspList": "ObjectsSheet",
+  "titleByDriveApi": "ObjectsSheet"
 }

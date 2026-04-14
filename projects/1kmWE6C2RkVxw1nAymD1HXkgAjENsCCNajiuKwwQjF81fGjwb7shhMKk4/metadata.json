@@ -11,5 +11,6 @@
       "description": ""
     }
   ],
-  "titleByClaspList": "FileChooser"
+  "titleByClaspList": "FileChooser",
+  "titleByDriveApi": "FileChooser"
 }

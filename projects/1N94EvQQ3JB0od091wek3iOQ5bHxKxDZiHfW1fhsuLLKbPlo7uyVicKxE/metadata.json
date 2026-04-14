@@ -11,5 +11,6 @@
       "description": ""
     }
   ],
-  "titleByClaspList": "Script Cache"
+  "titleByClaspList": "Script Cache",
+  "titleByDriveApi": "Script Cache"
 }

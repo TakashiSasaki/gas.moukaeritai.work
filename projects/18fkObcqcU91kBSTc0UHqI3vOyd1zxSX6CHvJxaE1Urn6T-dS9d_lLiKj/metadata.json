@@ -26,5 +26,6 @@
       "description": "mock"
     }
   ],
-  "titleByClaspList": "DriveMetaViewer"
+  "titleByClaspList": "DriveMetaViewer",
+  "titleByDriveApi": "DriveMetaViewer"
 }

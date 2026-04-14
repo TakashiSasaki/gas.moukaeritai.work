@@ -16,5 +16,6 @@
       "description": "公開用 v7"
     }
   ],
-  "titleByClaspList": "Android package list"
+  "titleByClaspList": "Android package list",
+  "titleByDriveApi": "Android package list"
 }

@@ -16,5 +16,6 @@
       "description": "リリース版"
     }
   ],
-  "titleByClaspList": "Web Clip Stash"
+  "titleByClaspList": "Web Clip Stash",
+  "titleByDriveApi": "Web Clip Stash"
 }

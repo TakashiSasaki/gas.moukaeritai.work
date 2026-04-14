@@ -16,5 +16,6 @@
       "description": ""
     }
   ],
-  "titleByClaspList": "Googleドライブ内文書一覧"
+  "titleByClaspList": "Googleドライブ内文書一覧",
+  "titleByDriveApi": "Googleドライブ内文書一覧"
 }

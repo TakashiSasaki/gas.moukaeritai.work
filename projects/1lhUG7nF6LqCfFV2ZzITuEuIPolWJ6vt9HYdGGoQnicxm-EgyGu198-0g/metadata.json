@@ -16,5 +16,6 @@
       "description": "web app meta-version"
     }
   ],
-  "titleByClaspList": "松山市プレミアム商品券"
+  "titleByClaspList": "松山市プレミアム商品券",
+  "titleByDriveApi": "松山市プレミアム商品券"
 }

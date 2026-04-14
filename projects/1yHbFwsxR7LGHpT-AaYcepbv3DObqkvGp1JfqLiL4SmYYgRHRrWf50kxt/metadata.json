@@ -16,5 +16,6 @@
       "description": ""
     }
   ],
-  "titleByClaspList": "SheetHelper"
+  "titleByClaspList": "SheetHelper",
+  "titleByDriveApi": "SheetHelper"
 }

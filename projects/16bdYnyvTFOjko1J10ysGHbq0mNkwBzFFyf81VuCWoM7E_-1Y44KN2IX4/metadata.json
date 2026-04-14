@@ -16,5 +16,6 @@
       "description": "公開用 Version 9"
     }
   ],
-  "titleByClaspList": "GAS Project Finder"
+  "titleByClaspList": "GAS Project Finder",
+  "titleByDriveApi": "GAS Project Finder"
 }

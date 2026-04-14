@@ -21,5 +21,6 @@
       "description": "devなURLを開くにはまず一度はデプロイしないといかんらしい"
     }
   ],
-  "titleByClaspList": "File Triage"
+  "titleByClaspList": "File Triage",
+  "titleByDriveApi": "File Triage"
 }

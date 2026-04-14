@@ -11,5 +11,6 @@
       "description": ""
     }
   ],
-  "titleByClaspList": "Addon Helper"
+  "titleByClaspList": "Addon Helper",
+  "titleByDriveApi": "Addon Helper"
 }

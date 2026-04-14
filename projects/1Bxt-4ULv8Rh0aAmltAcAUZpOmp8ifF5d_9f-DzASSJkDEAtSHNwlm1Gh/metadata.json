@@ -11,5 +11,6 @@
       "description": ""
     }
   ],
-  "titleByClaspList": "URI"
+  "titleByClaspList": "URI",
+  "titleByDriveApi": "URI"
 }

@@ -11,5 +11,6 @@
       "description": ""
     }
   ],
-  "titleByClaspList": "Gmail Addon"
+  "titleByClaspList": "Gmail Addon",
+  "titleByDriveApi": "Gmail Addon"
 }

@@ -26,5 +26,6 @@
       "description": "2025-05-21 DEMO"
     }
   ],
-  "titleByClaspList": "Moodle true/false quiz validator"
+  "titleByClaspList": "Moodle true/false quiz validator",
+  "titleByDriveApi": "Moodle true/false quiz validator"
 }

@@ -16,5 +16,6 @@
       "description": "更新更新更新"
     }
   ],
-  "titleByClaspList": "Docsタイトル提案アドイン"
+  "titleByClaspList": "Docsタイトル提案アドイン",
+  "titleByDriveApi": "Docsタイトル提案アドイン"
 }

@@ -11,5 +11,6 @@
       "description": ""
     }
   ],
-  "titleByClaspList": "StringEx"
+  "titleByClaspList": "StringEx",
+  "titleByDriveApi": "StringEx"
 }

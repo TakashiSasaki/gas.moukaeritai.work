@@ -16,5 +16,6 @@
       "description": "バージョン5"
     }
   ],
-  "titleByClaspList": "Drive Shallow Mover"
+  "titleByClaspList": "Drive Shallow Mover",
+  "titleByDriveApi": "Drive Shallow Mover"
 }

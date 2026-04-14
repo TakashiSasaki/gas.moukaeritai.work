@@ -11,5 +11,6 @@
       "description": ""
     }
   ],
-  "titleByClaspList": "Show Google Tasks"
+  "titleByClaspList": "Show Google Tasks",
+  "titleByDriveApi": "Show Google Tasks"
 }

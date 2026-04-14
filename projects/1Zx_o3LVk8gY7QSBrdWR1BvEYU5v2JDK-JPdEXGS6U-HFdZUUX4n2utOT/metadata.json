@@ -16,5 +16,6 @@
       "description": "動作テスト"
     }
   ],
-  "titleByClaspList": "Anonymous Cache"
+  "titleByClaspList": "Anonymous Cache",
+  "titleByDriveApi": "Anonymous Cache"
 }

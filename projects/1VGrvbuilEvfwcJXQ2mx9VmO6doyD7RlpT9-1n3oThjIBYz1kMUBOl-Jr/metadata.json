@@ -16,5 +16,6 @@
       "description": "web app meta-version"
     }
   ],
-  "titleByClaspList": "物件選択アンケート"
+  "titleByClaspList": "物件選択アンケート",
+  "titleByDriveApi": "物件選択アンケート"
 }

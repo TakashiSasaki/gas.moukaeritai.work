@@ -16,5 +16,6 @@
       "description": "web app meta-version"
     }
   ],
-  "titleByClaspList": "Snippets For DriveApp"
+  "titleByClaspList": "Snippets For DriveApp",
+  "titleByDriveApi": "Snippets For DriveApp"
 }

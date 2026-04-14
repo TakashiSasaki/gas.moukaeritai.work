@@ -21,5 +21,6 @@
       "description": "GCPでプロジェクトを作成し、スコープと認可ページを作成した"
     }
   ],
-  "titleByClaspList": "Google Takeout File Browser"
+  "titleByClaspList": "Google Takeout File Browser",
+  "titleByDriveApi": "Google Takeout File Browser"
 }

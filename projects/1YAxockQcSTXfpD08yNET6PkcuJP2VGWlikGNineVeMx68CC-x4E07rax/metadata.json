@@ -11,5 +11,6 @@
       "description": ""
     }
   ],
-  "titleByClaspList": "GAS Library Viewer"
+  "titleByClaspList": "GAS Library Viewer",
+  "titleByDriveApi": "GAS Library Viewer"
 }

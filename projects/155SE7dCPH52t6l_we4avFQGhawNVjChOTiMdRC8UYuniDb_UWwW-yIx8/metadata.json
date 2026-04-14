@@ -16,5 +16,6 @@
       "description": "web app meta-version"
     }
   ],
-  "titleByClaspList": "Markdown in Sheet addon"
+  "titleByClaspList": "Markdown in Sheet addon",
+  "titleByDriveApi": "Markdown in Sheet addon"
 }

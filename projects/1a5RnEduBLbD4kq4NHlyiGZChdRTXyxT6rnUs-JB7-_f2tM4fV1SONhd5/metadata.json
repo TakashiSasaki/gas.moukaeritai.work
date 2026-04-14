@@ -16,5 +16,6 @@
       "description": "web app meta-version"
     }
   ],
-  "titleByClaspList": "send-to-kindle"
+  "titleByClaspList": "send-to-kindle",
+  "titleByDriveApi": "send-to-kindle"
 }

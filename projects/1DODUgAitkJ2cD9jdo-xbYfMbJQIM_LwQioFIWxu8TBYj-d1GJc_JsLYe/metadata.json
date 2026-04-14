@@ -16,5 +16,6 @@
       "description": "web app meta-version"
     }
   ],
-  "titleByClaspList": "Web Clipboard Reader"
+  "titleByClaspList": "Web Clipboard Reader",
+  "titleByDriveApi": "Web Clipboard Reader"
 }

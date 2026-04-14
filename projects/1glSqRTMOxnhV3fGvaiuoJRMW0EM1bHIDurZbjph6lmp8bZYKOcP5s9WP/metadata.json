@@ -16,5 +16,6 @@
       "description": ""
     }
   ],
-  "titleByClaspList": "WebClipboard"
+  "titleByClaspList": "WebClipboard",
+  "titleByDriveApi": "WebClipboard"
 }

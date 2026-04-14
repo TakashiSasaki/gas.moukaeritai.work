@@ -16,5 +16,6 @@
       "description": "mime=text/plain"
     }
   ],
-  "titleByClaspList": "Ehime Matsuyama Museum Street"
+  "titleByClaspList": "Ehime Matsuyama Museum Street",
+  "titleByDriveApi": "Ehime Matsuyama Museum Street"
 }

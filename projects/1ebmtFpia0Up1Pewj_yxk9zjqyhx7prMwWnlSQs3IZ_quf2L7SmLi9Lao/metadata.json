@@ -16,5 +16,6 @@
       "description": "Published"
     }
   ],
-  "titleByClaspList": "Google Tasks Viewer"
+  "titleByClaspList": "Google Tasks Viewer",
+  "titleByDriveApi": "Google Tasks Viewer"
 }

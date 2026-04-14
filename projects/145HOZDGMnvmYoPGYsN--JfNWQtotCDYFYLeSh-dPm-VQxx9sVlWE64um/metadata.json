@@ -11,5 +11,6 @@
       "description": ""
     }
   ],
-  "titleByClaspList": "Table"
+  "titleByClaspList": "Table",
+  "titleByDriveApi": "Table"
 }

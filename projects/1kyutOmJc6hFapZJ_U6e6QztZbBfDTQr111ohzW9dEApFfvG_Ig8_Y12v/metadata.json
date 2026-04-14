@@ -16,5 +16,6 @@
       "description": "公開用"
     }
   ],
-  "titleByClaspList": "Docs to Blogger Publisher"
+  "titleByClaspList": "Docs to Blogger Publisher",
+  "titleByDriveApi": "Docs to Blogger Publisher"
 }

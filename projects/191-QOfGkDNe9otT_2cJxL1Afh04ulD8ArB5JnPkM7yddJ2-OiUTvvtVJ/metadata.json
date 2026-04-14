@@ -16,5 +16,6 @@
       "description": "web app meta-version"
     }
   ],
-  "titleByClaspList": "GasOAuthLibrary"
+  "titleByClaspList": "GasOAuthLibrary",
+  "titleByDriveApi": "GasOAuthLibrary"
 }

@@ -11,5 +11,6 @@
       "description": ""
     }
   ],
-  "titleByClaspList": "Google Keep to Google Tasks"
+  "titleByClaspList": "Google Keep to Google Tasks",
+  "titleByDriveApi": "Google Keep to Google Tasks"
 }

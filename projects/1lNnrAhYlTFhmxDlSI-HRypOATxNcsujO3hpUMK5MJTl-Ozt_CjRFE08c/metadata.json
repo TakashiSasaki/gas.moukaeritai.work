@@ -16,5 +16,6 @@
       "description": "web app meta-version"
     }
   ],
-  "titleByClaspList": "CsvParser"
+  "titleByClaspList": "CsvParser",
+  "titleByDriveApi": "CsvParser"
 }

@@ -11,5 +11,6 @@
       "description": ""
     }
   ],
-  "titleByClaspList": "Sha1"
+  "titleByClaspList": "Sha1",
+  "titleByDriveApi": "Sha1"
 }

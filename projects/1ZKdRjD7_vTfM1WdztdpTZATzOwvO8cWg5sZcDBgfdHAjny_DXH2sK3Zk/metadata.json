@@ -16,5 +16,6 @@
       "description": "web app meta-version"
     }
   ],
-  "titleByClaspList": "Gmail Label Manimulator"
+  "titleByClaspList": "Gmail Label Manimulator",
+  "titleByDriveApi": "Gmail Label Manimulator"
 }

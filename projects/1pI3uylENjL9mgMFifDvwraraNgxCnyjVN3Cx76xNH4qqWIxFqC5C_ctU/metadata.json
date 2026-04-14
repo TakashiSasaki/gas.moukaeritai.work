@@ -16,5 +16,6 @@
       "description": "web app meta-version"
     }
   ],
-  "titleByClaspList": "Outlook Web App Folder List"
+  "titleByClaspList": "Outlook Web App Folder List",
+  "titleByDriveApi": "Outlook Web App Folder List"
 }

@@ -16,5 +16,6 @@
       "description": ""
     }
   ],
-  "titleByClaspList": "ContentService test"
+  "titleByClaspList": "ContentService test",
+  "titleByDriveApi": "ContentService test"
 }

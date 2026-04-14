@@ -36,5 +36,6 @@
       "description": "QR code"
     }
   ],
-  "titleByClaspList": "Markdown2GoogleDocs"
+  "titleByClaspList": "Markdown2GoogleDocs",
+  "titleByDriveApi": "Markdown2GoogleDocs"
 }

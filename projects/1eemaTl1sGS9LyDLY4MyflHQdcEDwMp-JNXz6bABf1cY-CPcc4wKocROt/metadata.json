@@ -16,5 +16,6 @@
       "description": "公開 v4"
     }
   ],
-  "titleByClaspList": "rename-by-gemini"
+  "titleByClaspList": "rename-by-gemini",
+  "titleByDriveApi": "rename-by-gemini"
 }

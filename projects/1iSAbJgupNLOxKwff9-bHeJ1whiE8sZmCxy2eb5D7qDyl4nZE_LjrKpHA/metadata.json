@@ -16,5 +16,6 @@
       "description": "web app meta-version"
     }
   ],
-  "titleByClaspList": "ArecXのスター表示に関するテスト"
+  "titleByClaspList": "ArecXのスター表示に関するテスト",
+  "titleByDriveApi": "ArecXのスター表示に関するテスト"
 }

@@ -31,5 +31,6 @@
       "description": "web app meta-version"
     }
   ],
-  "titleByClaspList": "Slack Playground"
+  "titleByClaspList": "Slack Playground",
+  "titleByDriveApi": "Slack Playground"
 }

@@ -16,5 +16,6 @@
       "description": "web app meta-version"
     }
   ],
-  "titleByClaspList": "JsDoc"
+  "titleByClaspList": "JsDoc",
+  "titleByDriveApi": "JsDoc"
 }

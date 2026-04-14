@@ -11,5 +11,6 @@
       "description": ""
     }
   ],
-  "titleByClaspList": "GmailThreadTable"
+  "titleByClaspList": "GmailThreadTable",
+  "titleByDriveApi": "GmailThreadTable"
 }

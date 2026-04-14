@@ -16,5 +16,6 @@
       "description": "公開版"
     }
   ],
-  "titleByClaspList": "タイトル文字列の適切さ判定"
+  "titleByClaspList": "タイトル文字列の適切さ判定",
+  "titleByDriveApi": "タイトル文字列の適切さ判定"
 }

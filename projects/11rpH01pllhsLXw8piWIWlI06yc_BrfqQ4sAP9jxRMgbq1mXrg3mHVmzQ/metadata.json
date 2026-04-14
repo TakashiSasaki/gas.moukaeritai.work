@@ -16,5 +16,6 @@
       "description": "UIとりあえずできたよ"
     }
   ],
-  "titleByClaspList": "Document Saver"
+  "titleByClaspList": "Document Saver",
+  "titleByDriveApi": "Document Saver"
 }

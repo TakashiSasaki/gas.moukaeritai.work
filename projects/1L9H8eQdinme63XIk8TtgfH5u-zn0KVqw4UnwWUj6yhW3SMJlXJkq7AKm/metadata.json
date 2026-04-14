@@ -16,5 +16,6 @@
       "description": "web app meta-version"
     }
   ],
-  "titleByClaspList": "Kakaku Library"
+  "titleByClaspList": "Kakaku Library",
+  "titleByDriveApi": "Kakaku Library"
 }
