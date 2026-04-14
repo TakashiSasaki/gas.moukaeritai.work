@@ -1,19 +1,6 @@
 {
   "id": "1jdrz76e6DCQI4bmZAqlkRhM8uMjvycSr8MfNE1AFEpNk3IDjwyw4i0Rc",
   "url": "https://script.google.com/d/1jdrz76e6DCQI4bmZAqlkRhM8uMjvycSr8MfNE1AFEpNk3IDjwyw4i0Rc/edit?usp=drivesdk",
-  "application.json": null,
-  "deployments.json": [
-    {
-      "id": "AKfycbyqPxeTHiJ69dE01XR8MLEVVemvCF8OGJHREElb-ug",
-      "target": "HEAD",
-      "description": ""
-    },
-    {
-      "id": "AKfycbxrdaRkaIRc9Gp18u3cuZbKNy0w5Ctn5j5otUXo_BjAu3pa3ShslcJHuGMomM8zkgLP",
-      "target": "13",
-      "description": "更新更新更新"
-    }
-  ],
   "driveApi": {
     "name": "Docsタイトル提案アドイン",
     "createdTime": "2025-10-14T03:32:25.496Z",

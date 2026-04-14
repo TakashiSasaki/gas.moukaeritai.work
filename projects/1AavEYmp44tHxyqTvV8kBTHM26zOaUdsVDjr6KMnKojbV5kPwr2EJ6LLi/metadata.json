@@ -1,19 +1,6 @@
 {
   "id": "1AavEYmp44tHxyqTvV8kBTHM26zOaUdsVDjr6KMnKojbV5kPwr2EJ6LLi",
   "url": "https://script.google.com/d/1AavEYmp44tHxyqTvV8kBTHM26zOaUdsVDjr6KMnKojbV5kPwr2EJ6LLi/edit?usp=drivesdk",
-  "application.json": null,
-  "deployments.json": [
-    {
-      "id": "AKfycbyzDwK7XYgRjraGu_ra_LOHp2s2utKiGFDFPfNeLH4",
-      "target": "HEAD",
-      "description": ""
-    },
-    {
-      "id": "AKfycbzuiRVRP_bcJwdeX1dGskF445PoK-7KToeG2EOpC4e2jlCLr24",
-      "target": "2",
-      "description": "web app meta-version"
-    }
-  ],
   "driveApi": {
     "name": "Google日本語入力ユーザー辞書ユーティリティ",
     "createdTime": "2017-02-22T11:05:43.627Z",

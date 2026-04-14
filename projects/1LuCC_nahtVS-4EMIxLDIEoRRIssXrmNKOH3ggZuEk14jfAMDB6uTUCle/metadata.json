@@ -1,14 +1,6 @@
 {
   "id": "1LuCC_nahtVS-4EMIxLDIEoRRIssXrmNKOH3ggZuEk14jfAMDB6uTUCle",
   "url": "https://script.google.com/d/1LuCC_nahtVS-4EMIxLDIEoRRIssXrmNKOH3ggZuEk14jfAMDB6uTUCle/edit?usp=drivesdk",
-  "application.json": null,
-  "deployments.json": [
-    {
-      "id": "AKfycbycZLrpOKbyvKQvYj4GvJOpxs-2kLPakZSuOQMBHcc",
-      "target": "HEAD",
-      "description": ""
-    }
-  ],
   "driveApi": {
     "name": "Snippets",
     "createdTime": "2019-09-10T07:13:34.361Z",

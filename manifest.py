@@ -31,8 +31,9 @@ def main():
         if script_id and 'id' not in metadata:
             metadata['id'] = script_id
 
-        metadata['application.json'] = load_json(os.path.join(project_dir, 'application.json'))
-        metadata['deployments.json'] = load_json(os.path.join(project_dir, 'deployments.json'))
+        # Standalone files only - exclude from metadata.json consolidation
+        # metadata['application.json'] = load_json(os.path.join(project_dir, 'application.json'))
+        # metadata['deployments.json'] = load_json(os.path.join(project_dir, 'deployments.json'))
 
         with open(os.path.join(project_dir, 'metadata.json'), 'w', encoding='utf-8') as f:
             json.dump(metadata, f, ensure_ascii=False, indent=2)

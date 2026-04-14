@@ -1,14 +1,6 @@
 {
   "id": "19gfPoC2um5FcDCPyzHenOg_MUHsJruM9X82VQqeR9zxdZEg0wnbWRwQM",
   "url": "https://script.google.com/d/19gfPoC2um5FcDCPyzHenOg_MUHsJruM9X82VQqeR9zxdZEg0wnbWRwQM/edit?usp=drivesdk",
-  "application.json": null,
-  "deployments.json": [
-    {
-      "id": "AKfycbyc2xL-4FaC2RXd5J_jM2bJuEQuPdUgOVifnVjrMWk8",
-      "target": "HEAD",
-      "description": ""
-    }
-  ],
   "driveApi": {
     "name": "Gmail Search Sheets",
     "createdTime": "2018-10-03T01:54:06.002Z",

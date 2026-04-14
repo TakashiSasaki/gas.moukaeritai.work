@@ -1,14 +1,6 @@
 {
   "id": "1-DK5w5wmpLrTNKv8-WNrAn9oVJ0vf6Oh7Z29Q2h-0ZMtSkr6yC2U1dsR",
   "url": "https://script.google.com/d/1-DK5w5wmpLrTNKv8-WNrAn9oVJ0vf6Oh7Z29Q2h-0ZMtSkr6yC2U1dsR/edit?usp=drivesdk",
-  "application.json": null,
-  "deployments.json": [
-    {
-      "id": "AKfycbwCim2FBm97ZnboxZ-SVO-sig218UBNspToMPdfkk7Q",
-      "target": "HEAD",
-      "description": ""
-    }
-  ],
   "driveApi": {
     "name": "URL Bookmark parser",
     "createdTime": "2023-12-04T05:25:18.170Z",

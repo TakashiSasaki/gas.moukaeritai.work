@@ -1,19 +1,6 @@
 {
   "id": "1Ck4-5l9YWT52gsWOnLGlVqc-H2dtVOMwUhKCoPKFKZ4qS4Ii_CDgdOfz",
   "url": "https://script.google.com/d/1Ck4-5l9YWT52gsWOnLGlVqc-H2dtVOMwUhKCoPKFKZ4qS4Ii_CDgdOfz/edit?usp=drivesdk",
-  "application.json": null,
-  "deployments.json": [
-    {
-      "id": "AKfycbw-ntLrWW9s6k5_MQX9ZpmLJvf5-CSSogQfMAyOxOaM",
-      "target": "HEAD",
-      "description": ""
-    },
-    {
-      "id": "AKfycbzf_HlO0hdFtbnPVqfpprD10MMsKJ2dyDE-rZoC06yAyu8thdB9n8-4FrAGAJZ6RdcXQA",
-      "target": "1",
-      "description": ""
-    }
-  ],
   "driveApi": {
     "name": "Docs Headings Addon",
     "createdTime": "2021-09-27T06:40:07.006Z",

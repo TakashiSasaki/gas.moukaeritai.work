@@ -1,24 +1,6 @@
 {
   "id": "1tPNJshkGnHrSKO5HIkFGvTyrCm6nZDQsDAxn-p38VhHI17ovSVpEA_uJ",
   "url": "https://script.google.com/d/1tPNJshkGnHrSKO5HIkFGvTyrCm6nZDQsDAxn-p38VhHI17ovSVpEA_uJ/edit?usp=drivesdk",
-  "application.json": null,
-  "deployments.json": [
-    {
-      "id": "AKfycbyT2wk0k1QsrkICaKiXsu1pYbh0mgKqAW8jz_3yfEHx",
-      "target": "HEAD",
-      "description": ""
-    },
-    {
-      "id": "AKfycbxdWdovzteS3K8cGeeGdIuacnCsA9F4i5efP1gEp2HbaSYQknPQ",
-      "target": "7",
-      "description": "oneplatform api meta-version"
-    },
-    {
-      "id": "AKfycbwrYfAhXvMYRPqHcWvjAbBOTZSPQv1ofnhw2XPeQUd3fXb6KJO6",
-      "target": "8",
-      "description": "web app meta-version"
-    }
-  ],
   "driveApi": {
     "name": "Xor",
     "createdTime": "2017-10-19T11:19:54.737Z",

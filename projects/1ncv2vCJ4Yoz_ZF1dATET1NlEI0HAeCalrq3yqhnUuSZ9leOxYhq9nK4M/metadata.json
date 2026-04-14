@@ -1,19 +1,6 @@
 {
   "id": "1ncv2vCJ4Yoz_ZF1dATET1NlEI0HAeCalrq3yqhnUuSZ9leOxYhq9nK4M",
   "url": "https://script.google.com/d/1ncv2vCJ4Yoz_ZF1dATET1NlEI0HAeCalrq3yqhnUuSZ9leOxYhq9nK4M/edit?usp=drivesdk",
-  "application.json": null,
-  "deployments.json": [
-    {
-      "id": "AKfycbxwckHTK_S3CymGqT1t5pHHlEuTJ7caa0LCbJQhfWM",
-      "target": "HEAD",
-      "description": ""
-    },
-    {
-      "id": "AKfycbwV3dOARMexlmsPpe_heXOfDbKz7NqFaLDV-EzSydMpgyx34EOxmFUzzHPduwLm_KSi",
-      "target": "5",
-      "description": "release v5"
-    }
-  ],
   "driveApi": {
     "name": "dns.moukaeritai.work",
     "createdTime": "2025-06-13T03:57:23.424Z",

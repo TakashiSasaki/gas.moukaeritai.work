@@ -1,14 +1,6 @@
 {
   "id": "1JsxPkJk_0isXeZwzI5EbpXCgTDvNmp_6NKrrNx61q_iefSjQwe5eEZzC",
   "url": "https://script.google.com/d/1JsxPkJk_0isXeZwzI5EbpXCgTDvNmp_6NKrrNx61q_iefSjQwe5eEZzC/edit?usp=drivesdk",
-  "application.json": null,
-  "deployments.json": [
-    {
-      "id": "AKfycbzOVg_yg1ZshX78ofDX_is6UT5sBxA2PDA_5d6WKM0",
-      "target": "HEAD",
-      "description": ""
-    }
-  ],
   "driveApi": {
     "name": "JsonTable",
     "createdTime": "2019-04-18T15:49:50.840Z",

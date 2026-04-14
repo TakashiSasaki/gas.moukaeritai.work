@@ -138,7 +138,11 @@ def update_local_metadata(project_dir, api_metadata):
     data['appsScriptApi'] = api_metadata
     
     # Cleanup root properties as requested (consolidation)
-    root_to_remove = ["lastUpdated", "name", "createdTime", "modifiedTime", "titleByClaspList", "titleByDriveApi"]
+    root_to_remove = [
+        "lastUpdated", "name", "createdTime", "modifiedTime", 
+        "titleByClaspList", "titleByDriveApi",
+        "application.json", "deployments.json", "versions.json"
+    ]
     for prop in root_to_remove:
         data.pop(prop, None)
     

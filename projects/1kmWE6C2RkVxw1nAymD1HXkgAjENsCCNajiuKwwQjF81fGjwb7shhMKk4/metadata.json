@@ -1,14 +1,6 @@
 {
   "id": "1kmWE6C2RkVxw1nAymD1HXkgAjENsCCNajiuKwwQjF81fGjwb7shhMKk4",
   "url": "https://script.google.com/d/1kmWE6C2RkVxw1nAymD1HXkgAjENsCCNajiuKwwQjF81fGjwb7shhMKk4/edit?usp=drivesdk",
-  "application.json": null,
-  "deployments.json": [
-    {
-      "id": "AKfycbyd3QElFzGxES7C1tPTDkt_gbR7ca7hwP9LNFqOHUP6",
-      "target": "HEAD",
-      "description": ""
-    }
-  ],
   "driveApi": {
     "name": "FileChooser",
     "createdTime": "2018-06-11T03:55:19.962Z",

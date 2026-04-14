@@ -1,19 +1,6 @@
 {
   "id": "1tEJHwlwUnrmb4488tbOkvhlBBfrAVHflvXT2WqXp_z8GGNgIi-Mv5VQ6",
   "url": "https://script.google.com/d/1tEJHwlwUnrmb4488tbOkvhlBBfrAVHflvXT2WqXp_z8GGNgIi-Mv5VQ6/edit?usp=drivesdk",
-  "application.json": null,
-  "deployments.json": [
-    {
-      "id": "AKfycbya33Nunwrn_rnO6olls6IGlNrEgDPj3QoAO03nIuZQ",
-      "target": "HEAD",
-      "description": ""
-    },
-    {
-      "id": "AKfycbx9Oyusm3lzvRHOBYVypVIIKqFdohtjx4gHfL1Cz1gZ5RYzd5r68VXIpnpFPsrF21GLyA",
-      "target": "4",
-      "description": ""
-    }
-  ],
   "driveApi": {
     "name": "感情分析",
     "createdTime": "2023-06-08T00:19:45.356Z",

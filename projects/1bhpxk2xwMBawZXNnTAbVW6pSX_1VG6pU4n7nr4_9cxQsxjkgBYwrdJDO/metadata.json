@@ -1,19 +1,6 @@
 {
   "id": "1bhpxk2xwMBawZXNnTAbVW6pSX_1VG6pU4n7nr4_9cxQsxjkgBYwrdJDO",
   "url": "https://script.google.com/d/1bhpxk2xwMBawZXNnTAbVW6pSX_1VG6pU4n7nr4_9cxQsxjkgBYwrdJDO/edit?usp=drivesdk",
-  "application.json": null,
-  "deployments.json": [
-    {
-      "id": "AKfycbyVplN2_YKjBksTfGGG6U2WIPwmf15KJzkeBSj-Ifkj",
-      "target": "HEAD",
-      "description": ""
-    },
-    {
-      "id": "AKfycbyhxxFtBaXstAo3E0ycj15x4nzFWJsYBaiSSn1GJFo4XMnilU4vZn-9hB32VFcy8wuTMw",
-      "target": "5",
-      "description": "バージョン5"
-    }
-  ],
   "driveApi": {
     "name": "Drive Shallow Mover",
     "createdTime": "2026-01-28T10:48:09.574Z",

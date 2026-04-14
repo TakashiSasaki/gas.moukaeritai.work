@@ -1,19 +1,6 @@
 {
   "id": "1ovfzNY0BUREXY5Ky0eX1HZaz3VxEoq3wyjwZuYg4L6m8H83Rjb8Q1yhw",
   "url": "https://script.google.com/d/1ovfzNY0BUREXY5Ky0eX1HZaz3VxEoq3wyjwZuYg4L6m8H83Rjb8Q1yhw/edit?usp=drivesdk",
-  "application.json": null,
-  "deployments.json": [
-    {
-      "id": "AKfycbwizThTnDoMwPeZWvpp3U23bYSI5W4ckj0V2UgV0_N_",
-      "target": "HEAD",
-      "description": ""
-    },
-    {
-      "id": "AKfycbz_IlegeYN8hkLyATN0OeepUp8i_Hqz0uH3FWMLqn6NSJnwyEL7",
-      "target": "18",
-      "description": "web app meta-version"
-    }
-  ],
   "driveApi": {
     "name": "Is",
     "createdTime": "2019-11-16T09:04:49.445Z",

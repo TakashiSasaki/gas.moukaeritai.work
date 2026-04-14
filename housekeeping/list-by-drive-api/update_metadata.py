@@ -61,8 +61,6 @@ def update_metadata(backup_file: Path, projects_dir: Path):
             meta_data = {
                 "id": script_id,
                 "url": f"https://script.google.com/d/{script_id}/edit?usp=drivesdk",
-                "application.json": None,
-                "deployments.json": [],
                 "driveApi": {
                     "name": name,
                     "createdTime": created_time,
@@ -90,7 +88,11 @@ def update_metadata(backup_file: Path, projects_dir: Path):
         
         # Cleanup root properties (Migration to Drive API block or deletion)
         # We keep 'id' and 'url' at the root.
-        root_to_remove = ["name", "createdTime", "modifiedTime", "lastUpdated", "titleByClaspList", "titleByDriveApi"]
+        root_to_remove = [
+            "name", "createdTime", "modifiedTime", "lastUpdated", 
+            "titleByClaspList", "titleByDriveApi",
+            "application.json", "deployments.json", "versions.json"
+        ]
         for prop in root_to_remove:
             meta_data.pop(prop, None)
         

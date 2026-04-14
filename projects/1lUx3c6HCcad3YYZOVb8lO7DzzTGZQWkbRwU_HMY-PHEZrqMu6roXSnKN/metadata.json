@@ -1,19 +1,6 @@
 {
   "id": "1lUx3c6HCcad3YYZOVb8lO7DzzTGZQWkbRwU_HMY-PHEZrqMu6roXSnKN",
   "url": "https://script.google.com/d/1lUx3c6HCcad3YYZOVb8lO7DzzTGZQWkbRwU_HMY-PHEZrqMu6roXSnKN/edit?usp=drivesdk",
-  "application.json": null,
-  "deployments.json": [
-    {
-      "id": "AKfycbxqWXohvQU3HjoJt8SXK0dFpGAxhsNb7kfP3FxrqoNa",
-      "target": "HEAD",
-      "description": ""
-    },
-    {
-      "id": "AKfycbyybSIC97L7KdlkQItJUKmtFsxDyi1nvmBUMRz_wwyWNmd348o-sz5nSdcsRLyRgGgiRw",
-      "target": "7",
-      "description": "Release 1.3.20240306"
-    }
-  ],
   "driveApi": {
     "name": "PublicWebCache",
     "createdTime": "2024-03-05T14:44:57.358Z",

@@ -1,14 +1,6 @@
 {
   "id": "1EUaapnjQf2c1QcTtEct0GWeztTGAByDD1jD2n1iFu17m7ycr0Wq0bQyn",
   "url": "https://script.google.com/d/1EUaapnjQf2c1QcTtEct0GWeztTGAByDD1jD2n1iFu17m7ycr0Wq0bQyn/edit?usp=drivesdk",
-  "application.json": null,
-  "deployments.json": [
-    {
-      "id": "AKfycbxG4Ld6hTSSueRSRG2pan53whK_8-EjBYXL-s3uB7s",
-      "target": "HEAD",
-      "description": ""
-    }
-  ],
   "driveApi": {
     "name": "Glitch Projects",
     "createdTime": "2019-07-03T08:49:44.751Z",

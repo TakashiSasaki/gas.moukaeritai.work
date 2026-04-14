@@ -1,14 +1,6 @@
 {
   "id": "1SN862ojGSUHB0KjJW-p4iYu8O_U8OYBnOsYMIQhb4soKnnioCHCVhH72",
   "url": "https://script.google.com/d/1SN862ojGSUHB0KjJW-p4iYu8O_U8OYBnOsYMIQhb4soKnnioCHCVhH72/edit?usp=drivesdk",
-  "application.json": null,
-  "deployments.json": [
-    {
-      "id": "AKfycbxAYs1QIFJXKc9oWI-OdySfLVUKNFdRS4qg6tM-ktUa",
-      "target": "HEAD",
-      "description": ""
-    }
-  ],
   "driveApi": {
     "name": "GmailThreadTable",
     "createdTime": "2019-09-10T06:19:18.172Z",

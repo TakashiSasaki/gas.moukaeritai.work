@@ -1,19 +1,6 @@
 {
   "id": "1RvhfmTi5Il33TqPVCX0SzkgOTN14obJxdEDrv69CkfBuKHQ6LXSnIAQ5",
   "url": "https://script.google.com/d/1RvhfmTi5Il33TqPVCX0SzkgOTN14obJxdEDrv69CkfBuKHQ6LXSnIAQ5/edit?usp=drivesdk",
-  "application.json": null,
-  "deployments.json": [
-    {
-      "id": "AKfycbwTvn3g19jJ96jlnksFFXMZxvxX2F_jz8enYgIctT88",
-      "target": "HEAD",
-      "description": ""
-    },
-    {
-      "id": "AKfycbzh3Mavd-EIq1sVBS16jv1hPJezIl59cZD-tp8TJCVMhhpWgJ3o",
-      "target": "2",
-      "description": "web app meta-version"
-    }
-  ],
   "driveApi": {
     "name": "Cache Clipboard",
     "createdTime": "2018-02-21T10:02:30.166Z",

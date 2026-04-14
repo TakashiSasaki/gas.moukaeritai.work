@@ -1,19 +1,6 @@
 {
   "id": "1OFyuUHAA2lLSjmadG07uEnafWEoRj18X5FqpFk2Oi1Z0xtFXCKx7g0es",
   "url": "https://script.google.com/d/1OFyuUHAA2lLSjmadG07uEnafWEoRj18X5FqpFk2Oi1Z0xtFXCKx7g0es/edit?usp=drivesdk",
-  "application.json": null,
-  "deployments.json": [
-    {
-      "id": "AKfycbyY7Ic4lNEEerYyEpoBwQd4QqxkpN9lcHfzOGub26EJ",
-      "target": "HEAD",
-      "description": ""
-    },
-    {
-      "id": "AKfycbxdw3BZaL_-41CpRKqwpu733q1O043YBo3fenkmII1fqtR7A6RB",
-      "target": "15",
-      "description": "web app meta-version"
-    }
-  ],
   "driveApi": {
     "name": "kenqweb2 to researchmap CSV converter",
     "createdTime": "2017-11-14T01:09:03.223Z",

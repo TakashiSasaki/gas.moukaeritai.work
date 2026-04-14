@@ -1,14 +1,6 @@
 {
   "id": "1Bxt-4ULv8Rh0aAmltAcAUZpOmp8ifF5d_9f-DzASSJkDEAtSHNwlm1Gh",
   "url": "https://script.google.com/d/1Bxt-4ULv8Rh0aAmltAcAUZpOmp8ifF5d_9f-DzASSJkDEAtSHNwlm1Gh/edit?usp=drivesdk",
-  "application.json": null,
-  "deployments.json": [
-    {
-      "id": "AKfycbyV3JGesMiF40TL_6gXJncBGBrBkVpNHTJI3P1PAuw",
-      "target": "HEAD",
-      "description": ""
-    }
-  ],
   "driveApi": {
     "name": "URI",
     "createdTime": "2020-08-10T13:10:36.163Z",

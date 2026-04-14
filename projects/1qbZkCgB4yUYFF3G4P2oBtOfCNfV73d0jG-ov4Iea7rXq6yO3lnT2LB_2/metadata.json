@@ -1,14 +1,6 @@
 {
   "id": "1qbZkCgB4yUYFF3G4P2oBtOfCNfV73d0jG-ov4Iea7rXq6yO3lnT2LB_2",
   "url": "https://script.google.com/d/1qbZkCgB4yUYFF3G4P2oBtOfCNfV73d0jG-ov4Iea7rXq6yO3lnT2LB_2/edit?usp=drivesdk",
-  "application.json": null,
-  "deployments.json": [
-    {
-      "id": "AKfycbyTHHTqBnhoO4T7uVbxHCbmy4mqSyZVnM8dJLBlmuo",
-      "target": "HEAD",
-      "description": ""
-    }
-  ],
   "driveApi": {
     "name": "Gmail Addon",
     "createdTime": "2017-09-25T02:01:07.889Z",

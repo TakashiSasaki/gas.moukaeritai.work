@@ -1,19 +1,6 @@
 {
   "id": "1D8eOonUk_fg0ZGWp-SFrma6FtSZv73Hzts_Hf-2MLmMcpX-yXgQnuXEP",
   "url": "https://script.google.com/d/1D8eOonUk_fg0ZGWp-SFrma6FtSZv73Hzts_Hf-2MLmMcpX-yXgQnuXEP/edit?usp=drivesdk",
-  "application.json": null,
-  "deployments.json": [
-    {
-      "id": "AKfycbxe9hHQ3CCpxcpnZ5R8C2FsHR8tbk_oE4vdcAnP8sY",
-      "target": "HEAD",
-      "description": ""
-    },
-    {
-      "id": "AKfycbyhraKi6oqu33iU1VNa9cSP4Oi9K7Kb7g3GrEOSjAUiqK7oELrhuCaAK2ElN4tneWUA",
-      "target": "7",
-      "description": "mime=text/plain"
-    }
-  ],
   "driveApi": {
     "name": "Ehime Matsuyama Museum Street",
     "createdTime": "2026-03-16T02:40:09.248Z",

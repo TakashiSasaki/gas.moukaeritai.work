@@ -1,14 +1,6 @@
 {
   "id": "1toCTzwoHcWb0VQGQ3aYO9QZpRY9P5f4g3Hn4K9FCWFIth7OJjW4jssP5",
   "url": "https://script.google.com/d/1toCTzwoHcWb0VQGQ3aYO9QZpRY9P5f4g3Hn4K9FCWFIth7OJjW4jssP5/edit?usp=drivesdk",
-  "application.json": null,
-  "deployments.json": [
-    {
-      "id": "AKfycbyKLsnZ4dm6Dc2QiNyQkrL5D1Balmi7-McpGkAv1Ru2",
-      "target": "HEAD",
-      "description": ""
-    }
-  ],
   "driveApi": {
     "name": "String Utility",
     "createdTime": "2017-02-02T14:37:00.860Z",

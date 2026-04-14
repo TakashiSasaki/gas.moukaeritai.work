@@ -1,14 +1,6 @@
 {
   "id": "16aPNNXwgQT5HUc7ch5nkTC9NfCbvHBFjVRr2KiiKSRXPnV0l1LjhXvdB",
   "url": "https://script.google.com/d/16aPNNXwgQT5HUc7ch5nkTC9NfCbvHBFjVRr2KiiKSRXPnV0l1LjhXvdB/edit?usp=drivesdk",
-  "application.json": null,
-  "deployments.json": [
-    {
-      "id": "AKfycbxlhD7QuP3MrBhUFpOyIB4RImfxZJQgAazEjeeprhaI",
-      "target": "HEAD",
-      "description": ""
-    }
-  ],
   "driveApi": {
     "name": "Form Addon",
     "createdTime": "2017-11-01T06:04:47.397Z",
