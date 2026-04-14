@@ -12,5 +12,23 @@
       "description": ""
     }
   ],
-  "versions": []
+  "versions": [],
+  "appsScriptApi": {
+    "scriptId": "1YAxockQcSTXfpD08yNET6PkcuJP2VGWlikGNineVeMx68CC-x4E07rax",
+    "title": "GAS Library Viewer",
+    "createTime": "2018-06-11T03:54:27.127Z",
+    "updateTime": "2025-01-23T17:48:27.449Z",
+    "creator": {
+      "domain": "gmail.com",
+      "email": "takashi316@gmail.com",
+      "name": "Takashi SASAKI (佐々木隆志)",
+      "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    },
+    "lastModifyUser": {
+      "domain": "gmail.com",
+      "email": "takashi316@gmail.com",
+      "name": "Takashi SASAKI (佐々木隆志)",
+      "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    }
+  }
 }

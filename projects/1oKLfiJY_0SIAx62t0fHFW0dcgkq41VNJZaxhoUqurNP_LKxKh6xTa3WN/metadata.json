@@ -37,5 +37,23 @@
       "version": 6,
       "description": "No description"
     }
-  ]
+  ],
+  "appsScriptApi": {
+    "scriptId": "1oKLfiJY_0SIAx62t0fHFW0dcgkq41VNJZaxhoUqurNP_LKxKh6xTa3WN",
+    "title": "Sha1",
+    "createTime": "2019-11-08T07:36:39.301Z",
+    "updateTime": "2019-11-21T23:56:25.637Z",
+    "creator": {
+      "domain": "gmail.com",
+      "email": "takashi316@gmail.com",
+      "name": "Takashi SASAKI (佐々木隆志)",
+      "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    },
+    "lastModifyUser": {
+      "domain": "gmail.com",
+      "email": "takashi316@gmail.com",
+      "name": "Takashi SASAKI (佐々木隆志)",
+      "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    }
+  }
 }

@@ -31,5 +31,23 @@
       "version": 2,
       "description": "ロジックとしてはうまく動いている。見栄えの調整しなきゃな。"
     }
-  ]
+  ],
+  "appsScriptApi": {
+    "scriptId": "1bv9vqLAy7LQO1ek_nOrb7iSrcQO8pcGr_NhiP75qJ3fjggqvkiZ6FAqN",
+    "title": "ImeDictionary Aggregator",
+    "createTime": "2025-04-16T00:42:06.736Z",
+    "updateTime": "2025-04-18T08:51:33.103Z",
+    "creator": {
+      "domain": "gmail.com",
+      "email": "takashi316@gmail.com",
+      "name": "Takashi SASAKI (佐々木隆志)",
+      "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    },
+    "lastModifyUser": {
+      "domain": "gmail.com",
+      "email": "takashi316@gmail.com",
+      "name": "Takashi SASAKI (佐々木隆志)",
+      "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    }
+  }
 }

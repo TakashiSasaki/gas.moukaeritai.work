@@ -26,5 +26,23 @@
       "version": 6,
       "description": "No description"
     }
-  ]
+  ],
+  "appsScriptApi": {
+    "scriptId": "1L9H8eQdinme63XIk8TtgfH5u-zn0KVqw4UnwWUj6yhW3SMJlXJkq7AKm",
+    "title": "Kakaku Library",
+    "createTime": "2017-03-23T10:28:34.507Z",
+    "updateTime": "2025-01-21T18:01:18.421Z",
+    "creator": {
+      "domain": "gmail.com",
+      "email": "takashi316@gmail.com",
+      "name": "Takashi SASAKI (佐々木隆志)",
+      "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    },
+    "lastModifyUser": {
+      "domain": "gmail.com",
+      "email": "takashi316@gmail.com",
+      "name": "Takashi SASAKI (佐々木隆志)",
+      "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    }
+  }
 }

@@ -58,5 +58,23 @@
       "version": 5,
       "description": "スコープ修正"
     }
-  ]
+  ],
+  "appsScriptApi": {
+    "scriptId": "1Uf0YpVntqswRo0bwSXCBA7glomAfrNz43dxiJziapYeXIy90b_EHpt3_",
+    "title": "Markdown2GoogleDocs",
+    "createTime": "2025-04-10T00:36:02.620Z",
+    "updateTime": "2025-04-10T05:35:32.523Z",
+    "creator": {
+      "domain": "gmail.com",
+      "email": "takashi316@gmail.com",
+      "name": "Takashi SASAKI (佐々木隆志)",
+      "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    },
+    "lastModifyUser": {
+      "domain": "gmail.com",
+      "email": "takashi316@gmail.com",
+      "name": "Takashi SASAKI (佐々木隆志)",
+      "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    }
+  }
 }

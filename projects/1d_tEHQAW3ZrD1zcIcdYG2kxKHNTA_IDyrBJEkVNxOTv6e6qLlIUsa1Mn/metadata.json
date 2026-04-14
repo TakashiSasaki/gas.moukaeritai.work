@@ -26,5 +26,23 @@
       "version": 2,
       "description": "No description"
     }
-  ]
+  ],
+  "appsScriptApi": {
+    "scriptId": "1d_tEHQAW3ZrD1zcIcdYG2kxKHNTA_IDyrBJEkVNxOTv6e6qLlIUsa1Mn",
+    "title": "HOTP",
+    "createTime": "2018-01-12T01:31:13.655Z",
+    "updateTime": "2021-03-16T09:37:43.455Z",
+    "creator": {
+      "domain": "gmail.com",
+      "email": "takashi316@gmail.com",
+      "name": "Takashi SASAKI (佐々木隆志)",
+      "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    },
+    "lastModifyUser": {
+      "domain": "gmail.com",
+      "email": "takashi316@gmail.com",
+      "name": "Takashi SASAKI (佐々木隆志)",
+      "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    }
+  }
 }

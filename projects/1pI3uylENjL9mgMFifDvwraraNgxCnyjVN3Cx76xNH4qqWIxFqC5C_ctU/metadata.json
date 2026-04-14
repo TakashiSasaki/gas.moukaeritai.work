@@ -22,5 +22,23 @@
       "version": 1,
       "description": "No description"
     }
-  ]
+  ],
+  "appsScriptApi": {
+    "scriptId": "1pI3uylENjL9mgMFifDvwraraNgxCnyjVN3Cx76xNH4qqWIxFqC5C_ctU",
+    "title": "Outlook Web App Folder List",
+    "createTime": "2020-12-21T04:29:20.984Z",
+    "updateTime": "2020-12-21T05:23:50.796Z",
+    "creator": {
+      "domain": "gmail.com",
+      "email": "takashi316@gmail.com",
+      "name": "Takashi SASAKI (佐々木隆志)",
+      "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    },
+    "lastModifyUser": {
+      "domain": "gmail.com",
+      "email": "takashi316@gmail.com",
+      "name": "Takashi SASAKI (佐々木隆志)",
+      "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    }
+  }
 }

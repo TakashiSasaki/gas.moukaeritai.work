@@ -22,5 +22,23 @@
       "version": 1,
       "description": "No description"
     }
-  ]
+  ],
+  "appsScriptApi": {
+    "scriptId": "1glSqRTMOxnhV3fGvaiuoJRMW0EM1bHIDurZbjph6lmp8bZYKOcP5s9WP",
+    "title": "WebClipboard",
+    "createTime": "2023-06-06T03:05:06.682Z",
+    "updateTime": "2023-06-06T03:07:05.002Z",
+    "creator": {
+      "domain": "gmail.com",
+      "email": "takashi316@gmail.com",
+      "name": "Takashi SASAKI (佐々木隆志)",
+      "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    },
+    "lastModifyUser": {
+      "domain": "gmail.com",
+      "email": "takashi316@gmail.com",
+      "name": "Takashi SASAKI (佐々木隆志)",
+      "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    }
+  }
 }

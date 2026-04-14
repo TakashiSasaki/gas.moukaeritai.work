@@ -38,5 +38,23 @@
       "version": 5,
       "description": "release v5"
     }
-  ]
+  ],
+  "appsScriptApi": {
+    "scriptId": "1ncv2vCJ4Yoz_ZF1dATET1NlEI0HAeCalrq3yqhnUuSZ9leOxYhq9nK4M",
+    "title": "dns.moukaeritai.work",
+    "createTime": "2025-06-13T03:57:23.424Z",
+    "updateTime": "2025-06-21T02:17:39.046Z",
+    "creator": {
+      "domain": "gmail.com",
+      "email": "takashi316@gmail.com",
+      "name": "Takashi SASAKI (佐々木隆志)",
+      "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    },
+    "lastModifyUser": {
+      "domain": "gmail.com",
+      "email": "takashi316@gmail.com",
+      "name": "Takashi SASAKI (佐々木隆志)",
+      "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    }
+  }
 }

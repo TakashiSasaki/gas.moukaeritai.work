@@ -31,5 +31,23 @@
       "version": 2,
       "description": "動く"
     }
-  ]
+  ],
+  "appsScriptApi": {
+    "scriptId": "1DJbk8E57h7UVVXyzS9PIDn_iL0ZJf39VRdLepQbf_DDI9WPVkzVlSN2Z",
+    "title": "File Triage",
+    "createTime": "2025-06-13T08:19:57.424Z",
+    "updateTime": "2025-06-13T11:56:14.511Z",
+    "creator": {
+      "domain": "gmail.com",
+      "email": "takashi316@gmail.com",
+      "name": "Takashi SASAKI (佐々木隆志)",
+      "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    },
+    "lastModifyUser": {
+      "domain": "gmail.com",
+      "email": "takashi316@gmail.com",
+      "name": "Takashi SASAKI (佐々木隆志)",
+      "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    }
+  }
 }

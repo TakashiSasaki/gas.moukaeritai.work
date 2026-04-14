@@ -12,5 +12,23 @@
       "description": ""
     }
   ],
-  "versions": []
+  "versions": [],
+  "appsScriptApi": {
+    "scriptId": "1M1amG2VwddxG9UpHjERfroY9wntSro8xSbEE02tVJnvsg7pQ_AsNS6p5",
+    "title": "Automate flows",
+    "createTime": "2018-06-11T03:55:00.906Z",
+    "updateTime": "2025-01-21T18:11:09.267Z",
+    "creator": {
+      "domain": "gmail.com",
+      "email": "takashi316@gmail.com",
+      "name": "Takashi SASAKI (佐々木隆志)",
+      "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    },
+    "lastModifyUser": {
+      "domain": "gmail.com",
+      "email": "takashi316@gmail.com",
+      "name": "Takashi SASAKI (佐々木隆志)",
+      "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    }
+  }
 }

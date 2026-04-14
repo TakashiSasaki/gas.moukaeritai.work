@@ -54,5 +54,23 @@
       "version": 9,
       "description": "公開用 Version 9"
     }
-  ]
+  ],
+  "appsScriptApi": {
+    "scriptId": "16bdYnyvTFOjko1J10ysGHbq0mNkwBzFFyf81VuCWoM7E_-1Y44KN2IX4",
+    "title": "GAS Project Finder",
+    "createTime": "2025-06-19T01:17:42.360Z",
+    "updateTime": "2025-06-20T01:03:21.643Z",
+    "creator": {
+      "domain": "gmail.com",
+      "email": "takashi316@gmail.com",
+      "name": "Takashi SASAKI (佐々木隆志)",
+      "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    },
+    "lastModifyUser": {
+      "domain": "gmail.com",
+      "email": "takashi316@gmail.com",
+      "name": "Takashi SASAKI (佐々木隆志)",
+      "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    }
+  }
 }

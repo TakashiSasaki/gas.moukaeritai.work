@@ -12,5 +12,23 @@
       "description": ""
     }
   ],
-  "versions": []
+  "versions": [],
+  "appsScriptApi": {
+    "scriptId": "1GYfj-JgHwhPdQoxpqfD-wL0XXCJtm972x4fXr291WkLbFEsCp-yhkodK",
+    "title": "StringEx",
+    "createTime": "2019-10-11T07:52:30.230Z",
+    "updateTime": "2023-05-08T20:48:57.657Z",
+    "creator": {
+      "domain": "gmail.com",
+      "email": "takashi316@gmail.com",
+      "name": "Takashi SASAKI (佐々木隆志)",
+      "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    },
+    "lastModifyUser": {
+      "domain": "gmail.com",
+      "email": "takashi316@gmail.com",
+      "name": "Takashi SASAKI (佐々木隆志)",
+      "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    }
+  }
 }

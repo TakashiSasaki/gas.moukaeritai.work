@@ -12,5 +12,23 @@
       "description": ""
     }
   ],
-  "versions": []
+  "versions": [],
+  "appsScriptApi": {
+    "scriptId": "1LuCC_nahtVS-4EMIxLDIEoRRIssXrmNKOH3ggZuEk14jfAMDB6uTUCle",
+    "title": "Snippets",
+    "createTime": "2019-09-10T07:13:34.361Z",
+    "updateTime": "2023-03-08T23:06:15.017Z",
+    "creator": {
+      "domain": "gmail.com",
+      "email": "takashi316@gmail.com",
+      "name": "Takashi SASAKI (佐々木隆志)",
+      "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    },
+    "lastModifyUser": {
+      "domain": "gmail.com",
+      "email": "takashi316@gmail.com",
+      "name": "Takashi SASAKI (佐々木隆志)",
+      "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    }
+  }
 }

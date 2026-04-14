@@ -54,5 +54,18 @@
       "version": 28,
       "description": "No description"
     }
-  ]
+  ],
+  "appsScriptApi": {
+    "scriptId": "1A_kkWBH9eqn08Rir8tv_KdaVyYZkJt487UD69qAbQ0fGHCjKKTPwhC0H",
+    "title": "GetFragmentPartOfUrlTest",
+    "createTime": "2015-12-17T05:21:17.380Z",
+    "updateTime": "2025-01-22T18:41:49.705Z",
+    "creator": {
+      "domain": "gmail.com",
+      "email": "takashi316@gmail.com",
+      "name": "Takashi SASAKI (佐々木隆志)",
+      "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    },
+    "lastModifyUser": {}
+  }
 }

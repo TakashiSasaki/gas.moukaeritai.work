@@ -46,5 +46,23 @@
       "version": 7,
       "description": "mime=text/plain"
     }
-  ]
+  ],
+  "appsScriptApi": {
+    "scriptId": "1D8eOonUk_fg0ZGWp-SFrma6FtSZv73Hzts_Hf-2MLmMcpX-yXgQnuXEP",
+    "title": "Ehime Matsuyama Museum Street",
+    "createTime": "2026-03-16T02:40:09.248Z",
+    "updateTime": "2026-03-26T05:16:16.955Z",
+    "creator": {
+      "domain": "gmail.com",
+      "email": "takashi316@gmail.com",
+      "name": "Takashi SASAKI (佐々木隆志)",
+      "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    },
+    "lastModifyUser": {
+      "domain": "gmail.com",
+      "email": "takashi316@gmail.com",
+      "name": "Takashi SASAKI (佐々木隆志)",
+      "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    }
+  }
 }

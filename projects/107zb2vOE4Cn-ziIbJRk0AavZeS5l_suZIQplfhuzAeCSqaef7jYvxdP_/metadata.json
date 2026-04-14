@@ -40,5 +40,23 @@
       "version": 3,
       "description": "doPost をテストしてる"
     }
-  ]
+  ],
+  "appsScriptApi": {
+    "scriptId": "107zb2vOE4Cn-ziIbJRk0AavZeS5l_suZIQplfhuzAeCSqaef7jYvxdP_",
+    "title": "Public ScriptCache",
+    "createTime": "2023-08-02T07:00:14.883Z",
+    "updateTime": "2023-08-14T23:42:08.921Z",
+    "creator": {
+      "domain": "gmail.com",
+      "email": "takashi316@gmail.com",
+      "name": "Takashi SASAKI (佐々木隆志)",
+      "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    },
+    "lastModifyUser": {
+      "domain": "gmail.com",
+      "email": "takashi316@gmail.com",
+      "name": "Takashi SASAKI (佐々木隆志)",
+      "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    }
+  }
 }

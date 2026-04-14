@@ -26,5 +26,18 @@
       "version": 2,
       "description": "No description"
     }
-  ]
+  ],
+  "appsScriptApi": {
+    "scriptId": "1ZKdRjD7_vTfM1WdztdpTZATzOwvO8cWg5sZcDBgfdHAjny_DXH2sK3Zk",
+    "title": "Gmail Label Manimulator",
+    "createTime": "2015-05-21T06:30:07.183Z",
+    "updateTime": "2018-04-26T18:38:07.347Z",
+    "creator": {
+      "domain": "gmail.com",
+      "email": "takashi316@gmail.com",
+      "name": "Takashi SASAKI (佐々木隆志)",
+      "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    },
+    "lastModifyUser": {}
+  }
 }

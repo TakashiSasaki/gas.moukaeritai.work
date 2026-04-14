@@ -31,5 +31,23 @@
       "version": 2,
       "description": "Google Takeout File Browser"
     }
-  ]
+  ],
+  "appsScriptApi": {
+    "scriptId": "1z_jBz0uoeT8VfbsuBhbw9op6GBZSolw89bFbEx3J4HDmCTOCfhsfwOoN",
+    "title": "Google Takeout File Browser",
+    "createTime": "2022-10-11T11:02:35.412Z",
+    "updateTime": "2022-10-11T12:45:34.441Z",
+    "creator": {
+      "domain": "gmail.com",
+      "email": "takashi316@gmail.com",
+      "name": "Takashi SASAKI (佐々木隆志)",
+      "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    },
+    "lastModifyUser": {
+      "domain": "gmail.com",
+      "email": "takashi316@gmail.com",
+      "name": "Takashi SASAKI (佐々木隆志)",
+      "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    }
+  }
 }

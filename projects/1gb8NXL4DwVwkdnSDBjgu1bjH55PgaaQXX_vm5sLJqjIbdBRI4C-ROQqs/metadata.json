@@ -31,5 +31,23 @@
       "version": 2,
       "description": "公開用"
     }
-  ]
+  ],
+  "appsScriptApi": {
+    "scriptId": "1gb8NXL4DwVwkdnSDBjgu1bjH55PgaaQXX_vm5sLJqjIbdBRI4C-ROQqs",
+    "title": "Bookmark Spreadsheet",
+    "createTime": "2025-06-18T04:19:16.462Z",
+    "updateTime": "2025-06-20T00:24:23.023Z",
+    "creator": {
+      "domain": "gmail.com",
+      "email": "takashi316@gmail.com",
+      "name": "Takashi SASAKI (佐々木隆志)",
+      "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    },
+    "lastModifyUser": {
+      "domain": "gmail.com",
+      "email": "takashi316@gmail.com",
+      "name": "Takashi SASAKI (佐々木隆志)",
+      "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    }
+  }
 }

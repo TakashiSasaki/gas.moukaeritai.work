@@ -40,5 +40,23 @@
       "version": 6,
       "description": "0.20250408"
     }
-  ]
+  ],
+  "appsScriptApi": {
+    "scriptId": "18fkObcqcU91kBSTc0UHqI3vOyd1zxSX6CHvJxaE1Urn6T-dS9d_lLiKj",
+    "title": "DriveMetaViewer",
+    "createTime": "2025-04-08T02:10:33.551Z",
+    "updateTime": "2025-04-08T03:46:15.914Z",
+    "creator": {
+      "domain": "gmail.com",
+      "email": "takashi316@gmail.com",
+      "name": "Takashi SASAKI (佐々木隆志)",
+      "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    },
+    "lastModifyUser": {
+      "domain": "gmail.com",
+      "email": "takashi316@gmail.com",
+      "name": "Takashi SASAKI (佐々木隆志)",
+      "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    }
+  }
 }

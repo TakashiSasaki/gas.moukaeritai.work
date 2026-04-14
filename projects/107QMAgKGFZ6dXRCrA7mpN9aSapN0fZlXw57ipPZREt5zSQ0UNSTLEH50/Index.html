@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<!-- index.html -->
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <!-- viewportタグはCode.gsで設定 -->
+  <title>Android Package List Viewer</title>
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+  <script type="text/javascript">
+    // 全デバイスのデータを保持するグローバル変数
+    let allDeviceData = [];
+
+    // Google Chartsライブラリの読み込み完了後、データ取得を開始
+    google.charts.load('current', {'packages':['table']});
+    google.charts.setOnLoadCallback(fetchInitialData);
+
+    /**
+     * サーバーから初期データを非同期で取得する
+     */
+    function fetchInitialData() {
+      google.script.run
+        .withSuccessHandler(onDataReceived)
+        .withFailureHandler(onDataError)
+        .getDeviceDataForHtml();
+    }
+
+    /**
+     * データ取得成功時のコールバック関数
+     * @param {Array<Object>} data - サーバーから取得したデバイスデータ
+     */
+    function onDataReceived(data) {
+      allDeviceData = data;
+      
+      // ローダーを非表示にし、メインコンテンツを表示
+      document.getElementById('initial-loader-overlay').style.display = 'none';
+      document.querySelector('.container').style.display = 'block';
+
+      // データがない場合はメッセージを表示し、UIの一部を隠す
+      if (!allDeviceData || allDeviceData.length === 0) {
+        document.getElementById('table_div').innerHTML = 
+          '<div class="no-data-message">表示するデータがありません。</div>';
+        document.getElementById('main_content_header').style.display = 'none';
+        document.getElementById('meta_info_wrapper').style.display = 'none';
+        document.querySelector('h2').style.display = 'none';
+      } else {
+        // データがある場合はUIを構築
+        populateDeviceSelector();
+        updateDisplay(0); // 最初のデバイスの情報を表示
+      }
+    }
+
+    /**
+     * データ取得失敗時のコールバック関数
+     * @param {Error} error - 発生したエラーオブジェクト
+     */
+    function onDataError(error) {
+      document.getElementById('initial-loader-overlay').style.display = 'none';
+      document.querySelector('.container').style.display = 'block';
+
+      const mainContent = document.getElementById('main_content');
+      mainContent.innerHTML = '<div class="error-message">データの読み込みに失敗しました。ページを再読み込みしてください。<p style="font-size:0.8em; color:#777;">エラー: ' + error.message + '</p></div>';
+      console.error('Failed to fetch data:', error);
+    }
+
+    /**
+     * デバイス選択用のドロップダウンメニューを生成する
+     */
+    function populateDeviceSelector() {
+      const selector = document.getElementById('device_selector');
+      allDeviceData.forEach((device, index) => {
+        const option = document.createElement('option');
+        option.value = index;
+        option.textContent = device.modelName;
+        selector.appendChild(option);
+      });
+      selector.addEventListener('change', (event) => {
+        updateDisplay(event.target.value);
+      });
+    }
+
+    /**
+     * 選択されたデバイスの情報を表示する
+     * @param {number} index - allDeviceData配列のインデックス
+     */
+    function updateDisplay(index) {
+      const device = allDeviceData[index];
+      document.getElementById('android_id_display').textContent = device.androidId;
+      document.getElementById('package_count_display').textContent = "パッケージリスト (" + device.packageList.length + "件)";
+      drawTable(device.packageList);
+    }
+
+    /**
+     * 指定されたパッケージリストでテーブルを描画する
+     * @param {Array<string>} packageList - 表示するパッケージの配列
+     */
+    function drawTable(packageList) {
+      const loader = document.getElementById('table-loader');
+      loader.style.display = 'block';
+
+      setTimeout(function() {
+        const data = new google.visualization.DataTable();
+        data.addColumn('string', 'Package Name');
+        const rows = packageList.map(pkg => {
+          try {
+            if (typeof pkg !== 'string' || !pkg) return ['(無効なデータ)'];
+            const url = "intent:#Intent;package=" + pkg + ";end";
+            const link = "<a href='" + url + "' target='_blank' rel='noopener noreferrer'>" + pkg + "</a>";
+            return [link];
+          } catch (e) {
+            return [pkg]; 
+          }
+        });
+        data.addRows(rows);
+
+        const table = new google.visualization.Table(document.getElementById('table_div'));
+        google.visualization.events.addListener(table, 'ready', function() {
+          loader.style.display = 'none';
+        });
+
+        table.draw(data, { 
+          showRowNumber: true, 
+          width: '100%', 
+          height: '100%',
+          allowHtml: true, 
+          sort: 'enable' 
+        });
+      }, 0);
+    }
+  </script>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; background-color: #f0f2f5; }
+    
+    /* 初期ローディング画面のスタイル */
+    #initial-loader-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background-color: rgba(255, 255, 255, 0.95);
+      display: flex; flex-direction: column; justify-content: center; align-items: center;
+      z-index: 9999;
+    }
+    .loader-text { margin-bottom: 20px; font-size: 1.2em; color: #555; }
+    #initial-loader-overlay .loader {
+      width: 50px; height: 50px; border: 6px solid #f3f3f3;
+      border-top: 6px solid #1a73e8; border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    .container { max-width: 800px; margin: 20px auto; padding: 0 15px; display: none; /* 初期状態は非表示 */ }
+    .content-box { border: 1px solid #ddd; border-radius: 8px; padding: 20px 25px; background-color: #fff; position: relative; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .user-info { position: absolute; top: 10px; right: 25px; font-size: 0.9em; color: #5f6368; }
+    .header-flex { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #eee; padding-bottom: 10px; flex-wrap: wrap; }
+    
+    .title-group { display: flex; align-items: center; }
+    .header-icon { width: 36px; height: 36px; margin-right: 15px; }
+    h1 { color: #1a73e8; margin: 0; font-size: 1.8em; }
+
+    #device_selector { font-size: 1em; padding: 8px 10px; border-radius: 4px; border: 1px solid #ccc; background-color: #fff; }
+    .meta-info { background-color: #e8f0fe; border-left: 4px solid #1a73e8; padding: 10px 15px; margin: 20px 0; }
+    
+    #table_div { position: relative; height: 450px; width: 100%; }
+    #table-loader {
+      display: none; position: absolute; top: 40%; left: 50%;
+      width: 40px; height: 40px; margin-left: -20px;
+      border: 5px solid #f3f3f3; border-top: 5px solid #1a73e8;
+      border-radius: 50%; animation: spin 1s linear infinite;
+    }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+    .no-data-message, .error-message { text-align: center; color: #777; padding: 80px 20px; font-size: 1.1em; }
+    .footer-instructions { margin-top: 25px; padding-top: 15px; border-top: 1px solid #ddd; }
+    .footer-instructions p { margin: 4px 0; font-size: 0.9em; color: #555; }
+    .footer-instructions a { color: #1a73e8; text-decoration: none; font-weight: bold; }
+    .footer-instructions a:hover { text-decoration: underline; }
+    .readme-links { margin-top: 1em; }
+
+    /* モバイル用のスタイル */
+    @media (max-width: 600px) {
+      .container {
+        margin: 0;
+        padding: 0;
+      }
+      .content-box {
+        border-radius: 0;
+        border-left: none;
+        border-right: none;
+        padding: 15px;
+      }
+      .user-info {
+        position: static;
+        text-align: right;
+        margin-bottom: 10px;
+        padding-right: 15px;
+      }
+      .header-flex {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+      }
+      h1 {
+        font-size: 1.6em;
+      }
+      #device_selector {
+        width: 100%;
+      }
+      .footer-instructions {
+        text-align: left;
+      }
+    }
+
+  </style>
+</head>
+<body>
+  <!-- 初期ローディング画面 -->
+  <div id="initial-loader-overlay">
+    <div class="loader-text">データを読み込んでいます...</div>
+    <div class="loader"></div>
+  </div>
+
+  <!-- メインコンテンツ -->
+  <div class="container">
+    <div class="content-box">
+      <div class="user-info">
+        👤 <?= userEmail ?>
+      </div>
+
+      <div id="main_content">
+        <div id="main_content_header" class="header-flex">
+          <div class="title-group">
+            <!-- ▼▼▼ ここから変更 ▼▼▼ -->
+            <img src="<?= faviconUrl ?>" alt="App Icon" class="header-icon">
+            <!-- ▲▲▲ ここまで変更 ▲▲▲ -->
+            <h1>Package Viewer</h1>
+          </div>
+          <select id="device_selector" title="表示するデバイスを選択"></select>
+        </div>
+      
+        <div id="meta_info_wrapper" class="meta-info">
+          <strong>Android ID:</strong> <span id="android_id_display"></span>
+        </div>
+
+        <h2 id="package_count_display">パッケージリスト</h2>
+
+        <div id="table_div">
+          <div id="table-loader"></div>
+        </div>
+      </div>
+
+      <div class="footer-instructions">
+        <div>
+          <p>このアプリは、<a href="https://llamalab.com/automate/" target="_blank" rel="noopener noreferrer"><strong>Automate</strong></a> と連携します。</p>
+          <p>データを送信するには、<a href="https://llamalab.com/automate/community/flows/51123" target="_blank" rel="noopener noreferrer">このコミュニティフロー</a>を実行してください。</p>
+          <p class="readme-links">
+            <a href="<?= ScriptApp.getService().getUrl() ?>?page=readme-ja" target="_blank">アプリの使い方 (日本語)</a> | 
+            <a href="<?= ScriptApp.getService().getUrl() ?>?page=readme-en" target="_blank">How to Use (English)</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

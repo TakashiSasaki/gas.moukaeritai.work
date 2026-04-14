@@ -12,5 +12,18 @@
       "description": ""
     }
   ],
-  "versions": []
+  "versions": [],
+  "appsScriptApi": {
+    "scriptId": "13faGzNt1a3JjMs8zCfYdm9-L7UCtrWa16Ha5G-_Q9-8yxAZxRCylv6eY",
+    "title": "Google Driveの一覧を取得するアドオン",
+    "createTime": "2016-12-27T08:08:44.585Z",
+    "updateTime": "2024-05-22T18:03:09.527Z",
+    "creator": {
+      "domain": "gmail.com",
+      "email": "takashi316@gmail.com",
+      "name": "Takashi SASAKI (佐々木隆志)",
+      "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    },
+    "lastModifyUser": {}
+  }
 }

@@ -31,5 +31,23 @@
       "version": 2,
       "description": "開発中プレビュー公開"
     }
-  ]
+  ],
+  "appsScriptApi": {
+    "scriptId": "1z3HCVNHvj2W-flbvkl2y-5QCWnl_GF4cPDqMbA2IlvbXqhtneLvEDEBz",
+    "title": "Moodle multichoice question validator",
+    "createTime": "2025-06-11T00:08:06.947Z",
+    "updateTime": "2025-06-11T04:59:02.114Z",
+    "creator": {
+      "domain": "gmail.com",
+      "email": "takashi316@gmail.com",
+      "name": "Takashi SASAKI (佐々木隆志)",
+      "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    },
+    "lastModifyUser": {
+      "domain": "gmail.com",
+      "email": "takashi316@gmail.com",
+      "name": "Takashi SASAKI (佐々木隆志)",
+      "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    }
+  }
 }

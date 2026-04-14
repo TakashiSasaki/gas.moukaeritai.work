@@ -22,5 +22,23 @@
       "version": 1,
       "description": "動作テスト"
     }
-  ]
+  ],
+  "appsScriptApi": {
+    "scriptId": "1Zx_o3LVk8gY7QSBrdWR1BvEYU5v2JDK-JPdEXGS6U-HFdZUUX4n2utOT",
+    "title": "Anonymous Cache",
+    "createTime": "2024-01-17T01:32:21.247Z",
+    "updateTime": "2024-01-17T01:33:50.169Z",
+    "creator": {
+      "domain": "gmail.com",
+      "email": "takashi316@gmail.com",
+      "name": "Takashi SASAKI (佐々木隆志)",
+      "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    },
+    "lastModifyUser": {
+      "domain": "gmail.com",
+      "email": "takashi316@gmail.com",
+      "name": "Takashi SASAKI (佐々木隆志)",
+      "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    }
+  }
 }

@@ -22,5 +22,23 @@
       "version": 1,
       "description": "リリース版"
     }
-  ]
+  ],
+  "appsScriptApi": {
+    "scriptId": "1qBif_0AXBT0X8-joKtQlP1ZRlrpcGTOuqOSWLpONoHkl21FhDoICeSWM",
+    "title": "Web Clip Stash",
+    "createTime": "2025-12-16T00:00:17.137Z",
+    "updateTime": "2025-12-16T02:18:16.020Z",
+    "creator": {
+      "domain": "gmail.com",
+      "email": "takashi316@gmail.com",
+      "name": "Takashi SASAKI (佐々木隆志)",
+      "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    },
+    "lastModifyUser": {
+      "domain": "gmail.com",
+      "email": "takashi316@gmail.com",
+      "name": "Takashi SASAKI (佐々木隆志)",
+      "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    }
+  }
 }

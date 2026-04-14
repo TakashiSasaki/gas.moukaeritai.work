@@ -50,5 +50,23 @@
       "version": 36,
       "description": "ｓｑｗ"
     }
-  ]
+  ],
+  "appsScriptApi": {
+    "scriptId": "191-QOfGkDNe9otT_2cJxL1Afh04ulD8ArB5JnPkM7yddJ2-OiUTvvtVJ",
+    "title": "GasOAuthLibrary",
+    "createTime": "2017-06-22T09:28:52.472Z",
+    "updateTime": "2025-01-13T18:43:29.583Z",
+    "creator": {
+      "domain": "gmail.com",
+      "email": "takashi316@gmail.com",
+      "name": "Takashi SASAKI (佐々木隆志)",
+      "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    },
+    "lastModifyUser": {
+      "domain": "gmail.com",
+      "email": "takashi316@gmail.com",
+      "name": "Takashi SASAKI (佐々木隆志)",
+      "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    }
+  }
 }

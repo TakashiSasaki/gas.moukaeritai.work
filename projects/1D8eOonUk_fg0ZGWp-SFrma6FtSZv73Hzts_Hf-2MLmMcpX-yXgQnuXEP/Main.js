@@ -3,42 +3,47 @@
 // Webアプリのルーティングと実行制御を担当
 // ==========================================
 
-/**
- * Webアプリにアクセスした際に実行される関数
- * @param {Object} e HTTPリクエストのパラメータ
- */
 function doGet(e) {
   const pageId = e.parameter.page;
+  const mimeType = e.parameter.mime; // 追加: mimeパラメータの取得
+  const props = PropertiesService.getScriptProperties();
   
-  // 1. pageパラメータがあり、かつ有効な施設IDの場合
   if (pageId && FACILITY_CONFIG[pageId]) {
     const htmlContent = getLatestHtml(pageId);
     
     if (htmlContent) {
-      // スプレッドシートから取得した最新のHTMLをそのまま表示
+      // ----------------------------------------------------
+      // ▼ 追加: mime=text/plain が指定されている場合はプレーンテキストで返す
+      // ----------------------------------------------------
+      if (mimeType === 'text/plain') {
+        return ContentService.createTextOutput(htmlContent)
+          .setMimeType(ContentService.MimeType.TEXT);
+      }
+      
+      // デフォルト: ブラウザで表示するための HTML として返す
       return HtmlService.createHtmlOutput(htmlContent)
         .setTitle(FACILITY_CONFIG[pageId].name + " - 最新レポート")
         .addMetaTag('viewport', 'width=device-width, initial-scale=1');
     } else {
-      // データが存在しない場合のメッセージ
-      return HtmlService.createHtmlOutput("<h1>まだデータが取得されていません。</h1><p>一覧に戻って「データ作成」を行ってください。</p>");
+      // データ未取得時のエラーメッセージもMIMEタイプに合わせる
+      if (mimeType === 'text/plain') {
+        return ContentService.createTextOutput("Error: まだデータが取得されていません。")
+          .setMimeType(ContentService.MimeType.TEXT);
+      }
+      return HtmlService.createHtmlOutput("<h1>まだデータが取得されていません。</h1>");
     }
-  } 
-  
-  // 2. パラメータがない、または不正な場合は「施設情報レポート一覧」を表示
-  else {
+  } else {
     const template = HtmlService.createTemplateFromFile('index');
-    
-    // テンプレートに渡す変数を設定
     template.webAppUrl = ScriptApp.getService().getUrl();
     template.facilities = FACILITY_CONFIG;
     
-    // スプレッドシート情報の取得
     const ss = getOrCreateSpreadsheet();
     template.ssUrl = ss.getUrl();
-    
-    // Storage.gs から最新の取得日時リストを取得
     template.timestamps = getLatestTimestamps();
+    
+    // 現在選択されているモデルと選択肢をUIに渡す
+    template.currentModel = props.getProperty("SELECTED_MODEL") || DEFAULT_MODEL;
+    template.availableModels = AVAILABLE_MODELS;
     
     return template.evaluate()
       .setTitle("施設情報レポート一覧")
@@ -46,38 +51,29 @@ function doGet(e) {
   }
 }
 
-/**
- * データの取得から保存までを一貫して実行するコア関数
- * @param {number} pageId 施設のセット番号
- */
+function updateModelSetting(modelName) {
+  if (AVAILABLE_MODELS.indexOf(modelName) === -1) throw new Error("無効なモデル名です。");
+  PropertiesService.getScriptProperties().setProperty("SELECTED_MODEL", modelName);
+  return `使用モデルを ${modelName} に変更しました。`;
+}
+
 function executeAndSave(pageId) {
   const config = FACILITY_CONFIG[pageId];
   if (!config) return;
-
   try {
     console.log(`開始: ${config.name} (ID: ${pageId}) のデータ生成中...`);
-    
-    // Gemini.gs の関数を呼び出してHTMLを生成
-    const generatedHtml = generateFacilityHtml(config.prompt);
-    
-    // Storage.gs の関数を呼び出してスプレッドシートに保存
+    const generatedHtml = generateFacilityHtml(buildPrompt(pageId));
     saveHtmlData(pageId, config.name, generatedHtml);
-    
     console.log(`成功: ${config.name} の保存が完了しました。`);
   } catch (error) {
     console.error(`エラー: ID ${pageId} の処理中に問題が発生しました。`, error);
-    throw error; // エラーを上位に投げてWeb側のハンドラに伝える
+    throw error;
   }
 }
 
-/**
- * Web画面(index.html)のボタンから呼び出される連携関数
- * @param {number} pageId 施設のセット番号
- */
 function triggerUpdateFromWeb(pageId) {
   const config = FACILITY_CONFIG[pageId];
   if (!config) throw new Error("無効な施設IDです。");
-  
   try {
     executeAndSave(pageId);
     return `${config.name} のデータを更新しました。`;
@@ -85,12 +81,6 @@ function triggerUpdateFromWeb(pageId) {
     throw new Error(`${config.name} の更新に失敗しました: ${e.message}`);
   }
 }
-
-// ==========================================
-// 定期実行（時間主導型トリガー）用エントリーポイント
-// ==========================================
-// 以下の各関数を GAS エディタの「トリガー」メニューから
-// それぞれ毎日指定の時刻（午前1時〜10時など）に実行するよう設定してください。
 
 function triggerSet1()  { executeAndSave(1); }
 function triggerSet2()  { executeAndSave(2); }

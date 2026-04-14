@@ -40,5 +40,23 @@
       "version": 3,
       "description": "解説付き"
     }
-  ]
+  ],
+  "appsScriptApi": {
+    "scriptId": "1yeQ42lIGOQq2Zkl33L0B6RdUfdtH-e_8rqEaHLoRXCu3iwHrc7EjDixf",
+    "title": "Moodle true/false quiz validator",
+    "createTime": "2025-05-21T05:01:47.595Z",
+    "updateTime": "2025-05-21T11:18:27.179Z",
+    "creator": {
+      "domain": "gmail.com",
+      "email": "takashi316@gmail.com",
+      "name": "Takashi SASAKI (佐々木隆志)",
+      "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    },
+    "lastModifyUser": {
+      "domain": "gmail.com",
+      "email": "takashi316@gmail.com",
+      "name": "Takashi SASAKI (佐々木隆志)",
+      "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    }
+  }
 }

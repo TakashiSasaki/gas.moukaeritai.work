@@ -26,5 +26,23 @@
       "version": 4,
       "description": "initial deployment"
     }
-  ]
+  ],
+  "appsScriptApi": {
+    "scriptId": "1fWFGiC7PwwYBmNTY12zxbSdBqkgP6RKta-bGSFDD90jliFIYOqxHbYEg",
+    "title": "DocImageResizer",
+    "createTime": "2025-03-26T05:19:10.635Z",
+    "updateTime": "2025-03-28T08:52:30.661Z",
+    "creator": {
+      "domain": "gmail.com",
+      "email": "takashi316@gmail.com",
+      "name": "Takashi SASAKI (佐々木隆志)",
+      "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    },
+    "lastModifyUser": {
+      "domain": "gmail.com",
+      "email": "takashi316@gmail.com",
+      "name": "Takashi SASAKI (佐々木隆志)",
+      "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    }
+  }
 }

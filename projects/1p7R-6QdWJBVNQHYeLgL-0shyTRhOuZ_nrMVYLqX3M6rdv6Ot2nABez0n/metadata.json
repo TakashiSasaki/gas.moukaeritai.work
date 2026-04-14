@@ -46,5 +46,23 @@
       "version": 7,
       "description": "Pocketで認可してアイテムを取得できるところまで確認"
     }
-  ]
+  ],
+  "appsScriptApi": {
+    "scriptId": "1p7R-6QdWJBVNQHYeLgL-0shyTRhOuZ_nrMVYLqX3M6rdv6Ot2nABez0n",
+    "title": "Download Items from Pocket.com",
+    "createTime": "2024-09-12T02:18:04.346Z",
+    "updateTime": "2024-09-12T09:33:01.785Z",
+    "creator": {
+      "domain": "gmail.com",
+      "email": "takashi316@gmail.com",
+      "name": "Takashi SASAKI (佐々木隆志)",
+      "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    },
+    "lastModifyUser": {
+      "domain": "gmail.com",
+      "email": "takashi316@gmail.com",
+      "name": "Takashi SASAKI (佐々木隆志)",
+      "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    }
+  }
 }

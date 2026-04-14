@@ -178,5 +178,23 @@
       "version": 40,
       "description": "Web app only"
     }
-  ]
+  ],
+  "appsScriptApi": {
+    "scriptId": "1R6Wr7q2KhcEMl6aUGc4YtwcKyuDfPkX-duWxyA93qLVLnpvAFkx47N4r",
+    "title": "Google Colaboratory Cell Link",
+    "createTime": "2023-11-28T09:25:42.130Z",
+    "updateTime": "2023-12-01T11:29:22.789Z",
+    "creator": {
+      "domain": "gmail.com",
+      "email": "takashi316@gmail.com",
+      "name": "Takashi SASAKI (佐々木隆志)",
+      "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    },
+    "lastModifyUser": {
+      "domain": "gmail.com",
+      "email": "takashi316@gmail.com",
+      "name": "Takashi SASAKI (佐々木隆志)",
+      "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    }
+  }
 }
