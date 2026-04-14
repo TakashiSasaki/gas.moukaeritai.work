@@ -6,7 +6,7 @@ permissions:
 on:
   workflow_dispatch:
   workflow_run:
-    workflows: ["GAS Project Finder"]
+    workflows: ["b1-gas-project-finder"]
     types:
       - completed
 

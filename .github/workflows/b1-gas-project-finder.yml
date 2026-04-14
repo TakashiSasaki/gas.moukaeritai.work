@@ -1,4 +1,4 @@
-name: GAS Project Finder
+name: b1-gas-project-finder
 
 on:
   schedule:
