@@ -76,8 +76,7 @@
         "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
       },
       "createTime": "2026-03-16T02:40:09.682Z",
-      "updateTime": "2026-03-26T05:16:12.810Z",
-      "functionSet": {}
+      "updateTime": "2026-03-26T05:16:12.810Z"
     },
     {
       "name": "Config",
@@ -89,17 +88,7 @@
         "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
       },
       "createTime": "2026-03-16T02:56:41.028Z",
-      "updateTime": "2026-03-26T05:16:12.810Z",
-      "functionSet": {
-        "values": [
-          {
-            "name": "buildPrompt",
-            "parameters": [
-              "pageId"
-            ]
-          }
-        ]
-      }
+      "updateTime": "2026-03-26T05:16:12.810Z"
     },
     {
       "name": "Storage",
@@ -111,31 +100,7 @@
         "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
       },
       "createTime": "2026-03-16T02:53:13.880Z",
-      "updateTime": "2026-03-26T05:16:12.810Z",
-      "functionSet": {
-        "values": [
-          {
-            "name": "getOrCreateSpreadsheet"
-          },
-          {
-            "name": "saveHtmlData",
-            "parameters": [
-              "pageId",
-              "facilityName",
-              "htmlContent"
-            ]
-          },
-          {
-            "name": "getLatestHtml",
-            "parameters": [
-              "pageId"
-            ]
-          },
-          {
-            "name": "getLatestTimestamps"
-          }
-        ]
-      }
+      "updateTime": "2026-03-26T05:16:12.810Z"
     },
     {
       "name": "index",
@@ -147,8 +112,7 @@
         "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
       },
       "createTime": "2026-03-16T02:41:38.753Z",
-      "updateTime": "2026-03-26T05:16:12.810Z",
-      "functionSet": {}
+      "updateTime": "2026-03-26T05:16:12.810Z"
     },
     {
       "name": "Main",
@@ -160,65 +124,7 @@
         "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
       },
       "createTime": "2026-03-16T04:57:46.787Z",
-      "updateTime": "2026-03-26T05:16:12.810Z",
-      "functionSet": {
-        "values": [
-          {
-            "name": "doGet",
-            "parameters": [
-              "e"
-            ]
-          },
-          {
-            "name": "updateModelSetting",
-            "parameters": [
-              "modelName"
-            ]
-          },
-          {
-            "name": "executeAndSave",
-            "parameters": [
-              "pageId"
-            ]
-          },
-          {
-            "name": "triggerUpdateFromWeb",
-            "parameters": [
-              "pageId"
-            ]
-          },
-          {
-            "name": "triggerSet1"
-          },
-          {
-            "name": "triggerSet2"
-          },
-          {
-            "name": "triggerSet3"
-          },
-          {
-            "name": "triggerSet4"
-          },
-          {
-            "name": "triggerSet5"
-          },
-          {
-            "name": "triggerSet6"
-          },
-          {
-            "name": "triggerSet7"
-          },
-          {
-            "name": "triggerSet8"
-          },
-          {
-            "name": "triggerSet9"
-          },
-          {
-            "name": "triggerSet10"
-          }
-        ]
-      }
+      "updateTime": "2026-03-26T05:16:12.810Z"
     },
     {
       "name": "Gemini",
@@ -230,17 +136,7 @@
         "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
       },
       "createTime": "2026-03-16T05:37:05.149Z",
-      "updateTime": "2026-03-26T05:16:12.810Z",
-      "functionSet": {
-        "values": [
-          {
-            "name": "generateFacilityHtml",
-            "parameters": [
-              "targetPrompt"
-            ]
-          }
-        ]
-      }
+      "updateTime": "2026-03-26T05:16:12.810Z"
     },
     {
       "name": "setupMonthlyTriggers",
@@ -252,66 +148,7 @@
         "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
       },
       "createTime": "2026-03-26T05:05:44.906Z",
-      "updateTime": "2026-03-26T05:16:12.810Z",
-      "functionSet": {
-        "values": [
-          {
-            "name": "deleteAllTriggers"
-          },
-          {
-            "name": "dailyMainTrigger"
-          },
-          {
-            "name": "relayExecutor",
-            "parameters": [
-              "n"
-            ]
-          },
-          {
-            "name": "createNextTrigger",
-            "parameters": [
-              "nextN",
-              "minutesLater"
-            ]
-          },
-          {
-            "name": "deleteTriggerByName",
-            "parameters": [
-              "functionName"
-            ]
-          },
-          {
-            "name": "runRelay1"
-          },
-          {
-            "name": "runRelay2"
-          },
-          {
-            "name": "runRelay3"
-          },
-          {
-            "name": "runRelay4"
-          },
-          {
-            "name": "runRelay5"
-          },
-          {
-            "name": "runRelay6"
-          },
-          {
-            "name": "runRelay7"
-          },
-          {
-            "name": "runRelay8"
-          },
-          {
-            "name": "runRelay9"
-          },
-          {
-            "name": "runRelay10"
-          }
-        ]
-      }
+      "updateTime": "2026-03-26T05:16:12.810Z"
     }
   ]
 }

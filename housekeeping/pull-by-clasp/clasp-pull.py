@@ -154,12 +154,10 @@ def get_project_files_metadata(script_id, access_token):
         with urllib.request.urlopen(req) as res:
             data = json.load(res)
         files = data.get("files", [])
-        # Strip source code; keep only metadata fields
+        _EXCLUDE = {"source", "functionSet"}
+        # Strip source code and functionSet; keep name, type, createTime, updateTime, lastModifyUser
         return [
-            {
-                k: v for k, v in f.items()
-                if k != "source"
-            }
+            {k: v for k, v in f.items() if k not in _EXCLUDE}
             for f in files
         ]
     except Exception as e:
