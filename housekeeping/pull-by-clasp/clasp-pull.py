@@ -141,6 +141,31 @@ def get_remote_project_metadata(script_id, access_token):
         print(f"Error fetching metadata for {script_id}: {e}", file=sys.stderr)
         return None
 
+def get_project_files_metadata(script_id, access_token):
+    """Fetch file list from Apps Script /content API, stripping source code.
+    
+    Returns a list of dicts with keys: name, type, createTime, updateTime.
+    Source code is intentionally excluded to keep metadata.json lightweight.
+    """
+    url = f"https://script.googleapis.com/v1/projects/{script_id}/content"
+    req = urllib.request.Request(url)
+    req.add_header("Authorization", f"Bearer {access_token}")
+    try:
+        with urllib.request.urlopen(req) as res:
+            data = json.load(res)
+        files = data.get("files", [])
+        # Strip source code; keep only metadata fields
+        return [
+            {
+                k: v for k, v in f.items()
+                if k != "source"
+            }
+            for f in files
+        ]
+    except Exception as e:
+        print(f"Error fetching file list for {script_id}: {e}", file=sys.stderr)
+        return None
+
 def get_local_apps_script_update_time(project_dir):
     """Get updateTime from local metadata.json (appsScriptApi block)."""
     meta_path = os.path.join(project_dir, 'metadata.json')
@@ -168,7 +193,7 @@ def cleanup_standalone_files(project_dir):
             except Exception:
                 pass
 
-def update_local_metadata(project_dir, api_metadata, deployments=None, versions=None):
+def update_local_metadata(project_dir, api_metadata, deployments=None, versions=None, files_metadata=None):
     """Merge Apps Script API metadata into metadata.json and clean up old properties."""
     meta_path = os.path.join(project_dir, 'metadata.json')
     data = {}
@@ -187,6 +212,8 @@ def update_local_metadata(project_dir, api_metadata, deployments=None, versions=
         data['deployments'] = deployments
     if versions is not None:
         data['versions'] = versions
+    if files_metadata is not None:
+        data['files'] = files_metadata
     
     # Cleanup root properties as requested (consolidation)
     root_to_remove = [
@@ -319,8 +346,16 @@ def main():
                 raw_ver = proc_ver.stdout
                 vers = parse_versions(raw_ver)
 
+                # 5) Fetch file list metadata via API
+                files_meta = None
+                if access_token and script_id:
+                    print("  Fetching file list metadata via API...")
+                    files_meta = get_project_files_metadata(script_id, access_token)
+                    if files_meta is not None:
+                        print(f"  Found {len(files_meta)} file(s): {[f.get('name') for f in files_meta]}")
+
                 # Update metadata directly in-memory and clean up old files
-                update_local_metadata(project_dir, remote_metadata, deps, vers)
+                update_local_metadata(project_dir, remote_metadata, deps, vers, files_meta)
                 cleanup_standalone_files(project_dir)
 
                 print(f"  Completed project '{entry}'.")
