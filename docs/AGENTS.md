@@ -8,7 +8,7 @@ Files in this directory define the public-facing static website, including:
 
 - `index.html`
 - `find.html`
-- `style.css`
+- `index.css`
 - `sw.js`
 - `manifest.webmanifest`
 - `icons/`
