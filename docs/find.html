@@ -5,7 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Google Apps Script by moukaeritai.work</title>
     <link rel="canonical" href="https://gas.moukaeritai.work/">
-    <link rel="icon" type="image/webp" href="moukaeritai-pictgram/64x64.webp/gold_green.webp">
+    <meta name="description" content="Browse and search Google Apps Script project READMEs on gas.moukaeritai.work.">
+    <meta name="theme-color" content="#1e6b52">
+    <link rel="manifest" href="/manifest.webmanifest">
+    <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
+    <link rel="apple-touch-icon" href="/icons/icon-192.png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
@@ -41,11 +45,9 @@
     <header class="hero position-relative">
         <div class="position-absolute top-0 end-0 p-3">
             <a href="https://moukaeritai.work" class="btn btn-sm btn-light me-2">
-                <img src="moukaeritai-pictgram/64x64.webp/slate_teal.webp" alt="" width="16" height="16" class="me-1">
                 moukaeritai.work
             </a>
             <a href="https://gas.moukaeritai.work" class="btn btn-sm btn-light me-2">
-                <img src="moukaeritai-pictgram/64x64.webp/gold_green.webp" alt="" width="16" height="16" class="me-1">
                 gas.moukaeritai.work
             </a>
             <a href="https://github.com/TakashiSasaki/gas.moukaeritai.work" class="btn btn-sm btn-light me-2">
@@ -93,6 +95,14 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script>
+        if ("serviceWorker" in navigator) {
+            window.addEventListener("load", () => {
+                navigator.serviceWorker.register("/sw.js").catch((err) => {
+                    console.log("ServiceWorker registration failed:", err);
+                });
+            });
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             const projectListEl = document.getElementById('project-list');
             const markdownContentEl = document.getElementById('markdown-content');
