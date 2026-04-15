@@ -9,3 +9,4 @@ generate_readme_list.py
 commit_message.txt
 test_out.txt
 _run_single.py
+_syntax_check.py
