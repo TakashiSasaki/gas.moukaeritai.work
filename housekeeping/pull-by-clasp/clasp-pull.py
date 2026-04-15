@@ -163,6 +163,39 @@ def get_project_files_metadata(script_id, access_token):
     except Exception as e:
         print(f"Error fetching file list for {script_id}: {e}", file=sys.stderr)
         return None
+def check_case_insensitive_name_conflicts(files, script_id):
+    """Detect file names that would collide on case-insensitive file systems (e.g. Windows).
+
+    If any collision is found, prints a detailed error to stderr and exits with code 1
+    so that GitHub Actions marks the workflow run as failed.
+    """
+    seen = {}  # lowercase_name -> original_name
+    conflicts = []  # list of (name_a, name_b) tuples
+
+    for f in files:
+        name = f.get("name", "")
+        lower = name.lower()
+        if lower in seen:
+            conflicts.append((seen[lower], name))
+        else:
+            seen[lower] = name
+
+    if conflicts:
+        print(
+            f"ERROR: Case-insensitive filename conflict detected in project {script_id}.",
+            file=sys.stderr,
+        )
+        for name_a, name_b in conflicts:
+            print(
+                f"  Conflict: '{name_a}' vs '{name_b}' (identical when lowercased)",
+                file=sys.stderr,
+            )
+        print(
+            "  On Windows these files map to the same path. "
+            "Remove one of the conflicting files from the Apps Script project before pulling.",
+            file=sys.stderr,
+        )
+        sys.exit(1)
 
 def get_local_apps_script_update_time(project_dir):
     """Get updateTime from local metadata.json (appsScriptApi block)."""
@@ -351,6 +384,7 @@ def main():
                     files_meta = get_project_files_metadata(script_id, access_token)
                     if files_meta is not None:
                         print(f"  Found {len(files_meta)} file(s): {[f.get('name') for f in files_meta]}")
+                        check_case_insensitive_name_conflicts(files_meta, script_id)
 
                 # Update metadata directly in-memory and clean up old files
                 update_local_metadata(project_dir, remote_metadata, deps, vers, files_meta)
