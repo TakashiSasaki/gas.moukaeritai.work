@@ -8,3 +8,4 @@ generate_readme_list.py
 .gemini/
 commit_message.txt
 test_out.txt
+_run_single.py
