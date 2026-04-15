@@ -137,56 +137,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const findTab = document.getElementById('find-tab');
-            const findIframe = document.getElementById('find-iframe');
-
-            findTab.addEventListener('shown.bs.tab', function() {
-                 if (findIframe) {
-                    try {
-                        const iframeDoc = findIframe.contentWindow.document;
-                         if (iframeDoc.body) {
-                            findIframe.style.height = iframeDoc.body.scrollHeight + 'px';
-                             // ResizeObserver to handle dynamic content changes inside iframe
-                            const resizeObserver = new ResizeObserver(() => {
-                                findIframe.style.height = iframeDoc.body.scrollHeight + 'px';
-                            });
-                            resizeObserver.observe(iframeDoc.body);
-                         }
-                    } catch(e) {
-                        console.log("Cross-origin iframe access restricted or content not loaded yet.");
-                    }
-                 }
-            });
-
-            // Handle iframe load event as well
-            if(findIframe) {
-                findIframe.addEventListener('load', function() {
-                     try {
-                        const iframeDoc = this.contentWindow.document;
-                        this.style.height = iframeDoc.body.scrollHeight + 'px';
-                        
-                        const resizeObserver = new ResizeObserver(() => {
-                             this.style.height = iframeDoc.body.scrollHeight + 'px';
-                        });
-                        resizeObserver.observe(iframeDoc.body);
-                    } catch(e) {
-                         console.log("Cross-origin iframe access restricted.");
-                    }
-                });
-            }
-
-        });
-    </script>
-    <script>
-        if ("serviceWorker" in navigator) {
-            window.addEventListener("load", () => {
-                navigator.serviceWorker.register("/sw.js").catch((err) => {
-                    console.log("ServiceWorker registration failed:", err);
-                });
-            });
-        }
-    </script>
+    <script src="/index.js"></script>
 </body>
 </html>

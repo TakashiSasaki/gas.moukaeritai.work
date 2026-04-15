@@ -7,6 +7,7 @@ This directory is published as `https://gas.moukaeritai.work/`.
 Files in this directory define the public-facing static website, including:
 
 - `index.html`
+- `index.js`
 - `find.html`
 - `index.css`
 - `sw.js`
