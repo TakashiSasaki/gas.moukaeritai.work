@@ -95,11 +95,21 @@
             btn.disabled = false;
             btn.innerText = "Post to Blogger (Draft)";
             const status = document.getElementById('status');
+            status.innerHTML = '';
+            const p = document.createElement('p');
             if(res.success) {
-              status.innerHTML = `<p style="color:green">成功! <a href="${res.url}" target="_blank">記事を見る</a></p>`;
+              p.style.color = 'green';
+              p.appendChild(document.createTextNode('成功! '));
+              const a = document.createElement('a');
+              a.href = res.url;
+              a.target = '_blank';
+              a.textContent = '記事を見る';
+              p.appendChild(a);
             } else {
-              status.innerHTML = `<p class="error">${res.message}</p>`;
+              p.className = 'error';
+              p.textContent = res.message;
             }
+            status.appendChild(p);
           })
           .processDocument(docUrl, blogId);
       }
