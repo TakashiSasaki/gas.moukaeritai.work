@@ -48,5 +48,31 @@
       "name": "Takashi SASAKI (佐々木隆志)",
       "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
     }
-  }
+  },
+  "files": [
+    {
+      "name": "appsscript",
+      "type": "JSON",
+      "lastModifyUser": {
+        "domain": "gmail.com",
+        "email": "takashi316@gmail.com",
+        "name": "Takashi SASAKI (佐々木隆志)",
+        "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+      },
+      "createTime": "2023-12-01T11:20:34.234Z",
+      "updateTime": "2023-12-01T11:42:52.747Z"
+    },
+    {
+      "name": "Code",
+      "type": "SERVER_JS",
+      "lastModifyUser": {
+        "domain": "gmail.com",
+        "email": "takashi316@gmail.com",
+        "name": "Takashi SASAKI (佐々木隆志)",
+        "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+      },
+      "createTime": "2023-12-01T11:20:34.234Z",
+      "updateTime": "2023-12-01T11:42:52.747Z"
+    }
+  ]
 }
