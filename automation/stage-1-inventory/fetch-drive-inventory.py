@@ -62,7 +62,12 @@ def refresh_access_token(credentials: dict[str, Any], session: Any = requests) -
 
 
 def fetch_inventory(access_token: str, session: Any = requests) -> dict[str, list[dict[str, Any]]] | None:
-    """Fetch the Drive inventory exhaustively through all result pages."""
+    """Fetch the Drive inventory exhaustively through all result pages.
+
+    A successful HTTP response is not sufficient evidence of completeness:
+    Drive can explicitly return ``incompleteSearch: true``. Such a response must
+    not be converted into an authoritative negative observation.
+    """
     files: list[dict[str, Any]] = []
     page_token: str | None = None
 
@@ -70,7 +75,7 @@ def fetch_inventory(access_token: str, session: Any = requests) -> dict[str, lis
         params: dict[str, Any] = {
             "q": "mimeType = 'application/vnd.google-apps.script' and trashed = false",
             "pageSize": 100,
-            "fields": "nextPageToken, files(id, name, createdTime, modifiedTime)",
+            "fields": "incompleteSearch, nextPageToken, files(id, name, createdTime, modifiedTime)",
         }
         if page_token:
             params["pageToken"] = page_token
@@ -82,6 +87,8 @@ def fetch_inventory(access_token: str, session: Any = requests) -> dict[str, lis
         if response.status_code != 200:
             return None
         payload = response.json()
+        if payload.get("incompleteSearch") is True:
+            return None
         page_files = payload.get("files", [])
         if not isinstance(page_files, list):
             return None
@@ -127,8 +134,9 @@ def main() -> int:
     if not inventory:
         return 1
     # This marker is repository-owned evidence that the snapshot came from the
-    # exhaustive paginated fetch path above. Historical/manual snapshots lacking
-    # it remain valid positive observations but cannot prove project absence.
+    # exhaustive paginated fetch path above and Drive did not report an
+    # incomplete search. Historical/manual snapshots lacking it remain valid
+    # positive observations but cannot prove project absence.
     snapshot = {"complete": True, **inventory}
     output = write_snapshot(snapshot, snapshot_directory())
     print(f"Wrote {len(inventory['files'])} Drive inventory entries to {output}")
