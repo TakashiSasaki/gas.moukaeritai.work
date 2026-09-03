@@ -16,6 +16,7 @@ This repository stores and synchronizes many Google Apps Script projects in one 
 - `automation/`: **how synchronization is performed**.
   - `stage-1-inventory/`: Drive inventory acquisition, canonical registry/lifecycle reconciliation, and public project-index generation.
   - `stage-2-inspection/`: Phase 2 read-only Apps Script API inspection and deterministic materialization planning; this implementation must not invoke clasp or mutate project source/state.
+  - `stage-3-materialization/`: Phase 2 transactional source materialization and observation finalization; this implementation may use clasp only for `pull`.
   - `stage-2-sync/`: currently orchestrated compatibility path combining Apps Script change detection, clasp source synchronization, metadata refresh, and project-state validation until the three-stage cutover.
   - `shared/`: repository, OAuth, and validation primitives shared by stages.
   - `maintenance/`: explicit historical migrations; these are not part of steady-state synchronization.
@@ -29,7 +30,8 @@ There is no supported repository-root project fallback. Do not recreate one.
 The canonical state authorities are intentionally distinct:
 
 - Stage 1 / Drive owns `driveApi` and `lifecycle.driveInventory`.
-- Apps Script remote observation belongs under `appsScriptApi` and the related remote metadata namespaces.
+- Stage 2 owns read-only Apps Script remote observation and deterministic materialization planning.
+- Stage 3 owns repository source materialization and finalization of Stage 2 observations.
 - `syncState.lastMaterializedAppsScriptUpdateTime` records the Apps Script state that was **successfully materialized**, not merely observed.
 
 Never infer successful synchronization solely from a freshly observed remote timestamp.
@@ -80,13 +82,28 @@ Source freshness is compared against `syncState.lastMaterializedAppsScriptUpdate
 5. fail closed when required Apps Script API observations cannot be obtained;
 6. never invoke clasp or parse human-readable clasp output.
 
-This implementation is additive until Stage 3 exists. Do not wire it into the production workflow or remove the compatibility path before the dedicated cutover PR.
+### Target Stage 3 — materialization/finalization
+
+`automation/stage-3-materialization/` consumes a Stage 2 plan and applies it to canonical repository state. It must:
+
+1. reject malformed or stale plans before any source mutation;
+2. use `clasp pull` as the only steady-state clasp command;
+3. treat pull, stale tracked-source cleanup, post-pull validation, structured metadata persistence, and checkpoint advancement as one per-project transaction when a pull is required;
+4. restore the complete pre-transaction project directory if any part of a required transaction fails;
+5. preserve unrelated metadata namespaces, especially Stage 1-owned `driveApi` and `lifecycle`;
+6. advance `syncState.lastMaterializedAppsScriptUpdateTime` only to the pre-pull Apps Script `updateTime` carried by the Stage 2 plan and only after successful source materialization;
+7. leave the checkpoint unchanged when no correlated pre-pull `updateTime` exists, so the next inspection remains fail-safe;
+8. refresh structured Apps Script/file/deployment/version observations for unchanged active projects without invoking clasp;
+9. leave Drive-absent projects untouched;
+10. honor a safe project-local `.clasp.json.rootDir` and reject source/root paths that can escape the canonical project directory.
+
+The target Stage 2 and Stage 3 implementations remain additive until the dedicated three-stage workflow cutover. Do not remove the compatibility path or wire the new stages into production orchestration in this PR.
 
 ## Project Directory Rules
 
 1. Do not rename or flatten `projects/<SCRIPT_ID>/`.
 2. Keep `.clasp.json` in each tracked project directory with the correct non-empty `scriptId`.
-3. Preserve unrelated namespaces in `metadata.json`. In particular, Stage 1 and Stage 2 must not overwrite each other's authoritative metadata blocks.
+3. Preserve unrelated namespaces in `metadata.json`. In particular, Stage 1 and downstream stages must not overwrite each other's authoritative metadata blocks.
 4. Treat standalone `deployments.json`, `versions.json`, and their old text variants as legacy state, not as canonical outputs.
 5. Be careful with case-insensitive filename collisions because this repository is actively used on Windows.
 6. Never advance `syncState.lastMaterializedAppsScriptUpdateTime` for a failed or unattempted source synchronization.
