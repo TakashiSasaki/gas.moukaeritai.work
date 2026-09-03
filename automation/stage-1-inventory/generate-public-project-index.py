@@ -20,24 +20,25 @@ def build_index(root: Path | None = None) -> list[dict[str, str]]:
     entries: list[dict[str, str]] = []
     for directory in iter_project_directories(base):
         metadata = load_metadata(directory, allow_missing=True)
+        name = None
         drive_api = metadata.get("driveApi")
-        if not isinstance(drive_api, dict):
+        if isinstance(drive_api, dict):
+            name = drive_api.get("name")
+        apps_script_api = metadata.get("appsScriptApi")
+        if not name and isinstance(apps_script_api, dict):
+            name = apps_script_api.get("title")
+        if not isinstance(name, str) or not name:
             continue
-        script_id = drive_api.get("id")
-        name = drive_api.get("name")
-        if not isinstance(script_id, str) or not script_id:
-            continue
-        if not isinstance(name, str):
-            name = ""
-        entries.append({"id": script_id, "name": name})
-    return sorted(entries, key=lambda item: (item["name"], item["id"]))
+        entries.append({"id": directory.name, "name": name})
+    entries.sort(key=lambda item: item["name"].lower())
+    return entries
 
 
 def write_index(entries: list[dict[str, str]], output: Path) -> None:
     output.parent.mkdir(parents=True, exist_ok=True)
     temporary = output.with_name(output.name + ".tmp")
     temporary.write_text(
-        json.dumps(entries, ensure_ascii=False, indent=2) + "\n",
+        json.dumps(entries, ensure_ascii=False, indent=2),
         encoding="utf-8",
     )
     os.replace(temporary, output)
