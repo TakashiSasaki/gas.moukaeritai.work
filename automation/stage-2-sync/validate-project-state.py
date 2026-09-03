@@ -12,64 +12,16 @@ if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
 from automation.shared.project_registry import get_script_id, iter_project_directories, load_metadata
-
-
-class CaseInsensitiveNameConflict(ValueError):
-    """Raised when Apps Script file names collide on a case-insensitive filesystem."""
+from automation.shared.project_validation import (
+    CaseInsensitiveNameConflict,
+    find_case_insensitive_name_conflicts,
+    validate_files,
+    windows_case_insensitive_key,
+)
 
 
 class ProjectStateError(ValueError):
     """Raised when lifecycle or synchronization state violates its contract."""
-
-
-def windows_case_insensitive_key(name: str) -> str:
-    """Approximate Windows ordinal filename comparison without full case folding.
-
-    Windows case-insensitive filename matching uses an uppercase-character table:
-    each input character maps to at most one comparison character. Python's
-    ``casefold()`` is intentionally stronger and can perform multi-character
-    expansions such as ``ß -> ss``, which would reject filenames that Windows
-    can keep distinct. Use only one-code-point uppercase mappings here and leave
-    characters unchanged when Python's full uppercase mapping expands them.
-    """
-    mapped: list[str] = []
-    for character in name:
-        uppercase = character.upper()
-        mapped.append(uppercase if len(uppercase) == 1 else character)
-    return "".join(mapped)
-
-
-def find_case_insensitive_name_conflicts(files: list[dict[str, Any]]) -> list[tuple[str, str]]:
-    seen: dict[str, str] = {}
-    conflicts: list[tuple[str, str]] = []
-    for item in files:
-        if not isinstance(item, dict):
-            continue
-        name = item.get("name", "")
-        if not isinstance(name, str):
-            name = str(name)
-        comparison_key = windows_case_insensitive_key(name)
-        if comparison_key in seen:
-            conflicts.append((seen[comparison_key], name))
-        else:
-            seen[comparison_key] = name
-    return conflicts
-
-
-def validate_files(files: list[dict[str, Any]], script_id: str) -> None:
-    conflicts = find_case_insensitive_name_conflicts(files)
-    if not conflicts:
-        return
-    details = "\n".join(
-        f"  Conflict: '{first}' vs '{second}' (identical under Windows-style case comparison)"
-        for first, second in conflicts
-    )
-    raise CaseInsensitiveNameConflict(
-        f"ERROR: Case-insensitive filename conflict detected in project {script_id}.\n"
-        f"{details}\n"
-        "  On Windows these files map to the same path. Remove one of the conflicting "
-        "files from the Apps Script project before pulling."
-    )
 
 
 def validate_state_contract(metadata: dict[str, Any], script_id: str) -> None:
