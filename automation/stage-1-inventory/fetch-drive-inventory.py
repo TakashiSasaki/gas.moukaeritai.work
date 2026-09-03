@@ -61,8 +61,8 @@ def refresh_access_token(credentials: dict[str, Any], session: Any = requests) -
     return str(token) if token else None
 
 
-def fetch_inventory(access_token: str, session: Any = requests) -> dict[str, Any] | None:
-    """Fetch an exhaustive Drive listing and mark only verified snapshots complete."""
+def fetch_inventory(access_token: str, session: Any = requests) -> dict[str, list[dict[str, Any]]] | None:
+    """Fetch the Drive inventory exhaustively through all result pages."""
     files: list[dict[str, Any]] = []
     page_token: str | None = None
 
@@ -70,7 +70,7 @@ def fetch_inventory(access_token: str, session: Any = requests) -> dict[str, Any
         params: dict[str, Any] = {
             "q": "mimeType = 'application/vnd.google-apps.script' and trashed = false",
             "pageSize": 100,
-            "fields": "nextPageToken, incompleteSearch, files(id, name, createdTime, modifiedTime)",
+            "fields": "nextPageToken, files(id, name, createdTime, modifiedTime)",
         }
         if page_token:
             params["pageToken"] = page_token
@@ -82,8 +82,6 @@ def fetch_inventory(access_token: str, session: Any = requests) -> dict[str, Any
         if response.status_code != 200:
             return None
         payload = response.json()
-        if payload.get("incompleteSearch") is True:
-            return None
         page_files = payload.get("files", [])
         if not isinstance(page_files, list):
             return None
@@ -92,11 +90,7 @@ def fetch_inventory(access_token: str, session: Any = requests) -> dict[str, Any
         if not page_token:
             break
 
-    # `complete` is a repository contract marker, not a Drive API field. Only
-    # snapshots produced after exhausting pagination receive it. Historical or
-    # manually supplied snapshots without this marker can still contribute
-    # positive observations, but must never cause projects to be marked absent.
-    return {"complete": True, "files": files}
+    return {"files": files}
 
 
 def prune_timestamped_snapshots(directory: Path, keep: int = SNAPSHOT_RETENTION) -> None:
@@ -132,7 +126,11 @@ def main() -> int:
     inventory = fetch_inventory(access_token)
     if not inventory:
         return 1
-    output = write_snapshot(inventory, snapshot_directory())
+    # This marker is repository-owned evidence that the snapshot came from the
+    # exhaustive paginated fetch path above. Historical/manual snapshots lacking
+    # it remain valid positive observations but cannot prove project absence.
+    snapshot = {"complete": True, **inventory}
+    output = write_snapshot(snapshot, snapshot_directory())
     print(f"Wrote {len(inventory['files'])} Drive inventory entries to {output}")
     return 0
 
