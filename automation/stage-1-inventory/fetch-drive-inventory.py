@@ -1,10 +1,5 @@
 #!/usr/bin/env python3
-"""Fetch the Apps Script inventory from Drive and persist a raw snapshot.
-
-This module is intentionally limited to external observation. It preserves the
-legacy Stage 1 Drive/OAuth and snapshot contracts while moving their ownership
-under automation/ and data/.
-"""
+"""Fetch the Apps Script inventory from Drive and persist a raw snapshot."""
 
 from __future__ import annotations
 
@@ -17,49 +12,24 @@ from typing import Any
 
 import requests
 
-TOKEN_URL = "https://oauth2.googleapis.com/token"
+REPO_ROOT = Path(__file__).resolve().parents[2]
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
+
+from automation.shared.google_oauth import GoogleOAuthError, acquire_access_token
+
 DRIVE_FILES_URL = "https://www.googleapis.com/drive/v3/files"
 SNAPSHOT_PATTERN = re.compile(r"^\d{8}-\d{6}\.json$")
 SNAPSHOT_RETENTION = 5
 
 
 def repository_root() -> Path:
-    return Path(__file__).resolve().parents[2]
+    return REPO_ROOT
 
 
 def snapshot_directory(root: Path | None = None) -> Path:
     base = root if root is not None else repository_root()
     return base / "data" / "inventory" / "drive-api" / "snapshots"
-
-
-def load_credentials(path: Path | None = None) -> dict[str, Any] | None:
-    credentials_path = path if path is not None else Path.home() / ".clasprc.json"
-    if not credentials_path.exists():
-        return None
-    data = json.loads(credentials_path.read_text(encoding="utf-8"))
-    if not isinstance(data, dict):
-        return None
-    tokens = data.get("tokens")
-    if isinstance(tokens, dict) and isinstance(tokens.get("default"), dict):
-        return tokens["default"]
-    token = data.get("token")
-    return token if isinstance(token, dict) else None
-
-
-def refresh_access_token(credentials: dict[str, Any], session: Any = requests) -> str | None:
-    response = session.post(
-        TOKEN_URL,
-        data={
-            "client_id": credentials["client_id"],
-            "client_secret": credentials["client_secret"],
-            "refresh_token": credentials["refresh_token"],
-            "grant_type": "refresh_token",
-        },
-    )
-    if response.status_code != 200:
-        return None
-    token = response.json().get("access_token")
-    return str(token) if token else None
 
 
 def fetch_inventory(access_token: str, session: Any = requests) -> dict[str, list[dict[str, Any]]] | None:
@@ -80,14 +50,26 @@ def fetch_inventory(access_token: str, session: Any = requests) -> dict[str, lis
         }
         if page_token:
             params["pageToken"] = page_token
-        response = session.get(
-            DRIVE_FILES_URL,
-            params=params,
-            headers={"Authorization": f"Bearer {access_token}"},
-        )
-        if response.status_code != 200:
+        try:
+            response = session.get(
+                DRIVE_FILES_URL,
+                params=params,
+                headers={"Authorization": f"Bearer {access_token}"},
+            )
+        except Exception as exc:
+            print(f"Error: Drive inventory request failed: {exc}", file=sys.stderr)
             return None
-        payload = response.json()
+        if response.status_code != 200:
+            print(f"Error: Drive inventory request failed with HTTP status {response.status_code}", file=sys.stderr)
+            return None
+        try:
+            payload = response.json()
+        except Exception as exc:
+            print(f"Error: Drive inventory response was not valid JSON: {exc}", file=sys.stderr)
+            return None
+        if not isinstance(payload, dict):
+            print("Error: Drive inventory response must be a JSON object", file=sys.stderr)
+            return None
         if payload.get("incompleteSearch") is True:
             print(
                 "Error: Drive API returned incompleteSearch=true; refusing to treat "
@@ -97,9 +79,14 @@ def fetch_inventory(access_token: str, session: Any = requests) -> dict[str, lis
             return None
         page_files = payload.get("files", [])
         if not isinstance(page_files, list):
+            print("Error: Drive inventory response field 'files' must be a list", file=sys.stderr)
             return None
         files.extend(item for item in page_files if isinstance(item, dict))
-        page_token = payload.get("nextPageToken")
+        next_page = payload.get("nextPageToken")
+        if next_page is not None and (not isinstance(next_page, str) or not next_page):
+            print("Error: Drive inventory nextPageToken must be a non-empty string", file=sys.stderr)
+            return None
+        page_token = next_page
         if not page_token:
             break
 
@@ -130,19 +117,17 @@ def write_snapshot(
 
 
 def main() -> int:
-    credentials = load_credentials()
-    if not credentials:
-        return 1
-    access_token = refresh_access_token(credentials)
-    if not access_token:
+    try:
+        access_token = acquire_access_token()
+    except GoogleOAuthError as exc:
+        print(f"Error: {exc}", file=sys.stderr)
         return 1
     inventory = fetch_inventory(access_token)
-    if not inventory:
+    if inventory is None:
         return 1
-    # This marker is repository-owned evidence that the snapshot came from the
-    # exhaustive paginated fetch path above and Drive did not report an
-    # incomplete search. Historical/manual snapshots lacking it remain valid
-    # positive observations but cannot prove project absence.
+    # Repository-owned evidence that exhaustive pagination completed and Drive
+    # did not report an incomplete search. Historical/manual snapshots lacking
+    # the marker can prove presence but cannot prove project absence.
     snapshot = {"complete": True, **inventory}
     output = write_snapshot(snapshot, snapshot_directory())
     print(f"Wrote {len(inventory['files'])} Drive inventory entries to {output}")
