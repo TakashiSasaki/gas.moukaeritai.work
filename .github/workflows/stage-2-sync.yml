@@ -1,17 +1,20 @@
-name: pull-by-clasp
+name: stage-2-sync
 
-# Ensure GITHUB_TOKEN can write to the repo
 permissions:
   contents: write
 
 on:
   workflow_dispatch:
+  workflow_run:
+    workflows: ["stage-1-inventory"]
+    types:
+      - completed
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
-  pull:
+  sync:
     runs-on: ubuntu-latest
 
     steps:
@@ -33,8 +36,23 @@ jobs:
       - name: Restore clasp credentials
         run: echo '${{ secrets.CLASPRC_JSON }}' > ~/.clasprc.json
 
-      - name: Pull all Apps Script projects
-        run: python3 housekeeping/pull-by-clasp/clasp-pull.py
+      - name: Detect project changes
+        run: python3 automation/stage-2-sync/detect-project-changes.py --output "$RUNNER_TEMP/stage-2-plan.json"
+
+      - name: Synchronize selected project sources
+        run: |
+          python3 automation/stage-2-sync/sync-project-source.py \
+            --plan "$RUNNER_TEMP/stage-2-plan.json" \
+            --output "$RUNNER_TEMP/stage-2-sync-result.json"
+
+      - name: Refresh synchronized project metadata
+        run: |
+          python3 automation/stage-2-sync/refresh-project-metadata.py \
+            --plan "$RUNNER_TEMP/stage-2-plan.json" \
+            --sync-result "$RUNNER_TEMP/stage-2-sync-result.json"
+
+      - name: Validate project state
+        run: python3 automation/stage-2-sync/validate-project-state.py
 
       - name: Commit & Push changes if any
         run: |

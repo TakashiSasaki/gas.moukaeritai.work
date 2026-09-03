@@ -41,7 +41,6 @@ def load_json(path: Path, validation: Validation):
 def validate_python(validation: Validation) -> None:
     roots = [
         REPOSITORY_ROOT / "automation",
-        REPOSITORY_ROOT / "housekeeping",
         REPOSITORY_ROOT / ".github" / "scripts",
     ]
     python_files = sorted(path for root in roots if root.exists() for path in root.rglob("*.py"))
@@ -77,7 +76,6 @@ def validate_json_files(validation: Validation) -> None:
         REPOSITORY_ROOT / "projects",
         REPOSITORY_ROOT / "docs",
         REPOSITORY_ROOT / "data",
-        REPOSITORY_ROOT / "housekeeping" / "list-by-drive-api",
     ]
     json_files = sorted(path for root in roots if root.exists() for path in root.rglob("*.json"))
     for path in json_files:
