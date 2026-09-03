@@ -1,49 +1,60 @@
 # Google Apps Script Project Management
 
-This repository is used to download all projects from Google Apps Script and manage them using Git.
+This repository backs up and version-controls multiple Google Apps Script projects in one Git repository.
 
-このリポジトリは複数のGoogle Apps Scriptプロジェクトを集めてコードを一元管理するためのものです。各 GAS プロジェクトは `projects/` 配下に配置されています。
-各サブディレクトリ名は Google Apps Script の Script ID をそのまま使っています。
+各 Google Apps Script project は `projects/<SCRIPT_ID>/` に配置され、Script ID を directory name として使用します。
 
-## Purpose
+## Repository Model
 
-The primary purpose of this repository is to provide a centralized location for:
+The repository separates synchronization responsibilities explicitly:
 
-*   **Backing up** your Google Apps Script projects.
-*   **Version controlling** your scripts, allowing you to track changes, revert to previous versions, and collaborate more effectively.
-*   **Managing** multiple Google Apps Script projects within a single Git repository structure.
-
-## How it Works (General Idea)
-
-Typically, this setup involves using a tool like `clasp` (the command-line tool for Google Apps Script) or custom scripts to:
-
-1.  **List** all your Google Apps Script projects.
-2.  **Clone** or **pull** each project into `projects/<SCRIPT_ID>/`.
-3.  **Commit** changes to Git to keep a history of your script development.
-
-This allows you to leverage the power of Git for your Google Apps Script development workflow.
+- `automation/`: synchronization implementation — **how** state is observed and synchronized.
+- `data/`: external observations — **what** was observed, including Drive inventory snapshots.
+- `projects/`: materialized Apps Script project source and metadata.
+- `docs/`: the public GitHub Pages projection, including generated `projects.json`.
 
 ## GitHub Actions Workflows
 
-This repository utilizes GitHub Actions workflows to automate certain tasks. These workflows now operate on the default branch, `gas.moukaeritai.work`.
+The default branch is `gas.moukaeritai.work`.
 
-### Sync from GAS
+### Stage 1: Drive Inventory
 
-*   **Trigger:** Manual dispatch or downstream `workflow_run`.
-*   **Purpose:** Automatically pulls the latest code from all registered Google Apps Script projects.
-*   **Process:**
-    1.  Checks out the `gas.moukaeritai.work` branch.
-    2.  Uses `clasp` to pull updates for each linked Google Apps Script project into `projects/<SCRIPT_ID>/`.
-    3.  If any changes are detected, commits them to the default branch with the message "chore: sync GAS projects".
+Workflow: `.github/workflows/stage-1-inventory.yml`
 
-### Update Apps Script Projects List
+- **Trigger:** every three hours or manual dispatch.
+- **Purpose:** observe Apps Script projects through Drive API, reconcile canonical project registry metadata, and regenerate the public project index.
+- **Pipeline:**
+  1. `automation/stage-1-inventory/fetch-drive-inventory.py`
+  2. `automation/stage-1-inventory/reconcile-project-registry.py`
+  3. `automation/stage-1-inventory/generate-public-project-index.py`
+  4. repository validation
+- **Outputs:** Drive snapshots under `data/inventory/drive-api/snapshots/`, `projects/<SCRIPT_ID>/` registry state, and `docs/projects.json`.
 
-*   **Trigger:** Manual dispatch.
-*   **Purpose:** Keeps an updated list of all Google Apps Script projects associated with the account.
-*   **Process:**
-    1.  Checks out the `gas.moukaeritai.work` branch.
-    2.  Uses `clasp list` to fetch the current list of projects.
-    3.  Saves this list to the `clasp-list.txt` file.
-    4.  If the `clasp-list.txt` file has changed since the last run, commits the updated file to the default branch with the message "Update Apps Script projects list and JSON".
+### Stage 2: Apps Script Synchronization
 
-These workflows help ensure that the repository remains a current backup and version-controlled representation of your Google Apps Script projects.
+Workflow: `.github/workflows/stage-2-sync.yml`
+
+- **Trigger:** manual dispatch or completion of the Stage 1 workflow.
+- **Purpose:** pull changed Apps Script sources and refresh Apps Script/deployment/version/file metadata.
+- **Pipeline:**
+  1. `automation/stage-2-sync/detect-project-changes.py`
+  2. `automation/stage-2-sync/sync-project-source.py`
+  3. `automation/stage-2-sync/refresh-project-metadata.py`
+  4. `automation/stage-2-sync/validate-project-state.py`
+- **External I/O:** Apps Script HTTP access is isolated in `apps_script_api.py`; clasp subprocess/auth-state access is isolated in `clasp_client.py`.
+
+### Validation
+
+Workflow: `.github/workflows/validate-automation.yml`
+
+Pull requests are checked with repository structural validation and unit tests under `automation/tests/` without requiring Google credentials.
+
+## Project State
+
+Each tracked project normally contains:
+
+- `.clasp.json` with its Script ID;
+- `metadata.json` with namespaced metadata such as `driveApi` and `appsScriptApi`;
+- Apps Script source files materialized by Stage 2.
+
+Historical metadata/file migrations are explicit maintenance operations under `automation/maintenance/`; they are not part of recurring Stage 1 synchronization.
