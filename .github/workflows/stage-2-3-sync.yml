@@ -54,7 +54,23 @@ jobs:
 
           with open(sys.argv[1], encoding="utf-8") as stream:
               plan = json.load(stream)
-          print("true" if plan.get("materializationRequired") is True else "false")
+          projects = plan.get("projects")
+          if not isinstance(projects, list):
+              raise SystemExit("Stage 2 plan projects must be a list")
+          required = False
+          for project in projects:
+              if not isinstance(project, dict):
+                  raise SystemExit("Stage 2 plan project must be an object")
+              materialization = project.get("materialization")
+              if not isinstance(materialization, dict):
+                  raise SystemExit("Stage 2 plan project materialization must be an object")
+              decision = materialization.get("required")
+              if not isinstance(decision, bool):
+                  raise SystemExit("Stage 2 plan materialization.required must be a boolean")
+              required = required or decision
+          if plan.get("materializationRequired") is not required:
+              raise SystemExit("Stage 2 plan materializationRequired does not match project decisions")
+          print("true" if required else "false")
           PY
           )"
           echo "materialization_required=$materialization_required" >> "$GITHUB_OUTPUT"
