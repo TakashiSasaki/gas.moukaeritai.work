@@ -23,6 +23,7 @@ from automation.shared.project_registry import (
     load_clasp,
     load_metadata,
     project_path,
+    projects_path,
     write_metadata,
 )
 from automation.shared.project_validation import CaseInsensitiveNameConflict, validate_files
@@ -87,6 +88,22 @@ def _current_checkpoint(metadata: dict[str, Any], script_id: str) -> str | None:
     if metadata.get("lastUpdated") is not None:
         return _optional_timestamp(metadata.get("lastUpdated"), "metadata lastUpdated", script_id)
     return None
+
+
+def _current_drive_lifecycle(metadata: dict[str, Any], script_id: str) -> str:
+    lifecycle = metadata.get("lifecycle")
+    if lifecycle is None:
+        return "unknown"
+    if not isinstance(lifecycle, dict):
+        raise MaterializationPlanError(f"{script_id}: metadata lifecycle must be an object")
+    value = lifecycle.get("driveInventory")
+    if value is None:
+        return "unknown"
+    if value not in {"present", "absent"}:
+        raise MaterializationPlanError(
+            f"{script_id}: metadata lifecycle.driveInventory must be 'present' or 'absent'"
+        )
+    return str(value)
 
 
 def _validate_object_list(value: Any, label: str, script_id: str) -> list[dict[str, Any]]:
@@ -175,6 +192,32 @@ def _validate_observation(item: dict[str, Any], script_id: str) -> dict[str, Any
     return observation
 
 
+def _validate_canonical_project(project_dir: Path, base: Path, script_id: str) -> None:
+    canonical_projects = projects_path(base)
+    if canonical_projects.is_symlink():
+        raise MaterializationPlanError("canonical projects/ directory must not be a symlink")
+    if not canonical_projects.is_dir():
+        raise MaterializationPlanError("canonical projects/ directory is missing")
+    try:
+        if canonical_projects.resolve().parent != base.resolve():
+            raise MaterializationPlanError("canonical projects/ directory escapes the repository root")
+    except OSError as exc:
+        raise MaterializationPlanError(f"cannot resolve canonical projects/ directory: {exc}") from exc
+
+    if project_dir.is_symlink():
+        raise MaterializationPlanError(f"{script_id}: canonical project directory must not be a symlink")
+    if not project_dir.is_dir():
+        raise MaterializationPlanError(f"{script_id}: canonical project directory is missing")
+    try:
+        resolved = project_dir.resolve()
+    except OSError as exc:
+        raise MaterializationPlanError(f"{script_id}: cannot resolve canonical project directory: {exc}") from exc
+    if resolved.parent != canonical_projects.resolve() or resolved.name != script_id:
+        raise MaterializationPlanError(
+            f"{script_id}: canonical project directory resolves outside projects/<SCRIPT_ID>"
+        )
+
+
 def _plan_projects(plan: dict[str, Any], base: Path) -> list[dict[str, Any]]:
     """Validate the complete plan before any project mutation occurs."""
     if plan.get("schemaVersion") != 1:
@@ -195,6 +238,11 @@ def _plan_projects(plan: dict[str, Any], base: Path) -> list[dict[str, Any]]:
             raise MaterializationPlanError(f"duplicate Stage 2 plan project: {script_id}")
         seen.add(script_id)
 
+        planned_lifecycle = item.get("lifecycle")
+        if planned_lifecycle not in {"present", "absent", "unknown"}:
+            raise MaterializationPlanError(
+                f"{script_id}: plan lifecycle must be 'present', 'absent', or 'unknown'"
+            )
         materialization = item.get("materialization")
         if not isinstance(materialization, dict) or not isinstance(materialization.get("required"), bool):
             raise MaterializationPlanError(f"{script_id}: materialization.required must be a boolean")
@@ -210,10 +258,15 @@ def _plan_projects(plan: dict[str, Any], base: Path) -> list[dict[str, Any]]:
             raise MaterializationPlanError(
                 f"{script_id}: plan path {item.get('path')!r} does not match canonical {expected_path!r}"
             )
-        if not canonical.is_dir():
-            raise MaterializationPlanError(f"{script_id}: canonical project directory is missing")
+        _validate_canonical_project(canonical, base, script_id)
 
         metadata = load_metadata(canonical, allow_missing=True)
+        current_lifecycle = _current_drive_lifecycle(metadata, script_id)
+        if current_lifecycle != planned_lifecycle:
+            raise MaterializationPlanError(
+                f"{script_id}: stale Stage 2 plan lifecycle {planned_lifecycle!r}; "
+                f"current repository lifecycle is {current_lifecycle!r}"
+            )
         current_checkpoint = _current_checkpoint(metadata, script_id)
         if current_checkpoint != planned_checkpoint:
             raise MaterializationPlanError(
@@ -235,11 +288,7 @@ def _plan_projects(plan: dict[str, Any], base: Path) -> list[dict[str, Any]]:
     return validated
 
 
-def _tracked_source_paths(
-    files: Any,
-    source_root: Path,
-    script_id: str,
-) -> set[Path]:
+def _tracked_source_paths(files: Any, source_root: Path, script_id: str) -> set[Path]:
     if not isinstance(files, list):
         return set()
     tracked: set[Path] = set()
@@ -249,8 +298,6 @@ def _tracked_source_paths(
         try:
             relative = _source_relative_path(item, script_id)
         except PostPullValidationError:
-            # Historical metadata may be malformed. Never broaden cleanup on the
-            # basis of a path we cannot prove was a canonical Apps Script source.
             continue
         destination = source_root.joinpath(*relative.parts).resolve()
         try:
@@ -330,9 +377,6 @@ def _metadata_from_observation(
         raise MaterializationPlanError(f"{script_id}: metadata syncState must be an object")
     else:
         sync_state = dict(sync_state)
-    # Make migration state explicit before replacing appsScriptApi with a remote
-    # observation. This prevents a new observation from being mistaken for a
-    # successful-materialization checkpoint on the next Stage 2 run.
     if checkpoint is not None:
         sync_state["lastMaterializedAppsScriptUpdateTime"] = checkpoint
     result["syncState"] = sync_state
@@ -348,9 +392,6 @@ def _metadata_from_observation(
             "materialization.observedAppsScriptUpdateTime",
             script_id,
         )
-        # A successful pull with no correlated updateTime is still useful, but
-        # cannot prove which remote revision was materialized. Keep the prior
-        # checkpoint so the next Stage 2 inspection safely selects it again.
         if observed is not None:
             sync_state["lastMaterializedAppsScriptUpdateTime"] = observed
     return result
@@ -358,9 +399,11 @@ def _metadata_from_observation(
 
 def _restore_project(project_dir: Path, backup: Path) -> None:
     try:
-        if project_dir.exists():
+        if project_dir.is_symlink():
+            project_dir.unlink()
+        elif project_dir.exists():
             shutil.rmtree(project_dir)
-        shutil.copytree(backup, project_dir)
+        shutil.copytree(backup, project_dir, symlinks=True)
     except OSError as exc:
         raise RuntimeError(f"failed to restore {project_dir} after materialization failure: {exc}") from exc
 
@@ -418,7 +461,7 @@ def materialize_plan(
         result["attempted"] = True
         with tempfile.TemporaryDirectory(prefix="gas-stage3-") as temporary:
             backup = Path(temporary) / "project-backup"
-            shutil.copytree(project_dir, backup)
+            shutil.copytree(project_dir, backup, symlinks=True)
             try:
                 clasp.pull(project_dir)
                 _remove_stale_tracked_sources(project_dir, script_id, old_metadata, observation)
