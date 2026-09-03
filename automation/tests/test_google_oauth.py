@@ -74,17 +74,24 @@ class GoogleOAuthTests(unittest.TestCase):
             with self.assertRaisesRegex(google_oauth.GoogleOAuthError, "client_id"):
                 google_oauth.acquire_access_token(path, session=FakeSession())
 
-    def test_refresh_http_failure_is_actionable(self):
+    def test_refresh_http_failure_preserves_safe_google_error_details_only(self):
         with tempfile.TemporaryDirectory() as temporary:
             path = Path(temporary) / ".clasprc.json"
             path.write_text(json.dumps({
                 "tokens": {"default": {"client_id": "client", "refresh_token": "refresh"}}
             }), encoding="utf-8")
-            with self.assertRaisesRegex(google_oauth.GoogleOAuthError, "HTTP status 401"):
-                google_oauth.acquire_access_token(
-                    path,
-                    session=FakeSession(FakeResponse({"error": "invalid_grant"}, status_code=401)),
-                )
+            response = FakeResponse({
+                "error": "invalid_grant",
+                "error_description": "Token has been revoked",
+                "refresh_token": "must-not-be-reported",
+            }, status_code=400)
+            with self.assertRaises(google_oauth.GoogleOAuthError) as raised:
+                google_oauth.acquire_access_token(path, session=FakeSession(response))
+            message = str(raised.exception)
+            self.assertIn("HTTP status 400", message)
+            self.assertIn("error=invalid_grant", message)
+            self.assertIn("error_description=Token has been revoked", message)
+            self.assertNotIn("must-not-be-reported", message)
 
     def test_refresh_requires_access_token_in_response(self):
         with tempfile.TemporaryDirectory() as temporary:
