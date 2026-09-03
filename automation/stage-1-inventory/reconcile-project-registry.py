@@ -22,7 +22,6 @@ if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
 from automation.shared.project_registry import (
-    get_script_id,
     iter_project_directories,
     load_metadata,
     project_path,
@@ -109,11 +108,11 @@ def reconcile(snapshot: Path, root: Path | None = None) -> int:
         present_script_ids.add(script_id)
         reconciled += 1
 
-    # Preserve source history for projects that disappeared from Drive. Only
-    # their Stage-1-owned lifecycle observation changes.
+    # The canonical directory name is itself the registry key. Do not depend on
+    # `.clasp.json` to derive lifecycle: Stage 1 is Drive/repository-owned and
+    # must not make a clasp artifact an authority for project discovery.
     for directory in iter_project_directories(base):
-        script_id = get_script_id(directory)
-        if script_id in present_script_ids:
+        if directory.name in present_script_ids:
             continue
         metadata = load_metadata(directory, allow_missing=True)
         _set_drive_lifecycle(metadata, "absent")
