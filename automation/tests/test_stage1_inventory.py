@@ -25,30 +25,16 @@ def load_module(name: str, relative_path: str) -> ModuleType:
     return module
 
 
-fetcher = load_module(
-    "stage1_fetch_drive_inventory",
-    "automation/stage-1-inventory/fetch-drive-inventory.py",
-)
-reconciler = load_module(
-    "stage1_reconcile_project_registry",
-    "automation/stage-1-inventory/reconcile-project-registry.py",
-)
-generator = load_module(
-    "stage1_generate_public_project_index",
-    "automation/stage-1-inventory/generate-public-project-index.py",
-)
-migrator = load_module(
-    "maintenance_migrate_legacy_project_metadata",
-    "automation/maintenance/migrate-legacy-project-metadata.py",
-)
+fetcher = load_module("stage1_fetch", "automation/stage-1-inventory/fetch-drive-inventory.py")
+reconciler = load_module("stage1_reconcile", "automation/stage-1-inventory/reconcile-project-registry.py")
+generator = load_module("stage1_index", "automation/stage-1-inventory/generate-public-project-index.py")
+migrator = load_module("legacy_migration", "automation/maintenance/migrate-legacy-project-metadata.py")
 
 
 class FakeResponse:
-    def __init__(self, payload):
+    def __init__(self, payload, status_code=200):
         self.payload = payload
-
-    def raise_for_status(self):
-        return None
+        self.status_code = status_code
 
     def json(self):
         return self.payload
@@ -62,86 +48,107 @@ class FakeDriveSession:
             {"files": [{"id": "two"}]},
         ]
 
-    def get(self, url, headers, params, timeout):
+    def get(self, url, params, headers):
         self.calls.append(dict(params))
         return FakeResponse(self.pages[len(self.calls) - 1])
 
 
 class Stage1InventoryTests(unittest.TestCase):
-    def test_drive_inventory_paginates(self):
+    def test_drive_inventory_paginates_and_preserves_envelope(self):
         session = FakeDriveSession()
         result = fetcher.fetch_inventory("token", session=session)
-        self.assertEqual([{"id": "one"}, {"id": "two"}], result)
+        self.assertEqual({"files": [{"id": "one"}, {"id": "two"}]}, result)
         self.assertNotIn("pageToken", session.calls[0])
         self.assertEqual("page-2", session.calls[1]["pageToken"])
+        self.assertEqual(100, session.calls[0]["pageSize"])
+        self.assertEqual(
+            "nextPageToken, files(id, name, createdTime, modifiedTime)",
+            session.calls[0]["fields"],
+        )
+
+    def test_credentials_support_legacy_clasp_shapes(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            path = Path(temporary) / ".clasprc.json"
+            path.write_text(json.dumps({"tokens": {"default": {"refresh_token": "a"}}}), encoding="utf-8")
+            self.assertEqual("a", fetcher.load_credentials(path)["refresh_token"])
+            path.write_text(json.dumps({"token": {"refresh_token": "b"}}), encoding="utf-8")
+            self.assertEqual("b", fetcher.load_credentials(path)["refresh_token"])
 
     def test_snapshot_retention_preserves_legacy_seed(self):
         with tempfile.TemporaryDirectory() as temporary:
             directory = Path(temporary)
-            (directory / "20260406.json").write_text("[]\n", encoding="utf-8")
+            (directory / "20260406.json").write_text('{"files": []}', encoding="utf-8")
             for second in range(6):
                 fetcher.write_snapshot(
-                    [],
-                    directory,
+                    {"files": []}, directory,
                     now=datetime(2026, 4, 14, 8, 7, 50 + second),
                 )
             timestamped = sorted(
-                path.name for path in directory.iterdir() if fetcher.SNAPSHOT_PATTERN.fullmatch(path.name)
+                path.name for path in directory.iterdir()
+                if fetcher.SNAPSHOT_PATTERN.fullmatch(path.name)
             )
             self.assertEqual(5, len(timestamped))
             self.assertTrue((directory / "20260406.json").exists())
 
-    def test_reconcile_only_updates_drive_api_and_creates_clasp(self):
+    def test_reconcile_updates_only_drive_fields_and_does_not_migrate(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
             project = root / "projects" / "script-1"
             project.mkdir(parents=True)
             (project / "metadata.json").write_text(
-                json.dumps(
-                    {
-                        "appsScriptApi": {"updateTime": "old"},
-                        "deployments.json": [{"legacy": True}],
-                        "driveApi": {"id": "script-1", "name": "Old"},
-                    }
-                ),
-                encoding="utf-8",
+                json.dumps({
+                    "appsScriptApi": {"updateTime": "old"},
+                    "deployments.json": [{"legacy": True}],
+                    "driveApi": {"id": "script-1", "name": "Old", "extra": "keep"},
+                }), encoding="utf-8",
             )
             snapshot = root / "snapshot.json"
             snapshot.write_text(
-                json.dumps([{"id": "script-1", "name": "New", "version": "2"}]),
-                encoding="utf-8",
+                json.dumps({"files": [{
+                    "id": "script-1", "name": "New",
+                    "createdTime": "created", "modifiedTime": "modified",
+                }]}), encoding="utf-8",
             )
-
-            count = reconciler.reconcile(snapshot, root=root)
-
-            self.assertEqual(1, count)
+            self.assertEqual(1, reconciler.reconcile(snapshot, root=root))
             metadata = json.loads((project / "metadata.json").read_text(encoding="utf-8"))
             self.assertEqual("New", metadata["driveApi"]["name"])
+            self.assertEqual("keep", metadata["driveApi"]["extra"])
             self.assertEqual({"updateTime": "old"}, metadata["appsScriptApi"])
             self.assertIn("deployments.json", metadata)
             self.assertNotIn("deployments", metadata)
-            clasp = json.loads((project / ".clasp.json").read_text(encoding="utf-8"))
-            self.assertEqual({"scriptId": "script-1", "rootDir": "."}, clasp)
+            self.assertFalse((project / ".clasp.json").exists())
 
-    def test_public_index_uses_materialized_drive_metadata_and_sorts(self):
+    def test_reconcile_new_project_creates_legacy_compatible_clasp(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
-            for script_id, name in (("b", "Zulu"), ("a", "Alpha")):
+            snapshot = root / "snapshot.json"
+            snapshot.write_text(
+                json.dumps({"files": [{"id": "script-1", "name": "New"}]}),
+                encoding="utf-8",
+            )
+            self.assertEqual(1, reconciler.reconcile(snapshot, root=root))
+            clasp = json.loads((root / "projects" / "script-1" / ".clasp.json").read_text(encoding="utf-8"))
+            self.assertEqual({"scriptId": "script-1"}, clasp)
+
+    def test_public_index_preserves_fallback_and_case_insensitive_sort(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            values = {
+                "b": {"driveApi": {"name": "Zulu"}},
+                "a": {"appsScriptApi": {"title": "alpha"}},
+            }
+            for script_id, metadata in values.items():
                 project = root / "projects" / script_id
                 project.mkdir(parents=True)
-                (project / "metadata.json").write_text(
-                    json.dumps({"driveApi": {"id": script_id, "name": name}}),
-                    encoding="utf-8",
-                )
-            ignored = root / "projects" / "ignored"
-            ignored.mkdir(parents=True)
-            (ignored / "metadata.json").write_text(json.dumps({"appsScriptApi": {}}), encoding="utf-8")
-
-            entries = generator.build_index(root)
+                (project / "metadata.json").write_text(json.dumps(metadata), encoding="utf-8")
             self.assertEqual(
-                [{"id": "a", "name": "Alpha"}, {"id": "b", "name": "Zulu"}],
-                entries,
+                [{"id": "a", "name": "alpha"}, {"id": "b", "name": "Zulu"}],
+                generator.build_index(root),
             )
+
+    def test_current_public_index_contract_is_preserved(self):
+        expected = json.loads((REPO_ROOT / "docs" / "projects.json").read_text(encoding="utf-8"))
+        self.assertEqual(expected, generator.build_index(REPO_ROOT))
 
     def test_legacy_migration_is_explicit_and_dry_run_is_read_only(self):
         with tempfile.TemporaryDirectory() as temporary:
@@ -154,12 +161,10 @@ class Stage1InventoryTests(unittest.TestCase):
             }
             metadata_path = project / "metadata.json"
             metadata_path.write_text(json.dumps(original), encoding="utf-8")
-
             changed, notes = migrator.migrate_project(project, apply=False)
             self.assertTrue(changed)
             self.assertTrue(notes)
             self.assertEqual(original, json.loads(metadata_path.read_text(encoding="utf-8")))
-
             changed, _ = migrator.migrate_project(project, apply=True)
             self.assertTrue(changed)
             migrated = json.loads(metadata_path.read_text(encoding="utf-8"))
@@ -173,17 +178,11 @@ class Stage1InventoryTests(unittest.TestCase):
             project = Path(temporary) / "projects" / "script-1"
             project.mkdir(parents=True)
             metadata_path = project / "metadata.json"
-            metadata_path.write_text(
-                json.dumps(
-                    {
-                        "driveApi": {"id": "script-1"},
-                        "deployments": [{"deploymentId": "canonical"}],
-                        "deployments.json": [{"deploymentId": "legacy"}],
-                    }
-                ),
-                encoding="utf-8",
-            )
-
+            metadata_path.write_text(json.dumps({
+                "driveApi": {"id": "script-1"},
+                "deployments": [{"deploymentId": "canonical"}],
+                "deployments.json": [{"deploymentId": "legacy"}],
+            }), encoding="utf-8")
             changed, notes = migrator.migrate_project(project, apply=True)
             self.assertFalse(changed)
             self.assertTrue(any(note.startswith("conflict:") for note in notes))
