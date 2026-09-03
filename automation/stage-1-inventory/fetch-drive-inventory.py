@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Fetch the Apps Script inventory from Drive and persist a raw snapshot.
 
-This module is intentionally limited to external observation.  It does not
-materialize projects or publish the public project index.
+This module is intentionally limited to external observation. It preserves the
+legacy Stage 1 Drive/OAuth and snapshot contracts while moving their ownership
+under automation/ and data/.
 """
 
 from __future__ import annotations
@@ -17,13 +18,8 @@ import requests
 
 TOKEN_URL = "https://oauth2.googleapis.com/token"
 DRIVE_FILES_URL = "https://www.googleapis.com/drive/v3/files"
-SCRIPT_MIME_TYPE = "application/vnd.google-apps.script"
 SNAPSHOT_PATTERN = re.compile(r"^\d{8}-\d{6}\.json$")
 SNAPSHOT_RETENTION = 5
-FIELDS = (
-    "nextPageToken, "
-    "files(id,name,createdTime,modifiedTime,version,webViewLink,owners)"
-)
 
 
 def repository_root() -> Path:
@@ -35,18 +31,21 @@ def snapshot_directory(root: Path | None = None) -> Path:
     return base / "data" / "inventory" / "drive-api" / "snapshots"
 
 
-def load_credentials(path: Path | None = None) -> dict[str, Any]:
+def load_credentials(path: Path | None = None) -> dict[str, Any] | None:
     credentials_path = path if path is not None else Path.home() / ".clasprc.json"
-    with credentials_path.open("r", encoding="utf-8") as handle:
-        credentials = json.load(handle)
-    if not isinstance(credentials, dict):
-        raise ValueError(f"Expected JSON object in {credentials_path}")
-    return credentials
+    if not credentials_path.exists():
+        return None
+    data = json.loads(credentials_path.read_text(encoding="utf-8"))
+    if not isinstance(data, dict):
+        return None
+    tokens = data.get("tokens")
+    if isinstance(tokens, dict) and isinstance(tokens.get("default"), dict):
+        return tokens["default"]
+    token = data.get("token")
+    return token if isinstance(token, dict) else None
 
 
-def refresh_access_token(
-    credentials: dict[str, Any], session: Any = requests
-) -> str:
+def refresh_access_token(credentials: dict[str, Any], session: Any = requests) -> str | None:
     response = session.post(
         TOKEN_URL,
         data={
@@ -55,38 +54,42 @@ def refresh_access_token(
             "refresh_token": credentials["refresh_token"],
             "grant_type": "refresh_token",
         },
-        timeout=30,
     )
-    response.raise_for_status()
+    if response.status_code != 200:
+        return None
     token = response.json().get("access_token")
-    if not token:
-        raise RuntimeError("OAuth token refresh did not return access_token")
-    return str(token)
+    return str(token) if token else None
 
 
-def fetch_inventory(access_token: str, session: Any = requests) -> list[dict[str, Any]]:
-    headers = {"Authorization": f"Bearer {access_token}"}
-    params: dict[str, Any] = {
-        "q": f"mimeType='{SCRIPT_MIME_TYPE}' and trashed=false",
-        "fields": FIELDS,
-        "pageSize": 1000,
-    }
+def fetch_inventory(access_token: str, session: Any = requests) -> dict[str, list[dict[str, Any]]] | None:
     files: list[dict[str, Any]] = []
+    page_token: str | None = None
 
     while True:
-        response = session.get(DRIVE_FILES_URL, headers=headers, params=params, timeout=30)
-        response.raise_for_status()
+        params: dict[str, Any] = {
+            "q": "mimeType = 'application/vnd.google-apps.script' and trashed = false",
+            "pageSize": 100,
+            "fields": "nextPageToken, files(id, name, createdTime, modifiedTime)",
+        }
+        if page_token:
+            params["pageToken"] = page_token
+        response = session.get(
+            DRIVE_FILES_URL,
+            params=params,
+            headers={"Authorization": f"Bearer {access_token}"},
+        )
+        if response.status_code != 200:
+            return None
         payload = response.json()
         page_files = payload.get("files", [])
         if not isinstance(page_files, list):
-            raise RuntimeError("Drive API response contains a non-list files field")
+            return None
         files.extend(item for item in page_files if isinstance(item, dict))
         page_token = payload.get("nextPageToken")
         if not page_token:
             break
-        params["pageToken"] = page_token
 
-    return files
+    return {"files": files}
 
 
 def prune_timestamped_snapshots(directory: Path, keep: int = SNAPSHOT_RETENTION) -> None:
@@ -100,28 +103,32 @@ def prune_timestamped_snapshots(directory: Path, keep: int = SNAPSHOT_RETENTION)
 
 
 def write_snapshot(
-    inventory: list[dict[str, Any]],
+    inventory: dict[str, list[dict[str, Any]]],
     directory: Path,
     now: datetime | None = None,
 ) -> Path:
     directory.mkdir(parents=True, exist_ok=True)
     timestamp = (now or datetime.now()).strftime("%Y%m%d-%H%M%S")
     output = directory / f"{timestamp}.json"
-    output.write_text(
-        json.dumps(inventory, ensure_ascii=False, indent=2) + "\n",
-        encoding="utf-8",
-    )
+    output.write_text(json.dumps(inventory, indent=2, ensure_ascii=False), encoding="utf-8")
     prune_timestamped_snapshots(directory)
     return output
 
 
-def main() -> None:
+def main() -> int:
     credentials = load_credentials()
+    if not credentials:
+        return 1
     access_token = refresh_access_token(credentials)
+    if not access_token:
+        return 1
     inventory = fetch_inventory(access_token)
+    if not inventory:
+        return 1
     output = write_snapshot(inventory, snapshot_directory())
-    print(f"Wrote {len(inventory)} Drive inventory entries to {output}")
+    print(f"Wrote {len(inventory['files'])} Drive inventory entries to {output}")
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())
