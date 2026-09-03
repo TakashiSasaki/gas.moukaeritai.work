@@ -81,14 +81,6 @@ class Stage1InventoryTests(unittest.TestCase):
         self.assertEqual(1, len(session.calls))
         self.assertIn("incompleteSearch", session.calls[0]["fields"])
 
-    def test_credentials_support_legacy_clasp_shapes(self):
-        with tempfile.TemporaryDirectory() as temporary:
-            path = Path(temporary) / ".clasprc.json"
-            path.write_text(json.dumps({"tokens": {"default": {"refresh_token": "a"}}}), encoding="utf-8")
-            self.assertEqual("a", fetcher.load_credentials(path)["refresh_token"])
-            path.write_text(json.dumps({"token": {"refresh_token": "b"}}), encoding="utf-8")
-            self.assertEqual("b", fetcher.load_credentials(path)["refresh_token"])
-
     def test_snapshot_retention_preserves_legacy_seed(self):
         with tempfile.TemporaryDirectory() as temporary:
             directory = Path(temporary)

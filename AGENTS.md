@@ -15,8 +15,9 @@ This repository stores and synchronizes many Google Apps Script projects in one 
 
 - `automation/`: **how synchronization is performed**.
   - `stage-1-inventory/`: Drive inventory acquisition, canonical registry/lifecycle reconciliation, and public project-index generation.
-  - `stage-2-sync/`: Apps Script change detection, clasp source synchronization, metadata refresh, and project-state validation.
-  - `shared/`: repository-access primitives shared by stages.
+  - `stage-2-inspection/`: Phase 2 read-only Apps Script API inspection and deterministic materialization planning; this implementation must not invoke clasp or mutate project source/state.
+  - `stage-2-sync/`: currently orchestrated compatibility path combining Apps Script change detection, clasp source synchronization, metadata refresh, and project-state validation until the three-stage cutover.
+  - `shared/`: repository, OAuth, and validation primitives shared by stages.
   - `maintenance/`: explicit historical migrations; these are not part of steady-state synchronization.
 - `data/`: **what was externally observed**. Drive inventory snapshots live under `data/inventory/drive-api/snapshots/`.
 - `projects/`: materialized Apps Script project state under `projects/<SCRIPT_ID>/`.
@@ -32,6 +33,8 @@ The canonical state authorities are intentionally distinct:
 - `syncState.lastMaterializedAppsScriptUpdateTime` records the Apps Script state that was **successfully materialized**, not merely observed.
 
 Never infer successful synchronization solely from a freshly observed remote timestamp.
+
+Direct Drive API and Apps Script API code must acquire bearer tokens through `automation/shared/google_oauth.py`. That provider may read clasp-compatible authorized-user credentials but must not use `clasp list` or mutate clasp's credential store to refresh direct-API access. clasp commands remain responsible for their own OAuth lifecycle.
 
 ## Synchronization Workflows
 
@@ -53,18 +56,31 @@ Stage 1 owns Drive observation, `driveApi` reconciliation, and Drive-derived lif
 
 Do not treat `absent` as authorization to delete source or the project directory.
 
-### Stage 2 — synchronization
+### Current Stage 2 — compatibility synchronization
 
-`.github/workflows/stage-2-sync.yml` can be dispatched manually and is triggered only after successful Stage 1 completion. Its canonical sequence is:
+`.github/workflows/stage-2-sync.yml` can be dispatched manually and is triggered only after successful Stage 1 completion. Until the three-stage workflow cutover, its canonical sequence remains:
 
 1. `automation/stage-2-sync/detect-project-changes.py`
 2. `automation/stage-2-sync/sync-project-source.py`
 3. `automation/stage-2-sync/refresh-project-metadata.py`
 4. `automation/stage-2-sync/validate-project-state.py`
 
-External Apps Script HTTP I/O must go through `apps_script_api.py`; clasp subprocess/auth-state I/O must go through `clasp_client.py`. Keep business decisions out of those I/O primitives.
+External Apps Script HTTP I/O in this compatibility path goes through its `apps_script_api.py`; clasp subprocess/auth-state I/O goes through `clasp_client.py`. Keep business decisions out of those I/O primitives.
 
 Source freshness is compared against `syncState.lastMaterializedAppsScriptUpdateTime`. During migration, older metadata may use the previously successful `appsScriptApi.updateTime` as the fallback checkpoint. A failed source pull must leave the materialization checkpoint unchanged; only a successful source synchronization may advance it.
+
+### Target Stage 2 — inspection/planning
+
+`automation/stage-2-inspection/` is the cutover-ready Stage 2 implementation. It must:
+
+1. use the Google Apps Script API directly for project metadata, file metadata, deployments, and versions;
+2. skip projects whose Drive lifecycle is `absent`;
+3. emit a deterministic JSON materialization plan;
+4. remain read-only with respect to `projects/<SCRIPT_ID>/`;
+5. fail closed when required Apps Script API observations cannot be obtained;
+6. never invoke clasp or parse human-readable clasp output.
+
+This implementation is additive until Stage 3 exists. Do not wire it into the production workflow or remove the compatibility path before the dedicated cutover PR.
 
 ## Project Directory Rules
 
