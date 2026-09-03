@@ -22,6 +22,23 @@ class ProjectStateError(ValueError):
     """Raised when lifecycle or synchronization state violates its contract."""
 
 
+def windows_case_insensitive_key(name: str) -> str:
+    """Approximate Windows ordinal filename comparison without full case folding.
+
+    Windows case-insensitive filename matching uses an uppercase-character table:
+    each input character maps to at most one comparison character. Python's
+    ``casefold()`` is intentionally stronger and can perform multi-character
+    expansions such as ``ß -> ss``, which would reject filenames that Windows
+    can keep distinct. Use only one-code-point uppercase mappings here and leave
+    characters unchanged when Python's full uppercase mapping expands them.
+    """
+    mapped: list[str] = []
+    for character in name:
+        uppercase = character.upper()
+        mapped.append(uppercase if len(uppercase) == 1 else character)
+    return "".join(mapped)
+
+
 def find_case_insensitive_name_conflicts(files: list[dict[str, Any]]) -> list[tuple[str, str]]:
     seen: dict[str, str] = {}
     conflicts: list[tuple[str, str]] = []
@@ -31,11 +48,11 @@ def find_case_insensitive_name_conflicts(files: list[dict[str, Any]]) -> list[tu
         name = item.get("name", "")
         if not isinstance(name, str):
             name = str(name)
-        folded = name.casefold()
-        if folded in seen:
-            conflicts.append((seen[folded], name))
+        comparison_key = windows_case_insensitive_key(name)
+        if comparison_key in seen:
+            conflicts.append((seen[comparison_key], name))
         else:
-            seen[folded] = name
+            seen[comparison_key] = name
     return conflicts
 
 
@@ -44,7 +61,7 @@ def validate_files(files: list[dict[str, Any]], script_id: str) -> None:
     if not conflicts:
         return
     details = "\n".join(
-        f"  Conflict: '{first}' vs '{second}' (identical when case-folded)"
+        f"  Conflict: '{first}' vs '{second}' (identical under Windows-style case comparison)"
         for first, second in conflicts
     )
     raise CaseInsensitiveNameConflict(
