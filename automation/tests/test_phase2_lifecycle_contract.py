@@ -56,11 +56,20 @@ def write_project(root: Path, script_id: str, metadata: dict) -> Path:
     return directory
 
 
-def write_snapshot(root: Path, files: list[dict], name: str = "20260903-000000.json") -> Path:
+def write_snapshot(
+    root: Path,
+    files: list[dict],
+    name: str = "20260903-000000.json",
+    *,
+    complete: bool = True,
+) -> Path:
     directory = root / "data" / "inventory" / "drive-api" / "snapshots"
     directory.mkdir(parents=True, exist_ok=True)
     path = directory / name
-    path.write_text(json.dumps({"files": files}), encoding="utf-8")
+    payload = {"files": files}
+    if complete:
+        payload["complete"] = True
+    path.write_text(json.dumps(payload), encoding="utf-8")
     return path
 
 
@@ -122,6 +131,43 @@ class Phase2LifecycleContractTests(unittest.TestCase):
             metadata = json.loads((project / "metadata.json").read_text(encoding="utf-8"))
             self.assertEqual(metadata["lifecycle"]["driveInventory"], "present")
             self.assertTrue(source.exists())
+
+    def test_incomplete_snapshot_never_marks_omitted_project_absent(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            project = write_project(
+                root,
+                "script-a",
+                {
+                    "driveApi": {"id": "script-a", "name": "Alpha"},
+                    "lifecycle": {"driveInventory": "present"},
+                },
+            )
+            incomplete = write_snapshot(root, [], complete=False)
+            reconcile_module.reconcile(incomplete, root)
+            metadata = json.loads((project / "metadata.json").read_text(encoding="utf-8"))
+            self.assertEqual(metadata["lifecycle"]["driveInventory"], "present")
+
+    def test_incomplete_snapshot_can_still_confirm_presence(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            project = write_project(
+                root,
+                "script-a",
+                {
+                    "driveApi": {"id": "script-a", "name": "Old"},
+                    "lifecycle": {"driveInventory": "absent"},
+                },
+            )
+            incomplete = write_snapshot(
+                root,
+                [{"id": "script-a", "name": "Alpha"}],
+                complete=False,
+            )
+            reconcile_module.reconcile(incomplete, root)
+            metadata = json.loads((project / "metadata.json").read_text(encoding="utf-8"))
+            self.assertEqual(metadata["lifecycle"]["driveInventory"], "present")
+            self.assertEqual(metadata["driveApi"]["name"], "Alpha")
 
     def test_public_index_excludes_absent_projects(self):
         with tempfile.TemporaryDirectory() as temporary:
