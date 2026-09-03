@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate the GitHub Pages project index from materialized project metadata."""
+"""Generate the GitHub Pages project index from active project metadata."""
 
 from __future__ import annotations
 
@@ -15,11 +15,22 @@ if str(REPO_ROOT) not in sys.path:
 from automation.shared.project_registry import iter_project_directories, load_metadata
 
 
+def _is_present(metadata: dict[str, object]) -> bool:
+    lifecycle = metadata.get("lifecycle")
+    if isinstance(lifecycle, dict) and lifecycle.get("driveInventory") == "absent":
+        return False
+    # Missing lifecycle means pre-contract metadata and remains active until the
+    # next Stage 1 reconciliation records an explicit observation.
+    return True
+
+
 def build_index(root: Path | None = None) -> list[dict[str, str]]:
     base = root if root is not None else REPO_ROOT
     entries: list[dict[str, str]] = []
     for directory in iter_project_directories(base):
         metadata = load_metadata(directory, allow_missing=True)
+        if not _is_present(metadata):
+            continue
         name = None
         drive_api = metadata.get("driveApi")
         if isinstance(drive_api, dict):
