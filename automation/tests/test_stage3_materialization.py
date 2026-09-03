@@ -170,7 +170,7 @@ class Stage3MaterializationTests(unittest.TestCase):
 
             def fail(directory: Path):
                 (directory / "Code.js").write_text("partial", encoding="utf-8")
-                raise subprocess.CalledProcessError(1, ["npx", "clasp", "pull"])
+                raise subprocess.CalledProcessError(1, ["clasp", "pull"])
 
             result = stage3.materialize_plan(
                 plan(plan_item("script-1", required=True, remote=observation("new"))),
@@ -468,12 +468,18 @@ class Stage3MaterializationTests(unittest.TestCase):
             def runner(args, **kwargs):
                 calls.append(list(args))
                 if len(calls) == 1:
-                    raise subprocess.CalledProcessError(1, args)
+                    raise subprocess.CalledProcessError(1, args, stderr="transient")
                 return subprocess.CompletedProcess(args, 0, stdout="ok", stderr="")
 
-            self.assertEqual("ok", clasp_client.pull(project, runner=runner, retries=1))
+            clasp_client.pull(
+                project,
+                runner=runner,
+                attempts=2,
+                retry_delay_seconds=0,
+                sleeper=lambda _: None,
+            )
             self.assertEqual(
-                [["npx", "clasp", "pull"], ["npx", "clasp", "pull"]],
+                [["clasp", "pull"], ["clasp", "pull"]],
                 calls,
             )
             self.assertTrue(all("list" not in call for call in calls))
