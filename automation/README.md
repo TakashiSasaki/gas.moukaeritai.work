@@ -8,7 +8,6 @@ The synchronization architecture separates implementation from observed data and
 - `stage-1-inventory/` owns Drive inventory acquisition, project registry reconciliation, and public index generation.
 - `stage-2-inspection/` is the steady-state clasp-free Apps Script API inspection/planning implementation. It observes project/content/deployment/version state and emits a deterministic materialization plan without changing canonical project state.
 - `stage-3-materialization/` is the steady-state materialization/finalization implementation. It consumes the Stage 2 plan, uses only `clasp pull` for required source changes, validates the resulting tree, applies structured observation metadata, and advances the successful-materialization checkpoint within a per-project rollback boundary.
-- `stage-2-sync/` is the retired compatibility implementation. It is retained temporarily only for explicit post-cutover cleanup and is not part of steady-state orchestration.
 - `maintenance/` contains explicit historical migrations that do not run as part of steady-state synchronization.
 
 Direct Drive and Apps Script API callers acquire bearer tokens through `shared/google_oauth.py`. This provider reads compatible clasp authorized-user credentials but does not invoke `clasp list` or mutate clasp's credential store; clasp commands remain responsible for their own OAuth refresh.
