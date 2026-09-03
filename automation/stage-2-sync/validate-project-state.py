@@ -1,0 +1,74 @@
+#!/usr/bin/env python3
+"""Validate materialized Stage 2 project state without performing external I/O."""
+
+from __future__ import annotations
+
+import sys
+from pathlib import Path
+from typing import Any
+
+REPO_ROOT = Path(__file__).resolve().parents[2]
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
+
+from automation.shared.project_registry import get_script_id, iter_project_directories, load_metadata
+
+
+class CaseInsensitiveNameConflict(ValueError):
+    """Raised when Apps Script file names collide on a case-insensitive filesystem."""
+
+
+def find_case_insensitive_name_conflicts(files: list[dict[str, Any]]) -> list[tuple[str, str]]:
+    seen: dict[str, str] = {}
+    conflicts: list[tuple[str, str]] = []
+    for item in files:
+        if not isinstance(item, dict):
+            continue
+        name = item.get("name", "")
+        if not isinstance(name, str):
+            name = str(name)
+        folded = name.lower()
+        if folded in seen:
+            conflicts.append((seen[folded], name))
+        else:
+            seen[folded] = name
+    return conflicts
+
+
+def validate_files(files: list[dict[str, Any]], script_id: str) -> None:
+    conflicts = find_case_insensitive_name_conflicts(files)
+    if not conflicts:
+        return
+    details = "\n".join(
+        f"  Conflict: '{first}' vs '{second}' (identical when lowercased)"
+        for first, second in conflicts
+    )
+    raise CaseInsensitiveNameConflict(
+        f"ERROR: Case-insensitive filename conflict detected in project {script_id}.\n"
+        f"{details}\n"
+        "  On Windows these files map to the same path. Remove one of the conflicting "
+        "files from the Apps Script project before pulling."
+    )
+
+
+def validate_repository(root: Path | str | None = None) -> None:
+    for project_dir in iter_project_directories(root):
+        script_id = get_script_id(project_dir)
+        metadata = load_metadata(project_dir, allow_missing=True)
+        files = metadata.get("files")
+        if isinstance(files, list):
+            validate_files(files, script_id)
+
+
+def main() -> int:
+    try:
+        validate_repository()
+    except CaseInsensitiveNameConflict as exc:
+        print(str(exc), file=sys.stderr)
+        return 1
+    print("Stage 2 project-state validation passed.")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
