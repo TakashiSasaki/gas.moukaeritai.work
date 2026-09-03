@@ -14,6 +14,9 @@ REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
 PROJECTS_DIR = REPOSITORY_ROOT / "projects"
 DOCS_PROJECTS = REPOSITORY_ROOT / "docs" / "projects.json"
 
+if str(REPOSITORY_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPOSITORY_ROOT))
+
 
 class Validation:
     def __init__(self) -> None:
@@ -36,7 +39,11 @@ def load_json(path: Path, validation: Validation):
 
 
 def validate_python(validation: Validation) -> None:
-    roots = [REPOSITORY_ROOT / "housekeeping", REPOSITORY_ROOT / ".github" / "scripts"]
+    roots = [
+        REPOSITORY_ROOT / "automation",
+        REPOSITORY_ROOT / "housekeeping",
+        REPOSITORY_ROOT / ".github" / "scripts",
+    ]
     python_files = sorted(path for root in roots if root.exists() for path in root.rglob("*.py"))
     imported_roots: set[str] = set()
 
@@ -69,6 +76,7 @@ def validate_json_files(validation: Validation) -> None:
     roots = [
         REPOSITORY_ROOT / "projects",
         REPOSITORY_ROOT / "docs",
+        REPOSITORY_ROOT / "data",
         REPOSITORY_ROOT / "housekeeping" / "list-by-drive-api",
     ]
     json_files = sorted(path for root in roots if root.exists() for path in root.rglob("*.json"))
@@ -169,7 +177,7 @@ def validate_docs_projection(project_ids: set[str], validation: Validation) -> N
     if unprojected:
         validation.warning(
             f"{len(unprojected)} materialized project directories are absent from docs/projects.json; "
-            "this is recorded as baseline information, not a Phase 1 PR 1 failure"
+            "this remains baseline information rather than a structural validation failure"
         )
 
     print(f"Validated docs/projects.json references for {len(documented_ids)} projects.")
@@ -186,7 +194,7 @@ def main() -> int:
     if mismatches:
         print(
             f"Baseline observation: {len(mismatches)} project directories do not match their scriptId; "
-            "the canonical-name invariant is not enforced by this PR."
+            "the canonical-name invariant is not yet enforced."
         )
 
     for warning in validation.warnings:
