@@ -22,7 +22,7 @@ The default branch is `gas.moukaeritai.work`.
 Workflow: `.github/workflows/stage-1-inventory.yml`
 
 - **Trigger:** every three hours or manual dispatch.
-- **Purpose:** observe Apps Script projects through Drive API, reconcile canonical project registry metadata, and regenerate the public project index.
+- **Purpose:** observe Apps Script projects through Drive API, reconcile canonical project registry metadata and lifecycle, and regenerate the public project index.
 - **Pipeline:**
   1. `automation/stage-1-inventory/fetch-drive-inventory.py`
   2. `automation/stage-1-inventory/reconcile-project-registry.py`
@@ -30,11 +30,18 @@ Workflow: `.github/workflows/stage-1-inventory.yml`
   4. repository validation
 - **Outputs:** Drive snapshots under `data/inventory/drive-api/snapshots/`, `projects/<SCRIPT_ID>/` registry state, and `docs/projects.json`.
 
+Stage 1 is the authority for Drive-derived project presence. `metadata.json` records this as `lifecycle.driveInventory`:
+
+- `present`: the project exists in the latest Drive inventory and participates in normal publication/synchronization.
+- `absent`: the project is missing from the latest Drive inventory. The canonical project directory and source history are retained, but the project is excluded from `docs/projects.json` and normal Stage 2 synchronization. A later Drive observation can return it to `present`.
+
+An `absent` transition is therefore **not** a project deletion.
+
 ### Stage 2: Apps Script Synchronization
 
 Workflow: `.github/workflows/stage-2-sync.yml`
 
-- **Trigger:** manual dispatch or completion of the Stage 1 workflow.
+- **Trigger:** manual dispatch or successful completion of the Stage 1 workflow.
 - **Purpose:** pull changed Apps Script sources and refresh Apps Script/deployment/version/file metadata.
 - **Pipeline:**
   1. `automation/stage-2-sync/detect-project-changes.py`
@@ -42,6 +49,8 @@ Workflow: `.github/workflows/stage-2-sync.yml`
   3. `automation/stage-2-sync/refresh-project-metadata.py`
   4. `automation/stage-2-sync/validate-project-state.py`
 - **External I/O:** Apps Script HTTP access is isolated in `apps_script_api.py`; clasp subprocess/auth-state access is isolated in `clasp_client.py`.
+
+Remote observation and successful source materialization are separate states. `appsScriptApi.updateTime` records observed Apps Script state, while `syncState.lastMaterializedAppsScriptUpdateTime` is the successful-materialization checkpoint used for source freshness. A failed source pull must not advance that checkpoint.
 
 ### Validation
 
@@ -54,7 +63,13 @@ Pull requests are checked with repository structural validation and unit tests u
 Each tracked project normally contains:
 
 - `.clasp.json` with its Script ID;
-- `metadata.json` with namespaced metadata such as `driveApi` and `appsScriptApi`;
+- `metadata.json` with namespaced metadata such as `driveApi`, `appsScriptApi`, `lifecycle`, and `syncState`;
 - Apps Script source files materialized by Stage 2.
+
+The repository intentionally distinguishes three concepts:
+
+1. Drive observation (`driveApi` and `lifecycle.driveInventory`);
+2. Apps Script remote observation (`appsScriptApi` and related remote metadata);
+3. successful materialization (`syncState.lastMaterializedAppsScriptUpdateTime`).
 
 Historical metadata/file migrations are explicit maintenance operations under `automation/maintenance/`; they are not part of recurring Stage 1 synchronization.

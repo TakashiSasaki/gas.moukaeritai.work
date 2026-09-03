@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Reconcile a Drive inventory snapshot into canonical project registry state.
 
-This is steady-state materialization only. Historical metadata migration and
-public index publication are deliberately separate responsibilities.
+Stage 1 owns Drive observation and the Drive-derived project lifecycle. It
+never deletes a canonical project directory merely because the project is
+absent from the latest inventory.
 """
 
 from __future__ import annotations
@@ -20,7 +21,12 @@ SNAPSHOT_PATTERN = re.compile(r"^\d{8}-\d{6}\.json$")
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
-from automation.shared.project_registry import load_metadata, project_path, write_metadata
+from automation.shared.project_registry import (
+    iter_project_directories,
+    load_metadata,
+    project_path,
+    write_metadata,
+)
 
 
 def snapshot_directory(root: Path | None = None) -> Path:
@@ -39,11 +45,16 @@ def latest_snapshot(root: Path | None = None) -> Path:
     return candidates[-1]
 
 
-def load_snapshot(path: Path) -> list[dict[str, Any]]:
+def load_snapshot_payload(path: Path) -> dict[str, Any]:
     with path.open("r", encoding="utf-8") as handle:
         payload = json.load(handle)
     if not isinstance(payload, dict) or not isinstance(payload.get("files"), list):
         raise ValueError(f"Expected {{'files': [...]}} snapshot in {path}")
+    return payload
+
+
+def load_snapshot(path: Path) -> list[dict[str, Any]]:
+    payload = load_snapshot_payload(path)
     return [item for item in payload["files"] if isinstance(item, dict)]
 
 
@@ -59,10 +70,22 @@ def _write_clasp(directory: Path, script_id: str) -> None:
     os.replace(temporary, clasp_path)
 
 
+def _set_drive_lifecycle(metadata: dict[str, Any], status: str) -> None:
+    lifecycle = metadata.get("lifecycle")
+    if not isinstance(lifecycle, dict):
+        lifecycle = {}
+        metadata["lifecycle"] = lifecycle
+    lifecycle["driveInventory"] = status
+
+
 def reconcile(snapshot: Path, root: Path | None = None) -> int:
     base = root if root is not None else REPO_ROOT
     reconciled = 0
-    for item in load_snapshot(snapshot):
+    present_script_ids: set[str] = set()
+    snapshot_payload = load_snapshot_payload(snapshot)
+    snapshot_complete = snapshot_payload.get("complete") is True
+
+    for item in (item for item in snapshot_payload["files"] if isinstance(item, dict)):
         script_id = item.get("id")
         name = item.get("name")
         if not isinstance(script_id, str) or not script_id or not name:
@@ -84,11 +107,28 @@ def reconcile(snapshot: Path, root: Path | None = None) -> int:
             drive_api["createdTime"] = item["createdTime"]
         if item.get("modifiedTime"):
             drive_api["modifiedTime"] = item["modifiedTime"]
+        _set_drive_lifecycle(metadata, "present")
 
         if is_new_metadata:
             _write_clasp(directory, script_id)
         write_metadata(directory, metadata)
+        present_script_ids.add(script_id)
         reconciled += 1
+
+    # Negative lifecycle observations are authoritative only for snapshots that
+    # explicitly prove exhaustive pagination. Historical/manual snapshots with
+    # no `complete: true` marker can still prove presence, but can never prove
+    # absence. This prevents truncated inventories from hiding active projects.
+    if snapshot_complete:
+        # The canonical directory name is itself the registry key. Do not depend
+        # on `.clasp.json` to derive lifecycle: Stage 1 is Drive/repository-owned.
+        for directory in iter_project_directories(base):
+            if directory.name in present_script_ids:
+                continue
+            metadata = load_metadata(directory, allow_missing=True)
+            _set_drive_lifecycle(metadata, "absent")
+            write_metadata(directory, metadata)
+
     return reconciled
 
 

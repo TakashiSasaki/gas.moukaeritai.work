@@ -33,12 +33,31 @@ clasp_client = _load_sibling("stage2_detect_clasp_client", "clasp_client.py")
 apps_script_api = _load_sibling("stage2_detect_apps_script_api", "apps_script_api.py")
 
 
-def _local_update_time(metadata: dict[str, Any]) -> str | None:
+def _materialized_update_time(metadata: dict[str, Any]) -> str | None:
+    # Once syncState exists, it is the sole successful-materialization authority.
+    # An empty syncState intentionally means "no known checkpoint" and must not
+    # fall back to a newer remote observation stored in appsScriptApi.
+    if "syncState" in metadata:
+        sync_state = metadata.get("syncState")
+        if not isinstance(sync_state, dict):
+            return None
+        checkpoint = sync_state.get("lastMaterializedAppsScriptUpdateTime")
+        return str(checkpoint) if checkpoint else None
+
+    # Compatibility with the pre-contract representation. Before syncState was
+    # introduced, appsScriptApi.updateTime was written only after a successful
+    # source synchronization, so it is a safe checkpoint fallback until a writer
+    # explicitly migrates the project to syncState.
     apps_script = metadata.get("appsScriptApi")
     if isinstance(apps_script, dict) and apps_script.get("updateTime"):
         return str(apps_script["updateTime"])
     legacy = metadata.get("lastUpdated")
     return str(legacy) if legacy else None
+
+
+def _is_absent(metadata: dict[str, Any]) -> bool:
+    lifecycle = metadata.get("lifecycle")
+    return isinstance(lifecycle, dict) and lifecycle.get("driveInventory") == "absent"
 
 
 def build_plan(
@@ -52,7 +71,8 @@ def build_plan(
     api = api or apps_script_api
     base = Path(root).resolve() if root is not None else REPO_ROOT
 
-    # Preserve the legacy best-effort startup behavior without making it policy.
+    # Preserve the legacy best-effort startup behavior until Stage 2 is cut over
+    # to direct OAuth and Apps Script API inspection in the next phase step.
     clasp.check_version()
     clasp.refresh_token()
     access_token = clasp.read_access_token()
@@ -67,15 +87,35 @@ def build_plan(
     for project_dir in iter_project_directories(base):
         script_id = get_script_id(project_dir)
         metadata = load_metadata(project_dir, allow_missing=True)
-        local_update_time = _local_update_time(metadata)
+        local_update_time = _materialized_update_time(metadata)
+
+        if _is_absent(metadata):
+            entries.append(
+                {
+                    "scriptId": script_id,
+                    "path": project_dir.relative_to(base).as_posix(),
+                    "shouldSync": False,
+                    "localUpdateTime": local_update_time,
+                    "remoteUpdateTime": None,
+                    "remoteMetadata": None,
+                }
+            )
+            continue
+
         remote_metadata = api.get_project(script_id, access_token) if access_token else None
         remote_update_time = None
         if isinstance(remote_metadata, dict) and remote_metadata.get("updateTime"):
             remote_update_time = str(remote_metadata["updateTime"])
 
-        should_sync = True
-        if remote_update_time and local_update_time and remote_update_time <= local_update_time:
-            should_sync = False
+        # A checkpoint proves exactly one observed remote state was materialized.
+        # Only equality can establish unchanged state without relying on timestamp
+        # string ordering, precision, or monotonicity assumptions. Any difference
+        # is conservatively selected for synchronization.
+        should_sync = not (
+            remote_update_time
+            and local_update_time
+            and remote_update_time == local_update_time
+        )
 
         entries.append(
             {

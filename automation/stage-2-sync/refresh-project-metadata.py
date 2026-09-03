@@ -61,6 +61,36 @@ def _cleanup_standalone_files(project_dir: Path) -> None:
             pass
 
 
+def _migrate_materialization_state(metadata: dict[str, Any]) -> None:
+    """Make successful-materialization state explicit before remote observation changes."""
+    if "syncState" in metadata:
+        return
+
+    sync_state: dict[str, Any] = {}
+    apps_script = metadata.get("appsScriptApi")
+    if isinstance(apps_script, dict) and apps_script.get("updateTime"):
+        sync_state["lastMaterializedAppsScriptUpdateTime"] = str(apps_script["updateTime"])
+    elif metadata.get("lastUpdated"):
+        sync_state["lastMaterializedAppsScriptUpdateTime"] = str(metadata["lastUpdated"])
+    metadata["syncState"] = sync_state
+
+
+def _advance_materialization_checkpoint(
+    metadata: dict[str, Any],
+    plan_item: dict[str, Any],
+) -> None:
+    """Advance only to the remote state observed before the successful pull."""
+    update_time = plan_item.get("remoteUpdateTime")
+    if not update_time:
+        return
+
+    sync_state = metadata.get("syncState")
+    if not isinstance(sync_state, dict):
+        sync_state = {}
+        metadata["syncState"] = sync_state
+    sync_state["lastMaterializedAppsScriptUpdateTime"] = str(update_time)
+
+
 def refresh_metadata(
     plan: dict[str, Any],
     sync_result: dict[str, Any],
@@ -70,7 +100,7 @@ def refresh_metadata(
     api: Any = None,
     state_validator: Any = None,
 ) -> int:
-    """Merge remote metadata only for projects whose source sync succeeded."""
+    """Merge remote metadata and advance checkpoints only for successful syncs."""
     clasp = clasp or clasp_client
     api = api or apps_script_api
     state_validator = state_validator or validator
@@ -102,6 +132,8 @@ def refresh_metadata(
         project_dir = project_path(script_id, base)
         remote_metadata = plan_item.get("remoteMetadata")
         if not isinstance(remote_metadata, dict):
+            # This is a post-pull observation only. It may be persisted, but it
+            # must never determine the successful-materialization checkpoint.
             remote_metadata = api.get_project(script_id, access_token) if access_token else None
 
         files_metadata = None
@@ -113,12 +145,18 @@ def refresh_metadata(
                 state_validator.validate_files(files_metadata, script_id)
 
         metadata = load_metadata(project_dir, allow_missing=True)
+        # Before replacing the legacy appsScriptApi observation, preserve its old
+        # successful-sync meaning as an explicit checkpoint. Even an empty
+        # syncState is meaningful: it prevents future fallback to a newer remote
+        # observation when no correlated checkpoint is known.
+        _migrate_materialization_state(metadata)
         if isinstance(remote_metadata, dict):
             metadata["appsScriptApi"] = remote_metadata
         metadata["deployments"] = clasp.list_deployments(project_dir)
         metadata["versions"] = clasp.list_versions(project_dir)
         if files_metadata is not None:
             metadata["files"] = files_metadata
+        _advance_materialization_checkpoint(metadata, plan_item)
 
         for key in LEGACY_ROOT_KEYS:
             metadata.pop(key, None)

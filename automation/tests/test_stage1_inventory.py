@@ -44,13 +44,22 @@ class FakeDriveSession:
     def __init__(self):
         self.calls = []
         self.pages = [
-            {"files": [{"id": "one"}], "nextPageToken": "page-2"},
-            {"files": [{"id": "two"}]},
+            {"files": [{"id": "one"}], "nextPageToken": "page-2", "incompleteSearch": False},
+            {"files": [{"id": "two"}], "incompleteSearch": False},
         ]
 
     def get(self, url, params, headers):
         self.calls.append(dict(params))
         return FakeResponse(self.pages[len(self.calls) - 1])
+
+
+class FakeIncompleteDriveSession:
+    def __init__(self):
+        self.calls = []
+
+    def get(self, url, params, headers):
+        self.calls.append(dict(params))
+        return FakeResponse({"files": [{"id": "one"}], "incompleteSearch": True})
 
 
 class Stage1InventoryTests(unittest.TestCase):
@@ -62,9 +71,15 @@ class Stage1InventoryTests(unittest.TestCase):
         self.assertEqual("page-2", session.calls[1]["pageToken"])
         self.assertEqual(100, session.calls[0]["pageSize"])
         self.assertEqual(
-            "nextPageToken, files(id, name, createdTime, modifiedTime)",
+            "incompleteSearch, nextPageToken, files(id, name, createdTime, modifiedTime)",
             session.calls[0]["fields"],
         )
+
+    def test_drive_inventory_rejects_incomplete_search(self):
+        session = FakeIncompleteDriveSession()
+        self.assertIsNone(fetcher.fetch_inventory("token", session=session))
+        self.assertEqual(1, len(session.calls))
+        self.assertIn("incompleteSearch", session.calls[0]["fields"])
 
     def test_credentials_support_legacy_clasp_shapes(self):
         with tempfile.TemporaryDirectory() as temporary:
