@@ -26,7 +26,11 @@ from automation.shared.project_registry import (
     projects_path,
     write_metadata,
 )
-from automation.shared.project_validation import CaseInsensitiveNameConflict, validate_files
+from automation.shared.project_validation import (
+    CaseInsensitiveNameConflict,
+    validate_files,
+    windows_case_insensitive_key,
+)
 
 
 def _load_sibling(name: str, filename: str) -> ModuleType:
@@ -192,6 +196,47 @@ def _assert_no_symlink_components(
             break
 
 
+def _assert_no_windows_case_aliases(
+    path: Path,
+    boundary: Path,
+    script_id: str,
+) -> None:
+    """Reject existing lexical aliases that collide under Windows comparison."""
+    try:
+        relative = path.relative_to(boundary)
+    except ValueError as exc:
+        raise PostPullValidationError(
+            f"{script_id}: source path is outside the canonical project: {path}"
+        ) from exc
+
+    parent = boundary
+    for part in relative.parts:
+        if not parent.exists():
+            return
+        if not parent.is_dir():
+            raise PostPullValidationError(
+                f"{script_id}: source path parent is not a directory: {parent}"
+            )
+        comparison_key = windows_case_insensitive_key(part)
+        try:
+            aliases = sorted(
+                entry.name
+                for entry in parent.iterdir()
+                if entry.name != part
+                and windows_case_insensitive_key(entry.name) == comparison_key
+            )
+        except OSError as exc:
+            raise PostPullValidationError(
+                f"{script_id}: cannot inspect source path parent {parent}: {exc}"
+            ) from exc
+        if aliases:
+            raise PostPullValidationError(
+                f"{script_id}: source path component {part!r} conflicts with existing "
+                f"Windows case alias(es) {aliases!r} in {parent}"
+            )
+        parent = parent / part
+
+
 def _tracked_source_paths(files: Any, source_root: Path, script_id: str) -> set[Path]:
     """Return lexical tracked source paths without dereferencing their leaves."""
     if not isinstance(files, list):
@@ -203,8 +248,6 @@ def _tracked_source_paths(files: Any, source_root: Path, script_id: str) -> set[
         try:
             relative = _source_relative_path(item, script_id)
         except PostPullValidationError:
-            # Historical metadata may be malformed. Never broaden cleanup from
-            # an unprovable historical path.
             continue
         tracked.add(source_root.joinpath(*relative.parts))
     return tracked
@@ -216,12 +259,14 @@ def _validate_existing_materialization_paths(
     old_metadata: dict[str, Any],
     observation: dict[str, Any],
 ) -> None:
-    """Ensure clasp cannot follow an existing source symlink outside the project."""
+    """Ensure clasp cannot redirect or case-alias a project-local source write."""
     source_root = _source_root(project_dir, script_id)
     _assert_no_symlink_components(source_root, project_dir, script_id)
+    _assert_no_windows_case_aliases(source_root, project_dir, script_id)
 
     for destination in _tracked_source_paths(observation.get("files"), source_root, script_id):
         _assert_no_symlink_components(destination, project_dir, script_id)
+        _assert_no_windows_case_aliases(destination, project_dir, script_id)
 
     # A stale tracked source may itself be a symlink; cleanup can safely unlink
     # that lexical leaf, but no parent component may redirect the operation.
@@ -232,6 +277,7 @@ def _validate_existing_materialization_paths(
             script_id,
             allow_leaf_symlink=True,
         )
+        _assert_no_windows_case_aliases(destination, project_dir, script_id)
 
 
 def _expected_materialization_required(
@@ -267,6 +313,16 @@ def _validate_observation(item: dict[str, Any], script_id: str) -> dict[str, Any
         raise MaterializationPlanError(
             f"{script_id}: observation.appsScriptApi must be an object"
         )
+    observed_script_id = apps_script.get("scriptId")
+    if not isinstance(observed_script_id, str) or not observed_script_id:
+        raise MaterializationPlanError(
+            f"{script_id}: observation.appsScriptApi.scriptId must be a non-empty string"
+        )
+    if observed_script_id != script_id:
+        raise MaterializationPlanError(
+            f"{script_id}: observation Apps Script project belongs to {observed_script_id!r}"
+        )
+
     files = _validate_object_list(observation.get("files"), "files", script_id)
     _validate_object_list(observation.get("deployments"), "deployments", script_id)
     _validate_object_list(observation.get("versions"), "versions", script_id)
@@ -463,6 +519,7 @@ def _remove_stale_tracked_sources(
 ) -> None:
     source_root = _source_root(project_dir, script_id)
     _assert_no_symlink_components(source_root, project_dir, script_id)
+    _assert_no_windows_case_aliases(source_root, project_dir, script_id)
     old_paths = _tracked_source_paths(
         old_metadata.get("files"), source_root, script_id
     )
@@ -476,6 +533,7 @@ def _remove_stale_tracked_sources(
             script_id,
             allow_leaf_symlink=True,
         )
+        _assert_no_windows_case_aliases(stale, project_dir, script_id)
         if stale.is_symlink():
             stale.unlink()
         elif stale.is_file():
@@ -509,6 +567,7 @@ def validate_post_pull(
 
     source_root = _source_root(project_dir, script_id)
     _assert_no_symlink_components(source_root, project_dir, script_id)
+    _assert_no_windows_case_aliases(source_root, project_dir, script_id)
     if not source_root.is_dir():
         raise PostPullValidationError(
             f"{script_id}: clasp rootDir was not materialized: {source_root}"
@@ -517,6 +576,7 @@ def validate_post_pull(
         relative = _source_relative_path(file_metadata, script_id)
         destination = source_root.joinpath(*relative.parts)
         _assert_no_symlink_components(destination, project_dir, script_id)
+        _assert_no_windows_case_aliases(destination, project_dir, script_id)
         if not destination.is_file():
             raise PostPullValidationError(
                 f"{script_id}: clasp pull did not materialize observed source file {relative.as_posix()!r}"
