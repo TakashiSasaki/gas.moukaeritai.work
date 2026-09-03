@@ -34,14 +34,20 @@ apps_script_api = _load_sibling("stage2_detect_apps_script_api", "apps_script_ap
 
 
 def _materialized_update_time(metadata: dict[str, Any]) -> str | None:
-    sync_state = metadata.get("syncState")
-    if isinstance(sync_state, dict) and sync_state.get("lastMaterializedAppsScriptUpdateTime"):
-        return str(sync_state["lastMaterializedAppsScriptUpdateTime"])
+    # Once syncState exists, it is the sole successful-materialization authority.
+    # An empty syncState intentionally means "no known checkpoint" and must not
+    # fall back to a newer remote observation stored in appsScriptApi.
+    if "syncState" in metadata:
+        sync_state = metadata.get("syncState")
+        if not isinstance(sync_state, dict):
+            return None
+        checkpoint = sync_state.get("lastMaterializedAppsScriptUpdateTime")
+        return str(checkpoint) if checkpoint else None
 
     # Compatibility with the pre-contract representation. Before syncState was
     # introduced, appsScriptApi.updateTime was written only after a successful
-    # source synchronization, so it is a safe checkpoint fallback during the
-    # transition.
+    # source synchronization, so it is a safe checkpoint fallback until a writer
+    # explicitly migrates the project to syncState.
     apps_script = metadata.get("appsScriptApi")
     if isinstance(apps_script, dict) and apps_script.get("updateTime"):
         return str(apps_script["updateTime"])
