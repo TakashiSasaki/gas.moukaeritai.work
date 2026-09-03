@@ -30,7 +30,7 @@ def build_index(root: Path | None = None) -> list[dict[str, str]]:
         if not isinstance(name, str) or not name:
             continue
         entries.append({"id": directory.name, "name": name})
-    entries.sort(key=lambda item: item["name"].lower())
+    entries.sort(key=lambda item: (item["name"].lower(), item["id"]))
     return entries
 
 
