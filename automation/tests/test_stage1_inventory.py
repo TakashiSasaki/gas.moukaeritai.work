@@ -130,11 +130,12 @@ class Stage1InventoryTests(unittest.TestCase):
             clasp = json.loads((root / "projects" / "script-1" / ".clasp.json").read_text(encoding="utf-8"))
             self.assertEqual({"scriptId": "script-1"}, clasp)
 
-    def test_public_index_preserves_fallback_and_case_insensitive_sort(self):
+    def test_public_index_preserves_fallback_and_deterministic_sort(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
             values = {
                 "b": {"driveApi": {"name": "Zulu"}},
+                "c": {"appsScriptApi": {"title": "alpha"}},
                 "a": {"appsScriptApi": {"title": "alpha"}},
             }
             for script_id, metadata in values.items():
@@ -142,12 +143,17 @@ class Stage1InventoryTests(unittest.TestCase):
                 project.mkdir(parents=True)
                 (project / "metadata.json").write_text(json.dumps(metadata), encoding="utf-8")
             self.assertEqual(
-                [{"id": "a", "name": "alpha"}, {"id": "b", "name": "Zulu"}],
+                [
+                    {"id": "a", "name": "alpha"},
+                    {"id": "c", "name": "alpha"},
+                    {"id": "b", "name": "Zulu"},
+                ],
                 generator.build_index(root),
             )
 
-    def test_current_public_index_contract_is_preserved(self):
+    def test_current_public_index_membership_is_preserved(self):
         expected = json.loads((REPO_ROOT / "docs" / "projects.json").read_text(encoding="utf-8"))
+        expected = sorted(expected, key=lambda item: (item["name"].lower(), item["id"]))
         self.assertEqual(expected, generator.build_index(REPO_ROOT))
 
     def test_legacy_migration_is_explicit_and_dry_run_is_read_only(self):
