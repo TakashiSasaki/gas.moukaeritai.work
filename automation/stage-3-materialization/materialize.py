@@ -95,6 +95,41 @@ def _validate_object_list(value: Any, label: str, script_id: str) -> list[dict[s
     return value
 
 
+def _source_relative_path(file_metadata: dict[str, Any], script_id: str) -> PurePosixPath:
+    name = file_metadata.get("name")
+    file_type = file_metadata.get("type")
+    if not isinstance(name, str) or not name:
+        raise PostPullValidationError(f"{script_id}: observed Apps Script file is missing a name")
+    if "\\" in name:
+        raise PostPullValidationError(f"{script_id}: observed Apps Script filename contains a backslash: {name!r}")
+    relative = PurePosixPath(name)
+    if relative.is_absolute() or not relative.parts or any(part in {"", ".", ".."} for part in relative.parts):
+        raise PostPullValidationError(f"{script_id}: observed Apps Script filename is not a safe relative path: {name!r}")
+    extension = _EXTENSION_BY_TYPE.get(file_type)
+    if extension is None:
+        raise PostPullValidationError(f"{script_id}: unsupported Apps Script file type for validation: {file_type!r}")
+    return PurePosixPath(str(relative) + extension)
+
+
+def _source_root(project_dir: Path, script_id: str) -> Path:
+    try:
+        clasp = load_clasp(project_dir)
+    except ProjectRegistryError as exc:
+        raise PostPullValidationError(f"{script_id}: invalid .clasp.json: {exc}") from exc
+    root_dir = clasp.get("rootDir", ".")
+    if not isinstance(root_dir, str) or not root_dir:
+        raise PostPullValidationError(f"{script_id}: .clasp.json rootDir must be a non-empty string")
+    normalized = PurePosixPath(root_dir.replace("\\", "/"))
+    if normalized.is_absolute() or any(part == ".." for part in normalized.parts):
+        raise PostPullValidationError(f"{script_id}: .clasp.json rootDir escapes the project: {root_dir!r}")
+    root = project_dir.joinpath(*[part for part in normalized.parts if part not in {"", "."}]).resolve()
+    try:
+        root.relative_to(project_dir.resolve())
+    except ValueError as exc:
+        raise PostPullValidationError(f"{script_id}: .clasp.json rootDir escapes the project: {root_dir!r}") from exc
+    return root
+
+
 def _validate_observation(item: dict[str, Any], script_id: str) -> dict[str, Any] | None:
     lifecycle = item.get("lifecycle")
     required = item["materialization"]["required"]
@@ -111,9 +146,15 @@ def _validate_observation(item: dict[str, Any], script_id: str) -> dict[str, Any
     apps_script = observation.get("appsScriptApi")
     if not isinstance(apps_script, dict):
         raise MaterializationPlanError(f"{script_id}: observation.appsScriptApi must be an object")
-    _validate_object_list(observation.get("files"), "files", script_id)
+    files = _validate_object_list(observation.get("files"), "files", script_id)
     _validate_object_list(observation.get("deployments"), "deployments", script_id)
     _validate_object_list(observation.get("versions"), "versions", script_id)
+    try:
+        validate_files(files, script_id)
+        for file_metadata in files:
+            _source_relative_path(file_metadata, script_id)
+    except (CaseInsensitiveNameConflict, PostPullValidationError) as exc:
+        raise MaterializationPlanError(f"{script_id}: unsafe Stage 2 file observation: {exc}") from exc
 
     materialization = item["materialization"]
     planned_observed = _optional_timestamp(
@@ -180,43 +221,18 @@ def _plan_projects(plan: dict[str, Any], base: Path) -> list[dict[str, Any]]:
                 f"current repository checkpoint is {current_checkpoint!r}"
             )
         _validate_observation(item, script_id)
+
+        if materialization["required"]:
+            try:
+                if get_script_id(canonical) != script_id:
+                    raise MaterializationPlanError(
+                        f"{script_id}: .clasp.json scriptId does not match the canonical project directory"
+                    )
+                _source_root(canonical, script_id)
+            except (ProjectRegistryError, PostPullValidationError) as exc:
+                raise MaterializationPlanError(f"{script_id}: invalid clasp materialization target: {exc}") from exc
         validated.append(item)
     return validated
-
-
-def _source_relative_path(file_metadata: dict[str, Any], script_id: str) -> PurePosixPath:
-    name = file_metadata.get("name")
-    file_type = file_metadata.get("type")
-    if not isinstance(name, str) or not name:
-        raise PostPullValidationError(f"{script_id}: observed Apps Script file is missing a name")
-    if "\\" in name:
-        raise PostPullValidationError(f"{script_id}: observed Apps Script filename contains a backslash: {name!r}")
-    relative = PurePosixPath(name)
-    if relative.is_absolute() or not relative.parts or any(part in {"", ".", ".."} for part in relative.parts):
-        raise PostPullValidationError(f"{script_id}: observed Apps Script filename is not a safe relative path: {name!r}")
-    extension = _EXTENSION_BY_TYPE.get(file_type)
-    if extension is None:
-        raise PostPullValidationError(f"{script_id}: unsupported Apps Script file type for validation: {file_type!r}")
-    return PurePosixPath(str(relative) + extension)
-
-
-def _source_root(project_dir: Path, script_id: str) -> Path:
-    try:
-        clasp = load_clasp(project_dir)
-    except ProjectRegistryError as exc:
-        raise PostPullValidationError(f"{script_id}: invalid .clasp.json: {exc}") from exc
-    root_dir = clasp.get("rootDir", ".")
-    if not isinstance(root_dir, str) or not root_dir:
-        raise PostPullValidationError(f"{script_id}: .clasp.json rootDir must be a non-empty string")
-    normalized = PurePosixPath(root_dir.replace("\\", "/"))
-    if normalized.is_absolute() or any(part == ".." for part in normalized.parts):
-        raise PostPullValidationError(f"{script_id}: .clasp.json rootDir escapes the project: {root_dir!r}")
-    root = project_dir.joinpath(*[part for part in normalized.parts if part not in {"", "."}]).resolve()
-    try:
-        root.relative_to(project_dir.resolve())
-    except ValueError as exc:
-        raise PostPullValidationError(f"{script_id}: .clasp.json rootDir escapes the project: {root_dir!r}") from exc
-    return root
 
 
 def _tracked_source_paths(
