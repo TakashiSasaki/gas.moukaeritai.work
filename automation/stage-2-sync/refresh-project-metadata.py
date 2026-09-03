@@ -115,10 +115,8 @@ def refresh_metadata(
         metadata = load_metadata(project_dir, allow_missing=True)
         if isinstance(remote_metadata, dict):
             metadata["appsScriptApi"] = remote_metadata
-        if result.get("deployments") is not None:
-            metadata["deployments"] = result["deployments"]
-        if result.get("versions") is not None:
-            metadata["versions"] = result["versions"]
+        metadata["deployments"] = clasp.list_deployments(project_dir)
+        metadata["versions"] = clasp.list_versions(project_dir)
         if files_metadata is not None:
             metadata["files"] = files_metadata
 

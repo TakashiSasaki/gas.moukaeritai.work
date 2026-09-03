@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Synchronize source and clasp-owned metadata for projects selected by Stage 2."""
+"""Synchronize source for projects selected by Stage 2."""
 
 from __future__ import annotations
 
@@ -39,7 +39,7 @@ def sync_plan(
     *,
     clasp: Any = None,
 ) -> dict[str, Any]:
-    """Execute clasp synchronization for selected projects, continuing on clasp failures."""
+    """Execute only clasp source pulls, continuing on per-project failures."""
     clasp = clasp or clasp_client
     base = Path(root).resolve() if root is not None else REPO_ROOT
     results: list[dict[str, Any]] = []
@@ -59,8 +59,6 @@ def sync_plan(
             "scriptId": script_id,
             "attempted": False,
             "synced": False,
-            "deployments": None,
-            "versions": None,
             "error": None,
         }
         if not item.get("shouldSync", True):
@@ -71,8 +69,6 @@ def sync_plan(
         directory = project_path(script_id, base)
         try:
             clasp.pull(directory)
-            result["deployments"] = clasp.list_deployments(directory)
-            result["versions"] = clasp.list_versions(directory)
             result["synced"] = True
         except subprocess.CalledProcessError as exc:
             result["error"] = f"clasp command failed with exit code {exc.returncode}"
