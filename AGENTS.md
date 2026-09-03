@@ -15,9 +15,9 @@ This repository stores and synchronizes many Google Apps Script projects in one 
 
 - `automation/`: **how synchronization is performed**.
   - `stage-1-inventory/`: Drive inventory acquisition, canonical registry/lifecycle reconciliation, and public project-index generation.
-  - `stage-2-inspection/`: Phase 2 read-only Apps Script API inspection and deterministic materialization planning; this implementation must not invoke clasp or mutate project source/state.
-  - `stage-3-materialization/`: Phase 2 transactional source materialization and observation finalization; this implementation may use clasp only for `pull`.
-  - `stage-2-sync/`: currently orchestrated compatibility path combining Apps Script change detection, clasp source synchronization, metadata refresh, and project-state validation until the three-stage cutover.
+  - `stage-2-inspection/`: read-only Apps Script API inspection and deterministic materialization planning; it must not invoke clasp or mutate project source/state.
+  - `stage-3-materialization/`: transactional source materialization and observation finalization; it may use clasp only for `pull`.
+  - `stage-2-sync/`: retired compatibility implementation retained temporarily for explicit post-cutover cleanup; do not wire it back into steady-state orchestration.
   - `shared/`: repository, OAuth, and validation primitives shared by stages.
   - `maintenance/`: explicit historical migrations; these are not part of steady-state synchronization.
 - `data/`: **what was externally observed**. Drive inventory snapshots live under `data/inventory/drive-api/snapshots/`.
@@ -40,6 +40,8 @@ Direct Drive API and Apps Script API code must acquire bearer tokens through `au
 
 ## Synchronization Workflows
 
+Stage 1 and Stage 2/3 use the same GitHub Actions concurrency group, `gas-project-state-writer`, with cancellation disabled. Keep canonical project-state writers serialized; do not introduce a parallel workflow that can mutate the default branch independently.
+
 ### Stage 1 — inventory
 
 `.github/workflows/stage-1-inventory.yml` runs every three hours and can also be dispatched manually. Its canonical sequence is:
@@ -58,22 +60,9 @@ Stage 1 owns Drive observation, `driveApi` reconciliation, and Drive-derived lif
 
 Do not treat `absent` as authorization to delete source or the project directory.
 
-### Current Stage 2 — compatibility synchronization
+### Stage 2 — inspection/planning
 
-`.github/workflows/stage-2-sync.yml` can be dispatched manually and is triggered only after successful Stage 1 completion. Until the three-stage workflow cutover, its canonical sequence remains:
-
-1. `automation/stage-2-sync/detect-project-changes.py`
-2. `automation/stage-2-sync/sync-project-source.py`
-3. `automation/stage-2-sync/refresh-project-metadata.py`
-4. `automation/stage-2-sync/validate-project-state.py`
-
-External Apps Script HTTP I/O in this compatibility path goes through its `apps_script_api.py`; clasp subprocess/auth-state I/O goes through `clasp_client.py`. Keep business decisions out of those I/O primitives.
-
-Source freshness is compared against `syncState.lastMaterializedAppsScriptUpdateTime`. During migration, older metadata may use the previously successful `appsScriptApi.updateTime` as the fallback checkpoint. A failed source pull must leave the materialization checkpoint unchanged; only a successful source synchronization may advance it.
-
-### Target Stage 2 — inspection/planning
-
-`automation/stage-2-inspection/` is the cutover-ready Stage 2 implementation. It must:
+`.github/workflows/stage-2-3-sync.yml` is dispatched manually or after successful Stage 1 completion. Stage 2 runs `automation/stage-2-inspection/plan-materialization.py` and must:
 
 1. use the Google Apps Script API directly for project metadata, file metadata, deployments, and versions;
 2. skip projects whose Drive lifecycle is `absent`;
@@ -82,9 +71,11 @@ Source freshness is compared against `syncState.lastMaterializedAppsScriptUpdate
 5. fail closed when required Apps Script API observations cannot be obtained;
 6. never invoke clasp or parse human-readable clasp output.
 
-### Target Stage 3 — materialization/finalization
+The Stage 2 plan is an ephemeral run artifact in `$RUNNER_TEMP`; it is not canonical repository state and must not be committed.
 
-`automation/stage-3-materialization/` consumes a Stage 2 plan and applies it to canonical repository state. It must:
+### Stage 3 — materialization/finalization
+
+The same workflow passes the Stage 2 plan directly to `automation/stage-3-materialization/materialize.py`. Stage 3 must:
 
 1. reject malformed or stale plans before any source mutation;
 2. use `clasp pull` as the only steady-state clasp command;
@@ -95,9 +86,14 @@ Source freshness is compared against `syncState.lastMaterializedAppsScriptUpdate
 7. leave the checkpoint unchanged when no correlated pre-pull `updateTime` exists, so the next inspection remains fail-safe;
 8. refresh structured Apps Script/file/deployment/version observations for unchanged active projects without invoking clasp;
 9. leave Drive-absent projects untouched;
-10. honor a safe project-local `.clasp.json.rootDir` and reject source/root paths that can escape the canonical project directory.
+10. honor a safe project-local `.clasp.json.rootDir` and reject source/root paths that can escape the canonical project directory;
+11. reject a plan when a concrete current Drive lifecycle or successful-materialization checkpoint no longer matches the Stage 2 plan.
 
-The target Stage 2 and Stage 3 implementations remain additive until the dedicated three-stage workflow cutover. Do not remove the compatibility path or wire the new stages into production orchestration in this PR.
+Node.js and clasp installation are conditional on `materializationRequired=true`. Do **not** skip Stage 3 when no pull is required: it may still need to finalize structured observations for unchanged active projects.
+
+If Stage 3 fails, the workflow must not commit partial project state. A retry must start again from Stage 2 and build a new plan; do not reuse a plan from a failed or partially applied run.
+
+After Stage 3 succeeds, run repository validation before committing. The synchronization workflow stages only `projects/` for its commit; Stage 1 remains responsible for Drive snapshots and public projections.
 
 ## Project Directory Rules
 
@@ -107,6 +103,7 @@ The target Stage 2 and Stage 3 implementations remain additive until the dedicat
 4. Treat standalone `deployments.json`, `versions.json`, and their old text variants as legacy state, not as canonical outputs.
 5. Be careful with case-insensitive filename collisions because this repository is actively used on Windows.
 6. Never advance `syncState.lastMaterializedAppsScriptUpdateTime` for a failed or unattempted source synchronization.
+7. Treat canonical project-directory symlinks and source/root paths that escape the canonical project directory as invalid synchronization targets.
 
 ## Project Creation and Deletion
 

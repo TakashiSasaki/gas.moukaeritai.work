@@ -17,7 +17,7 @@ The repository separates synchronization responsibilities explicitly:
 
 The default branch is `gas.moukaeritai.work`.
 
-### Stage 1: Drive Inventory
+### Stage 1: Drive inventory
 
 Workflow: `.github/workflows/stage-1-inventory.yml`
 
@@ -33,44 +33,27 @@ Workflow: `.github/workflows/stage-1-inventory.yml`
 Stage 1 is the authority for Drive-derived project presence. `metadata.json` records this as `lifecycle.driveInventory`:
 
 - `present`: the project exists in the latest Drive inventory and participates in normal publication/synchronization.
-- `absent`: the project is missing from the latest Drive inventory. The canonical project directory and source history are retained, but the project is excluded from `docs/projects.json` and normal Stage 2 synchronization. A later Drive observation can return it to `present`.
+- `absent`: the project is missing from the latest Drive inventory. The canonical project directory and source history are retained, but the project is excluded from `docs/projects.json` and normal downstream synchronization. A later Drive observation can return it to `present`.
 
 An `absent` transition is therefore **not** a project deletion.
 
-### Current Stage 2: compatibility synchronization
+### Stage 2 + Stage 3: Apps Script synchronization
 
-Workflow: `.github/workflows/stage-2-sync.yml`
+Workflow: `.github/workflows/stage-2-3-sync.yml`
 
 - **Trigger:** manual dispatch or successful completion of the Stage 1 workflow.
-- **Purpose:** pull changed Apps Script sources and refresh Apps Script/deployment/version/file metadata.
-- **Pipeline:**
-  1. `automation/stage-2-sync/detect-project-changes.py`
-  2. `automation/stage-2-sync/sync-project-source.py`
-  3. `automation/stage-2-sync/refresh-project-metadata.py`
-  4. `automation/stage-2-sync/validate-project-state.py`
-- **External I/O:** Apps Script HTTP access is isolated in `apps_script_api.py`; clasp subprocess/auth-state access is isolated in `clasp_client.py`.
+- **Stage 2 — inspection/planning:** `automation/stage-2-inspection/plan-materialization.py` observes structured Apps Script project/file/deployment/version state through the Apps Script API and emits a deterministic plan without mutating canonical project state or invoking clasp.
+- **Stage 3 — materialization/finalization:** `automation/stage-3-materialization/materialize.py` consumes that plan, pulls only projects requiring source materialization, validates the resulting tree, finalizes structured observations, and advances successful-materialization checkpoints transactionally.
+- **Validation:** repository structural validation runs after Stage 3 and before any commit.
+- **Publication:** only `projects/` changes produced by a successful Stage 3 run are committed by this workflow.
 
-This compatibility workflow remains in service until the dedicated three-stage workflow cutover.
+`clasp pull` is the only steady-state clasp command. Node.js and clasp are installed only when the Stage 2 plan reports that source materialization is required. Stage 3 still runs when zero pulls are required because unchanged active projects may need their structured Apps Script observations finalized.
 
-Remote observation and successful source materialization are separate states. `appsScriptApi.updateTime` records observed Apps Script state, while `syncState.lastMaterializedAppsScriptUpdateTime` is the successful-materialization checkpoint used for source freshness. A failed source pull must not advance that checkpoint.
+Stage 1 and the Stage 2/3 workflow share a repository-writer concurrency group. This serializes their default-branch mutations so a Stage 2 plan and its Stage 3 application are not raced by another canonical project-state writer.
 
-### Phase 2 target Stage 2: inspection/planning
+Remote observation and successful source materialization are separate states. `appsScriptApi.updateTime` records observed Apps Script state, while `syncState.lastMaterializedAppsScriptUpdateTime` is the successful-materialization checkpoint used for source freshness. A failed source pull or failed Stage 3 transaction must not advance that checkpoint.
 
-`automation/stage-2-inspection/` contains the cutover-ready Stage 2 responsibility: read-only Apps Script API inspection and deterministic materialization planning. It directly acquires structured project, file, deployment, and version observations and does **not** invoke clasp or write project source/state. Direct Drive and Apps Script API access share `automation/shared/google_oauth.py`.
-
-### Phase 2 target Stage 3: materialization/finalization
-
-`automation/stage-3-materialization/` consumes a Stage 2 plan. It is responsible for applying the observed state to canonical project directories while preserving the distinction between remote observation and successful materialization.
-
-- `clasp pull` is the only clasp command used for steady-state source materialization.
-- A required pull, post-pull validation, structured metadata finalization, and checkpoint advancement are one per-project transaction.
-- A pull, validation, or finalization failure restores the complete project directory from its pre-transaction state.
-- `syncState.lastMaterializedAppsScriptUpdateTime` advances only to the Apps Script `updateTime` observed by Stage 2 before a successful pull.
-- An unchanged project can refresh structured Apps Script/deployment/version/file metadata without invoking clasp.
-- An `absent` project is neither pulled nor finalized from Apps Script observation.
-- Stage 3 rejects stale plans before mutation when their checkpoint no longer matches repository state.
-
-The target Stage 2 and Stage 3 implementations are intentionally not yet wired into the production synchronization workflow. The existing `stage-2-sync` workflow remains authoritative until the three-stage workflow cutover is reviewed separately.
+Stage 3 also rejects a plan if a concrete current Drive lifecycle or successful-materialization checkpoint no longer matches the state observed when Stage 2 built the plan.
 
 ### Validation
 

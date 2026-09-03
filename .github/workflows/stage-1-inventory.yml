@@ -8,6 +8,10 @@ on:
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
+concurrency:
+  group: gas-project-state-writer
+  cancel-in-progress: false
+
 jobs:
   inventory:
     runs-on: ubuntu-latest
@@ -20,17 +24,20 @@ jobs:
         with:
           ref: gas.moukaeritai.work
 
-      - name: Restore clasp credentials
+      - name: Restore Google credentials
+        env:
+          CLASPRC_JSON: ${{ secrets.CLASPRC_JSON }}
         run: |
-          echo '${{ secrets.CLASPRC_JSON }}' > ~/.clasprc.json
+          umask 077
+          printf '%s' "$CLASPRC_JSON" > ~/.clasprc.json
 
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.x'
+          python-version: '3.11'
 
       - name: Install dependencies
-        run: pip install requests
+        run: python -m pip install requests
 
       - name: Fetch Drive inventory
         run: python automation/stage-1-inventory/fetch-drive-inventory.py

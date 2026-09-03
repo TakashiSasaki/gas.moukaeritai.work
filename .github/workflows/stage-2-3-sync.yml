@@ -1,0 +1,109 @@
+name: stage-2-3-sync
+
+permissions:
+  contents: write
+
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows: ["stage-1-inventory"]
+    types:
+      - completed
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+concurrency:
+  group: gas-project-state-writer
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout default branch
+        uses: actions/checkout@v4
+        with:
+          ref: gas.moukaeritai.work
+          persist-credentials: true
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install direct API dependencies
+        run: python -m pip install requests
+
+      - name: Restore Google credentials
+        env:
+          CLASPRC_JSON: ${{ secrets.CLASPRC_JSON }}
+        run: |
+          umask 077
+          printf '%s' "$CLASPRC_JSON" > ~/.clasprc.json
+
+      - name: Inspect Apps Script state and build materialization plan
+        id: inspection
+        run: |
+          python automation/stage-2-inspection/plan-materialization.py \
+            --output "$RUNNER_TEMP/stage-2-plan.json"
+          materialization_required="$(python - "$RUNNER_TEMP/stage-2-plan.json" <<'PY'
+          import json
+          import sys
+
+          with open(sys.argv[1], encoding="utf-8") as stream:
+              plan = json.load(stream)
+          projects = plan.get("projects")
+          if not isinstance(projects, list):
+              raise SystemExit("Stage 2 plan projects must be a list")
+          required = False
+          for project in projects:
+              if not isinstance(project, dict):
+                  raise SystemExit("Stage 2 plan project must be an object")
+              materialization = project.get("materialization")
+              if not isinstance(materialization, dict):
+                  raise SystemExit("Stage 2 plan project materialization must be an object")
+              decision = materialization.get("required")
+              if not isinstance(decision, bool):
+                  raise SystemExit("Stage 2 plan materialization.required must be a boolean")
+              required = required or decision
+          if plan.get("materializationRequired") is not required:
+              raise SystemExit("Stage 2 plan materializationRequired does not match project decisions")
+          print("true" if required else "false")
+          PY
+          )"
+          echo "materialization_required=$materialization_required" >> "$GITHUB_OUTPUT"
+
+      - name: Set up Node.js for source materialization
+        if: steps.inspection.outputs.materialization_required == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install clasp for source materialization
+        if: steps.inspection.outputs.materialization_required == 'true'
+        run: npm install -g @google/clasp@3.4.1
+
+      - name: Materialize sources and finalize observations
+        run: |
+          python automation/stage-3-materialization/materialize.py \
+            --plan "$RUNNER_TEMP/stage-2-plan.json" \
+            --output "$RUNNER_TEMP/stage-3-result.json"
+
+      - name: Validate repository state
+        run: python .github/scripts/validate-automation.py
+
+      - name: Commit and push synchronized project state
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add projects/
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: sync GAS projects"
+            git push origin HEAD:gas.moukaeritai.work
+          else
+            echo "No project changes detected, skipping commit"
+          fi
