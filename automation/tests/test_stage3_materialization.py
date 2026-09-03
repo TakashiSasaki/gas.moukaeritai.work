@@ -75,7 +75,11 @@ def observation(update_time="new", files=None):
         project["updateTime"] = update_time
     return {
         "appsScriptApi": project,
-        "files": list(files if files is not None else [{"name": "Code", "type": "SERVER_JS"}]),
+        "files": list(
+            files
+            if files is not None
+            else [{"name": "Code", "type": "SERVER_JS"}]
+        ),
         "deployments": [{"deploymentId": "d1"}],
         "versions": [{"versionNumber": 2}],
     }
@@ -90,11 +94,17 @@ def plan_item(
     lifecycle="present",
     remote=None,
 ):
+    correlated_remote = remote
+    if remote is not None:
+        correlated_remote = json.loads(json.dumps(remote))
+        apps_script = correlated_remote.get("appsScriptApi")
+        if isinstance(apps_script, dict):
+            apps_script["scriptId"] = script_id
     return {
         "scriptId": script_id,
         "path": f"projects/{script_id}",
         "lifecycle": lifecycle,
-        "observation": remote,
+        "observation": correlated_remote,
         "materialization": {
             "required": required,
             "reason": "test",
@@ -107,7 +117,9 @@ def plan_item(
 def plan(*items):
     return {
         "schemaVersion": 1,
-        "materializationRequired": any(item["materialization"]["required"] for item in items),
+        "materializationRequired": any(
+            item["materialization"]["required"] for item in items
+        ),
         "projects": list(items),
     }
 
@@ -116,14 +128,18 @@ class Stage3MaterializationTests(unittest.TestCase):
     def test_successful_pull_finalizes_checkpoint_and_removes_only_tracked_stale_source(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
-            project = write_project(root, "script-1", {
-                "driveApi": {"name": "keep"},
-                "lifecycle": {"driveInventory": "present"},
-                "syncState": {"lastMaterializedAppsScriptUpdateTime": "old"},
-                "appsScriptApi": {"updateTime": "old"},
-                "files": [{"name": "Old", "type": "SERVER_JS"}],
-                "custom": {"preserve": True},
-            })
+            project = write_project(
+                root,
+                "script-1",
+                {
+                    "driveApi": {"name": "keep"},
+                    "lifecycle": {"driveInventory": "present"},
+                    "syncState": {"lastMaterializedAppsScriptUpdateTime": "old"},
+                    "appsScriptApi": {"updateTime": "old"},
+                    "files": [{"name": "Old", "type": "SERVER_JS"}],
+                    "custom": {"preserve": True},
+                },
+            )
             (project / "Old.js").write_text("old source", encoding="utf-8")
             (project / "LocalOnly.js").write_text("local", encoding="utf-8")
 
@@ -173,7 +189,13 @@ class Stage3MaterializationTests(unittest.TestCase):
                 raise subprocess.CalledProcessError(1, ["clasp", "pull"])
 
             result = stage3.materialize_plan(
-                plan(plan_item("script-1", required=True, remote=observation("new"))),
+                plan(
+                    plan_item(
+                        "script-1",
+                        required=True,
+                        remote=observation("new"),
+                    )
+                ),
                 root,
                 clasp=FakeClasp(fail),
             )
@@ -194,12 +216,21 @@ class Stage3MaterializationTests(unittest.TestCase):
             (project / "sentinel.txt").write_text("before", encoding="utf-8")
 
             result = stage3.materialize_plan(
-                plan(plan_item("script-1", required=True, remote=observation("new"))),
+                plan(
+                    plan_item(
+                        "script-1",
+                        required=True,
+                        remote=observation("new"),
+                    )
+                ),
                 root,
                 clasp=FakeClasp(lambda directory: None),
             )
             self.assertFalse(result["allProjectsSuccessful"])
-            self.assertEqual("before", (project / "sentinel.txt").read_text(encoding="utf-8"))
+            self.assertEqual(
+                "before",
+                (project / "sentinel.txt").read_text(encoding="utf-8"),
+            )
             self.assertEqual(original, load_metadata(project))
 
     def test_metadata_failure_after_write_rolls_back_entire_project(self):
@@ -219,7 +250,13 @@ class Stage3MaterializationTests(unittest.TestCase):
                 raise RuntimeError("simulated finalize failure")
 
             result = stage3.materialize_plan(
-                plan(plan_item("script-1", required=True, remote=observation("new"))),
+                plan(
+                    plan_item(
+                        "script-1",
+                        required=True,
+                        remote=observation("new"),
+                    )
+                ),
                 root,
                 clasp=FakeClasp(pull),
                 metadata_writer=write_then_fail,
@@ -231,23 +268,29 @@ class Stage3MaterializationTests(unittest.TestCase):
     def test_unchanged_project_refreshes_observation_without_clasp_or_checkpoint_change(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
-            project = write_project(root, "script-1", {
-                "lifecycle": {"driveInventory": "present"},
-                "syncState": {"lastMaterializedAppsScriptUpdateTime": "same"},
-                "appsScriptApi": {"updateTime": "same", "title": "old"},
-                "driveApi": {"name": "preserve"},
-            })
+            project = write_project(
+                root,
+                "script-1",
+                {
+                    "lifecycle": {"driveInventory": "present"},
+                    "syncState": {"lastMaterializedAppsScriptUpdateTime": "same"},
+                    "appsScriptApi": {"updateTime": "same", "title": "old"},
+                    "driveApi": {"name": "preserve"},
+                },
+            )
             clasp = FakeClasp(lambda directory: self.fail("clasp must not run"))
             remote = observation("same", files=[])
             remote["appsScriptApi"]["title"] = "fresh"
             result = stage3.materialize_plan(
-                plan(plan_item(
-                    "script-1",
-                    required=False,
-                    checkpoint="same",
-                    observed="same",
-                    remote=remote,
-                )),
+                plan(
+                    plan_item(
+                        "script-1",
+                        required=False,
+                        checkpoint="same",
+                        observed="same",
+                        remote=remote,
+                    )
+                ),
                 root,
                 clasp=clasp,
             )
@@ -255,33 +298,44 @@ class Stage3MaterializationTests(unittest.TestCase):
             self.assertTrue(result["projects"][0]["finalized"])
             self.assertTrue(result["projects"][0]["successful"])
             metadata = load_metadata(project)
-            self.assertEqual("same", metadata["syncState"]["lastMaterializedAppsScriptUpdateTime"])
+            self.assertEqual(
+                "same",
+                metadata["syncState"]["lastMaterializedAppsScriptUpdateTime"],
+            )
             self.assertEqual("fresh", metadata["appsScriptApi"]["title"])
             self.assertEqual({"name": "preserve"}, metadata["driveApi"])
 
     def test_legacy_checkpoint_is_made_explicit_before_no_pull_observation_replacement(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
-            project = write_project(root, "script-1", {
-                "lifecycle": {"driveInventory": "present"},
-                "appsScriptApi": {"updateTime": "same", "title": "legacy"},
-            })
+            project = write_project(
+                root,
+                "script-1",
+                {
+                    "lifecycle": {"driveInventory": "present"},
+                    "appsScriptApi": {"updateTime": "same", "title": "legacy"},
+                },
+            )
             remote = observation("same", files=[])
             result = stage3.materialize_plan(
-                plan(plan_item(
-                    "script-1",
-                    required=False,
-                    checkpoint="same",
-                    observed="same",
-                    remote=remote,
-                )),
+                plan(
+                    plan_item(
+                        "script-1",
+                        required=False,
+                        checkpoint="same",
+                        observed="same",
+                        remote=remote,
+                    )
+                ),
                 root,
                 clasp=FakeClasp(),
             )
             self.assertTrue(result["allProjectsSuccessful"])
             self.assertEqual(
                 "same",
-                load_metadata(project)["syncState"]["lastMaterializedAppsScriptUpdateTime"],
+                load_metadata(project)["syncState"][
+                    "lastMaterializedAppsScriptUpdateTime"
+                ],
             )
 
     def test_absent_project_is_untouched_and_never_calls_clasp(self):
@@ -294,14 +348,16 @@ class Stage3MaterializationTests(unittest.TestCase):
             project = write_project(root, "script-1", original)
             clasp = FakeClasp(lambda directory: self.fail("clasp must not run"))
             result = stage3.materialize_plan(
-                plan(plan_item(
-                    "script-1",
-                    required=False,
-                    checkpoint="old",
-                    observed=None,
-                    lifecycle="absent",
-                    remote=None,
-                )),
+                plan(
+                    plan_item(
+                        "script-1",
+                        required=False,
+                        checkpoint="old",
+                        observed=None,
+                        lifecycle="absent",
+                        remote=None,
+                    )
+                ),
                 root,
                 clasp=clasp,
             )
@@ -313,18 +369,45 @@ class Stage3MaterializationTests(unittest.TestCase):
     def test_stale_checkpoint_rejects_entire_plan_before_any_pull(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
-            write_project(root, "a", {
-                "syncState": {"lastMaterializedAppsScriptUpdateTime": "old"},
-            })
-            write_project(root, "b", {
-                "syncState": {"lastMaterializedAppsScriptUpdateTime": "current"},
-            })
-            clasp = FakeClasp(lambda directory: self.fail("preflight must finish before pulls"))
-            with self.assertRaisesRegex(stage3.MaterializationPlanError, "stale Stage 2 plan checkpoint"):
+            write_project(
+                root,
+                "a",
+                {
+                    "syncState": {
+                        "lastMaterializedAppsScriptUpdateTime": "old"
+                    },
+                },
+            )
+            write_project(
+                root,
+                "b",
+                {
+                    "syncState": {
+                        "lastMaterializedAppsScriptUpdateTime": "current"
+                    },
+                },
+            )
+            clasp = FakeClasp(
+                lambda directory: self.fail("preflight must finish before pulls")
+            )
+            with self.assertRaisesRegex(
+                stage3.MaterializationPlanError,
+                "stale Stage 2 plan checkpoint",
+            ):
                 stage3.materialize_plan(
                     plan(
-                        plan_item("a", required=True, checkpoint="old", remote=observation("new")),
-                        plan_item("b", required=True, checkpoint="stale", remote=observation("new")),
+                        plan_item(
+                            "a",
+                            required=True,
+                            checkpoint="old",
+                            remote=observation("new"),
+                        ),
+                        plan_item(
+                            "b",
+                            required=True,
+                            checkpoint="stale",
+                            remote=observation("new"),
+                        ),
                     ),
                     root,
                     clasp=clasp,
@@ -334,41 +417,65 @@ class Stage3MaterializationTests(unittest.TestCase):
     def test_success_without_correlated_remote_timestamp_keeps_checkpoint(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
-            project = write_project(root, "script-1", {
-                "syncState": {"lastMaterializedAppsScriptUpdateTime": "old"},
-            })
+            project = write_project(
+                root,
+                "script-1",
+                {
+                    "syncState": {"lastMaterializedAppsScriptUpdateTime": "old"},
+                },
+            )
 
             def pull(directory: Path):
                 (directory / "Code.js").write_text("source", encoding="utf-8")
 
             result = stage3.materialize_plan(
-                plan(plan_item(
-                    "script-1",
-                    required=True,
-                    checkpoint="old",
-                    observed=None,
-                    remote=observation(None),
-                )),
+                plan(
+                    plan_item(
+                        "script-1",
+                        required=True,
+                        checkpoint="old",
+                        observed=None,
+                        remote=observation(None),
+                    )
+                ),
                 root,
                 clasp=FakeClasp(pull),
             )
             self.assertTrue(result["allProjectsSuccessful"])
             self.assertEqual(
                 "old",
-                load_metadata(project)["syncState"]["lastMaterializedAppsScriptUpdateTime"],
+                load_metadata(project)["syncState"][
+                    "lastMaterializedAppsScriptUpdateTime"
+                ],
             )
 
     def test_unsafe_remote_filename_is_rejected_before_clasp(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
-            write_project(root, "script-1", {
-                "syncState": {"lastMaterializedAppsScriptUpdateTime": "old"},
-            })
+            write_project(
+                root,
+                "script-1",
+                {
+                    "syncState": {"lastMaterializedAppsScriptUpdateTime": "old"},
+                },
+            )
             clasp = FakeClasp()
-            remote = observation("new", files=[{"name": "../escape", "type": "SERVER_JS"}])
-            with self.assertRaisesRegex(stage3.MaterializationPlanError, "unsafe Stage 2 file observation"):
+            remote = observation(
+                "new",
+                files=[{"name": "../escape", "type": "SERVER_JS"}],
+            )
+            with self.assertRaisesRegex(
+                stage3.MaterializationPlanError,
+                "unsafe Stage 2 file observation",
+            ):
                 stage3.materialize_plan(
-                    plan(plan_item("script-1", required=True, remote=remote)),
+                    plan(
+                        plan_item(
+                            "script-1",
+                            required=True,
+                            remote=remote,
+                        )
+                    ),
                     root,
                     clasp=clasp,
                 )
@@ -384,9 +491,18 @@ class Stage3MaterializationTests(unittest.TestCase):
                 root_dir="../outside",
             )
             clasp = FakeClasp()
-            with self.assertRaisesRegex(stage3.MaterializationPlanError, "rootDir escapes"):
+            with self.assertRaisesRegex(
+                stage3.MaterializationPlanError,
+                "rootDir escapes",
+            ):
                 stage3.materialize_plan(
-                    plan(plan_item("script-1", required=True, remote=observation("new"))),
+                    plan(
+                        plan_item(
+                            "script-1",
+                            required=True,
+                            remote=observation("new"),
+                        )
+                    ),
                     root,
                     clasp=clasp,
                 )
@@ -403,10 +519,18 @@ class Stage3MaterializationTests(unittest.TestCase):
             )
 
             def pull(directory: Path):
-                (directory / "src" / "Code.js").write_text("source", encoding="utf-8")
+                (directory / "src" / "Code.js").write_text(
+                    "source", encoding="utf-8"
+                )
 
             result = stage3.materialize_plan(
-                plan(plan_item("script-1", required=True, remote=observation("new"))),
+                plan(
+                    plan_item(
+                        "script-1",
+                        required=True,
+                        remote=observation("new"),
+                    )
+                ),
                 root,
                 clasp=FakeClasp(pull),
             )
@@ -416,18 +540,27 @@ class Stage3MaterializationTests(unittest.TestCase):
     def test_observed_timestamp_mismatch_is_rejected_before_clasp(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
-            write_project(root, "script-1", {
-                "syncState": {"lastMaterializedAppsScriptUpdateTime": "old"},
-            })
+            write_project(
+                root,
+                "script-1",
+                {
+                    "syncState": {"lastMaterializedAppsScriptUpdateTime": "old"},
+                },
+            )
             clasp = FakeClasp()
-            with self.assertRaisesRegex(stage3.MaterializationPlanError, "does not match"):
+            with self.assertRaisesRegex(
+                stage3.MaterializationPlanError,
+                "does not match",
+            ):
                 stage3.materialize_plan(
-                    plan(plan_item(
-                        "script-1",
-                        required=True,
-                        observed="planned",
-                        remote=observation("remote"),
-                    )),
+                    plan(
+                        plan_item(
+                            "script-1",
+                            required=True,
+                            observed="planned",
+                            remote=observation("remote"),
+                        )
+                    ),
                     root,
                     clasp=clasp,
                 )
@@ -445,13 +578,15 @@ class Stage3MaterializationTests(unittest.TestCase):
                 raise RuntimeError("write failed")
 
             result = stage3.materialize_plan(
-                plan(plan_item(
-                    "script-1",
-                    required=False,
-                    checkpoint="same",
-                    observed="same",
-                    remote=observation("same", files=[]),
-                )),
+                plan(
+                    plan_item(
+                        "script-1",
+                        required=False,
+                        checkpoint="same",
+                        observed="same",
+                        remote=observation("same", files=[]),
+                    )
+                ),
                 root,
                 clasp=FakeClasp(),
                 metadata_writer=fail_writer,
@@ -468,8 +603,17 @@ class Stage3MaterializationTests(unittest.TestCase):
             def runner(args, **kwargs):
                 calls.append(list(args))
                 if len(calls) == 1:
-                    raise subprocess.CalledProcessError(1, args, stderr="transient")
-                return subprocess.CompletedProcess(args, 0, stdout="ok", stderr="")
+                    raise subprocess.CalledProcessError(
+                        1,
+                        args,
+                        stderr="transient",
+                    )
+                return subprocess.CompletedProcess(
+                    args,
+                    0,
+                    stdout="ok",
+                    stderr="",
+                )
 
             clasp_client.pull(
                 project,
