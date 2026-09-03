@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import json
 import re
+import sys
 from datetime import datetime
 from pathlib import Path
 from typing import Any
@@ -88,6 +89,11 @@ def fetch_inventory(access_token: str, session: Any = requests) -> dict[str, lis
             return None
         payload = response.json()
         if payload.get("incompleteSearch") is True:
+            print(
+                "Error: Drive API returned incompleteSearch=true; refusing to treat "
+                "this inventory as complete or infer project absence.",
+                file=sys.stderr,
+            )
             return None
         page_files = payload.get("files", [])
         if not isinstance(page_files, list):
