@@ -133,8 +133,6 @@ class Stage2PipelineTests(unittest.TestCase):
             create_project(root, "b", {"appsScriptApi": {"updateTime": "2026-01-01T00:00:00Z"}})
             create_project(root, "c", {})
 
-            # The legacy implementation also scanned root children. The new canonical
-            # registry must deliberately ignore this non-authoritative project shape.
             legacy = root / "legacy-project"
             legacy.mkdir()
             (legacy / ".clasp.json").write_text(json.dumps({"scriptId": "legacy"}), encoding="utf-8")
@@ -252,11 +250,19 @@ class Stage2PipelineTests(unittest.TestCase):
                 refresh.refresh_metadata(plan, result, root, clasp=RefreshClasp(), api=api)
             self.assertEqual(before, (project / "metadata.json").read_bytes())
 
-    def test_validator_detects_case_insensitive_conflicts(self):
+    def test_validator_detects_windows_case_insensitive_conflicts_without_full_casefolding(self):
         self.assertEqual([], validate.find_case_insensitive_name_conflicts([{"name": "Code"}, {"name": "Html"}]))
         self.assertEqual(
             [("Code", "code")],
             validate.find_case_insensitive_name_conflicts([{"name": "Code"}, {"name": "code"}]),
+        )
+        self.assertEqual(
+            [],
+            validate.find_case_insensitive_name_conflicts([{"name": "Straße"}, {"name": "STRASSE"}]),
+        )
+        self.assertEqual(
+            [("σ", "ς")],
+            validate.find_case_insensitive_name_conflicts([{"name": "σ"}, {"name": "ς"}]),
         )
         with self.assertRaises(validate.CaseInsensitiveNameConflict):
             validate.validate_files([{"name": "Code"}, {"name": "code"}], "script")
