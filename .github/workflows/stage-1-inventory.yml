@@ -48,9 +48,8 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          # Preserve the legacy snapshot staging behavior: stage retained/new JSON files,
-          # but do not turn this structural cutover into a historical snapshot purge.
-          git add data/inventory/drive-api/snapshots/*.json
+          # Stage both retained/new snapshots and retention deletions.
+          git add -A data/inventory/drive-api/snapshots
           git add projects/
           git add docs/
           if ! git diff --cached --quiet; then
