@@ -107,9 +107,15 @@ def build_plan(
         if isinstance(remote_metadata, dict) and remote_metadata.get("updateTime"):
             remote_update_time = str(remote_metadata["updateTime"])
 
-        should_sync = True
-        if remote_update_time and local_update_time and remote_update_time <= local_update_time:
-            should_sync = False
+        # A checkpoint proves exactly one observed remote state was materialized.
+        # Only equality can establish unchanged state without relying on timestamp
+        # string ordering, precision, or monotonicity assumptions. Any difference
+        # is conservatively selected for synchronization.
+        should_sync = not (
+            remote_update_time
+            and local_update_time
+            and remote_update_time == local_update_time
+        )
 
         entries.append(
             {
