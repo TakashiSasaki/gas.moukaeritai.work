@@ -6,6 +6,7 @@ import json
 import sys
 import tempfile
 import unittest
+import urllib.parse
 from pathlib import Path
 from types import ModuleType
 
@@ -105,10 +106,20 @@ class Stage2InspectionApiTests(unittest.TestCase):
             "https://script.googleapis.com/v1/projects/script-1",
             opener.requests[0].full_url,
         )
+        content_url = urllib.parse.urlparse(opener.requests[1].full_url)
         self.assertEqual(
             "https://script.googleapis.com/v1/projects/script-1/content",
-            opener.requests[1].full_url,
+            urllib.parse.urlunparse(content_url._replace(query="")),
         )
+        fields = urllib.parse.parse_qs(content_url.query).get("fields")
+        self.assertEqual([api_module._FILE_METADATA_FIELDS], fields)
+        self.assertNotIn("source", fields[0])
+        self.assertNotIn("functionSet", fields[0])
+        self.assertIn("name", fields[0])
+        self.assertIn("type", fields[0])
+        self.assertIn("createTime", fields[0])
+        self.assertIn("updateTime", fields[0])
+        self.assertIn("lastModifyUser", fields[0])
         self.assertEqual("Bearer token-1", opener.requests[0].get_header("Authorization"))
 
     def test_deployments_and_versions_paginate_as_structured_resources(self):

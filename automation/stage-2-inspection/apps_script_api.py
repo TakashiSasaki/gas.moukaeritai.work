@@ -10,6 +10,9 @@ from typing import Any, Callable
 
 API_ROOT = "https://script.googleapis.com/v1/projects"
 _EXCLUDED_FILE_FIELDS = {"source", "functionSet"}
+_FILE_METADATA_FIELDS = (
+    "files(name,type,lastModifyUser(domain,email,name,photoUrl),createTime,updateTime)"
+)
 
 
 class AppsScriptApiError(RuntimeError):
@@ -88,9 +91,12 @@ def get_project_files_metadata(
     *,
     opener: Callable[..., Any] = urllib.request.urlopen,
 ) -> list[dict[str, Any]]:
-    url = f"{API_ROOT}/{script_id}/content"
+    query = urllib.parse.urlencode({"fields": _FILE_METADATA_FIELDS})
+    url = f"{API_ROOT}/{script_id}/content?{query}"
     payload = _request_json(url, access_token, opener=opener)
     files = _object_list(payload, "files", url)
+    # Keep the defensive filter so tests/custom openers and future server changes
+    # cannot accidentally place source bodies or function metadata in the plan.
     return [
         {key: value for key, value in item.items() if key not in _EXCLUDED_FILE_FIELDS}
         for item in files
