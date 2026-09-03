@@ -77,6 +77,8 @@ class SyncClasp:
     def __init__(self, failing: set[str] | None = None):
         self.failing = failing or set()
         self.pulled: list[str] = []
+        self.deployment_calls = 0
+        self.version_calls = 0
 
     def pull(self, project_dir: Path):
         script_id = project_dir.name
@@ -85,18 +87,28 @@ class SyncClasp:
             raise subprocess.CalledProcessError(1, "clasp pull")
 
     def list_deployments(self, project_dir: Path):
-        return [{"id": f"dep-{project_dir.name}", "target": "HEAD", "description": ""}]
+        self.deployment_calls += 1
+        raise AssertionError("source sync must not refresh deployments")
 
     def list_versions(self, project_dir: Path):
-        return [{"version": 1, "description": project_dir.name}]
+        self.version_calls += 1
+        raise AssertionError("source sync must not refresh versions")
 
 
 class RefreshClasp:
     def __init__(self, token: str | None = "token"):
         self.token = token
+        self.deployments = [{"id": "dep", "target": "HEAD", "description": ""}]
+        self.versions = [{"version": 1, "description": "v1"}]
 
     def read_access_token(self):
         return self.token
+
+    def list_deployments(self, project_dir: Path):
+        return self.deployments
+
+    def list_versions(self, project_dir: Path):
+        return self.versions
 
 
 class RefreshApi:
@@ -168,7 +180,10 @@ class Stage2PipelineTests(unittest.TestCase):
             by_id = {item["scriptId"]: item for item in result["projects"]}
             self.assertFalse(by_id["a"]["attempted"])
             self.assertTrue(by_id["b"]["synced"])
-            self.assertEqual("dep-b", by_id["b"]["deployments"][0]["id"])
+            self.assertNotIn("deployments", by_id["b"])
+            self.assertNotIn("versions", by_id["b"])
+            self.assertEqual(0, clasp.deployment_calls)
+            self.assertEqual(0, clasp.version_calls)
             self.assertTrue(by_id["c"]["attempted"])
             self.assertFalse(by_id["c"]["synced"])
             self.assertIn("exit code 1", by_id["c"]["error"])
@@ -197,8 +212,6 @@ class Stage2PipelineTests(unittest.TestCase):
                     "scriptId": "a",
                     "attempted": True,
                     "synced": True,
-                    "deployments": [{"id": "dep", "target": "HEAD", "description": ""}],
-                    "versions": [{"version": 1, "description": "v1"}],
                     "error": None,
                 }]
             }
