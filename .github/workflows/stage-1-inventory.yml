@@ -25,9 +25,11 @@ jobs:
           ref: gas.moukaeritai.work
 
       - name: Restore Google credentials
+        env:
+          CLASPRC_JSON: ${{ secrets.CLASPRC_JSON }}
         run: |
           umask 077
-          printf '%s' '${{ secrets.CLASPRC_JSON }}' > ~/.clasprc.json
+          printf '%s' "$CLASPRC_JSON" > ~/.clasprc.json
 
       - name: Setup Python
         uses: actions/setup-python@v5
