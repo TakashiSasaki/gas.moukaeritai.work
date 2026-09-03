@@ -30,3 +30,6 @@ jobs:
 
       - name: Validate automation and repository state
         run: python .github/scripts/validate-automation.py
+
+      - name: Run automation unit tests
+        run: PYTHONPATH=. python -m unittest discover -s automation/tests -p 'test_*.py'
