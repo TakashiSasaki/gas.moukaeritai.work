@@ -39,9 +39,11 @@ jobs:
         run: python -m pip install requests
 
       - name: Restore Google credentials
+        env:
+          CLASPRC_JSON: ${{ secrets.CLASPRC_JSON }}
         run: |
           umask 077
-          printf '%s' '${{ secrets.CLASPRC_JSON }}' > ~/.clasprc.json
+          printf '%s' "$CLASPRC_JSON" > ~/.clasprc.json
 
       - name: Inspect Apps Script state and build materialization plan
         id: inspection
