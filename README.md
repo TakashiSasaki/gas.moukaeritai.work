@@ -37,7 +37,7 @@ Stage 1 is the authority for Drive-derived project presence. `metadata.json` rec
 
 An `absent` transition is therefore **not** a project deletion.
 
-### Stage 2: Apps Script Synchronization
+### Current Stage 2: compatibility synchronization
 
 Workflow: `.github/workflows/stage-2-sync.yml`
 
@@ -50,13 +50,27 @@ Workflow: `.github/workflows/stage-2-sync.yml`
   4. `automation/stage-2-sync/validate-project-state.py`
 - **External I/O:** Apps Script HTTP access is isolated in `apps_script_api.py`; clasp subprocess/auth-state access is isolated in `clasp_client.py`.
 
+This compatibility workflow remains in service until the dedicated three-stage workflow cutover.
+
 Remote observation and successful source materialization are separate states. `appsScriptApi.updateTime` records observed Apps Script state, while `syncState.lastMaterializedAppsScriptUpdateTime` is the successful-materialization checkpoint used for source freshness. A failed source pull must not advance that checkpoint.
 
-### Phase 2 inspection transition
+### Phase 2 target Stage 2: inspection/planning
 
 `automation/stage-2-inspection/` contains the cutover-ready Stage 2 responsibility: read-only Apps Script API inspection and deterministic materialization planning. It directly acquires structured project, file, deployment, and version observations and does **not** invoke clasp or write project source/state. Direct Drive and Apps Script API access share `automation/shared/google_oauth.py`.
 
-This implementation is intentionally not yet wired into the production synchronization workflow. The existing `stage-2-sync` workflow remains authoritative until Stage 3 materialization is introduced and the three-stage workflow cutover is reviewed separately.
+### Phase 2 target Stage 3: materialization/finalization
+
+`automation/stage-3-materialization/` consumes a Stage 2 plan. It is responsible for applying the observed state to canonical project directories while preserving the distinction between remote observation and successful materialization.
+
+- `clasp pull` is the only clasp command used for steady-state source materialization.
+- A required pull, post-pull validation, structured metadata finalization, and checkpoint advancement are one per-project transaction.
+- A pull, validation, or finalization failure restores the complete project directory from its pre-transaction state.
+- `syncState.lastMaterializedAppsScriptUpdateTime` advances only to the Apps Script `updateTime` observed by Stage 2 before a successful pull.
+- An unchanged project can refresh structured Apps Script/deployment/version/file metadata without invoking clasp.
+- An `absent` project is neither pulled nor finalized from Apps Script observation.
+- Stage 3 rejects stale plans before mutation when their checkpoint no longer matches repository state.
+
+The target Stage 2 and Stage 3 implementations are intentionally not yet wired into the production synchronization workflow. The existing `stage-2-sync` workflow remains authoritative until the three-stage workflow cutover is reviewed separately.
 
 ### Validation
 
@@ -70,7 +84,7 @@ Each tracked project normally contains:
 
 - `.clasp.json` with its Script ID;
 - `metadata.json` with namespaced metadata such as `driveApi`, `appsScriptApi`, `lifecycle`, and `syncState`;
-- Apps Script source files materialized by Stage 2.
+- Apps Script source files materialized by the synchronization pipeline.
 
 The repository intentionally distinguishes three concepts:
 
