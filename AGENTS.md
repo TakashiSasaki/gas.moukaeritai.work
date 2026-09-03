@@ -1,101 +1,76 @@
 # Instructions for AI Agents
 
-This repository stores and manages many Google Apps Script projects in a single Git repository.
+This repository stores and synchronizes many Google Apps Script projects in one Git repository.
 
 ## General Guidelines
 
-1. Respect the existing project layout. Each Google Apps Script project lives under `projects/<SCRIPT_ID>/`.
-2. Keep original Apps Script filenames whenever possible, such as `Code.js`, `appsscript.json`, `index.html`, and project-specific filenames from the Apps Script editor.
-3. Treat `clasp` as the primary sync tool for pulling from and pushing to Apps Script projects.
-4. Prefer the housekeeping scripts that already exist in this repository over inventing parallel workflows.
-5. Do not manually edit generated files when a housekeeping script is responsible for them.
-6. Keep `README.md` and this `AGENTS.md` aligned with significant repository-level workflow changes.
-7. If you need a detailed commit message file, use a temporary or ignored file such as `commit_message.txt`. Do not leave unrelated scratch files behind.
+1. Treat `projects/<SCRIPT_ID>/` as the only canonical location for materialized Apps Script project state.
+2. Keep original Apps Script filenames whenever possible, including `Code.js`, `appsscript.json`, HTML files, and project-specific names.
+3. Use the existing automation under `automation/` rather than inventing parallel synchronization scripts.
+4. Do not manually edit generated inventory snapshots or `docs/projects.json` when the canonical automation can produce them.
+5. Keep `README.md`, this file, and `docs/AGENTS.md` aligned with repository-level workflow changes.
+6. Preserve actionable error output around clasp, Google APIs, authentication, JSON parsing, and filesystem operations.
 
-## Repository Structure
+## Repository Structure and Authority
 
-- Root
-  - `README.md`: repository overview
-  - `AGENTS.md`: repository-wide instructions for humans and coding agents
-  - `docs/`: published static site assets and their local instructions in `docs/AGENTS.md`
-  - `housekeeping/`: operational scripts and their own local `AGENTS.md` files
-  - `projects/`: one directory per Apps Script project, named by Script ID
-- `housekeeping/pull-by-clasp/`
-  - `clasp-pull.py`: pulls project code with `clasp`, fetches metadata, and updates `metadata.json`
-- `housekeeping/list-by-drive-api/`
-  - `fetch-list.py`: fetches Apps Script project list from Google Drive API and stores timestamped JSON backups
-  - `update_metadata.py`: updates `projects/<SCRIPT_ID>/metadata.json` and regenerates `docs/projects.json`
+- `automation/`: **how synchronization is performed**.
+  - `stage-1-inventory/`: Drive inventory acquisition, canonical registry reconciliation, and public project-index generation.
+  - `stage-2-sync/`: Apps Script change detection, clasp source synchronization, metadata refresh, and project-state validation.
+  - `shared/`: repository-access primitives shared by stages.
+  - `maintenance/`: explicit historical migrations; these are not part of steady-state synchronization.
+- `data/`: **what was externally observed**. Drive inventory snapshots live under `data/inventory/drive-api/snapshots/`.
+- `projects/`: materialized Apps Script project state under `projects/<SCRIPT_ID>/`.
+- `docs/`: GitHub Pages/public projection. Local rules live in `docs/AGENTS.md`.
+- `.github/workflows/`: orchestration only; business logic belongs under `automation/`.
 
-## Source of Truth
+There is no supported repository-root project fallback. Do not recreate one.
 
-- Project source files belong in `projects/<SCRIPT_ID>/`
-- Project sync via `clasp` is handled by `housekeeping/pull-by-clasp/clasp-pull.py`
-- Drive-based project listing and metadata refresh are handled by `housekeeping/list-by-drive-api/`
-- `docs/projects.json` is generated data and should be updated by script, not by hand
-- Public website rules for `docs/` live in [docs/AGENTS.md](C:/Users/takashi/Documents/GitHub/gas.moukaeritai.work/docs/AGENTS.md)
+## Synchronization Workflows
+
+### Stage 1 — inventory
+
+`.github/workflows/stage-1-inventory.yml` runs every three hours and can also be dispatched manually. Its canonical sequence is:
+
+1. `automation/stage-1-inventory/fetch-drive-inventory.py`
+2. `automation/stage-1-inventory/reconcile-project-registry.py`
+3. `automation/stage-1-inventory/generate-public-project-index.py`
+4. repository validation
+
+Stage 1 owns Drive observation and `driveApi` reconciliation. It must not absorb Apps Script source pulling, deployment/version refresh, or historical migration.
+
+### Stage 2 — synchronization
+
+`.github/workflows/stage-2-sync.yml` can be dispatched manually and is triggered after Stage 1 completes. Its canonical sequence is:
+
+1. `automation/stage-2-sync/detect-project-changes.py`
+2. `automation/stage-2-sync/sync-project-source.py`
+3. `automation/stage-2-sync/refresh-project-metadata.py`
+4. `automation/stage-2-sync/validate-project-state.py`
+
+External Apps Script HTTP I/O must go through `apps_script_api.py`; clasp subprocess/auth-state I/O must go through `clasp_client.py`. Keep business decisions out of those I/O primitives.
 
 ## Project Directory Rules
 
 1. Do not rename or flatten `projects/<SCRIPT_ID>/`.
-2. Keep `.clasp.json` in each project directory when the project is tracked by `clasp`.
-3. Assume `metadata.json` is shared across housekeeping workflows.
-4. Be careful with legacy files such as `deployments.json` and `versions.json`. Some projects may still contain them until housekeeping scripts migrate or clean them up.
-5. When editing a specific project, follow that project's existing style and file naming rather than imposing a new convention.
-
-## Syncing Projects
-
-When asked to sync or refresh projects, prefer the existing scripts in this order:
-
-1. Run `housekeeping/pull-by-clasp/clasp-pull.py` to pull Apps Script project contents and Apps Script API metadata.
-2. Run `housekeeping/list-by-drive-api/fetch-list.py` when you need a fresh Drive API backup of the project list.
-3. Run `housekeeping/list-by-drive-api/update_metadata.py` when you need to refresh `driveApi` metadata or regenerate `docs/projects.json`.
-
-Before changing either workflow, read the local instructions in:
-
-- [housekeeping/pull-by-clasp/AGENTS.md](C:/Users/takashi/Documents/GitHub/gas.moukaeritai.work/housekeeping/pull-by-clasp/AGENTS.md)
-- [housekeeping/list-by-drive-api/AGENTS.md](C:/Users/takashi/Documents/GitHub/gas.moukaeritai.work/housekeeping/list-by-drive-api/AGENTS.md)
-
-## Code Modifications
-
-When modifying a specific Apps Script project:
-
-1. Locate the correct directory under `projects/<SCRIPT_ID>/`.
-2. Edit only the relevant project files.
-3. Preserve existing naming and structure.
-4. If the user wants the change deployed back to Apps Script, run `clasp push` from that project directory after making the change.
-5. For major pushes or potentially disruptive deploys, ask for user confirmation first.
+2. Keep `.clasp.json` in each tracked project directory with the correct non-empty `scriptId`.
+3. Preserve unrelated namespaces in `metadata.json`. In particular, Stage 1 and Stage 2 must not overwrite each other's authoritative metadata blocks.
+4. Treat standalone `deployments.json`, `versions.json`, and their old text variants as legacy state, not as canonical outputs.
+5. Be careful with case-insensitive filename collisions because this repository is actively used on Windows.
 
 ## Project Creation and Deletion
 
-- Creation
-  - If the user provides a new Script ID, create `projects/<SCRIPT_ID>/`.
-  - Initialize it in a way that stays compatible with `clasp` and the repository structure.
-  - If needed, create or preserve `.clasp.json` with the correct `scriptId`.
-- Deletion
-  - Deleting a project directory is destructive. Always ask for confirmation first.
-  - Remove only the intended `projects/<SCRIPT_ID>/` directory and any directly related generated references when necessary.
+- Creation: create only under `projects/<SCRIPT_ID>/` and initialize `.clasp.json` consistently with that Script ID.
+- Deletion: deleting a project directory is destructive. Confirm the intended project before removing `projects/<SCRIPT_ID>/` and related generated references.
+- Historical schema/file migration belongs in explicit maintenance tooling, not in recurring Stage 1 logic.
 
 ## Docs and Web UI
 
-1. `docs/` is the published static site for this repository.
-2. `docs/projects.json` is generated by `housekeeping/list-by-drive-api/update_metadata.py`.
-3. If you are changing public site behavior or page content under `docs/`, read [docs/AGENTS.md](C:/Users/takashi/Documents/GitHub/gas.moukaeritai.work/docs/AGENTS.md) first.
-4. If significant repository-level docs workflow changes, reflect them in `README.md` and this file.
+1. `docs/` is production public content for `https://gas.moukaeritai.work/`.
+2. `docs/projects.json` is generated by `automation/stage-1-inventory/generate-public-project-index.py`; do not hand-maintain it during normal synchronization.
+3. Read `docs/AGENTS.md` before changing public site behavior or assets.
 
-## Important Considerations
+## Validation
 
-- Error Handling
-  - Be robust around `clasp` failures, API failures, token issues, and malformed JSON.
-- User Confirmation
-  - Always confirm destructive actions such as deleting projects or pushing major changes.
-- Logging
-  - Keep useful logs from housekeeping scripts and preserve actionable error output.
-- Windows Compatibility
-  - This repository is actively used on Windows. Be careful about case-insensitive filename collisions and path assumptions.
+Run `.github/scripts/validate-automation.py` and the unit tests under `automation/tests/` for repository automation changes. The validation workflow is `.github/workflows/validate-automation.yml`.
 
-## Agent Memory: Known Issues and Notes
-
-- Access to `https://github.com/TakashiSasaki/world/` can fail with `403 Forbidden` when `GITHUB_TOKEN` overrides the intended credentials.
-- If that happens during Git operations, unset `GITHUB_TOKEN` before retrying.
-- Counts from `clasp list` and Drive API-derived data can legitimately differ because `clasp list` may include Apps Script projects still in Google Drive trash.
-- Some older instructions in historical files may mention `clasp-list.json`, `clasp-list.txt`, root-level sync scripts, or pictgram assets that no longer exist in the current layout. Prefer the current repository structure and local directory `AGENTS.md` files over stale references.
+When changing synchronization semantics, preserve the separation between external observation, materialized project state, and public projection unless the repository architecture is intentionally being redesigned.
