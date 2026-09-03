@@ -52,6 +52,12 @@ Workflow: `.github/workflows/stage-2-sync.yml`
 
 Remote observation and successful source materialization are separate states. `appsScriptApi.updateTime` records observed Apps Script state, while `syncState.lastMaterializedAppsScriptUpdateTime` is the successful-materialization checkpoint used for source freshness. A failed source pull must not advance that checkpoint.
 
+### Phase 2 inspection transition
+
+`automation/stage-2-inspection/` contains the cutover-ready Stage 2 responsibility: read-only Apps Script API inspection and deterministic materialization planning. It directly acquires structured project, file, deployment, and version observations and does **not** invoke clasp or write project source/state. Direct Drive and Apps Script API access share `automation/shared/google_oauth.py`.
+
+This implementation is intentionally not yet wired into the production synchronization workflow. The existing `stage-2-sync` workflow remains authoritative until Stage 3 materialization is introduced and the three-stage workflow cutover is reviewed separately.
+
 ### Validation
 
 Workflow: `.github/workflows/validate-automation.yml`
