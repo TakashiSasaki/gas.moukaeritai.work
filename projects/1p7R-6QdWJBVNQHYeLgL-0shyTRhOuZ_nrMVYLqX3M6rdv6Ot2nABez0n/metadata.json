@@ -1,57 +1,6 @@
 {
-  "driveApi": {
-    "name": "Download Items from Pocket.com",
-    "createdTime": "2024-09-12T02:18:04.346Z",
-    "modifiedTime": "2024-09-12T09:33:01.785Z",
-    "id": "1p7R-6QdWJBVNQHYeLgL-0shyTRhOuZ_nrMVYLqX3M6rdv6Ot2nABez0n"
-  },
-  "deployments": [
-    {
-      "id": "AKfycbyn2ggsYDyhNj6RJ-aJRbE6qjvijvtRe5nkIoXu-R4",
-      "target": "HEAD",
-      "description": ""
-    },
-    {
-      "id": "AKfycbyBD73dWM5lqWyd1h0C3oOQlfgXwrTfnOQPUDg0Tqiywq5AZ6PIr6stbCnDrpk3c5Jp",
-      "target": "7",
-      "description": "Pocketで認可してアイテムを取得できるところまで確認"
-    }
-  ],
-  "versions": [
-    {
-      "version": 1,
-      "description": "No description"
-    },
-    {
-      "version": 2,
-      "description": "No description"
-    },
-    {
-      "version": 3,
-      "description": "No description"
-    },
-    {
-      "version": 4,
-      "description": "No description"
-    },
-    {
-      "version": 5,
-      "description": "No description"
-    },
-    {
-      "version": 6,
-      "description": "No description"
-    },
-    {
-      "version": 7,
-      "description": "Pocketで認可してアイテムを取得できるところまで確認"
-    }
-  ],
   "appsScriptApi": {
-    "scriptId": "1p7R-6QdWJBVNQHYeLgL-0shyTRhOuZ_nrMVYLqX3M6rdv6Ot2nABez0n",
-    "title": "Download Items from Pocket.com",
     "createTime": "2024-09-12T02:18:04.346Z",
-    "updateTime": "2024-09-12T09:33:01.785Z",
     "creator": {
       "domain": "gmail.com",
       "email": "takashi316@gmail.com",
@@ -63,68 +12,122 @@
       "email": "takashi316@gmail.com",
       "name": "Takashi SASAKI (佐々木隆志)",
       "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    },
+    "scriptId": "1p7R-6QdWJBVNQHYeLgL-0shyTRhOuZ_nrMVYLqX3M6rdv6Ot2nABez0n",
+    "title": "Download Items from Pocket.com",
+    "updateTime": "2024-09-12T09:33:01.785Z"
+  },
+  "deployments": [
+    {
+      "description": "",
+      "id": "AKfycbyn2ggsYDyhNj6RJ-aJRbE6qjvijvtRe5nkIoXu-R4",
+      "target": "HEAD"
+    },
+    {
+      "description": "Pocketで認可してアイテムを取得できるところまで確認",
+      "id": "AKfycbyBD73dWM5lqWyd1h0C3oOQlfgXwrTfnOQPUDg0Tqiywq5AZ6PIr6stbCnDrpk3c5Jp",
+      "target": "7"
     }
+  ],
+  "driveApi": {
+    "createdTime": "2024-09-12T02:18:04.346Z",
+    "id": "1p7R-6QdWJBVNQHYeLgL-0shyTRhOuZ_nrMVYLqX3M6rdv6Ot2nABez0n",
+    "modifiedTime": "2024-09-12T09:33:01.785Z",
+    "name": "Download Items from Pocket.com"
   },
   "files": [
     {
+      "createTime": "2024-09-12T02:18:04.924Z",
+      "lastModifyUser": {
+        "domain": "gmail.com",
+        "email": "takashi316@gmail.com",
+        "name": "Takashi SASAKI (佐々木隆志)",
+        "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+      },
       "name": "appsscript",
       "type": "JSON",
+      "updateTime": "2024-09-12T09:33:01.514Z"
+    },
+    {
+      "createTime": "2024-09-12T02:18:04.924Z",
       "lastModifyUser": {
         "domain": "gmail.com",
         "email": "takashi316@gmail.com",
         "name": "Takashi SASAKI (佐々木隆志)",
         "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
       },
-      "createTime": "2024-09-12T02:18:04.924Z",
-      "updateTime": "2024-09-12T09:33:01.514Z"
-    },
-    {
       "name": "Code",
       "type": "SERVER_JS",
+      "updateTime": "2024-09-12T09:33:01.514Z"
+    },
+    {
+      "createTime": "2024-09-12T04:32:08.079Z",
       "lastModifyUser": {
         "domain": "gmail.com",
         "email": "takashi316@gmail.com",
         "name": "Takashi SASAKI (佐々木隆志)",
         "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
       },
-      "createTime": "2024-09-12T02:18:04.924Z",
-      "updateTime": "2024-09-12T09:33:01.514Z"
-    },
-    {
       "name": "index",
       "type": "HTML",
+      "updateTime": "2024-09-12T09:33:01.514Z"
+    },
+    {
+      "createTime": "2024-09-12T04:33:49.046Z",
       "lastModifyUser": {
         "domain": "gmail.com",
         "email": "takashi316@gmail.com",
         "name": "Takashi SASAKI (佐々木隆志)",
         "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
       },
-      "createTime": "2024-09-12T04:32:08.079Z",
-      "updateTime": "2024-09-12T09:33:01.514Z"
-    },
-    {
       "name": "fetchPocketItems",
       "type": "SERVER_JS",
-      "lastModifyUser": {
-        "domain": "gmail.com",
-        "email": "takashi316@gmail.com",
-        "name": "Takashi SASAKI (佐々木隆志)",
-        "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
-      },
-      "createTime": "2024-09-12T04:33:49.046Z",
       "updateTime": "2024-09-12T09:33:01.514Z"
     },
     {
-      "name": "script",
-      "type": "HTML",
+      "createTime": "2024-09-12T08:31:26.952Z",
       "lastModifyUser": {
         "domain": "gmail.com",
         "email": "takashi316@gmail.com",
         "name": "Takashi SASAKI (佐々木隆志)",
         "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
       },
-      "createTime": "2024-09-12T08:31:26.952Z",
+      "name": "script",
+      "type": "HTML",
       "updateTime": "2024-09-12T09:33:01.514Z"
+    }
+  ],
+  "lifecycle": {
+    "driveInventory": "present"
+  },
+  "versions": [
+    {
+      "description": "No description",
+      "version": 1
+    },
+    {
+      "description": "No description",
+      "version": 2
+    },
+    {
+      "description": "No description",
+      "version": 3
+    },
+    {
+      "description": "No description",
+      "version": 4
+    },
+    {
+      "description": "No description",
+      "version": 5
+    },
+    {
+      "description": "No description",
+      "version": 6
+    },
+    {
+      "description": "Pocketで認可してアイテムを取得できるところまで確認",
+      "version": 7
     }
   ]
 }

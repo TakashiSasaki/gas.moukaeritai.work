@@ -1,85 +1,6 @@
 {
-  "driveApi": {
-    "name": "Google Cloud Resource Manager Sandbox",
-    "createdTime": "2021-03-18T04:47:16.104Z",
-    "modifiedTime": "2021-07-07T03:40:01.992Z",
-    "id": "1Ukzd26N4sR2e_S_ZmBB2Z_dEIYXzuT8JkZu6DUNnHt53v-PSIG_9HB8k"
-  },
-  "deployments": [
-    {
-      "id": "AKfycbwg4MSFGK8FStH1L6IqAPgFfaYY_v3J3dOe1WkkRwc",
-      "target": "HEAD",
-      "description": ""
-    },
-    {
-      "id": "AKfycbzapKCD4fac6szWRM2UquJ0hsiaQWrQ6FXPzHozx5CtNqqp_H5pUZAQsKBSiYZkEis",
-      "target": "14",
-      "description": "testing authorization URL"
-    }
-  ],
-  "versions": [
-    {
-      "version": 1,
-      "description": "あああ"
-    },
-    {
-      "version": 2,
-      "description": "testing authorization URL"
-    },
-    {
-      "version": 3,
-      "description": "testing authorization URL"
-    },
-    {
-      "version": 4,
-      "description": "testing authorization URL"
-    },
-    {
-      "version": 5,
-      "description": "testing authorization URL"
-    },
-    {
-      "version": 6,
-      "description": "testing authorization URL"
-    },
-    {
-      "version": 7,
-      "description": "testing authorization URL"
-    },
-    {
-      "version": 8,
-      "description": "testing authorization URL"
-    },
-    {
-      "version": 9,
-      "description": "testing authorization URL"
-    },
-    {
-      "version": 10,
-      "description": "testing authorization URL"
-    },
-    {
-      "version": 11,
-      "description": "testing authorization URL"
-    },
-    {
-      "version": 12,
-      "description": "testing authorization URL"
-    },
-    {
-      "version": 13,
-      "description": "testing authorization URL"
-    },
-    {
-      "version": 14,
-      "description": "testing authorization URL"
-    }
-  ],
   "appsScriptApi": {
-    "scriptId": "1Ukzd26N4sR2e_S_ZmBB2Z_dEIYXzuT8JkZu6DUNnHt53v-PSIG_9HB8k",
-    "title": "Google Cloud Resource Manager Sandbox",
     "createTime": "2021-03-18T04:47:16.104Z",
-    "updateTime": "2021-07-07T03:40:01.992Z",
     "creator": {
       "domain": "gmail.com",
       "email": "takashi316@gmail.com",
@@ -91,56 +12,138 @@
       "email": "takashi316@gmail.com",
       "name": "Takashi SASAKI (佐々木隆志)",
       "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    },
+    "scriptId": "1Ukzd26N4sR2e_S_ZmBB2Z_dEIYXzuT8JkZu6DUNnHt53v-PSIG_9HB8k",
+    "title": "Google Cloud Resource Manager Sandbox",
+    "updateTime": "2021-07-07T03:40:01.992Z"
+  },
+  "deployments": [
+    {
+      "description": "",
+      "id": "AKfycbwg4MSFGK8FStH1L6IqAPgFfaYY_v3J3dOe1WkkRwc",
+      "target": "HEAD"
+    },
+    {
+      "description": "testing authorization URL",
+      "id": "AKfycbzapKCD4fac6szWRM2UquJ0hsiaQWrQ6FXPzHozx5CtNqqp_H5pUZAQsKBSiYZkEis",
+      "target": "14"
     }
+  ],
+  "driveApi": {
+    "createdTime": "2021-03-18T04:47:16.104Z",
+    "id": "1Ukzd26N4sR2e_S_ZmBB2Z_dEIYXzuT8JkZu6DUNnHt53v-PSIG_9HB8k",
+    "modifiedTime": "2021-07-07T03:40:01.992Z",
+    "name": "Google Cloud Resource Manager Sandbox"
   },
   "files": [
     {
+      "createTime": "2021-03-18T04:47:16.665Z",
+      "lastModifyUser": {
+        "domain": "gmail.com",
+        "email": "takashi316@gmail.com",
+        "name": "Takashi SASAKI (佐々木隆志)",
+        "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+      },
       "name": "appsscript",
       "type": "JSON",
+      "updateTime": "2021-07-07T03:40:01.864Z"
+    },
+    {
+      "createTime": "2021-03-18T04:47:16.664Z",
       "lastModifyUser": {
         "domain": "gmail.com",
         "email": "takashi316@gmail.com",
         "name": "Takashi SASAKI (佐々木隆志)",
         "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
       },
-      "createTime": "2021-03-18T04:47:16.665Z",
-      "updateTime": "2021-07-07T03:40:01.864Z"
-    },
-    {
       "name": "Code",
       "type": "SERVER_JS",
+      "updateTime": "2021-07-07T03:40:01.864Z"
+    },
+    {
+      "createTime": "2021-03-30T07:35:56.485Z",
       "lastModifyUser": {
         "domain": "gmail.com",
         "email": "takashi316@gmail.com",
         "name": "Takashi SASAKI (佐々木隆志)",
         "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
       },
-      "createTime": "2021-03-18T04:47:16.664Z",
-      "updateTime": "2021-07-07T03:40:01.864Z"
-    },
-    {
       "name": "index",
       "type": "HTML",
-      "lastModifyUser": {
-        "domain": "gmail.com",
-        "email": "takashi316@gmail.com",
-        "name": "Takashi SASAKI (佐々木隆志)",
-        "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
-      },
-      "createTime": "2021-03-30T07:35:56.485Z",
       "updateTime": "2021-07-07T03:40:01.864Z"
     },
     {
-      "name": "buildAuthorizationUrl",
-      "type": "SERVER_JS",
+      "createTime": "2021-07-07T03:40:01.864Z",
       "lastModifyUser": {
         "domain": "gmail.com",
         "email": "takashi316@gmail.com",
         "name": "Takashi SASAKI (佐々木隆志)",
         "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
       },
-      "createTime": "2021-07-07T03:40:01.864Z",
+      "name": "buildAuthorizationUrl",
+      "type": "SERVER_JS",
       "updateTime": "2021-07-07T03:40:01.864Z"
+    }
+  ],
+  "lifecycle": {
+    "driveInventory": "present"
+  },
+  "versions": [
+    {
+      "description": "あああ",
+      "version": 1
+    },
+    {
+      "description": "testing authorization URL",
+      "version": 2
+    },
+    {
+      "description": "testing authorization URL",
+      "version": 3
+    },
+    {
+      "description": "testing authorization URL",
+      "version": 4
+    },
+    {
+      "description": "testing authorization URL",
+      "version": 5
+    },
+    {
+      "description": "testing authorization URL",
+      "version": 6
+    },
+    {
+      "description": "testing authorization URL",
+      "version": 7
+    },
+    {
+      "description": "testing authorization URL",
+      "version": 8
+    },
+    {
+      "description": "testing authorization URL",
+      "version": 9
+    },
+    {
+      "description": "testing authorization URL",
+      "version": 10
+    },
+    {
+      "description": "testing authorization URL",
+      "version": 11
+    },
+    {
+      "description": "testing authorization URL",
+      "version": 12
+    },
+    {
+      "description": "testing authorization URL",
+      "version": 13
+    },
+    {
+      "description": "testing authorization URL",
+      "version": 14
     }
   ]
 }

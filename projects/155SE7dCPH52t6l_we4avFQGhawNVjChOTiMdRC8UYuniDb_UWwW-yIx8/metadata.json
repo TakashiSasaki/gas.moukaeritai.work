@@ -1,41 +1,6 @@
 {
-  "driveApi": {
-    "name": "Markdown in Sheet addon",
-    "createdTime": "2020-01-20T01:50:42.575Z",
-    "modifiedTime": "2025-01-24T18:19:53.560Z",
-    "id": "155SE7dCPH52t6l_we4avFQGhawNVjChOTiMdRC8UYuniDb_UWwW-yIx8"
-  },
-  "deployments": [
-    {
-      "id": "AKfycbx7jRVuS8qDFwALc2pfuxI8ZzIMjWAyEZU1WWDwWo3O",
-      "target": "HEAD",
-      "description": ""
-    },
-    {
-      "id": "AKfycbxVjczfHJ6xR7moBtgeMAmkQ8CI1LmvwpR7489iUlzB9JlscpPO",
-      "target": "1",
-      "description": "web app meta-version"
-    }
-  ],
-  "versions": [
-    {
-      "version": 1,
-      "description": "No description"
-    },
-    {
-      "version": 2,
-      "description": "2"
-    },
-    {
-      "version": 3,
-      "description": "No description"
-    }
-  ],
   "appsScriptApi": {
-    "scriptId": "155SE7dCPH52t6l_we4avFQGhawNVjChOTiMdRC8UYuniDb_UWwW-yIx8",
-    "title": "Markdown in Sheet addon",
     "createTime": "2020-01-20T01:50:42.575Z",
-    "updateTime": "2025-01-24T18:19:53.560Z",
     "creator": {
       "domain": "gmail.com",
       "email": "takashi316@gmail.com",
@@ -47,6 +12,44 @@
       "email": "takashi316@gmail.com",
       "name": "Takashi SASAKI (佐々木隆志)",
       "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    },
+    "scriptId": "155SE7dCPH52t6l_we4avFQGhawNVjChOTiMdRC8UYuniDb_UWwW-yIx8",
+    "title": "Markdown in Sheet addon",
+    "updateTime": "2025-01-24T18:19:53.560Z"
+  },
+  "deployments": [
+    {
+      "description": "",
+      "id": "AKfycbx7jRVuS8qDFwALc2pfuxI8ZzIMjWAyEZU1WWDwWo3O",
+      "target": "HEAD"
+    },
+    {
+      "description": "web app meta-version",
+      "id": "AKfycbxVjczfHJ6xR7moBtgeMAmkQ8CI1LmvwpR7489iUlzB9JlscpPO",
+      "target": "1"
     }
-  }
+  ],
+  "driveApi": {
+    "createdTime": "2020-01-20T01:50:42.575Z",
+    "id": "155SE7dCPH52t6l_we4avFQGhawNVjChOTiMdRC8UYuniDb_UWwW-yIx8",
+    "modifiedTime": "2025-01-24T18:19:53.560Z",
+    "name": "Markdown in Sheet addon"
+  },
+  "lifecycle": {
+    "driveInventory": "present"
+  },
+  "versions": [
+    {
+      "description": "No description",
+      "version": 1
+    },
+    {
+      "description": "2",
+      "version": 2
+    },
+    {
+      "description": "No description",
+      "version": 3
+    }
+  ]
 }

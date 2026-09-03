@@ -1,65 +1,6 @@
 {
-  "driveApi": {
-    "name": "GAS Project Finder",
-    "createdTime": "2025-06-19T01:17:42.360Z",
-    "modifiedTime": "2025-06-20T01:03:21.643Z",
-    "id": "16bdYnyvTFOjko1J10ysGHbq0mNkwBzFFyf81VuCWoM7E_-1Y44KN2IX4"
-  },
-  "deployments": [
-    {
-      "id": "AKfycbxTdjPOI6Jr_AWz3lfAxhwokuP3r3HvtYO-vgWMc_-w",
-      "target": "HEAD",
-      "description": ""
-    },
-    {
-      "id": "AKfycbz0a4RTpHE5Bxn3AeHWEAD7QHreptLqpa3HLxatARciZwYLJk8jd494G3Dd5_PF3WsJFg",
-      "target": "9",
-      "description": "公開用 Version 9"
-    }
-  ],
-  "versions": [
-    {
-      "version": 1,
-      "description": "公開用"
-    },
-    {
-      "version": 2,
-      "description": "No description"
-    },
-    {
-      "version": 3,
-      "description": "No description"
-    },
-    {
-      "version": 4,
-      "description": "公開用 Version 4"
-    },
-    {
-      "version": 5,
-      "description": "No description"
-    },
-    {
-      "version": 6,
-      "description": "公開用 Version 6"
-    },
-    {
-      "version": 7,
-      "description": "公開用 Version 7"
-    },
-    {
-      "version": 8,
-      "description": "公開用 Version 8"
-    },
-    {
-      "version": 9,
-      "description": "公開用 Version 9"
-    }
-  ],
   "appsScriptApi": {
-    "scriptId": "16bdYnyvTFOjko1J10ysGHbq0mNkwBzFFyf81VuCWoM7E_-1Y44KN2IX4",
-    "title": "GAS Project Finder",
     "createTime": "2025-06-19T01:17:42.360Z",
-    "updateTime": "2025-06-20T01:03:21.643Z",
     "creator": {
       "domain": "gmail.com",
       "email": "takashi316@gmail.com",
@@ -71,6 +12,68 @@
       "email": "takashi316@gmail.com",
       "name": "Takashi SASAKI (佐々木隆志)",
       "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    },
+    "scriptId": "16bdYnyvTFOjko1J10ysGHbq0mNkwBzFFyf81VuCWoM7E_-1Y44KN2IX4",
+    "title": "GAS Project Finder",
+    "updateTime": "2025-06-20T01:03:21.643Z"
+  },
+  "deployments": [
+    {
+      "description": "",
+      "id": "AKfycbxTdjPOI6Jr_AWz3lfAxhwokuP3r3HvtYO-vgWMc_-w",
+      "target": "HEAD"
+    },
+    {
+      "description": "公開用 Version 9",
+      "id": "AKfycbz0a4RTpHE5Bxn3AeHWEAD7QHreptLqpa3HLxatARciZwYLJk8jd494G3Dd5_PF3WsJFg",
+      "target": "9"
     }
-  }
+  ],
+  "driveApi": {
+    "createdTime": "2025-06-19T01:17:42.360Z",
+    "id": "16bdYnyvTFOjko1J10ysGHbq0mNkwBzFFyf81VuCWoM7E_-1Y44KN2IX4",
+    "modifiedTime": "2025-06-20T01:03:21.643Z",
+    "name": "GAS Project Finder"
+  },
+  "lifecycle": {
+    "driveInventory": "present"
+  },
+  "versions": [
+    {
+      "description": "公開用",
+      "version": 1
+    },
+    {
+      "description": "No description",
+      "version": 2
+    },
+    {
+      "description": "No description",
+      "version": 3
+    },
+    {
+      "description": "公開用 Version 4",
+      "version": 4
+    },
+    {
+      "description": "No description",
+      "version": 5
+    },
+    {
+      "description": "公開用 Version 6",
+      "version": 6
+    },
+    {
+      "description": "公開用 Version 7",
+      "version": 7
+    },
+    {
+      "description": "公開用 Version 8",
+      "version": 8
+    },
+    {
+      "description": "公開用 Version 9",
+      "version": 9
+    }
+  ]
 }

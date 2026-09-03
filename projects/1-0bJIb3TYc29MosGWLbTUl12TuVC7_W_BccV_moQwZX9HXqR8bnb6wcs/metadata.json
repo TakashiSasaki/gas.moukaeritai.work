@@ -1,23 +1,6 @@
 {
-  "driveApi": {
-    "name": "Copy of Public ScriptCache",
-    "createdTime": "2023-08-14T23:05:57.168Z",
-    "modifiedTime": "2023-08-14T23:05:58.288Z",
-    "id": "1-0bJIb3TYc29MosGWLbTUl12TuVC7_W_BccV_moQwZX9HXqR8bnb6wcs"
-  },
-  "deployments": [
-    {
-      "id": "AKfycbxCcFLzmwYXdewtCRB2tBrF3ETmlszs3uaVeWWbyMI",
-      "target": "HEAD",
-      "description": ""
-    }
-  ],
-  "versions": [],
   "appsScriptApi": {
-    "scriptId": "1-0bJIb3TYc29MosGWLbTUl12TuVC7_W_BccV_moQwZX9HXqR8bnb6wcs",
-    "title": "Copy of Public ScriptCache",
     "createTime": "2023-08-14T23:05:57.168Z",
-    "updateTime": "2023-08-14T23:05:58.288Z",
     "creator": {
       "domain": "gmail.com",
       "email": "takashi316@gmail.com",
@@ -29,20 +12,40 @@
       "email": "takashi316@gmail.com",
       "name": "Takashi SASAKI (佐々木隆志)",
       "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    },
+    "scriptId": "1-0bJIb3TYc29MosGWLbTUl12TuVC7_W_BccV_moQwZX9HXqR8bnb6wcs",
+    "title": "Copy of Public ScriptCache",
+    "updateTime": "2023-08-14T23:05:58.288Z"
+  },
+  "deployments": [
+    {
+      "description": "",
+      "id": "AKfycbxCcFLzmwYXdewtCRB2tBrF3ETmlszs3uaVeWWbyMI",
+      "target": "HEAD"
     }
+  ],
+  "driveApi": {
+    "createdTime": "2023-08-14T23:05:57.168Z",
+    "id": "1-0bJIb3TYc29MosGWLbTUl12TuVC7_W_BccV_moQwZX9HXqR8bnb6wcs",
+    "modifiedTime": "2023-08-14T23:05:58.288Z",
+    "name": "Copy of Public ScriptCache"
   },
   "files": [
     {
-      "name": "appsscript",
-      "type": "JSON",
+      "createTime": "2023-08-14T23:05:57.660Z",
       "lastModifyUser": {
         "domain": "gmail.com",
         "email": "takashi316@gmail.com",
         "name": "Takashi SASAKI (佐々木隆志)",
         "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
       },
-      "createTime": "2023-08-14T23:05:57.660Z",
+      "name": "appsscript",
+      "type": "JSON",
       "updateTime": "2023-08-14T23:05:57.660Z"
     }
-  ]
+  ],
+  "lifecycle": {
+    "driveInventory": "present"
+  },
+  "versions": []
 }

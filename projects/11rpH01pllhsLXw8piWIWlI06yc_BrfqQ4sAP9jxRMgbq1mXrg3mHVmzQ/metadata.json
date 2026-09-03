@@ -1,33 +1,6 @@
 {
-  "driveApi": {
-    "name": "Document Saver",
-    "createdTime": "2025-05-23T08:57:59.295Z",
-    "modifiedTime": "2025-05-23T12:16:46.492Z",
-    "id": "11rpH01pllhsLXw8piWIWlI06yc_BrfqQ4sAP9jxRMgbq1mXrg3mHVmzQ"
-  },
-  "deployments": [
-    {
-      "id": "AKfycbylC8hfXcdxyd5SL8fzR2DudERRKhizwqqomsM5aG2B",
-      "target": "HEAD",
-      "description": ""
-    },
-    {
-      "id": "AKfycbzM0oF4LEvKTbg7inoVB2hdc3aHI_v63zc7CAFikyLPVM6w2aaJ0nS0MQf6beDS03wDYg",
-      "target": "1",
-      "description": "UIとりあえずできたよ"
-    }
-  ],
-  "versions": [
-    {
-      "version": 1,
-      "description": "UIとりあえずできたよ"
-    }
-  ],
   "appsScriptApi": {
-    "scriptId": "11rpH01pllhsLXw8piWIWlI06yc_BrfqQ4sAP9jxRMgbq1mXrg3mHVmzQ",
-    "title": "Document Saver",
     "createTime": "2025-05-23T08:57:59.295Z",
-    "updateTime": "2025-05-23T12:16:46.492Z",
     "creator": {
       "domain": "gmail.com",
       "email": "takashi316@gmail.com",
@@ -39,6 +12,36 @@
       "email": "takashi316@gmail.com",
       "name": "Takashi SASAKI (佐々木隆志)",
       "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    },
+    "scriptId": "11rpH01pllhsLXw8piWIWlI06yc_BrfqQ4sAP9jxRMgbq1mXrg3mHVmzQ",
+    "title": "Document Saver",
+    "updateTime": "2025-05-23T12:16:46.492Z"
+  },
+  "deployments": [
+    {
+      "description": "",
+      "id": "AKfycbylC8hfXcdxyd5SL8fzR2DudERRKhizwqqomsM5aG2B",
+      "target": "HEAD"
+    },
+    {
+      "description": "UIとりあえずできたよ",
+      "id": "AKfycbzM0oF4LEvKTbg7inoVB2hdc3aHI_v63zc7CAFikyLPVM6w2aaJ0nS0MQf6beDS03wDYg",
+      "target": "1"
     }
-  }
+  ],
+  "driveApi": {
+    "createdTime": "2025-05-23T08:57:59.295Z",
+    "id": "11rpH01pllhsLXw8piWIWlI06yc_BrfqQ4sAP9jxRMgbq1mXrg3mHVmzQ",
+    "modifiedTime": "2025-05-23T12:16:46.492Z",
+    "name": "Document Saver"
+  },
+  "lifecycle": {
+    "driveInventory": "present"
+  },
+  "versions": [
+    {
+      "description": "UIとりあえずできたよ",
+      "version": 1
+    }
+  ]
 }

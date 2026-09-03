@@ -1,23 +1,6 @@
 {
-  "driveApi": {
-    "name": "Snippets For Gmail",
-    "createdTime": "2019-09-11T06:35:28.266Z",
-    "modifiedTime": "2021-06-19T15:30:04.849Z",
-    "id": "152hdXdkyiKko-Ciggv_GdV8b5TQ83ZrV5E2MB-j8ayW_S5zVxLim7YWL"
-  },
-  "deployments": [
-    {
-      "id": "AKfycbx_kF6GsfXuhIBS9M-Psc2hL-a07Pn-ra4Z_A2jsRu4",
-      "target": "HEAD",
-      "description": ""
-    }
-  ],
-  "versions": [],
   "appsScriptApi": {
-    "scriptId": "152hdXdkyiKko-Ciggv_GdV8b5TQ83ZrV5E2MB-j8ayW_S5zVxLim7YWL",
-    "title": "Snippets For Gmail",
     "createTime": "2019-09-11T06:35:28.266Z",
-    "updateTime": "2021-06-19T15:30:04.849Z",
     "creator": {
       "domain": "gmail.com",
       "email": "takashi316@gmail.com",
@@ -29,63 +12,83 @@
       "email": "takashi316@gmail.com",
       "name": "Takashi SASAKI (佐々木隆志)",
       "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    },
+    "scriptId": "152hdXdkyiKko-Ciggv_GdV8b5TQ83ZrV5E2MB-j8ayW_S5zVxLim7YWL",
+    "title": "Snippets For Gmail",
+    "updateTime": "2021-06-19T15:30:04.849Z"
+  },
+  "deployments": [
+    {
+      "description": "",
+      "id": "AKfycbx_kF6GsfXuhIBS9M-Psc2hL-a07Pn-ra4Z_A2jsRu4",
+      "target": "HEAD"
     }
+  ],
+  "driveApi": {
+    "createdTime": "2019-09-11T06:35:28.266Z",
+    "id": "152hdXdkyiKko-Ciggv_GdV8b5TQ83ZrV5E2MB-j8ayW_S5zVxLim7YWL",
+    "modifiedTime": "2021-06-19T15:30:04.849Z",
+    "name": "Snippets For Gmail"
   },
   "files": [
     {
+      "createTime": "2019-09-11T06:35:20.062Z",
+      "lastModifyUser": {},
       "name": "appsscript",
       "type": "JSON",
-      "lastModifyUser": {},
-      "createTime": "2019-09-11T06:35:20.062Z",
       "updateTime": "2021-06-19T15:29:54.773Z"
     },
     {
+      "createTime": "2019-09-11T06:43:29.540Z",
+      "lastModifyUser": {
+        "domain": "gmail.com",
+        "email": "takashi316@gmail.com",
+        "name": "Takashi SASAKI (佐々木隆志)",
+        "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+      },
       "name": "getLabels",
       "type": "SERVER_JS",
+      "updateTime": "2021-06-19T15:29:54.794Z"
+    },
+    {
+      "createTime": "2019-09-12T09:29:29.353Z",
       "lastModifyUser": {
         "domain": "gmail.com",
         "email": "takashi316@gmail.com",
         "name": "Takashi SASAKI (佐々木隆志)",
         "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
       },
-      "createTime": "2019-09-11T06:43:29.540Z",
-      "updateTime": "2021-06-19T15:29:54.794Z"
-    },
-    {
       "name": "getThreadsByLabelId",
       "type": "SERVER_JS",
+      "updateTime": "2021-06-19T15:29:54.794Z"
+    },
+    {
+      "createTime": "2019-09-12T09:41:40.412Z",
       "lastModifyUser": {
         "domain": "gmail.com",
         "email": "takashi316@gmail.com",
         "name": "Takashi SASAKI (佐々木隆志)",
         "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
       },
-      "createTime": "2019-09-12T09:29:29.353Z",
-      "updateTime": "2021-06-19T15:29:54.794Z"
-    },
-    {
       "name": "getThreadIdsByLabelId",
       "type": "SERVER_JS",
-      "lastModifyUser": {
-        "domain": "gmail.com",
-        "email": "takashi316@gmail.com",
-        "name": "Takashi SASAKI (佐々木隆志)",
-        "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
-      },
-      "createTime": "2019-09-12T09:41:40.412Z",
       "updateTime": "2021-06-19T15:29:54.794Z"
     },
     {
-      "name": "FIlterXmlSample",
-      "type": "HTML",
+      "createTime": "2019-09-13T14:56:18.969Z",
       "lastModifyUser": {
         "domain": "gmail.com",
         "email": "takashi316@gmail.com",
         "name": "Takashi SASAKI (佐々木隆志)",
         "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
       },
-      "createTime": "2019-09-13T14:56:18.969Z",
+      "name": "FIlterXmlSample",
+      "type": "HTML",
       "updateTime": "2019-09-13T14:59:44.945Z"
     }
-  ]
+  ],
+  "lifecycle": {
+    "driveInventory": "present"
+  },
+  "versions": []
 }

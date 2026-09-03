@@ -1,45 +1,6 @@
 {
-  "driveApi": {
-    "name": "感情分析",
-    "createdTime": "2023-06-08T00:19:45.356Z",
-    "modifiedTime": "2023-06-08T04:36:51.310Z",
-    "id": "1tEJHwlwUnrmb4488tbOkvhlBBfrAVHflvXT2WqXp_z8GGNgIi-Mv5VQ6"
-  },
-  "deployments": [
-    {
-      "id": "AKfycbya33Nunwrn_rnO6olls6IGlNrEgDPj3QoAO03nIuZQ",
-      "target": "HEAD",
-      "description": ""
-    },
-    {
-      "id": "AKfycbx9Oyusm3lzvRHOBYVypVIIKqFdohtjx4gHfL1Cz1gZ5RYzd5r68VXIpnpFPsrF21GLyA",
-      "target": "4",
-      "description": ""
-    }
-  ],
-  "versions": [
-    {
-      "version": 1,
-      "description": "動くものができた。"
-    },
-    {
-      "version": 2,
-      "description": "公開"
-    },
-    {
-      "version": 3,
-      "description": "Sentiment"
-    },
-    {
-      "version": 4,
-      "description": "No description"
-    }
-  ],
   "appsScriptApi": {
-    "scriptId": "1tEJHwlwUnrmb4488tbOkvhlBBfrAVHflvXT2WqXp_z8GGNgIi-Mv5VQ6",
-    "title": "感情分析",
     "createTime": "2023-06-08T00:19:45.356Z",
-    "updateTime": "2023-06-08T04:36:51.310Z",
     "creator": {
       "domain": "gmail.com",
       "email": "takashi316@gmail.com",
@@ -51,56 +12,98 @@
       "email": "takashi316@gmail.com",
       "name": "Takashi SASAKI (佐々木隆志)",
       "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    },
+    "scriptId": "1tEJHwlwUnrmb4488tbOkvhlBBfrAVHflvXT2WqXp_z8GGNgIi-Mv5VQ6",
+    "title": "感情分析",
+    "updateTime": "2023-06-08T04:36:51.310Z"
+  },
+  "deployments": [
+    {
+      "description": "",
+      "id": "AKfycbya33Nunwrn_rnO6olls6IGlNrEgDPj3QoAO03nIuZQ",
+      "target": "HEAD"
+    },
+    {
+      "description": "",
+      "id": "AKfycbx9Oyusm3lzvRHOBYVypVIIKqFdohtjx4gHfL1Cz1gZ5RYzd5r68VXIpnpFPsrF21GLyA",
+      "target": "4"
     }
+  ],
+  "driveApi": {
+    "createdTime": "2023-06-08T00:19:45.356Z",
+    "id": "1tEJHwlwUnrmb4488tbOkvhlBBfrAVHflvXT2WqXp_z8GGNgIi-Mv5VQ6",
+    "modifiedTime": "2023-06-08T04:36:51.310Z",
+    "name": "感情分析"
   },
   "files": [
     {
+      "createTime": "2023-06-08T00:19:45.895Z",
+      "lastModifyUser": {
+        "domain": "gmail.com",
+        "email": "takashi316@gmail.com",
+        "name": "Takashi SASAKI (佐々木隆志)",
+        "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+      },
       "name": "appsscript",
       "type": "JSON",
+      "updateTime": "2023-06-08T04:36:50.873Z"
+    },
+    {
+      "createTime": "2023-06-08T00:19:45.895Z",
       "lastModifyUser": {
         "domain": "gmail.com",
         "email": "takashi316@gmail.com",
         "name": "Takashi SASAKI (佐々木隆志)",
         "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
       },
-      "createTime": "2023-06-08T00:19:45.895Z",
-      "updateTime": "2023-06-08T04:36:50.873Z"
-    },
-    {
       "name": "Code",
       "type": "SERVER_JS",
+      "updateTime": "2023-06-08T04:36:50.873Z"
+    },
+    {
+      "createTime": "2023-06-08T02:50:01.476Z",
       "lastModifyUser": {
         "domain": "gmail.com",
         "email": "takashi316@gmail.com",
         "name": "Takashi SASAKI (佐々木隆志)",
         "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
       },
-      "createTime": "2023-06-08T00:19:45.895Z",
-      "updateTime": "2023-06-08T04:36:50.873Z"
-    },
-    {
       "name": "Digest",
       "type": "SERVER_JS",
-      "lastModifyUser": {
-        "domain": "gmail.com",
-        "email": "takashi316@gmail.com",
-        "name": "Takashi SASAKI (佐々木隆志)",
-        "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
-      },
-      "createTime": "2023-06-08T02:50:01.476Z",
       "updateTime": "2023-06-08T04:36:50.873Z"
     },
     {
-      "name": "Cache",
-      "type": "SERVER_JS",
+      "createTime": "2023-06-08T02:50:54.135Z",
       "lastModifyUser": {
         "domain": "gmail.com",
         "email": "takashi316@gmail.com",
         "name": "Takashi SASAKI (佐々木隆志)",
         "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
       },
-      "createTime": "2023-06-08T02:50:54.135Z",
+      "name": "Cache",
+      "type": "SERVER_JS",
       "updateTime": "2023-06-08T04:36:50.873Z"
+    }
+  ],
+  "lifecycle": {
+    "driveInventory": "present"
+  },
+  "versions": [
+    {
+      "description": "動くものができた。",
+      "version": 1
+    },
+    {
+      "description": "公開",
+      "version": 2
+    },
+    {
+      "description": "Sentiment",
+      "version": 3
+    },
+    {
+      "description": "No description",
+      "version": 4
     }
   ]
 }

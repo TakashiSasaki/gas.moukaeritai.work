@@ -1,85 +1,6 @@
 {
-  "driveApi": {
-    "name": "Str",
-    "createdTime": "2019-11-21T12:57:34.357Z",
-    "modifiedTime": "2019-12-06T10:00:29.520Z",
-    "id": "13sX98YHiFh-5eBWTAJtWR52SbdnCxaHzX3GXgt8zUU07ELz9ArLhlJvD"
-  },
-  "deployments": [
-    {
-      "id": "AKfycbxtIqTYinDNeC_gSQwpSijQm6QkSUD1RtNelJyoiegW",
-      "target": "HEAD",
-      "description": ""
-    },
-    {
-      "id": "AKfycbxq3vGTmk3kCQ2Yc-Z4kBjlmWCdaoYA07aWQNXO2BU55e6ITBCG",
-      "target": "18",
-      "description": "web app meta-version"
-    }
-  ],
-  "versions": [
-    {
-      "version": 2,
-      "description": "No description"
-    },
-    {
-      "version": 3,
-      "description": "No description"
-    },
-    {
-      "version": 5,
-      "description": "No description"
-    },
-    {
-      "version": 8,
-      "description": "No description"
-    },
-    {
-      "version": 9,
-      "description": "No description"
-    },
-    {
-      "version": 10,
-      "description": "No description"
-    },
-    {
-      "version": 11,
-      "description": "No description"
-    },
-    {
-      "version": 12,
-      "description": "No description"
-    },
-    {
-      "version": 13,
-      "description": "No description"
-    },
-    {
-      "version": 14,
-      "description": "No description"
-    },
-    {
-      "version": 15,
-      "description": "No description"
-    },
-    {
-      "version": 16,
-      "description": "No description"
-    },
-    {
-      "version": 17,
-      "description": "No description"
-    },
-    {
-      "version": 18,
-      "description": "No description"
-    }
-  ],
   "appsScriptApi": {
-    "scriptId": "13sX98YHiFh-5eBWTAJtWR52SbdnCxaHzX3GXgt8zUU07ELz9ArLhlJvD",
-    "title": "Str",
     "createTime": "2019-11-21T12:57:34.357Z",
-    "updateTime": "2019-12-06T10:00:29.520Z",
     "creator": {
       "domain": "gmail.com",
       "email": "takashi316@gmail.com",
@@ -91,6 +12,88 @@
       "email": "takashi316@gmail.com",
       "name": "Takashi SASAKI (佐々木隆志)",
       "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    },
+    "scriptId": "13sX98YHiFh-5eBWTAJtWR52SbdnCxaHzX3GXgt8zUU07ELz9ArLhlJvD",
+    "title": "Str",
+    "updateTime": "2019-12-06T10:00:29.520Z"
+  },
+  "deployments": [
+    {
+      "description": "",
+      "id": "AKfycbxtIqTYinDNeC_gSQwpSijQm6QkSUD1RtNelJyoiegW",
+      "target": "HEAD"
+    },
+    {
+      "description": "web app meta-version",
+      "id": "AKfycbxq3vGTmk3kCQ2Yc-Z4kBjlmWCdaoYA07aWQNXO2BU55e6ITBCG",
+      "target": "18"
     }
-  }
+  ],
+  "driveApi": {
+    "createdTime": "2019-11-21T12:57:34.357Z",
+    "id": "13sX98YHiFh-5eBWTAJtWR52SbdnCxaHzX3GXgt8zUU07ELz9ArLhlJvD",
+    "modifiedTime": "2019-12-06T10:00:29.520Z",
+    "name": "Str"
+  },
+  "lifecycle": {
+    "driveInventory": "present"
+  },
+  "versions": [
+    {
+      "description": "No description",
+      "version": 2
+    },
+    {
+      "description": "No description",
+      "version": 3
+    },
+    {
+      "description": "No description",
+      "version": 5
+    },
+    {
+      "description": "No description",
+      "version": 8
+    },
+    {
+      "description": "No description",
+      "version": 9
+    },
+    {
+      "description": "No description",
+      "version": 10
+    },
+    {
+      "description": "No description",
+      "version": 11
+    },
+    {
+      "description": "No description",
+      "version": 12
+    },
+    {
+      "description": "No description",
+      "version": 13
+    },
+    {
+      "description": "No description",
+      "version": 14
+    },
+    {
+      "description": "No description",
+      "version": 15
+    },
+    {
+      "description": "No description",
+      "version": 16
+    },
+    {
+      "description": "No description",
+      "version": 17
+    },
+    {
+      "description": "No description",
+      "version": 18
+    }
+  ]
 }

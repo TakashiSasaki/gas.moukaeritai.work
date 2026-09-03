@@ -1,15 +1,6 @@
 {
-  "driveApi": {
-    "id": "10KBTiTnzSQjxkyTLCC14R4nUaQRVKitePGwraOkkICIDiN8byP6kPfUg",
-    "name": "無題のプロジェクト",
-    "createdTime": "2026-06-22T12:04:17.043Z",
-    "modifiedTime": "2026-06-22T12:04:17.043Z"
-  },
   "appsScriptApi": {
-    "scriptId": "10KBTiTnzSQjxkyTLCC14R4nUaQRVKitePGwraOkkICIDiN8byP6kPfUg",
-    "title": "無題のプロジェクト",
     "createTime": "2026-06-22T12:04:17.043Z",
-    "updateTime": "2026-06-22T12:04:17.043Z",
     "creator": {
       "domain": "gmail.com",
       "email": "takashi316@gmail.com",
@@ -21,40 +12,52 @@
       "email": "takashi316@gmail.com",
       "name": "Takashi SASAKI (佐々木隆志)",
       "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
-    }
+    },
+    "scriptId": "10KBTiTnzSQjxkyTLCC14R4nUaQRVKitePGwraOkkICIDiN8byP6kPfUg",
+    "title": "無題のプロジェクト",
+    "updateTime": "2026-06-22T12:04:17.043Z"
   },
   "deployments": [
     {
+      "description": "",
       "id": "AKfycbzcR613zdC31M1Gf7bT4EqSNJw_8U1d4RGZBwTFjmQ",
-      "target": "HEAD",
-      "description": ""
+      "target": "HEAD"
     }
   ],
-  "versions": [],
+  "driveApi": {
+    "createdTime": "2026-06-22T12:04:17.043Z",
+    "id": "10KBTiTnzSQjxkyTLCC14R4nUaQRVKitePGwraOkkICIDiN8byP6kPfUg",
+    "modifiedTime": "2026-06-22T12:04:17.043Z",
+    "name": "無題のプロジェクト"
+  },
   "files": [
     {
-      "name": "appsscript",
-      "type": "JSON",
+      "createTime": "2026-06-22T12:04:17.384Z",
       "lastModifyUser": {
         "domain": "gmail.com",
         "email": "takashi316@gmail.com",
         "name": "Takashi SASAKI (佐々木隆志)",
         "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
       },
-      "createTime": "2026-06-22T12:04:17.384Z",
+      "name": "appsscript",
+      "type": "JSON",
       "updateTime": "2026-06-22T12:04:17.384Z"
     },
     {
-      "name": "コード",
-      "type": "SERVER_JS",
+      "createTime": "2026-06-22T12:04:17.383Z",
       "lastModifyUser": {
         "domain": "gmail.com",
         "email": "takashi316@gmail.com",
         "name": "Takashi SASAKI (佐々木隆志)",
         "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
       },
-      "createTime": "2026-06-22T12:04:17.383Z",
+      "name": "コード",
+      "type": "SERVER_JS",
       "updateTime": "2026-06-22T12:04:17.383Z"
     }
-  ]
+  ],
+  "lifecycle": {
+    "driveInventory": "present"
+  },
+  "versions": []
 }

@@ -1,71 +1,74 @@
 {
-  "driveApi": {
-    "name": "GetFragmentPartOfUrlTest",
-    "createdTime": "2015-12-17T05:21:17.380Z",
-    "modifiedTime": "2025-01-22T18:41:49.705Z",
-    "id": "1A_kkWBH9eqn08Rir8tv_KdaVyYZkJt487UD69qAbQ0fGHCjKKTPwhC0H"
-  },
-  "deployments": [
-    {
-      "id": "AKfycbxSsq557h5yz-o_1dGIoZPy1GR1caRJZIu1NeHdbqo",
-      "target": "HEAD",
-      "description": ""
-    },
-    {
-      "id": "AKfycbxyrBwHW1Fa89GlU06QJ8RRgc0WWr6p_S3czBghW_1E5QQgP3U",
-      "target": "28",
-      "description": "web app meta-version"
-    }
-  ],
-  "versions": [
-    {
-      "version": 17,
-      "description": "No description"
-    },
-    {
-      "version": 19,
-      "description": "No description"
-    },
-    {
-      "version": 22,
-      "description": "No description"
-    },
-    {
-      "version": 23,
-      "description": "No description"
-    },
-    {
-      "version": 24,
-      "description": "No description"
-    },
-    {
-      "version": 25,
-      "description": "No description"
-    },
-    {
-      "version": 26,
-      "description": "No description"
-    },
-    {
-      "version": 27,
-      "description": "No description"
-    },
-    {
-      "version": 28,
-      "description": "No description"
-    }
-  ],
   "appsScriptApi": {
-    "scriptId": "1A_kkWBH9eqn08Rir8tv_KdaVyYZkJt487UD69qAbQ0fGHCjKKTPwhC0H",
-    "title": "GetFragmentPartOfUrlTest",
     "createTime": "2015-12-17T05:21:17.380Z",
-    "updateTime": "2025-01-22T18:41:49.705Z",
     "creator": {
       "domain": "gmail.com",
       "email": "takashi316@gmail.com",
       "name": "Takashi SASAKI (佐々木隆志)",
       "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
     },
-    "lastModifyUser": {}
-  }
+    "lastModifyUser": {},
+    "scriptId": "1A_kkWBH9eqn08Rir8tv_KdaVyYZkJt487UD69qAbQ0fGHCjKKTPwhC0H",
+    "title": "GetFragmentPartOfUrlTest",
+    "updateTime": "2025-01-22T18:41:49.705Z"
+  },
+  "deployments": [
+    {
+      "description": "",
+      "id": "AKfycbxSsq557h5yz-o_1dGIoZPy1GR1caRJZIu1NeHdbqo",
+      "target": "HEAD"
+    },
+    {
+      "description": "web app meta-version",
+      "id": "AKfycbxyrBwHW1Fa89GlU06QJ8RRgc0WWr6p_S3czBghW_1E5QQgP3U",
+      "target": "28"
+    }
+  ],
+  "driveApi": {
+    "createdTime": "2015-12-17T05:21:17.380Z",
+    "id": "1A_kkWBH9eqn08Rir8tv_KdaVyYZkJt487UD69qAbQ0fGHCjKKTPwhC0H",
+    "modifiedTime": "2025-01-22T18:41:49.705Z",
+    "name": "GetFragmentPartOfUrlTest"
+  },
+  "lifecycle": {
+    "driveInventory": "present"
+  },
+  "versions": [
+    {
+      "description": "No description",
+      "version": 17
+    },
+    {
+      "description": "No description",
+      "version": 19
+    },
+    {
+      "description": "No description",
+      "version": 22
+    },
+    {
+      "description": "No description",
+      "version": 23
+    },
+    {
+      "description": "No description",
+      "version": 24
+    },
+    {
+      "description": "No description",
+      "version": 25
+    },
+    {
+      "description": "No description",
+      "version": 26
+    },
+    {
+      "description": "No description",
+      "version": 27
+    },
+    {
+      "description": "No description",
+      "version": 28
+    }
+  ]
 }

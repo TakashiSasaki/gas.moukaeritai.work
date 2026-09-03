@@ -1,57 +1,6 @@
 {
-  "driveApi": {
-    "name": "Android package list",
-    "createdTime": "2025-07-10T03:48:50.935Z",
-    "modifiedTime": "2025-07-10T06:45:54.297Z",
-    "id": "107QMAgKGFZ6dXRCrA7mpN9aSapN0fZlXw57ipPZREt5zSQ0UNSTLEH50"
-  },
-  "deployments": [
-    {
-      "id": "AKfycbyPnFuvxjOVBuHtapNumQ4PwYKpP3SVOJdAxLBR64Q",
-      "target": "HEAD",
-      "description": ""
-    },
-    {
-      "id": "AKfycbyEi5YGu-xDJWIgdUgY54DwZaBG2gCCbxUgmPSxIDtG5W5uVVG91vyp2M8S54shI2Ng",
-      "target": "7",
-      "description": "公開用 v7"
-    }
-  ],
-  "versions": [
-    {
-      "version": 1,
-      "description": "公開用"
-    },
-    {
-      "version": 2,
-      "description": "公開用 v2"
-    },
-    {
-      "version": 3,
-      "description": "公開用 v3"
-    },
-    {
-      "version": 4,
-      "description": "公開用 v4"
-    },
-    {
-      "version": 5,
-      "description": "公開用 v5"
-    },
-    {
-      "version": 6,
-      "description": "公開用 v6"
-    },
-    {
-      "version": 7,
-      "description": "公開用 v7"
-    }
-  ],
   "appsScriptApi": {
-    "scriptId": "107QMAgKGFZ6dXRCrA7mpN9aSapN0fZlXw57ipPZREt5zSQ0UNSTLEH50",
-    "title": "Android package list",
     "createTime": "2025-07-10T03:48:50.935Z",
-    "updateTime": "2025-07-10T06:45:54.297Z",
     "creator": {
       "domain": "gmail.com",
       "email": "takashi316@gmail.com",
@@ -63,6 +12,60 @@
       "email": "takashi316@gmail.com",
       "name": "Takashi SASAKI (佐々木隆志)",
       "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    },
+    "scriptId": "107QMAgKGFZ6dXRCrA7mpN9aSapN0fZlXw57ipPZREt5zSQ0UNSTLEH50",
+    "title": "Android package list",
+    "updateTime": "2025-07-10T06:45:54.297Z"
+  },
+  "deployments": [
+    {
+      "description": "",
+      "id": "AKfycbyPnFuvxjOVBuHtapNumQ4PwYKpP3SVOJdAxLBR64Q",
+      "target": "HEAD"
+    },
+    {
+      "description": "公開用 v7",
+      "id": "AKfycbyEi5YGu-xDJWIgdUgY54DwZaBG2gCCbxUgmPSxIDtG5W5uVVG91vyp2M8S54shI2Ng",
+      "target": "7"
     }
-  }
+  ],
+  "driveApi": {
+    "createdTime": "2025-07-10T03:48:50.935Z",
+    "id": "107QMAgKGFZ6dXRCrA7mpN9aSapN0fZlXw57ipPZREt5zSQ0UNSTLEH50",
+    "modifiedTime": "2025-07-10T06:45:54.297Z",
+    "name": "Android package list"
+  },
+  "lifecycle": {
+    "driveInventory": "present"
+  },
+  "versions": [
+    {
+      "description": "公開用",
+      "version": 1
+    },
+    {
+      "description": "公開用 v2",
+      "version": 2
+    },
+    {
+      "description": "公開用 v3",
+      "version": 3
+    },
+    {
+      "description": "公開用 v4",
+      "version": 4
+    },
+    {
+      "description": "公開用 v5",
+      "version": 5
+    },
+    {
+      "description": "公開用 v6",
+      "version": 6
+    },
+    {
+      "description": "公開用 v7",
+      "version": 7
+    }
+  ]
 }

@@ -1,42 +1,6 @@
 {
-  "driveApi": {
-    "name": "File Triage",
-    "createdTime": "2025-06-13T08:19:57.424Z",
-    "modifiedTime": "2025-06-13T11:56:14.511Z",
-    "id": "1DJbk8E57h7UVVXyzS9PIDn_iL0ZJf39VRdLepQbf_DDI9WPVkzVlSN2Z"
-  },
-  "deployments": [
-    {
-      "id": "AKfycbxS_89F7wf80xDUm3ARW4CakFj2Z4Cfl2zPBmEoDDyz",
-      "target": "HEAD",
-      "description": ""
-    },
-    {
-      "id": "AKfycbzvReMR-VKH5iJgUzDlvz00-JDibu7fr7yPzB8K5bEMAgfLbINXEunhH4BeW25VrtFqWw",
-      "target": "2",
-      "description": "動く"
-    },
-    {
-      "id": "AKfycbymlILmC4oBsr9g0-13__FspAJj9kwx65Cyo-msAetIcRoVcPYZ45SSjQcgqnVg5bjzfw",
-      "target": "1",
-      "description": "devなURLを開くにはまず一度はデプロイしないといかんらしい"
-    }
-  ],
-  "versions": [
-    {
-      "version": 1,
-      "description": "devなURLを開くにはまず一度はデプロイしないといかんらしい"
-    },
-    {
-      "version": 2,
-      "description": "動く"
-    }
-  ],
   "appsScriptApi": {
-    "scriptId": "1DJbk8E57h7UVVXyzS9PIDn_iL0ZJf39VRdLepQbf_DDI9WPVkzVlSN2Z",
-    "title": "File Triage",
     "createTime": "2025-06-13T08:19:57.424Z",
-    "updateTime": "2025-06-13T11:56:14.511Z",
     "creator": {
       "domain": "gmail.com",
       "email": "takashi316@gmail.com",
@@ -48,92 +12,131 @@
       "email": "takashi316@gmail.com",
       "name": "Takashi SASAKI (佐々木隆志)",
       "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    },
+    "scriptId": "1DJbk8E57h7UVVXyzS9PIDn_iL0ZJf39VRdLepQbf_DDI9WPVkzVlSN2Z",
+    "title": "File Triage",
+    "updateTime": "2025-06-13T11:56:14.511Z"
+  },
+  "deployments": [
+    {
+      "description": "",
+      "id": "AKfycbxS_89F7wf80xDUm3ARW4CakFj2Z4Cfl2zPBmEoDDyz",
+      "target": "HEAD"
+    },
+    {
+      "description": "動く",
+      "id": "AKfycbzvReMR-VKH5iJgUzDlvz00-JDibu7fr7yPzB8K5bEMAgfLbINXEunhH4BeW25VrtFqWw",
+      "target": "2"
+    },
+    {
+      "description": "devなURLを開くにはまず一度はデプロイしないといかんらしい",
+      "id": "AKfycbymlILmC4oBsr9g0-13__FspAJj9kwx65Cyo-msAetIcRoVcPYZ45SSjQcgqnVg5bjzfw",
+      "target": "1"
     }
+  ],
+  "driveApi": {
+    "createdTime": "2025-06-13T08:19:57.424Z",
+    "id": "1DJbk8E57h7UVVXyzS9PIDn_iL0ZJf39VRdLepQbf_DDI9WPVkzVlSN2Z",
+    "modifiedTime": "2025-06-13T11:56:14.511Z",
+    "name": "File Triage"
   },
   "files": [
     {
+      "createTime": "2025-06-13T08:19:57.582Z",
+      "lastModifyUser": {
+        "domain": "gmail.com",
+        "email": "takashi316@gmail.com",
+        "name": "Takashi SASAKI (佐々木隆志)",
+        "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+      },
       "name": "appsscript",
       "type": "JSON",
+      "updateTime": "2025-06-13T11:56:14.292Z"
+    },
+    {
+      "createTime": "2025-06-13T08:19:57.582Z",
       "lastModifyUser": {
         "domain": "gmail.com",
         "email": "takashi316@gmail.com",
         "name": "Takashi SASAKI (佐々木隆志)",
         "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
       },
-      "createTime": "2025-06-13T08:19:57.582Z",
-      "updateTime": "2025-06-13T11:56:14.292Z"
-    },
-    {
       "name": "Code",
       "type": "SERVER_JS",
+      "updateTime": "2025-06-13T11:56:14.292Z"
+    },
+    {
+      "createTime": "2025-06-13T08:26:28.912Z",
       "lastModifyUser": {
         "domain": "gmail.com",
         "email": "takashi316@gmail.com",
         "name": "Takashi SASAKI (佐々木隆志)",
         "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
       },
-      "createTime": "2025-06-13T08:19:57.582Z",
-      "updateTime": "2025-06-13T11:56:14.292Z"
-    },
-    {
       "name": "index",
       "type": "HTML",
+      "updateTime": "2025-06-13T11:56:14.292Z"
+    },
+    {
+      "createTime": "2025-06-13T11:14:43.500Z",
       "lastModifyUser": {
         "domain": "gmail.com",
         "email": "takashi316@gmail.com",
         "name": "Takashi SASAKI (佐々木隆志)",
         "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
       },
-      "createTime": "2025-06-13T08:26:28.912Z",
-      "updateTime": "2025-06-13T11:56:14.292Z"
-    },
-    {
       "name": "main.js",
       "type": "HTML",
+      "updateTime": "2025-06-13T11:56:14.292Z"
+    },
+    {
+      "createTime": "2025-06-13T09:42:21.240Z",
       "lastModifyUser": {
         "domain": "gmail.com",
         "email": "takashi316@gmail.com",
         "name": "Takashi SASAKI (佐々木隆志)",
         "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
       },
-      "createTime": "2025-06-13T11:14:43.500Z",
-      "updateTime": "2025-06-13T11:56:14.292Z"
-    },
-    {
       "name": "style",
       "type": "HTML",
+      "updateTime": "2025-06-13T11:56:14.292Z"
+    },
+    {
+      "createTime": "2025-06-13T10:37:35.956Z",
       "lastModifyUser": {
         "domain": "gmail.com",
         "email": "takashi316@gmail.com",
         "name": "Takashi SASAKI (佐々木隆志)",
         "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
       },
-      "createTime": "2025-06-13T09:42:21.240Z",
-      "updateTime": "2025-06-13T11:56:14.292Z"
-    },
-    {
       "name": "gemini",
       "type": "SERVER_JS",
-      "lastModifyUser": {
-        "domain": "gmail.com",
-        "email": "takashi316@gmail.com",
-        "name": "Takashi SASAKI (佐々木隆志)",
-        "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
-      },
-      "createTime": "2025-06-13T10:37:35.956Z",
       "updateTime": "2025-06-13T11:56:14.292Z"
     },
     {
-      "name": "setup.js",
-      "type": "HTML",
+      "createTime": "2025-06-13T11:14:04.162Z",
       "lastModifyUser": {
         "domain": "gmail.com",
         "email": "takashi316@gmail.com",
         "name": "Takashi SASAKI (佐々木隆志)",
         "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
       },
-      "createTime": "2025-06-13T11:14:04.162Z",
+      "name": "setup.js",
+      "type": "HTML",
       "updateTime": "2025-06-13T11:56:14.292Z"
+    }
+  ],
+  "lifecycle": {
+    "driveInventory": "present"
+  },
+  "versions": [
+    {
+      "description": "devなURLを開くにはまず一度はデプロイしないといかんらしい",
+      "version": 1
+    },
+    {
+      "description": "動く",
+      "version": 2
     }
   ]
 }

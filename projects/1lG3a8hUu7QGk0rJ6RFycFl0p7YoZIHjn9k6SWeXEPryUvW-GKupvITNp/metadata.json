@@ -1,53 +1,6 @@
 {
-  "driveApi": {
-    "name": "Unicode Normalization Sandbox",
-    "createdTime": "2017-09-25T07:33:27.898Z",
-    "modifiedTime": "2017-09-27T09:43:37.165Z",
-    "id": "1lG3a8hUu7QGk0rJ6RFycFl0p7YoZIHjn9k6SWeXEPryUvW-GKupvITNp"
-  },
-  "deployments": [
-    {
-      "id": "AKfycbw1Eqea8v8ILJy01ro2wmLZsrvtvnHRlTRIDtJZjw",
-      "target": "HEAD",
-      "description": ""
-    },
-    {
-      "id": "AKfycbzVXHmCamcn2ib_PQbWxmq8i8I_usAmoOPAUOJlEHAunojV0Q",
-      "target": "6",
-      "description": "web app meta-version"
-    }
-  ],
-  "versions": [
-    {
-      "version": 1,
-      "description": "No description"
-    },
-    {
-      "version": 2,
-      "description": "No description"
-    },
-    {
-      "version": 3,
-      "description": "No description"
-    },
-    {
-      "version": 4,
-      "description": "No description"
-    },
-    {
-      "version": 5,
-      "description": "No description"
-    },
-    {
-      "version": 6,
-      "description": "No description"
-    }
-  ],
   "appsScriptApi": {
-    "scriptId": "1lG3a8hUu7QGk0rJ6RFycFl0p7YoZIHjn9k6SWeXEPryUvW-GKupvITNp",
-    "title": "Unicode Normalization Sandbox",
     "createTime": "2017-09-25T07:33:27.898Z",
-    "updateTime": "2017-09-27T09:43:37.165Z",
     "creator": {
       "domain": "gmail.com",
       "email": "takashi316@gmail.com",
@@ -59,39 +12,89 @@
       "email": "takashi316@gmail.com",
       "name": "Takashi SASAKI (佐々木隆志)",
       "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    },
+    "scriptId": "1lG3a8hUu7QGk0rJ6RFycFl0p7YoZIHjn9k6SWeXEPryUvW-GKupvITNp",
+    "title": "Unicode Normalization Sandbox",
+    "updateTime": "2017-09-27T09:43:37.165Z"
+  },
+  "deployments": [
+    {
+      "description": "",
+      "id": "AKfycbw1Eqea8v8ILJy01ro2wmLZsrvtvnHRlTRIDtJZjw",
+      "target": "HEAD"
+    },
+    {
+      "description": "web app meta-version",
+      "id": "AKfycbzVXHmCamcn2ib_PQbWxmq8i8I_usAmoOPAUOJlEHAunojV0Q",
+      "target": "6"
     }
+  ],
+  "driveApi": {
+    "createdTime": "2017-09-25T07:33:27.898Z",
+    "id": "1lG3a8hUu7QGk0rJ6RFycFl0p7YoZIHjn9k6SWeXEPryUvW-GKupvITNp",
+    "modifiedTime": "2017-09-27T09:43:37.165Z",
+    "name": "Unicode Normalization Sandbox"
   },
   "files": [
     {
-      "name": "Code",
-      "type": "SERVER_JS",
+      "createTime": "2017-09-25T07:33:08.420Z",
       "lastModifyUser": {
         "domain": "gmail.com",
         "email": "takashi316@gmail.com",
         "name": "Takashi SASAKI (佐々木隆志)",
         "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
       },
-      "createTime": "2017-09-25T07:33:08.420Z",
+      "name": "Code",
+      "type": "SERVER_JS",
       "updateTime": "2017-09-27T09:43:27.056Z"
     },
     {
-      "name": "index",
-      "type": "HTML",
+      "createTime": "2017-09-25T07:41:56.870Z",
       "lastModifyUser": {
         "domain": "gmail.com",
         "email": "takashi316@gmail.com",
         "name": "Takashi SASAKI (佐々木隆志)",
         "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
       },
-      "createTime": "2017-09-25T07:41:56.870Z",
+      "name": "index",
+      "type": "HTML",
       "updateTime": "2017-09-27T09:43:27.052Z"
     },
     {
+      "createTime": "1970-01-01T00:00:00Z",
+      "lastModifyUser": {},
       "name": "appsscript",
       "type": "JSON",
-      "lastModifyUser": {},
-      "createTime": "1970-01-01T00:00:00Z",
       "updateTime": "1970-01-01T00:00:00Z"
+    }
+  ],
+  "lifecycle": {
+    "driveInventory": "present"
+  },
+  "versions": [
+    {
+      "description": "No description",
+      "version": 1
+    },
+    {
+      "description": "No description",
+      "version": 2
+    },
+    {
+      "description": "No description",
+      "version": 3
+    },
+    {
+      "description": "No description",
+      "version": 4
+    },
+    {
+      "description": "No description",
+      "version": 5
+    },
+    {
+      "description": "No description",
+      "version": 6
     }
   ]
 }

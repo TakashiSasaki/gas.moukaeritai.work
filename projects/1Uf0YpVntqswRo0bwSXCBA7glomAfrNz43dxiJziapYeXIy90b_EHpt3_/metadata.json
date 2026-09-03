@@ -1,69 +1,6 @@
 {
-  "driveApi": {
-    "name": "Markdown2GoogleDocs",
-    "createdTime": "2025-04-10T00:36:02.620Z",
-    "modifiedTime": "2025-04-10T05:35:32.523Z",
-    "id": "1Uf0YpVntqswRo0bwSXCBA7glomAfrNz43dxiJziapYeXIy90b_EHpt3_"
-  },
-  "deployments": [
-    {
-      "id": "AKfycbxd8lYaATVxcLQ2oQYs_37eyiv2bdRI1fE5TIw7Qa4",
-      "target": "HEAD",
-      "description": ""
-    },
-    {
-      "id": "AKfycbxkVNMd-fLAOo6nA9j9vhYs2PUvFRKKkEafnaHGZ9QBv6uzTHv9w0s2CuFdHSRJjb2L",
-      "target": "4",
-      "description": "ちょっとスタイルを調整"
-    },
-    {
-      "id": "AKfycbwTrTMc7qFkJ4T80-NbIe-DKzyug2_zp5bzZWUE1CNzeHP1M9ng5Vcb8UpMJnYPJS1Q",
-      "target": "5",
-      "description": "スコープ修正"
-    },
-    {
-      "id": "AKfycbyRvvRp9jc_Inkjchz2BJ4t8vfaTrQUriea6MFqZQ1UJYJ3hBkGGmqqUsuLuZadlD2d",
-      "target": "2",
-      "description": "v1"
-    },
-    {
-      "id": "AKfycbzz_cJXg9ux5PL5jLCo_iRqcbkU1c8ax6T0q4IG1cY0aetHdvGzcMhtDd5zb14x-awQ",
-      "target": "1",
-      "description": ""
-    },
-    {
-      "id": "AKfycbxBCoTjY4_xwW8ens1g6p3xWd1JaL2D66Lv_sJc9KVZG0D1gEO5kIaf_0so7GK2VRwf",
-      "target": "3",
-      "description": "QR code"
-    }
-  ],
-  "versions": [
-    {
-      "version": 1,
-      "description": "No description"
-    },
-    {
-      "version": 2,
-      "description": "v1"
-    },
-    {
-      "version": 3,
-      "description": "QR code"
-    },
-    {
-      "version": 4,
-      "description": "ちょっとスタイルを調整"
-    },
-    {
-      "version": 5,
-      "description": "スコープ修正"
-    }
-  ],
   "appsScriptApi": {
-    "scriptId": "1Uf0YpVntqswRo0bwSXCBA7glomAfrNz43dxiJziapYeXIy90b_EHpt3_",
-    "title": "Markdown2GoogleDocs",
     "createTime": "2025-04-10T00:36:02.620Z",
-    "updateTime": "2025-04-10T05:35:32.523Z",
     "creator": {
       "domain": "gmail.com",
       "email": "takashi316@gmail.com",
@@ -75,6 +12,72 @@
       "email": "takashi316@gmail.com",
       "name": "Takashi SASAKI (佐々木隆志)",
       "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    },
+    "scriptId": "1Uf0YpVntqswRo0bwSXCBA7glomAfrNz43dxiJziapYeXIy90b_EHpt3_",
+    "title": "Markdown2GoogleDocs",
+    "updateTime": "2025-04-10T05:35:32.523Z"
+  },
+  "deployments": [
+    {
+      "description": "",
+      "id": "AKfycbxd8lYaATVxcLQ2oQYs_37eyiv2bdRI1fE5TIw7Qa4",
+      "target": "HEAD"
+    },
+    {
+      "description": "ちょっとスタイルを調整",
+      "id": "AKfycbxkVNMd-fLAOo6nA9j9vhYs2PUvFRKKkEafnaHGZ9QBv6uzTHv9w0s2CuFdHSRJjb2L",
+      "target": "4"
+    },
+    {
+      "description": "スコープ修正",
+      "id": "AKfycbwTrTMc7qFkJ4T80-NbIe-DKzyug2_zp5bzZWUE1CNzeHP1M9ng5Vcb8UpMJnYPJS1Q",
+      "target": "5"
+    },
+    {
+      "description": "v1",
+      "id": "AKfycbyRvvRp9jc_Inkjchz2BJ4t8vfaTrQUriea6MFqZQ1UJYJ3hBkGGmqqUsuLuZadlD2d",
+      "target": "2"
+    },
+    {
+      "description": "",
+      "id": "AKfycbzz_cJXg9ux5PL5jLCo_iRqcbkU1c8ax6T0q4IG1cY0aetHdvGzcMhtDd5zb14x-awQ",
+      "target": "1"
+    },
+    {
+      "description": "QR code",
+      "id": "AKfycbxBCoTjY4_xwW8ens1g6p3xWd1JaL2D66Lv_sJc9KVZG0D1gEO5kIaf_0so7GK2VRwf",
+      "target": "3"
     }
-  }
+  ],
+  "driveApi": {
+    "createdTime": "2025-04-10T00:36:02.620Z",
+    "id": "1Uf0YpVntqswRo0bwSXCBA7glomAfrNz43dxiJziapYeXIy90b_EHpt3_",
+    "modifiedTime": "2025-04-10T05:35:32.523Z",
+    "name": "Markdown2GoogleDocs"
+  },
+  "lifecycle": {
+    "driveInventory": "present"
+  },
+  "versions": [
+    {
+      "description": "No description",
+      "version": 1
+    },
+    {
+      "description": "v1",
+      "version": 2
+    },
+    {
+      "description": "QR code",
+      "version": 3
+    },
+    {
+      "description": "ちょっとスタイルを調整",
+      "version": 4
+    },
+    {
+      "description": "スコープ修正",
+      "version": 5
+    }
+  ]
 }

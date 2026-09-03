@@ -1,72 +1,6 @@
 {
-  "driveApi": {
-    "name": "Slack Playground",
-    "createdTime": "2022-01-24T05:41:55.797Z",
-    "modifiedTime": "2022-01-25T11:10:02.631Z",
-    "id": "1PnI4XHOcM36rGvhn5ox_Eb6bWIMlZvPMK7TX1EP2sX-Qu-dywJLwfizW"
-  },
-  "deployments": [
-    {
-      "id": "AKfycbzO_DW7KYAsx80s1Izek_URNMC5CBhWnm7KpWUqmvA",
-      "target": "HEAD",
-      "description": ""
-    },
-    {
-      "id": "AKfycbwHSQVrvJbZK1VUwjtLeAdnJq1pJbMJt14VxDlEkSYmxd51VGXw8dzRSrHNJMZAe_l9",
-      "target": "6",
-      "description": ""
-    },
-    {
-      "id": "AKfycbz62pi_zgZzWT7DIOKy-dEwPBClTTJ7snZ0mW-Cu1PfrZMOQwHOAyf1HlSYFMM95uDe",
-      "target": "7",
-      "description": ""
-    },
-    {
-      "id": "AKfycbytQJQ2pbKqGNhsz4nuEH81TCyJUmuwT3aV_mipVhDWeWFXZRrgE9DiXm7TgmEp4Toe",
-      "target": "5",
-      "description": ""
-    },
-    {
-      "id": "AKfycbzVCxJzdcc0TqvhaapgDF7w1rhm1Q4Nb4SIPIsPuomYo6C05k4",
-      "target": "4",
-      "description": "web app meta-version"
-    }
-  ],
-  "versions": [
-    {
-      "version": 1,
-      "description": "No description"
-    },
-    {
-      "version": 2,
-      "description": "No description"
-    },
-    {
-      "version": 3,
-      "description": "No description"
-    },
-    {
-      "version": 4,
-      "description": "No description"
-    },
-    {
-      "version": 5,
-      "description": "No description"
-    },
-    {
-      "version": 6,
-      "description": "No description"
-    },
-    {
-      "version": 7,
-      "description": "No description"
-    }
-  ],
   "appsScriptApi": {
-    "scriptId": "1PnI4XHOcM36rGvhn5ox_Eb6bWIMlZvPMK7TX1EP2sX-Qu-dywJLwfizW",
-    "title": "Slack Playground",
     "createTime": "2022-01-24T05:41:55.797Z",
-    "updateTime": "2022-01-25T11:10:02.631Z",
     "creator": {
       "domain": "gmail.com",
       "email": "takashi316@gmail.com",
@@ -78,152 +12,221 @@
       "email": "takashi316@gmail.com",
       "name": "Takashi SASAKI (佐々木隆志)",
       "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    },
+    "scriptId": "1PnI4XHOcM36rGvhn5ox_Eb6bWIMlZvPMK7TX1EP2sX-Qu-dywJLwfizW",
+    "title": "Slack Playground",
+    "updateTime": "2022-01-25T11:10:02.631Z"
+  },
+  "deployments": [
+    {
+      "description": "",
+      "id": "AKfycbzO_DW7KYAsx80s1Izek_URNMC5CBhWnm7KpWUqmvA",
+      "target": "HEAD"
+    },
+    {
+      "description": "",
+      "id": "AKfycbwHSQVrvJbZK1VUwjtLeAdnJq1pJbMJt14VxDlEkSYmxd51VGXw8dzRSrHNJMZAe_l9",
+      "target": "6"
+    },
+    {
+      "description": "",
+      "id": "AKfycbz62pi_zgZzWT7DIOKy-dEwPBClTTJ7snZ0mW-Cu1PfrZMOQwHOAyf1HlSYFMM95uDe",
+      "target": "7"
+    },
+    {
+      "description": "",
+      "id": "AKfycbytQJQ2pbKqGNhsz4nuEH81TCyJUmuwT3aV_mipVhDWeWFXZRrgE9DiXm7TgmEp4Toe",
+      "target": "5"
+    },
+    {
+      "description": "web app meta-version",
+      "id": "AKfycbzVCxJzdcc0TqvhaapgDF7w1rhm1Q4Nb4SIPIsPuomYo6C05k4",
+      "target": "4"
     }
+  ],
+  "driveApi": {
+    "createdTime": "2022-01-24T05:41:55.797Z",
+    "id": "1PnI4XHOcM36rGvhn5ox_Eb6bWIMlZvPMK7TX1EP2sX-Qu-dywJLwfizW",
+    "modifiedTime": "2022-01-25T11:10:02.631Z",
+    "name": "Slack Playground"
   },
   "files": [
     {
+      "createTime": "2022-01-24T05:41:56.205Z",
+      "lastModifyUser": {
+        "domain": "gmail.com",
+        "email": "takashi316@gmail.com",
+        "name": "Takashi SASAKI (佐々木隆志)",
+        "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+      },
       "name": "appsscript",
       "type": "JSON",
+      "updateTime": "2022-01-25T11:10:02.401Z"
+    },
+    {
+      "createTime": "2022-01-24T10:16:43.761Z",
       "lastModifyUser": {
         "domain": "gmail.com",
         "email": "takashi316@gmail.com",
         "name": "Takashi SASAKI (佐々木隆志)",
         "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
       },
-      "createTime": "2022-01-24T05:41:56.205Z",
-      "updateTime": "2022-01-25T11:10:02.401Z"
-    },
-    {
       "name": "doGet",
       "type": "SERVER_JS",
+      "updateTime": "2022-01-25T11:10:02.401Z"
+    },
+    {
+      "createTime": "2022-01-24T09:58:53.067Z",
       "lastModifyUser": {
         "domain": "gmail.com",
         "email": "takashi316@gmail.com",
         "name": "Takashi SASAKI (佐々木隆志)",
         "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
       },
-      "createTime": "2022-01-24T10:16:43.761Z",
-      "updateTime": "2022-01-25T11:10:02.401Z"
-    },
-    {
       "name": "authorize",
       "type": "HTML",
+      "updateTime": "2022-01-25T11:10:02.401Z"
+    },
+    {
+      "createTime": "2022-01-24T09:58:58.790Z",
       "lastModifyUser": {
         "domain": "gmail.com",
         "email": "takashi316@gmail.com",
         "name": "Takashi SASAKI (佐々木隆志)",
         "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
       },
-      "createTime": "2022-01-24T09:58:53.067Z",
-      "updateTime": "2022-01-25T11:10:02.401Z"
-    },
-    {
       "name": "exchange",
       "type": "HTML",
+      "updateTime": "2022-01-25T11:10:02.401Z"
+    },
+    {
+      "createTime": "2022-01-24T09:59:21.806Z",
       "lastModifyUser": {
         "domain": "gmail.com",
         "email": "takashi316@gmail.com",
         "name": "Takashi SASAKI (佐々木隆志)",
         "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
       },
-      "createTime": "2022-01-24T09:58:58.790Z",
-      "updateTime": "2022-01-25T11:10:02.401Z"
-    },
-    {
       "name": "index",
       "type": "HTML",
+      "updateTime": "2022-01-25T11:10:02.401Z"
+    },
+    {
+      "createTime": "2022-01-24T10:17:05.607Z",
       "lastModifyUser": {
         "domain": "gmail.com",
         "email": "takashi316@gmail.com",
         "name": "Takashi SASAKI (佐々木隆志)",
         "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
       },
-      "createTime": "2022-01-24T09:59:21.806Z",
-      "updateTime": "2022-01-25T11:10:02.401Z"
-    },
-    {
       "name": "oauth",
       "type": "SERVER_JS",
+      "updateTime": "2022-01-25T11:10:02.401Z"
+    },
+    {
+      "createTime": "2022-01-24T10:56:13.713Z",
       "lastModifyUser": {
         "domain": "gmail.com",
         "email": "takashi316@gmail.com",
         "name": "Takashi SASAKI (佐々木隆志)",
         "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
       },
-      "createTime": "2022-01-24T10:17:05.607Z",
-      "updateTime": "2022-01-25T11:10:02.401Z"
-    },
-    {
       "name": "conversations.list",
       "type": "HTML",
+      "updateTime": "2022-01-25T11:10:02.401Z"
+    },
+    {
+      "createTime": "2022-01-24T10:57:45.624Z",
       "lastModifyUser": {
         "domain": "gmail.com",
         "email": "takashi316@gmail.com",
         "name": "Takashi SASAKI (佐々木隆志)",
         "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
       },
-      "createTime": "2022-01-24T10:56:13.713Z",
-      "updateTime": "2022-01-25T11:10:02.401Z"
-    },
-    {
       "name": "slack",
       "type": "SERVER_JS",
+      "updateTime": "2022-01-25T11:10:02.401Z"
+    },
+    {
+      "createTime": "2022-01-24T11:25:51.248Z",
       "lastModifyUser": {
         "domain": "gmail.com",
         "email": "takashi316@gmail.com",
         "name": "Takashi SASAKI (佐々木隆志)",
         "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
       },
-      "createTime": "2022-01-24T10:57:45.624Z",
-      "updateTime": "2022-01-25T11:10:02.401Z"
-    },
-    {
       "name": "menu",
       "type": "HTML",
+      "updateTime": "2022-01-25T11:10:02.401Z"
+    },
+    {
+      "createTime": "2022-01-25T10:22:49.162Z",
       "lastModifyUser": {
         "domain": "gmail.com",
         "email": "takashi316@gmail.com",
         "name": "Takashi SASAKI (佐々木隆志)",
         "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
       },
-      "createTime": "2022-01-24T11:25:51.248Z",
-      "updateTime": "2022-01-25T11:10:02.401Z"
-    },
-    {
       "name": "spreadsheet",
       "type": "HTML",
+      "updateTime": "2022-01-25T11:10:02.401Z"
+    },
+    {
+      "createTime": "2022-01-25T10:34:30.541Z",
       "lastModifyUser": {
         "domain": "gmail.com",
         "email": "takashi316@gmail.com",
         "name": "Takashi SASAKI (佐々木隆志)",
         "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
       },
-      "createTime": "2022-01-25T10:22:49.162Z",
-      "updateTime": "2022-01-25T11:10:02.401Z"
-    },
-    {
       "name": "style",
       "type": "HTML",
-      "lastModifyUser": {
-        "domain": "gmail.com",
-        "email": "takashi316@gmail.com",
-        "name": "Takashi SASAKI (佐々木隆志)",
-        "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
-      },
-      "createTime": "2022-01-25T10:34:30.541Z",
       "updateTime": "2022-01-25T11:10:02.401Z"
     },
     {
-      "name": "createNewSpreadsheet",
-      "type": "SERVER_JS",
+      "createTime": "2022-01-25T11:06:47.307Z",
       "lastModifyUser": {
         "domain": "gmail.com",
         "email": "takashi316@gmail.com",
         "name": "Takashi SASAKI (佐々木隆志)",
         "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
       },
-      "createTime": "2022-01-25T11:06:47.307Z",
+      "name": "createNewSpreadsheet",
+      "type": "SERVER_JS",
       "updateTime": "2022-01-25T11:10:02.401Z"
+    }
+  ],
+  "lifecycle": {
+    "driveInventory": "present"
+  },
+  "versions": [
+    {
+      "description": "No description",
+      "version": 1
+    },
+    {
+      "description": "No description",
+      "version": 2
+    },
+    {
+      "description": "No description",
+      "version": 3
+    },
+    {
+      "description": "No description",
+      "version": 4
+    },
+    {
+      "description": "No description",
+      "version": 5
+    },
+    {
+      "description": "No description",
+      "version": 6
+    },
+    {
+      "description": "No description",
+      "version": 7
     }
   ]
 }

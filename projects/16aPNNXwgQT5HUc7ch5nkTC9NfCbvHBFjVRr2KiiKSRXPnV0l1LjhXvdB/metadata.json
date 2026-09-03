@@ -1,34 +1,37 @@
 {
-  "driveApi": {
-    "name": "Form Addon",
-    "createdTime": "2017-11-01T06:04:47.397Z",
-    "modifiedTime": "2021-08-06T16:28:48.184Z",
-    "id": "16aPNNXwgQT5HUc7ch5nkTC9NfCbvHBFjVRr2KiiKSRXPnV0l1LjhXvdB"
-  },
-  "deployments": [
-    {
-      "id": "AKfycbxlhD7QuP3MrBhUFpOyIB4RImfxZJQgAazEjeeprhaI",
-      "target": "HEAD",
-      "description": ""
-    }
-  ],
-  "versions": [
-    {
-      "version": 1,
-      "description": "No description"
-    }
-  ],
   "appsScriptApi": {
-    "scriptId": "16aPNNXwgQT5HUc7ch5nkTC9NfCbvHBFjVRr2KiiKSRXPnV0l1LjhXvdB",
-    "title": "Form Addon",
     "createTime": "2017-11-01T06:04:47.397Z",
-    "updateTime": "2021-08-06T16:28:48.184Z",
     "creator": {
       "domain": "gmail.com",
       "email": "takashi316@gmail.com",
       "name": "Takashi SASAKI (佐々木隆志)",
       "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
     },
-    "lastModifyUser": {}
-  }
+    "lastModifyUser": {},
+    "scriptId": "16aPNNXwgQT5HUc7ch5nkTC9NfCbvHBFjVRr2KiiKSRXPnV0l1LjhXvdB",
+    "title": "Form Addon",
+    "updateTime": "2021-08-06T16:28:48.184Z"
+  },
+  "deployments": [
+    {
+      "description": "",
+      "id": "AKfycbxlhD7QuP3MrBhUFpOyIB4RImfxZJQgAazEjeeprhaI",
+      "target": "HEAD"
+    }
+  ],
+  "driveApi": {
+    "createdTime": "2017-11-01T06:04:47.397Z",
+    "id": "16aPNNXwgQT5HUc7ch5nkTC9NfCbvHBFjVRr2KiiKSRXPnV0l1LjhXvdB",
+    "modifiedTime": "2021-08-06T16:28:48.184Z",
+    "name": "Form Addon"
+  },
+  "lifecycle": {
+    "driveInventory": "present"
+  },
+  "versions": [
+    {
+      "description": "No description",
+      "version": 1
+    }
+  ]
 }

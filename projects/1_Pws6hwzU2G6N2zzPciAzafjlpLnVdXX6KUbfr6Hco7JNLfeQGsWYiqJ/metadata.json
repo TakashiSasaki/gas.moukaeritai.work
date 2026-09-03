@@ -1,33 +1,6 @@
 {
-  "driveApi": {
-    "name": "Googleドライブ内文書一覧",
-    "createdTime": "2025-11-08T01:33:09.425Z",
-    "modifiedTime": "2025-11-08T02:52:34.749Z",
-    "id": "1_Pws6hwzU2G6N2zzPciAzafjlpLnVdXX6KUbfr6Hco7JNLfeQGsWYiqJ"
-  },
-  "deployments": [
-    {
-      "id": "AKfycbxvla1TFBCxMc-pwNtur6vPRYXQeijTdaQGKGRuJ5A",
-      "target": "HEAD",
-      "description": ""
-    },
-    {
-      "id": "AKfycbwefkE_shQ5fBiQweCvLuFKflh5a5FjJprLQwQtv59PGzZNsEc3poqgtaBilJBKZ-KI",
-      "target": "1",
-      "description": ""
-    }
-  ],
-  "versions": [
-    {
-      "version": 1,
-      "description": "No description"
-    }
-  ],
   "appsScriptApi": {
-    "scriptId": "1_Pws6hwzU2G6N2zzPciAzafjlpLnVdXX6KUbfr6Hco7JNLfeQGsWYiqJ",
-    "title": "Googleドライブ内文書一覧",
     "createTime": "2025-11-08T01:33:09.425Z",
-    "updateTime": "2025-11-08T02:52:34.749Z",
     "creator": {
       "domain": "gmail.com",
       "email": "takashi316@gmail.com",
@@ -39,6 +12,36 @@
       "email": "takashi316@gmail.com",
       "name": "Takashi SASAKI (佐々木隆志)",
       "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    },
+    "scriptId": "1_Pws6hwzU2G6N2zzPciAzafjlpLnVdXX6KUbfr6Hco7JNLfeQGsWYiqJ",
+    "title": "Googleドライブ内文書一覧",
+    "updateTime": "2025-11-08T02:52:34.749Z"
+  },
+  "deployments": [
+    {
+      "description": "",
+      "id": "AKfycbxvla1TFBCxMc-pwNtur6vPRYXQeijTdaQGKGRuJ5A",
+      "target": "HEAD"
+    },
+    {
+      "description": "",
+      "id": "AKfycbwefkE_shQ5fBiQweCvLuFKflh5a5FjJprLQwQtv59PGzZNsEc3poqgtaBilJBKZ-KI",
+      "target": "1"
     }
-  }
+  ],
+  "driveApi": {
+    "createdTime": "2025-11-08T01:33:09.425Z",
+    "id": "1_Pws6hwzU2G6N2zzPciAzafjlpLnVdXX6KUbfr6Hco7JNLfeQGsWYiqJ",
+    "modifiedTime": "2025-11-08T02:52:34.749Z",
+    "name": "Googleドライブ内文書一覧"
+  },
+  "lifecycle": {
+    "driveInventory": "present"
+  },
+  "versions": [
+    {
+      "description": "No description",
+      "version": 1
+    }
+  ]
 }

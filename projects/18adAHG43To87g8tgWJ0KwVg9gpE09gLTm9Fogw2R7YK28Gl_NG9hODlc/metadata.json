@@ -1,45 +1,6 @@
 {
-  "driveApi": {
-    "name": "PubCache",
-    "createdTime": "2025-06-20T21:42:23.560Z",
-    "modifiedTime": "2025-06-21T00:46:09.475Z",
-    "id": "18adAHG43To87g8tgWJ0KwVg9gpE09gLTm9Fogw2R7YK28Gl_NG9hODlc"
-  },
-  "deployments": [
-    {
-      "id": "AKfycbxgTaCiZBJyloXUTX1-09VjIK_FIRNO1jdG9tHpIDOr",
-      "target": "HEAD",
-      "description": ""
-    },
-    {
-      "id": "AKfycbySWM-zP6L4yiypXCK4_o8IZHEeM02l1MGnzIrXB0utA3Q92_P89sp0z4E9uMH3RdvRUg",
-      "target": "4",
-      "description": "release v4"
-    }
-  ],
-  "versions": [
-    {
-      "version": 1,
-      "description": "release v1"
-    },
-    {
-      "version": 2,
-      "description": "release v2"
-    },
-    {
-      "version": 3,
-      "description": "release v3"
-    },
-    {
-      "version": 4,
-      "description": "release v4"
-    }
-  ],
   "appsScriptApi": {
-    "scriptId": "18adAHG43To87g8tgWJ0KwVg9gpE09gLTm9Fogw2R7YK28Gl_NG9hODlc",
-    "title": "PubCache",
     "createTime": "2025-06-20T21:42:23.560Z",
-    "updateTime": "2025-06-21T00:46:09.475Z",
     "creator": {
       "domain": "gmail.com",
       "email": "takashi316@gmail.com",
@@ -51,6 +12,48 @@
       "email": "takashi316@gmail.com",
       "name": "Takashi SASAKI (佐々木隆志)",
       "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    },
+    "scriptId": "18adAHG43To87g8tgWJ0KwVg9gpE09gLTm9Fogw2R7YK28Gl_NG9hODlc",
+    "title": "PubCache",
+    "updateTime": "2025-06-21T00:46:09.475Z"
+  },
+  "deployments": [
+    {
+      "description": "",
+      "id": "AKfycbxgTaCiZBJyloXUTX1-09VjIK_FIRNO1jdG9tHpIDOr",
+      "target": "HEAD"
+    },
+    {
+      "description": "release v4",
+      "id": "AKfycbySWM-zP6L4yiypXCK4_o8IZHEeM02l1MGnzIrXB0utA3Q92_P89sp0z4E9uMH3RdvRUg",
+      "target": "4"
     }
-  }
+  ],
+  "driveApi": {
+    "createdTime": "2025-06-20T21:42:23.560Z",
+    "id": "18adAHG43To87g8tgWJ0KwVg9gpE09gLTm9Fogw2R7YK28Gl_NG9hODlc",
+    "modifiedTime": "2025-06-21T00:46:09.475Z",
+    "name": "PubCache"
+  },
+  "lifecycle": {
+    "driveInventory": "present"
+  },
+  "versions": [
+    {
+      "description": "release v1",
+      "version": 1
+    },
+    {
+      "description": "release v2",
+      "version": 2
+    },
+    {
+      "description": "release v3",
+      "version": 3
+    },
+    {
+      "description": "release v4",
+      "version": 4
+    }
+  ]
 }

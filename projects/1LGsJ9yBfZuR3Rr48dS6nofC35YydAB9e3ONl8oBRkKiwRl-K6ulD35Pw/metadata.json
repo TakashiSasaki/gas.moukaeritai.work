@@ -1,46 +1,6 @@
 {
-  "driveApi": {
-    "name": "Markdown converter",
-    "createdTime": "2025-11-05T02:56:44.420Z",
-    "modifiedTime": "2025-11-05T04:00:43.297Z",
-    "id": "1LGsJ9yBfZuR3Rr48dS6nofC35YydAB9e3ONl8oBRkKiwRl-K6ulD35Pw"
-  },
-  "deployments": [
-    {
-      "id": "AKfycbwoigbx3IcvzfqH8alGjF7WZspQpC9Ezj5xeoYQ9wFq",
-      "target": "HEAD",
-      "description": ""
-    },
-    {
-      "id": "AKfycbwQE7bnBUGwAkF0XypkYS8mpKtEsa2O8Cr2qAl5gGdKxv9DZFIQOx7ufaLo922AbShOgw",
-      "target": "1",
-      "description": "Published Version"
-    },
-    {
-      "id": "AKfycbxI2WRRCOI_Q8dJeJFUeWpReXlPBe4aw4ks9XgSL1BLghYaYXvf7P-0uivPhqB3ljyi",
-      "target": "3",
-      "description": ""
-    }
-  ],
-  "versions": [
-    {
-      "version": 1,
-      "description": "Published Version"
-    },
-    {
-      "version": 2,
-      "description": "No description"
-    },
-    {
-      "version": 3,
-      "description": "No description"
-    }
-  ],
   "appsScriptApi": {
-    "scriptId": "1LGsJ9yBfZuR3Rr48dS6nofC35YydAB9e3ONl8oBRkKiwRl-K6ulD35Pw",
-    "title": "Markdown converter",
     "createTime": "2025-11-05T02:56:44.420Z",
-    "updateTime": "2025-11-05T04:00:43.297Z",
     "creator": {
       "domain": "gmail.com",
       "email": "takashi316@gmail.com",
@@ -52,44 +12,87 @@
       "email": "takashi316@gmail.com",
       "name": "Takashi SASAKI (佐々木隆志)",
       "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    },
+    "scriptId": "1LGsJ9yBfZuR3Rr48dS6nofC35YydAB9e3ONl8oBRkKiwRl-K6ulD35Pw",
+    "title": "Markdown converter",
+    "updateTime": "2025-11-05T04:00:43.297Z"
+  },
+  "deployments": [
+    {
+      "description": "",
+      "id": "AKfycbwoigbx3IcvzfqH8alGjF7WZspQpC9Ezj5xeoYQ9wFq",
+      "target": "HEAD"
+    },
+    {
+      "description": "Published Version",
+      "id": "AKfycbwQE7bnBUGwAkF0XypkYS8mpKtEsa2O8Cr2qAl5gGdKxv9DZFIQOx7ufaLo922AbShOgw",
+      "target": "1"
+    },
+    {
+      "description": "",
+      "id": "AKfycbxI2WRRCOI_Q8dJeJFUeWpReXlPBe4aw4ks9XgSL1BLghYaYXvf7P-0uivPhqB3ljyi",
+      "target": "3"
     }
+  ],
+  "driveApi": {
+    "createdTime": "2025-11-05T02:56:44.420Z",
+    "id": "1LGsJ9yBfZuR3Rr48dS6nofC35YydAB9e3ONl8oBRkKiwRl-K6ulD35Pw",
+    "modifiedTime": "2025-11-05T04:00:43.297Z",
+    "name": "Markdown converter"
   },
   "files": [
     {
+      "createTime": "2025-11-05T02:56:44.788Z",
+      "lastModifyUser": {
+        "domain": "gmail.com",
+        "email": "takashi316@gmail.com",
+        "name": "Takashi SASAKI (佐々木隆志)",
+        "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+      },
       "name": "appsscript",
       "type": "JSON",
+      "updateTime": "2025-11-05T04:00:43.072Z"
+    },
+    {
+      "createTime": "2025-11-05T02:56:44.788Z",
       "lastModifyUser": {
         "domain": "gmail.com",
         "email": "takashi316@gmail.com",
         "name": "Takashi SASAKI (佐々木隆志)",
         "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
       },
-      "createTime": "2025-11-05T02:56:44.788Z",
-      "updateTime": "2025-11-05T04:00:43.072Z"
-    },
-    {
       "name": "Code",
       "type": "SERVER_JS",
-      "lastModifyUser": {
-        "domain": "gmail.com",
-        "email": "takashi316@gmail.com",
-        "name": "Takashi SASAKI (佐々木隆志)",
-        "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
-      },
-      "createTime": "2025-11-05T02:56:44.788Z",
       "updateTime": "2025-11-05T04:00:43.072Z"
     },
     {
-      "name": "index",
-      "type": "HTML",
+      "createTime": "2025-11-05T02:57:21.724Z",
       "lastModifyUser": {
         "domain": "gmail.com",
         "email": "takashi316@gmail.com",
         "name": "Takashi SASAKI (佐々木隆志)",
         "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
       },
-      "createTime": "2025-11-05T02:57:21.724Z",
+      "name": "index",
+      "type": "HTML",
       "updateTime": "2025-11-05T04:00:43.072Z"
+    }
+  ],
+  "lifecycle": {
+    "driveInventory": "present"
+  },
+  "versions": [
+    {
+      "description": "Published Version",
+      "version": 1
+    },
+    {
+      "description": "No description",
+      "version": 2
+    },
+    {
+      "description": "No description",
+      "version": 3
     }
   ]
 }

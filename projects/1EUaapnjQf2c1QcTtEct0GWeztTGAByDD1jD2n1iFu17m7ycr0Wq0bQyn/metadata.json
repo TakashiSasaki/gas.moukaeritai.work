@@ -1,23 +1,6 @@
 {
-  "driveApi": {
-    "name": "Glitch Projects",
-    "createdTime": "2019-07-03T08:49:44.751Z",
-    "modifiedTime": "2021-09-25T13:49:02.185Z",
-    "id": "1EUaapnjQf2c1QcTtEct0GWeztTGAByDD1jD2n1iFu17m7ycr0Wq0bQyn"
-  },
-  "deployments": [
-    {
-      "id": "AKfycbxG4Ld6hTSSueRSRG2pan53whK_8-EjBYXL-s3uB7s",
-      "target": "HEAD",
-      "description": ""
-    }
-  ],
-  "versions": [],
   "appsScriptApi": {
-    "scriptId": "1EUaapnjQf2c1QcTtEct0GWeztTGAByDD1jD2n1iFu17m7ycr0Wq0bQyn",
-    "title": "Glitch Projects",
     "createTime": "2019-07-03T08:49:44.751Z",
-    "updateTime": "2021-09-25T13:49:02.185Z",
     "creator": {
       "domain": "gmail.com",
       "email": "takashi316@gmail.com",
@@ -29,6 +12,26 @@
       "email": "takashi316@gmail.com",
       "name": "Takashi SASAKI (佐々木隆志)",
       "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    },
+    "scriptId": "1EUaapnjQf2c1QcTtEct0GWeztTGAByDD1jD2n1iFu17m7ycr0Wq0bQyn",
+    "title": "Glitch Projects",
+    "updateTime": "2021-09-25T13:49:02.185Z"
+  },
+  "deployments": [
+    {
+      "description": "",
+      "id": "AKfycbxG4Ld6hTSSueRSRG2pan53whK_8-EjBYXL-s3uB7s",
+      "target": "HEAD"
     }
-  }
+  ],
+  "driveApi": {
+    "createdTime": "2019-07-03T08:49:44.751Z",
+    "id": "1EUaapnjQf2c1QcTtEct0GWeztTGAByDD1jD2n1iFu17m7ycr0Wq0bQyn",
+    "modifiedTime": "2021-09-25T13:49:02.185Z",
+    "name": "Glitch Projects"
+  },
+  "lifecycle": {
+    "driveInventory": "present"
+  },
+  "versions": []
 }

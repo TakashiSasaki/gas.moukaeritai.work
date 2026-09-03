@@ -1,12 +1,15 @@
 {
-  "id": "1yD5m1eGOgRl553YTs9w_CR-H5EOmCnLFYBja1-j_FJzBWyVcheUiOOGv",
   "application.json": null,
   "deployments.json": [
     {
+      "description": "",
       "id": "AKfycbxhF4DAy8vPwVpD_Ew28CWsYeXDw4BIU239QBehEiA",
-      "target": "HEAD",
-      "description": ""
+      "target": "HEAD"
     }
   ],
-  "lastUpdated": "2026-04-01T10:18:51.474Z"
+  "id": "1yD5m1eGOgRl553YTs9w_CR-H5EOmCnLFYBja1-j_FJzBWyVcheUiOOGv",
+  "lastUpdated": "2026-04-01T10:18:51.474Z",
+  "lifecycle": {
+    "driveInventory": "absent"
+  }
 }

@@ -1,45 +1,6 @@
 {
-  "driveApi": {
-    "name": "ContentService Test",
-    "createdTime": "2025-06-20T00:53:47.111Z",
-    "modifiedTime": "2025-06-20T00:59:41.321Z",
-    "id": "10b2Nk8rDW58NeofuEfhzQt9na5hWRHJHu_EMETlKgosiFJVXsfsOhb9U"
-  },
-  "deployments": [
-    {
-      "id": "AKfycbyK8QNnR7M6TSBxhI2EHjSkBP9BEZHcGYWeQFeQZXVv",
-      "target": "HEAD",
-      "description": ""
-    },
-    {
-      "id": "AKfycbw53bZLwRzvyDnK7xBArzfDnJ6ZcdZk7NAo9jl_UjxWAmPGS5QcX3QLsLPwa5p1DEHaMA",
-      "target": "4",
-      "description": ""
-    }
-  ],
-  "versions": [
-    {
-      "version": 1,
-      "description": "公開用"
-    },
-    {
-      "version": 2,
-      "description": "公開用 Version 2"
-    },
-    {
-      "version": 3,
-      "description": "公開用 Version 3"
-    },
-    {
-      "version": 4,
-      "description": "No description"
-    }
-  ],
   "appsScriptApi": {
-    "scriptId": "10b2Nk8rDW58NeofuEfhzQt9na5hWRHJHu_EMETlKgosiFJVXsfsOhb9U",
-    "title": "ContentService Test",
     "createTime": "2025-06-20T00:53:47.111Z",
-    "updateTime": "2025-06-20T00:59:41.321Z",
     "creator": {
       "domain": "gmail.com",
       "email": "takashi316@gmail.com",
@@ -51,6 +12,48 @@
       "email": "takashi316@gmail.com",
       "name": "Takashi SASAKI (佐々木隆志)",
       "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    },
+    "scriptId": "10b2Nk8rDW58NeofuEfhzQt9na5hWRHJHu_EMETlKgosiFJVXsfsOhb9U",
+    "title": "ContentService Test",
+    "updateTime": "2025-06-20T00:59:41.321Z"
+  },
+  "deployments": [
+    {
+      "description": "",
+      "id": "AKfycbyK8QNnR7M6TSBxhI2EHjSkBP9BEZHcGYWeQFeQZXVv",
+      "target": "HEAD"
+    },
+    {
+      "description": "",
+      "id": "AKfycbw53bZLwRzvyDnK7xBArzfDnJ6ZcdZk7NAo9jl_UjxWAmPGS5QcX3QLsLPwa5p1DEHaMA",
+      "target": "4"
     }
-  }
+  ],
+  "driveApi": {
+    "createdTime": "2025-06-20T00:53:47.111Z",
+    "id": "10b2Nk8rDW58NeofuEfhzQt9na5hWRHJHu_EMETlKgosiFJVXsfsOhb9U",
+    "modifiedTime": "2025-06-20T00:59:41.321Z",
+    "name": "ContentService Test"
+  },
+  "lifecycle": {
+    "driveInventory": "present"
+  },
+  "versions": [
+    {
+      "description": "公開用",
+      "version": 1
+    },
+    {
+      "description": "公開用 Version 2",
+      "version": 2
+    },
+    {
+      "description": "公開用 Version 3",
+      "version": 3
+    },
+    {
+      "description": "No description",
+      "version": 4
+    }
+  ]
 }

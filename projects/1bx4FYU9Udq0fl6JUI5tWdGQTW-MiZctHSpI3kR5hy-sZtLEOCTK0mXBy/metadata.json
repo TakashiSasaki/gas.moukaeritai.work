@@ -1,46 +1,6 @@
 {
-  "driveApi": {
-    "name": "Pocket to Sheets Addon",
-    "createdTime": "2022-09-12T12:39:16.758Z",
-    "modifiedTime": "2023-08-09T01:41:54.462Z",
-    "id": "1bx4FYU9Udq0fl6JUI5tWdGQTW-MiZctHSpI3kR5hy-sZtLEOCTK0mXBy"
-  },
-  "deployments": [
-    {
-      "id": "AKfycbw8d3L0y7zKcmXvm3iqXeNgFjF1YptRJ-IGhtyRndY",
-      "target": "HEAD",
-      "description": ""
-    },
-    {
-      "id": "AKfycbw-F2yIiWkJ3FVmTD6eA-cFisv16hkOA6_4rYAxSNgBfspffpAbN6ozH8bXZuCCdOv2",
-      "target": "1",
-      "description": ""
-    },
-    {
-      "id": "AKfycbzYzJtSUVwHc6c9tTEkxOhB_ho8JmUJRSiHetr_p3PrOAmFBquBB7Rp9U06TNEP6v-6",
-      "target": "3",
-      "description": "Web app"
-    }
-  ],
-  "versions": [
-    {
-      "version": 1,
-      "description": "No description"
-    },
-    {
-      "version": 2,
-      "description": "No description"
-    },
-    {
-      "version": 3,
-      "description": "Web app"
-    }
-  ],
   "appsScriptApi": {
-    "scriptId": "1bx4FYU9Udq0fl6JUI5tWdGQTW-MiZctHSpI3kR5hy-sZtLEOCTK0mXBy",
-    "title": "Pocket to Sheets Addon",
     "createTime": "2022-09-12T12:39:16.758Z",
-    "updateTime": "2023-08-09T01:41:54.462Z",
     "creator": {
       "domain": "gmail.com",
       "email": "takashi316@gmail.com",
@@ -52,68 +12,111 @@
       "email": "takashi316@gmail.com",
       "name": "Takashi SASAKI (佐々木隆志)",
       "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    },
+    "scriptId": "1bx4FYU9Udq0fl6JUI5tWdGQTW-MiZctHSpI3kR5hy-sZtLEOCTK0mXBy",
+    "title": "Pocket to Sheets Addon",
+    "updateTime": "2023-08-09T01:41:54.462Z"
+  },
+  "deployments": [
+    {
+      "description": "",
+      "id": "AKfycbw8d3L0y7zKcmXvm3iqXeNgFjF1YptRJ-IGhtyRndY",
+      "target": "HEAD"
+    },
+    {
+      "description": "",
+      "id": "AKfycbw-F2yIiWkJ3FVmTD6eA-cFisv16hkOA6_4rYAxSNgBfspffpAbN6ozH8bXZuCCdOv2",
+      "target": "1"
+    },
+    {
+      "description": "Web app",
+      "id": "AKfycbzYzJtSUVwHc6c9tTEkxOhB_ho8JmUJRSiHetr_p3PrOAmFBquBB7Rp9U06TNEP6v-6",
+      "target": "3"
     }
+  ],
+  "driveApi": {
+    "createdTime": "2022-09-12T12:39:16.758Z",
+    "id": "1bx4FYU9Udq0fl6JUI5tWdGQTW-MiZctHSpI3kR5hy-sZtLEOCTK0mXBy",
+    "modifiedTime": "2023-08-09T01:41:54.462Z",
+    "name": "Pocket to Sheets Addon"
   },
   "files": [
     {
+      "createTime": "2022-09-12T12:39:17.183Z",
+      "lastModifyUser": {
+        "domain": "gmail.com",
+        "email": "takashi316@gmail.com",
+        "name": "Takashi SASAKI (佐々木隆志)",
+        "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+      },
       "name": "appsscript",
       "type": "JSON",
+      "updateTime": "2023-08-09T01:41:54.002Z"
+    },
+    {
+      "createTime": "2023-08-07T12:55:31.651Z",
       "lastModifyUser": {
         "domain": "gmail.com",
         "email": "takashi316@gmail.com",
         "name": "Takashi SASAKI (佐々木隆志)",
         "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
       },
-      "createTime": "2022-09-12T12:39:17.183Z",
-      "updateTime": "2023-08-09T01:41:54.002Z"
-    },
-    {
       "name": "Code-v1",
       "type": "SERVER_JS",
+      "updateTime": "2023-08-09T01:41:54.002Z"
+    },
+    {
+      "createTime": "2022-09-12T14:09:19.870Z",
       "lastModifyUser": {
         "domain": "gmail.com",
         "email": "takashi316@gmail.com",
         "name": "Takashi SASAKI (佐々木隆志)",
         "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
       },
-      "createTime": "2023-08-07T12:55:31.651Z",
-      "updateTime": "2023-08-09T01:41:54.002Z"
-    },
-    {
       "name": "sidebar",
       "type": "HTML",
+      "updateTime": "2023-08-09T01:41:54.002Z"
+    },
+    {
+      "createTime": "2022-09-12T20:39:29.553Z",
       "lastModifyUser": {
         "domain": "gmail.com",
         "email": "takashi316@gmail.com",
         "name": "Takashi SASAKI (佐々木隆志)",
         "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
       },
-      "createTime": "2022-09-12T14:09:19.870Z",
-      "updateTime": "2023-08-09T01:41:54.002Z"
-    },
-    {
       "name": "sidebar.js",
       "type": "HTML",
-      "lastModifyUser": {
-        "domain": "gmail.com",
-        "email": "takashi316@gmail.com",
-        "name": "Takashi SASAKI (佐々木隆志)",
-        "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
-      },
-      "createTime": "2022-09-12T20:39:29.553Z",
       "updateTime": "2023-08-09T01:41:54.002Z"
     },
     {
-      "name": "createPocketService",
-      "type": "SERVER_JS",
+      "createTime": "2023-08-08T00:26:32.291Z",
       "lastModifyUser": {
         "domain": "gmail.com",
         "email": "takashi316@gmail.com",
         "name": "Takashi SASAKI (佐々木隆志)",
         "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
       },
-      "createTime": "2023-08-08T00:26:32.291Z",
+      "name": "createPocketService",
+      "type": "SERVER_JS",
       "updateTime": "2023-08-09T01:41:54.002Z"
+    }
+  ],
+  "lifecycle": {
+    "driveInventory": "present"
+  },
+  "versions": [
+    {
+      "description": "No description",
+      "version": 1
+    },
+    {
+      "description": "No description",
+      "version": 2
+    },
+    {
+      "description": "Web app",
+      "version": 3
     }
   ]
 }

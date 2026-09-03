@@ -1,77 +1,6 @@
 {
-  "driveApi": {
-    "name": "Spreadsheet Addon（すぷれ）",
-    "createdTime": "2017-08-28T04:28:59.547Z",
-    "modifiedTime": "2025-01-22T18:32:42.929Z",
-    "id": "1LSYokZ_LmtIkXv-URsN99givIHlIkDNHwQjkLAo6JkzwLvsbagpdbTaE"
-  },
-  "deployments": [
-    {
-      "id": "AKfycbwsy3-sNbx3Twj5sJd6ZUIo-kZ6KYAqEb842Kvkqdw",
-      "target": "HEAD",
-      "description": ""
-    },
-    {
-      "id": "AKfycbwuZ6LOWFTlx8Ra6L-JGOE8NBu8NwFTd6cGf023ZJIPx5o0zkQ",
-      "target": "32",
-      "description": "web app meta-version"
-    }
-  ],
-  "versions": [
-    {
-      "version": 21,
-      "description": "No description"
-    },
-    {
-      "version": 22,
-      "description": "republish"
-    },
-    {
-      "version": 23,
-      "description": "republish2"
-    },
-    {
-      "version": 24,
-      "description": "No description"
-    },
-    {
-      "version": 25,
-      "description": "No description"
-    },
-    {
-      "version": 26,
-      "description": "No description"
-    },
-    {
-      "version": 27,
-      "description": "No description"
-    },
-    {
-      "version": 28,
-      "description": "sidebar"
-    },
-    {
-      "version": 29,
-      "description": "update"
-    },
-    {
-      "version": 30,
-      "description": "getTriggerBuilder"
-    },
-    {
-      "version": 31,
-      "description": "newTrigger"
-    },
-    {
-      "version": 32,
-      "description": "No description"
-    }
-  ],
   "appsScriptApi": {
-    "scriptId": "1LSYokZ_LmtIkXv-URsN99givIHlIkDNHwQjkLAo6JkzwLvsbagpdbTaE",
-    "title": "Spreadsheet Addon（すぷれ）",
     "createTime": "2017-08-28T04:28:59.547Z",
-    "updateTime": "2025-01-22T18:32:42.929Z",
     "creator": {
       "domain": "gmail.com",
       "email": "takashi316@gmail.com",
@@ -83,6 +12,80 @@
       "email": "takashi316@gmail.com",
       "name": "Takashi SASAKI (佐々木隆志)",
       "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    },
+    "scriptId": "1LSYokZ_LmtIkXv-URsN99givIHlIkDNHwQjkLAo6JkzwLvsbagpdbTaE",
+    "title": "Spreadsheet Addon（すぷれ）",
+    "updateTime": "2025-01-22T18:32:42.929Z"
+  },
+  "deployments": [
+    {
+      "description": "",
+      "id": "AKfycbwsy3-sNbx3Twj5sJd6ZUIo-kZ6KYAqEb842Kvkqdw",
+      "target": "HEAD"
+    },
+    {
+      "description": "web app meta-version",
+      "id": "AKfycbwuZ6LOWFTlx8Ra6L-JGOE8NBu8NwFTd6cGf023ZJIPx5o0zkQ",
+      "target": "32"
     }
-  }
+  ],
+  "driveApi": {
+    "createdTime": "2017-08-28T04:28:59.547Z",
+    "id": "1LSYokZ_LmtIkXv-URsN99givIHlIkDNHwQjkLAo6JkzwLvsbagpdbTaE",
+    "modifiedTime": "2025-01-22T18:32:42.929Z",
+    "name": "Spreadsheet Addon（すぷれ）"
+  },
+  "lifecycle": {
+    "driveInventory": "present"
+  },
+  "versions": [
+    {
+      "description": "No description",
+      "version": 21
+    },
+    {
+      "description": "republish",
+      "version": 22
+    },
+    {
+      "description": "republish2",
+      "version": 23
+    },
+    {
+      "description": "No description",
+      "version": 24
+    },
+    {
+      "description": "No description",
+      "version": 25
+    },
+    {
+      "description": "No description",
+      "version": 26
+    },
+    {
+      "description": "No description",
+      "version": 27
+    },
+    {
+      "description": "sidebar",
+      "version": 28
+    },
+    {
+      "description": "update",
+      "version": 29
+    },
+    {
+      "description": "getTriggerBuilder",
+      "version": 30
+    },
+    {
+      "description": "newTrigger",
+      "version": 31
+    },
+    {
+      "description": "No description",
+      "version": 32
+    }
+  ]
 }

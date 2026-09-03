@@ -1,33 +1,6 @@
 {
-  "driveApi": {
-    "name": "ArecXのスター表示に関するテスト",
-    "createdTime": "2016-04-27T05:05:14.278Z",
-    "modifiedTime": "2025-01-13T17:35:23.531Z",
-    "id": "1iSAbJgupNLOxKwff9-bHeJ1whiE8sZmCxy2eb5D7qDyl4nZE_LjrKpHA"
-  },
-  "deployments": [
-    {
-      "id": "AKfycbw4NDrkymMtj1_jF5tT5emKpm2Si5pEJZGOOm69zNIW",
-      "target": "HEAD",
-      "description": ""
-    },
-    {
-      "id": "AKfycbwleNQ2aLMg4bRGhiSESkDOxbLHCa0OqaheVI08zsl5Ue0kwMaQ",
-      "target": "1",
-      "description": "web app meta-version"
-    }
-  ],
-  "versions": [
-    {
-      "version": 1,
-      "description": "No description"
-    }
-  ],
   "appsScriptApi": {
-    "scriptId": "1iSAbJgupNLOxKwff9-bHeJ1whiE8sZmCxy2eb5D7qDyl4nZE_LjrKpHA",
-    "title": "ArecXのスター表示に関するテスト",
     "createTime": "2016-04-27T05:05:14.278Z",
-    "updateTime": "2025-01-13T17:35:23.531Z",
     "creator": {
       "domain": "gmail.com",
       "email": "takashi316@gmail.com",
@@ -39,51 +12,81 @@
       "email": "takashi316@gmail.com",
       "name": "Takashi SASAKI (佐々木隆志)",
       "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    },
+    "scriptId": "1iSAbJgupNLOxKwff9-bHeJ1whiE8sZmCxy2eb5D7qDyl4nZE_LjrKpHA",
+    "title": "ArecXのスター表示に関するテスト",
+    "updateTime": "2025-01-13T17:35:23.531Z"
+  },
+  "deployments": [
+    {
+      "description": "",
+      "id": "AKfycbw4NDrkymMtj1_jF5tT5emKpm2Si5pEJZGOOm69zNIW",
+      "target": "HEAD"
+    },
+    {
+      "description": "web app meta-version",
+      "id": "AKfycbwleNQ2aLMg4bRGhiSESkDOxbLHCa0OqaheVI08zsl5Ue0kwMaQ",
+      "target": "1"
     }
+  ],
+  "driveApi": {
+    "createdTime": "2016-04-27T05:05:14.278Z",
+    "id": "1iSAbJgupNLOxKwff9-bHeJ1whiE8sZmCxy2eb5D7qDyl4nZE_LjrKpHA",
+    "modifiedTime": "2025-01-13T17:35:23.531Z",
+    "name": "ArecXのスター表示に関するテスト"
   },
   "files": [
     {
+      "createTime": "2016-04-27T05:01:29.471Z",
+      "lastModifyUser": {
+        "domain": "gmail.com",
+        "email": "takashi316@gmail.com",
+        "name": "Takashi SASAKI (佐々木隆志)",
+        "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+      },
       "name": "Code",
       "type": "SERVER_JS",
+      "updateTime": "2016-04-27T05:32:15.027Z"
+    },
+    {
+      "createTime": "2016-04-27T05:05:41.077Z",
       "lastModifyUser": {
         "domain": "gmail.com",
         "email": "takashi316@gmail.com",
         "name": "Takashi SASAKI (佐々木隆志)",
         "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
       },
-      "createTime": "2016-04-27T05:01:29.471Z",
-      "updateTime": "2016-04-27T05:32:15.027Z"
-    },
-    {
       "name": "index",
       "type": "HTML",
+      "updateTime": "2016-04-27T05:32:15.027Z"
+    },
+    {
+      "createTime": "2016-04-27T05:09:37.062Z",
       "lastModifyUser": {
         "domain": "gmail.com",
         "email": "takashi316@gmail.com",
         "name": "Takashi SASAKI (佐々木隆志)",
         "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
       },
-      "createTime": "2016-04-27T05:05:41.077Z",
-      "updateTime": "2016-04-27T05:32:15.027Z"
-    },
-    {
       "name": "js",
       "type": "HTML",
-      "lastModifyUser": {
-        "domain": "gmail.com",
-        "email": "takashi316@gmail.com",
-        "name": "Takashi SASAKI (佐々木隆志)",
-        "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
-      },
-      "createTime": "2016-04-27T05:09:37.062Z",
       "updateTime": "2016-04-27T05:32:15.027Z"
     },
     {
+      "createTime": "1970-01-01T00:00:00Z",
+      "lastModifyUser": {},
       "name": "appsscript",
       "type": "JSON",
-      "lastModifyUser": {},
-      "createTime": "1970-01-01T00:00:00Z",
       "updateTime": "2025-01-13T17:35:13.489Z"
+    }
+  ],
+  "lifecycle": {
+    "driveInventory": "present"
+  },
+  "versions": [
+    {
+      "description": "No description",
+      "version": 1
     }
   ]
 }

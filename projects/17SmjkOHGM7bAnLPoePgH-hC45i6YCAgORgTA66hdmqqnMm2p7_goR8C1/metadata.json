@@ -1,37 +1,6 @@
 {
-  "driveApi": {
-    "name": "Google Apps Script Project Browser",
-    "createdTime": "2019-11-09T07:43:35.485Z",
-    "modifiedTime": "2025-01-24T18:03:46.782Z",
-    "id": "17SmjkOHGM7bAnLPoePgH-hC45i6YCAgORgTA66hdmqqnMm2p7_goR8C1"
-  },
-  "deployments": [
-    {
-      "id": "AKfycbydTvvCh6BhKQWPX5XYU0baBLb5BOuhDaSIvirVjsC1",
-      "target": "HEAD",
-      "description": ""
-    },
-    {
-      "id": "AKfycbwQJNC35zwtEUGqnoQRwNQX-ALYtMHOQMw7Hz0BGFOIgyF1H4t3",
-      "target": "2",
-      "description": "web app meta-version"
-    }
-  ],
-  "versions": [
-    {
-      "version": 1,
-      "description": "No description"
-    },
-    {
-      "version": 2,
-      "description": "No description"
-    }
-  ],
   "appsScriptApi": {
-    "scriptId": "17SmjkOHGM7bAnLPoePgH-hC45i6YCAgORgTA66hdmqqnMm2p7_goR8C1",
-    "title": "Google Apps Script Project Browser",
     "createTime": "2019-11-09T07:43:35.485Z",
-    "updateTime": "2025-01-24T18:03:46.782Z",
     "creator": {
       "domain": "gmail.com",
       "email": "takashi316@gmail.com",
@@ -43,6 +12,40 @@
       "email": "takashi316@gmail.com",
       "name": "Takashi SASAKI (佐々木隆志)",
       "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    },
+    "scriptId": "17SmjkOHGM7bAnLPoePgH-hC45i6YCAgORgTA66hdmqqnMm2p7_goR8C1",
+    "title": "Google Apps Script Project Browser",
+    "updateTime": "2025-01-24T18:03:46.782Z"
+  },
+  "deployments": [
+    {
+      "description": "",
+      "id": "AKfycbydTvvCh6BhKQWPX5XYU0baBLb5BOuhDaSIvirVjsC1",
+      "target": "HEAD"
+    },
+    {
+      "description": "web app meta-version",
+      "id": "AKfycbwQJNC35zwtEUGqnoQRwNQX-ALYtMHOQMw7Hz0BGFOIgyF1H4t3",
+      "target": "2"
     }
-  }
+  ],
+  "driveApi": {
+    "createdTime": "2019-11-09T07:43:35.485Z",
+    "id": "17SmjkOHGM7bAnLPoePgH-hC45i6YCAgORgTA66hdmqqnMm2p7_goR8C1",
+    "modifiedTime": "2025-01-24T18:03:46.782Z",
+    "name": "Google Apps Script Project Browser"
+  },
+  "lifecycle": {
+    "driveInventory": "present"
+  },
+  "versions": [
+    {
+      "description": "No description",
+      "version": 1
+    },
+    {
+      "description": "No description",
+      "version": 2
+    }
+  ]
 }

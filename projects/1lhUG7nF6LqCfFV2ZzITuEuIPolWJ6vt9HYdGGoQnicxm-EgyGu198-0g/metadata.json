@@ -1,89 +1,6 @@
 {
-  "driveApi": {
-    "name": "松山市プレミアム商品券",
-    "createdTime": "2015-09-24T18:53:09.355Z",
-    "modifiedTime": "2025-01-13T18:12:05.903Z",
-    "id": "1lhUG7nF6LqCfFV2ZzITuEuIPolWJ6vt9HYdGGoQnicxm-EgyGu198-0g"
-  },
-  "deployments": [
-    {
-      "id": "AKfycbzDguF7-c1TW-vM57D1KaZ7cPqALbDTup_RRijB-40j",
-      "target": "HEAD",
-      "description": ""
-    },
-    {
-      "id": "AKfycbykZdHgW59Dr54ltfNBkey46mFqf941jzxR8MzBG2Hc_PPB2ddu",
-      "target": "21",
-      "description": "web app meta-version"
-    }
-  ],
-  "versions": [
-    {
-      "version": 2,
-      "description": "No description"
-    },
-    {
-      "version": 4,
-      "description": "No description"
-    },
-    {
-      "version": 5,
-      "description": "No description"
-    },
-    {
-      "version": 6,
-      "description": "No description"
-    },
-    {
-      "version": 9,
-      "description": "No description"
-    },
-    {
-      "version": 10,
-      "description": "No description"
-    },
-    {
-      "version": 13,
-      "description": "No description"
-    },
-    {
-      "version": 14,
-      "description": "No description"
-    },
-    {
-      "version": 15,
-      "description": "No description"
-    },
-    {
-      "version": 16,
-      "description": "No description"
-    },
-    {
-      "version": 17,
-      "description": "No description"
-    },
-    {
-      "version": 18,
-      "description": "No description"
-    },
-    {
-      "version": 19,
-      "description": "No description"
-    },
-    {
-      "version": 20,
-      "description": "No description"
-    },
-    {
-      "version": 21,
-      "description": "No description"
-    }
-  ],
   "appsScriptApi": {
-    "scriptId": "1lhUG7nF6LqCfFV2ZzITuEuIPolWJ6vt9HYdGGoQnicxm-EgyGu198-0g",
-    "title": "松山市プレミアム商品券",
     "createTime": "2015-09-24T18:53:09.355Z",
-    "updateTime": "2025-01-13T18:12:05.903Z",
     "creator": {
       "domain": "gmail.com",
       "email": "takashi316@gmail.com",
@@ -95,63 +12,149 @@
       "email": "takashi316@gmail.com",
       "name": "Takashi SASAKI (佐々木隆志)",
       "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    },
+    "scriptId": "1lhUG7nF6LqCfFV2ZzITuEuIPolWJ6vt9HYdGGoQnicxm-EgyGu198-0g",
+    "title": "松山市プレミアム商品券",
+    "updateTime": "2025-01-13T18:12:05.903Z"
+  },
+  "deployments": [
+    {
+      "description": "",
+      "id": "AKfycbzDguF7-c1TW-vM57D1KaZ7cPqALbDTup_RRijB-40j",
+      "target": "HEAD"
+    },
+    {
+      "description": "web app meta-version",
+      "id": "AKfycbykZdHgW59Dr54ltfNBkey46mFqf941jzxR8MzBG2Hc_PPB2ddu",
+      "target": "21"
     }
+  ],
+  "driveApi": {
+    "createdTime": "2015-09-24T18:53:09.355Z",
+    "id": "1lhUG7nF6LqCfFV2ZzITuEuIPolWJ6vt9HYdGGoQnicxm-EgyGu198-0g",
+    "modifiedTime": "2025-01-13T18:12:05.903Z",
+    "name": "松山市プレミアム商品券"
   },
   "files": [
     {
+      "createTime": "2015-09-24T18:52:55.496Z",
+      "lastModifyUser": {
+        "domain": "gmail.com",
+        "email": "takashi316@gmail.com",
+        "name": "Takashi SASAKI (佐々木隆志)",
+        "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+      },
       "name": "コード",
       "type": "SERVER_JS",
+      "updateTime": "2015-09-25T02:01:50.344Z"
+    },
+    {
+      "createTime": "2015-09-24T18:53:16.556Z",
       "lastModifyUser": {
         "domain": "gmail.com",
         "email": "takashi316@gmail.com",
         "name": "Takashi SASAKI (佐々木隆志)",
         "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
       },
-      "createTime": "2015-09-24T18:52:55.496Z",
-      "updateTime": "2015-09-25T02:01:50.344Z"
-    },
-    {
       "name": "js",
       "type": "HTML",
+      "updateTime": "2015-09-25T02:01:50.344Z"
+    },
+    {
+      "createTime": "2015-09-24T18:53:29.195Z",
       "lastModifyUser": {
         "domain": "gmail.com",
         "email": "takashi316@gmail.com",
         "name": "Takashi SASAKI (佐々木隆志)",
         "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
       },
-      "createTime": "2015-09-24T18:53:16.556Z",
-      "updateTime": "2015-09-25T02:01:50.344Z"
-    },
-    {
       "name": "css",
       "type": "HTML",
+      "updateTime": "2015-09-25T02:01:50.344Z"
+    },
+    {
+      "createTime": "2015-09-24T18:54:35.784Z",
       "lastModifyUser": {
         "domain": "gmail.com",
         "email": "takashi316@gmail.com",
         "name": "Takashi SASAKI (佐々木隆志)",
         "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
       },
-      "createTime": "2015-09-24T18:53:29.195Z",
-      "updateTime": "2015-09-25T02:01:50.344Z"
-    },
-    {
       "name": "index",
       "type": "HTML",
-      "lastModifyUser": {
-        "domain": "gmail.com",
-        "email": "takashi316@gmail.com",
-        "name": "Takashi SASAKI (佐々木隆志)",
-        "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
-      },
-      "createTime": "2015-09-24T18:54:35.784Z",
       "updateTime": "2015-09-25T02:01:50.344Z"
     },
     {
+      "createTime": "1970-01-01T00:00:00Z",
+      "lastModifyUser": {},
       "name": "appsscript",
       "type": "JSON",
-      "lastModifyUser": {},
-      "createTime": "1970-01-01T00:00:00Z",
       "updateTime": "2025-01-13T18:11:55.671Z"
+    }
+  ],
+  "lifecycle": {
+    "driveInventory": "present"
+  },
+  "versions": [
+    {
+      "description": "No description",
+      "version": 2
+    },
+    {
+      "description": "No description",
+      "version": 4
+    },
+    {
+      "description": "No description",
+      "version": 5
+    },
+    {
+      "description": "No description",
+      "version": 6
+    },
+    {
+      "description": "No description",
+      "version": 9
+    },
+    {
+      "description": "No description",
+      "version": 10
+    },
+    {
+      "description": "No description",
+      "version": 13
+    },
+    {
+      "description": "No description",
+      "version": 14
+    },
+    {
+      "description": "No description",
+      "version": 15
+    },
+    {
+      "description": "No description",
+      "version": 16
+    },
+    {
+      "description": "No description",
+      "version": 17
+    },
+    {
+      "description": "No description",
+      "version": 18
+    },
+    {
+      "description": "No description",
+      "version": 19
+    },
+    {
+      "description": "No description",
+      "version": 20
+    },
+    {
+      "description": "No description",
+      "version": 21
     }
   ]
 }

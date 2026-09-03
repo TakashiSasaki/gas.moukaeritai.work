@@ -1,49 +1,6 @@
 {
-  "driveApi": {
-    "name": "JsDoc",
-    "createdTime": "2019-11-18T02:21:53.492Z",
-    "modifiedTime": "2025-01-21T18:46:36.784Z",
-    "id": "1WC3AZoysl3LOVPj2WtyX-wBn6Ecvyv6fUjulDRUVhoNI_fN40d3KaCGV"
-  },
-  "deployments": [
-    {
-      "id": "AKfycbw7OK3MC3toWncuU4YtHvqITbfC05GteqHdME9K4GTy",
-      "target": "HEAD",
-      "description": ""
-    },
-    {
-      "id": "AKfycbyy0kE6eMFDH9c004A0hIPGnAXZHJRWCqy3dCPp_JtH_vHlr8ih",
-      "target": "5",
-      "description": "web app meta-version"
-    }
-  ],
-  "versions": [
-    {
-      "version": 1,
-      "description": "No description"
-    },
-    {
-      "version": 2,
-      "description": "No description"
-    },
-    {
-      "version": 3,
-      "description": "No description"
-    },
-    {
-      "version": 4,
-      "description": "No description"
-    },
-    {
-      "version": 5,
-      "description": "No description"
-    }
-  ],
   "appsScriptApi": {
-    "scriptId": "1WC3AZoysl3LOVPj2WtyX-wBn6Ecvyv6fUjulDRUVhoNI_fN40d3KaCGV",
-    "title": "JsDoc",
     "createTime": "2019-11-18T02:21:53.492Z",
-    "updateTime": "2025-01-21T18:46:36.784Z",
     "creator": {
       "domain": "gmail.com",
       "email": "takashi316@gmail.com",
@@ -55,51 +12,97 @@
       "email": "takashi316@gmail.com",
       "name": "Takashi SASAKI (佐々木隆志)",
       "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    },
+    "scriptId": "1WC3AZoysl3LOVPj2WtyX-wBn6Ecvyv6fUjulDRUVhoNI_fN40d3KaCGV",
+    "title": "JsDoc",
+    "updateTime": "2025-01-21T18:46:36.784Z"
+  },
+  "deployments": [
+    {
+      "description": "",
+      "id": "AKfycbw7OK3MC3toWncuU4YtHvqITbfC05GteqHdME9K4GTy",
+      "target": "HEAD"
+    },
+    {
+      "description": "web app meta-version",
+      "id": "AKfycbyy0kE6eMFDH9c004A0hIPGnAXZHJRWCqy3dCPp_JtH_vHlr8ih",
+      "target": "5"
     }
+  ],
+  "driveApi": {
+    "createdTime": "2019-11-18T02:21:53.492Z",
+    "id": "1WC3AZoysl3LOVPj2WtyX-wBn6Ecvyv6fUjulDRUVhoNI_fN40d3KaCGV",
+    "modifiedTime": "2025-01-21T18:46:36.784Z",
+    "name": "JsDoc"
   },
   "files": [
     {
-      "name": "jsdocAnchor",
-      "type": "SERVER_JS",
+      "createTime": "2019-11-18T02:21:45.324Z",
       "lastModifyUser": {
         "domain": "gmail.com",
         "email": "takashi316@gmail.com",
         "name": "Takashi SASAKI (佐々木隆志)",
         "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
       },
-      "createTime": "2019-11-18T02:21:45.324Z",
+      "name": "jsdocAnchor",
+      "type": "SERVER_JS",
       "updateTime": "2019-11-18T03:15:14.543Z"
     },
     {
+      "createTime": "2019-11-18T02:21:45.327Z",
+      "lastModifyUser": {},
       "name": "appsscript",
       "type": "JSON",
-      "lastModifyUser": {},
-      "createTime": "2019-11-18T02:21:45.327Z",
       "updateTime": "2025-01-21T18:46:26.741Z"
     },
     {
-      "name": "jsdocUrl",
-      "type": "SERVER_JS",
+      "createTime": "2019-11-18T02:22:16.109Z",
       "lastModifyUser": {
         "domain": "gmail.com",
         "email": "takashi316@gmail.com",
         "name": "Takashi SASAKI (佐々木隆志)",
         "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
       },
-      "createTime": "2019-11-18T02:22:16.109Z",
+      "name": "jsdocUrl",
+      "type": "SERVER_JS",
       "updateTime": "2019-11-18T03:15:14.543Z"
     },
     {
-      "name": "test",
-      "type": "SERVER_JS",
+      "createTime": "2019-11-18T02:22:41.118Z",
       "lastModifyUser": {
         "domain": "gmail.com",
         "email": "takashi316@gmail.com",
         "name": "Takashi SASAKI (佐々木隆志)",
         "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
       },
-      "createTime": "2019-11-18T02:22:41.118Z",
+      "name": "test",
+      "type": "SERVER_JS",
       "updateTime": "2019-11-18T03:15:14.543Z"
+    }
+  ],
+  "lifecycle": {
+    "driveInventory": "present"
+  },
+  "versions": [
+    {
+      "description": "No description",
+      "version": 1
+    },
+    {
+      "description": "No description",
+      "version": 2
+    },
+    {
+      "description": "No description",
+      "version": 3
+    },
+    {
+      "description": "No description",
+      "version": 4
+    },
+    {
+      "description": "No description",
+      "version": 5
     }
   ]
 }

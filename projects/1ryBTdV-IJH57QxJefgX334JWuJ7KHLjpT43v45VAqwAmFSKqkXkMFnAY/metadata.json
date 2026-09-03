@@ -1,28 +1,6 @@
 {
-  "driveApi": {
-    "name": "Addon Helper",
-    "createdTime": "2018-01-16T09:12:04.030Z",
-    "modifiedTime": "2021-02-06T05:20:17.969Z",
-    "id": "1ryBTdV-IJH57QxJefgX334JWuJ7KHLjpT43v45VAqwAmFSKqkXkMFnAY"
-  },
-  "deployments": [
-    {
-      "id": "AKfycbzZXi5i10tVr_DSyYC-TvOOhHUGu5G16qBn33n-57g",
-      "target": "HEAD",
-      "description": ""
-    }
-  ],
-  "versions": [
-    {
-      "version": 3,
-      "description": "No description"
-    }
-  ],
   "appsScriptApi": {
-    "scriptId": "1ryBTdV-IJH57QxJefgX334JWuJ7KHLjpT43v45VAqwAmFSKqkXkMFnAY",
-    "title": "Addon Helper",
     "createTime": "2018-01-16T09:12:04.030Z",
-    "updateTime": "2021-02-06T05:20:17.969Z",
     "creator": {
       "domain": "gmail.com",
       "email": "takashi316@gmail.com",
@@ -34,63 +12,88 @@
       "email": "takashi316@gmail.com",
       "name": "Takashi SASAKI (佐々木隆志)",
       "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    },
+    "scriptId": "1ryBTdV-IJH57QxJefgX334JWuJ7KHLjpT43v45VAqwAmFSKqkXkMFnAY",
+    "title": "Addon Helper",
+    "updateTime": "2021-02-06T05:20:17.969Z"
+  },
+  "deployments": [
+    {
+      "description": "",
+      "id": "AKfycbzZXi5i10tVr_DSyYC-TvOOhHUGu5G16qBn33n-57g",
+      "target": "HEAD"
     }
+  ],
+  "driveApi": {
+    "createdTime": "2018-01-16T09:12:04.030Z",
+    "id": "1ryBTdV-IJH57QxJefgX334JWuJ7KHLjpT43v45VAqwAmFSKqkXkMFnAY",
+    "modifiedTime": "2021-02-06T05:20:17.969Z",
+    "name": "Addon Helper"
   },
   "files": [
     {
-      "name": "sidebar",
-      "type": "SERVER_JS",
+      "createTime": "2018-01-16T09:11:30.463Z",
       "lastModifyUser": {
         "domain": "gmail.com",
         "email": "takashi316@gmail.com",
         "name": "Takashi SASAKI (佐々木隆志)",
         "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
       },
-      "createTime": "2018-01-16T09:11:30.463Z",
+      "name": "sidebar",
+      "type": "SERVER_JS",
       "updateTime": "2021-02-06T05:20:07.898Z"
     },
     {
-      "name": "sidebarTemplate",
-      "type": "HTML",
+      "createTime": "2018-01-16T09:23:45.784Z",
       "lastModifyUser": {
         "domain": "gmail.com",
         "email": "takashi316@gmail.com",
         "name": "Takashi SASAKI (佐々木隆志)",
         "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
       },
-      "createTime": "2018-01-16T09:23:45.784Z",
+      "name": "sidebarTemplate",
+      "type": "HTML",
       "updateTime": "2018-01-22T00:57:23.346Z"
     },
     {
+      "createTime": "2018-01-16T09:47:40.371Z",
+      "lastModifyUser": {
+        "domain": "gmail.com",
+        "email": "takashi316@gmail.com",
+        "name": "Takashi SASAKI (佐々木隆志)",
+        "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+      },
       "name": "menu",
       "type": "SERVER_JS",
+      "updateTime": "2021-02-06T05:20:07.898Z"
+    },
+    {
+      "createTime": "2018-01-22T01:47:45.038Z",
       "lastModifyUser": {
         "domain": "gmail.com",
         "email": "takashi316@gmail.com",
         "name": "Takashi SASAKI (佐々木隆志)",
         "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
       },
-      "createTime": "2018-01-16T09:47:40.371Z",
-      "updateTime": "2021-02-06T05:20:07.898Z"
-    },
-    {
       "name": "install",
       "type": "SERVER_JS",
-      "lastModifyUser": {
-        "domain": "gmail.com",
-        "email": "takashi316@gmail.com",
-        "name": "Takashi SASAKI (佐々木隆志)",
-        "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
-      },
-      "createTime": "2018-01-22T01:47:45.038Z",
       "updateTime": "2021-02-06T05:20:07.898Z"
     },
     {
+      "createTime": "1970-01-01T00:00:00Z",
+      "lastModifyUser": {},
       "name": "appsscript",
       "type": "JSON",
-      "lastModifyUser": {},
-      "createTime": "1970-01-01T00:00:00Z",
       "updateTime": "2021-02-06T05:20:07.895Z"
+    }
+  ],
+  "lifecycle": {
+    "driveInventory": "present"
+  },
+  "versions": [
+    {
+      "description": "No description",
+      "version": 3
     }
   ]
 }

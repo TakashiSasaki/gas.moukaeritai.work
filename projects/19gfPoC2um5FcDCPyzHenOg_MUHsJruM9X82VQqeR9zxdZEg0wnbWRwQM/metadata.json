@@ -1,23 +1,6 @@
 {
-  "driveApi": {
-    "name": "Gmail Search Sheets",
-    "createdTime": "2018-10-03T01:54:06.002Z",
-    "modifiedTime": "2023-05-02T20:50:33.501Z",
-    "id": "19gfPoC2um5FcDCPyzHenOg_MUHsJruM9X82VQqeR9zxdZEg0wnbWRwQM"
-  },
-  "deployments": [
-    {
-      "id": "AKfycbyc2xL-4FaC2RXd5J_jM2bJuEQuPdUgOVifnVjrMWk8",
-      "target": "HEAD",
-      "description": ""
-    }
-  ],
-  "versions": [],
   "appsScriptApi": {
-    "scriptId": "19gfPoC2um5FcDCPyzHenOg_MUHsJruM9X82VQqeR9zxdZEg0wnbWRwQM",
-    "title": "Gmail Search Sheets",
     "createTime": "2018-10-03T01:54:06.002Z",
-    "updateTime": "2023-05-02T20:50:33.501Z",
     "creator": {
       "domain": "gmail.com",
       "email": "takashi316@gmail.com",
@@ -29,6 +12,26 @@
       "email": "takashi316@gmail.com",
       "name": "Takashi SASAKI (佐々木隆志)",
       "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    },
+    "scriptId": "19gfPoC2um5FcDCPyzHenOg_MUHsJruM9X82VQqeR9zxdZEg0wnbWRwQM",
+    "title": "Gmail Search Sheets",
+    "updateTime": "2023-05-02T20:50:33.501Z"
+  },
+  "deployments": [
+    {
+      "description": "",
+      "id": "AKfycbyc2xL-4FaC2RXd5J_jM2bJuEQuPdUgOVifnVjrMWk8",
+      "target": "HEAD"
     }
-  }
+  ],
+  "driveApi": {
+    "createdTime": "2018-10-03T01:54:06.002Z",
+    "id": "19gfPoC2um5FcDCPyzHenOg_MUHsJruM9X82VQqeR9zxdZEg0wnbWRwQM",
+    "modifiedTime": "2023-05-02T20:50:33.501Z",
+    "name": "Gmail Search Sheets"
+  },
+  "lifecycle": {
+    "driveInventory": "present"
+  },
+  "versions": []
 }

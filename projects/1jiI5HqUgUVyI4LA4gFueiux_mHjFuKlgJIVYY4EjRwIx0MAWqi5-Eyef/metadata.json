@@ -1,49 +1,6 @@
 {
-  "driveApi": {
-    "name": "Html",
-    "createdTime": "2019-11-16T06:30:31.111Z",
-    "modifiedTime": "2025-01-23T17:48:17.632Z",
-    "id": "1jiI5HqUgUVyI4LA4gFueiux_mHjFuKlgJIVYY4EjRwIx0MAWqi5-Eyef"
-  },
-  "deployments": [
-    {
-      "id": "AKfycbye6El4kJTJLktLMJPZ5zM6XySIGetctwecvTzYc44",
-      "target": "HEAD",
-      "description": ""
-    },
-    {
-      "id": "AKfycbx79PNe1CHv5o5rgos0slKmG5uEC873UDW4WGmhmHA-4-XpVfo",
-      "target": "5",
-      "description": "web app meta-version"
-    }
-  ],
-  "versions": [
-    {
-      "version": 1,
-      "description": "No description"
-    },
-    {
-      "version": 2,
-      "description": "No description"
-    },
-    {
-      "version": 3,
-      "description": "No description"
-    },
-    {
-      "version": 4,
-      "description": "No description"
-    },
-    {
-      "version": 5,
-      "description": "No description"
-    }
-  ],
   "appsScriptApi": {
-    "scriptId": "1jiI5HqUgUVyI4LA4gFueiux_mHjFuKlgJIVYY4EjRwIx0MAWqi5-Eyef",
-    "title": "Html",
     "createTime": "2019-11-16T06:30:31.111Z",
-    "updateTime": "2025-01-23T17:48:17.632Z",
     "creator": {
       "domain": "gmail.com",
       "email": "takashi316@gmail.com",
@@ -55,63 +12,109 @@
       "email": "takashi316@gmail.com",
       "name": "Takashi SASAKI (佐々木隆志)",
       "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    },
+    "scriptId": "1jiI5HqUgUVyI4LA4gFueiux_mHjFuKlgJIVYY4EjRwIx0MAWqi5-Eyef",
+    "title": "Html",
+    "updateTime": "2025-01-23T17:48:17.632Z"
+  },
+  "deployments": [
+    {
+      "description": "",
+      "id": "AKfycbye6El4kJTJLktLMJPZ5zM6XySIGetctwecvTzYc44",
+      "target": "HEAD"
+    },
+    {
+      "description": "web app meta-version",
+      "id": "AKfycbx79PNe1CHv5o5rgos0slKmG5uEC873UDW4WGmhmHA-4-XpVfo",
+      "target": "5"
     }
+  ],
+  "driveApi": {
+    "createdTime": "2019-11-16T06:30:31.111Z",
+    "id": "1jiI5HqUgUVyI4LA4gFueiux_mHjFuKlgJIVYY4EjRwIx0MAWqi5-Eyef",
+    "modifiedTime": "2025-01-23T17:48:17.632Z",
+    "name": "Html"
   },
   "files": [
     {
-      "name": "persistentFormScript",
-      "type": "SERVER_JS",
+      "createTime": "2019-11-16T06:30:23.487Z",
       "lastModifyUser": {
         "domain": "gmail.com",
         "email": "takashi316@gmail.com",
         "name": "Takashi SASAKI (佐々木隆志)",
         "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
       },
-      "createTime": "2019-11-16T06:30:23.487Z",
+      "name": "persistentFormScript",
+      "type": "SERVER_JS",
       "updateTime": "2019-11-19T10:08:39.503Z"
     },
     {
+      "createTime": "2019-11-16T06:30:23.490Z",
+      "lastModifyUser": {},
       "name": "appsscript",
       "type": "JSON",
-      "lastModifyUser": {},
-      "createTime": "2019-11-16T06:30:23.490Z",
       "updateTime": "2025-01-23T17:48:07.525Z"
     },
     {
-      "name": "persistentFormStyle",
-      "type": "SERVER_JS",
+      "createTime": "2019-11-16T06:32:14.214Z",
       "lastModifyUser": {
         "domain": "gmail.com",
         "email": "takashi316@gmail.com",
         "name": "Takashi SASAKI (佐々木隆志)",
         "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
       },
-      "createTime": "2019-11-16T06:32:14.214Z",
+      "name": "persistentFormStyle",
+      "type": "SERVER_JS",
       "updateTime": "2019-11-19T10:08:39.503Z"
     },
     {
-      "name": "persistentFormCss",
-      "type": "HTML",
+      "createTime": "2019-11-16T06:32:33.570Z",
       "lastModifyUser": {
         "domain": "gmail.com",
         "email": "takashi316@gmail.com",
         "name": "Takashi SASAKI (佐々木隆志)",
         "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
       },
-      "createTime": "2019-11-16T06:32:33.570Z",
+      "name": "persistentFormCss",
+      "type": "HTML",
       "updateTime": "2019-11-16T06:37:22.239Z"
     },
     {
-      "name": "persistentFormJs",
-      "type": "HTML",
+      "createTime": "2019-11-16T06:33:14.594Z",
       "lastModifyUser": {
         "domain": "gmail.com",
         "email": "takashi316@gmail.com",
         "name": "Takashi SASAKI (佐々木隆志)",
         "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
       },
-      "createTime": "2019-11-16T06:33:14.594Z",
+      "name": "persistentFormJs",
+      "type": "HTML",
       "updateTime": "2019-11-19T10:08:32.619Z"
+    }
+  ],
+  "lifecycle": {
+    "driveInventory": "present"
+  },
+  "versions": [
+    {
+      "description": "No description",
+      "version": 1
+    },
+    {
+      "description": "No description",
+      "version": 2
+    },
+    {
+      "description": "No description",
+      "version": 3
+    },
+    {
+      "description": "No description",
+      "version": 4
+    },
+    {
+      "description": "No description",
+      "version": 5
     }
   ]
 }

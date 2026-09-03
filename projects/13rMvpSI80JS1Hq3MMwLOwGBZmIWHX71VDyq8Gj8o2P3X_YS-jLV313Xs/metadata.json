@@ -1,23 +1,6 @@
 {
-  "driveApi": {
-    "name": "Google Keep to Google Tasks",
-    "createdTime": "2019-06-04T00:30:21.700Z",
-    "modifiedTime": "2021-08-14T13:59:07.317Z",
-    "id": "13rMvpSI80JS1Hq3MMwLOwGBZmIWHX71VDyq8Gj8o2P3X_YS-jLV313Xs"
-  },
-  "deployments": [
-    {
-      "id": "AKfycbzTz1hem8XAYAd6iemrfnEp1YvubtyEs70KiBaMCp9q",
-      "target": "HEAD",
-      "description": ""
-    }
-  ],
-  "versions": [],
   "appsScriptApi": {
-    "scriptId": "13rMvpSI80JS1Hq3MMwLOwGBZmIWHX71VDyq8Gj8o2P3X_YS-jLV313Xs",
-    "title": "Google Keep to Google Tasks",
     "createTime": "2019-06-04T00:30:21.700Z",
-    "updateTime": "2021-08-14T13:59:07.317Z",
     "creator": {
       "domain": "gmail.com",
       "email": "takashi316@gmail.com",
@@ -29,6 +12,26 @@
       "email": "takashi316@gmail.com",
       "name": "Takashi SASAKI (佐々木隆志)",
       "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    },
+    "scriptId": "13rMvpSI80JS1Hq3MMwLOwGBZmIWHX71VDyq8Gj8o2P3X_YS-jLV313Xs",
+    "title": "Google Keep to Google Tasks",
+    "updateTime": "2021-08-14T13:59:07.317Z"
+  },
+  "deployments": [
+    {
+      "description": "",
+      "id": "AKfycbzTz1hem8XAYAd6iemrfnEp1YvubtyEs70KiBaMCp9q",
+      "target": "HEAD"
     }
-  }
+  ],
+  "driveApi": {
+    "createdTime": "2019-06-04T00:30:21.700Z",
+    "id": "13rMvpSI80JS1Hq3MMwLOwGBZmIWHX71VDyq8Gj8o2P3X_YS-jLV313Xs",
+    "modifiedTime": "2021-08-14T13:59:07.317Z",
+    "name": "Google Keep to Google Tasks"
+  },
+  "lifecycle": {
+    "driveInventory": "present"
+  },
+  "versions": []
 }

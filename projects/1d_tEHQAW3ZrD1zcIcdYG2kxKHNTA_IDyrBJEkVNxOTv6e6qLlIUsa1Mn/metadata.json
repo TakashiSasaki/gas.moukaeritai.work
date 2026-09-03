@@ -1,37 +1,6 @@
 {
-  "driveApi": {
-    "name": "HOTP",
-    "createdTime": "2018-01-12T01:31:13.655Z",
-    "modifiedTime": "2021-03-16T09:37:43.455Z",
-    "id": "1d_tEHQAW3ZrD1zcIcdYG2kxKHNTA_IDyrBJEkVNxOTv6e6qLlIUsa1Mn"
-  },
-  "deployments": [
-    {
-      "id": "AKfycbwgopPvcgHbAjE1m0jN_9aSulK8czWby8zdx_bG5pyd",
-      "target": "HEAD",
-      "description": ""
-    },
-    {
-      "id": "AKfycbyYu40SlSY-3k6MCUFkf9Fx3NzGzz2IiKLuUgt8AuUgqI1dphdO",
-      "target": "2",
-      "description": "web app meta-version"
-    }
-  ],
-  "versions": [
-    {
-      "version": 1,
-      "description": "No description"
-    },
-    {
-      "version": 2,
-      "description": "No description"
-    }
-  ],
   "appsScriptApi": {
-    "scriptId": "1d_tEHQAW3ZrD1zcIcdYG2kxKHNTA_IDyrBJEkVNxOTv6e6qLlIUsa1Mn",
-    "title": "HOTP",
     "createTime": "2018-01-12T01:31:13.655Z",
-    "updateTime": "2021-03-16T09:37:43.455Z",
     "creator": {
       "domain": "gmail.com",
       "email": "takashi316@gmail.com",
@@ -43,56 +12,90 @@
       "email": "takashi316@gmail.com",
       "name": "Takashi SASAKI (佐々木隆志)",
       "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+    },
+    "scriptId": "1d_tEHQAW3ZrD1zcIcdYG2kxKHNTA_IDyrBJEkVNxOTv6e6qLlIUsa1Mn",
+    "title": "HOTP",
+    "updateTime": "2021-03-16T09:37:43.455Z"
+  },
+  "deployments": [
+    {
+      "description": "",
+      "id": "AKfycbwgopPvcgHbAjE1m0jN_9aSulK8czWby8zdx_bG5pyd",
+      "target": "HEAD"
+    },
+    {
+      "description": "web app meta-version",
+      "id": "AKfycbyYu40SlSY-3k6MCUFkf9Fx3NzGzz2IiKLuUgt8AuUgqI1dphdO",
+      "target": "2"
     }
+  ],
+  "driveApi": {
+    "createdTime": "2018-01-12T01:31:13.655Z",
+    "id": "1d_tEHQAW3ZrD1zcIcdYG2kxKHNTA_IDyrBJEkVNxOTv6e6qLlIUsa1Mn",
+    "modifiedTime": "2021-03-16T09:37:43.455Z",
+    "name": "HOTP"
   },
   "files": [
     {
+      "createTime": "1970-01-01T00:00:00Z",
+      "lastModifyUser": {
+        "domain": "gmail.com",
+        "email": "takashi316@gmail.com",
+        "name": "Takashi SASAKI (佐々木隆志)",
+        "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
+      },
       "name": "appsscript",
       "type": "JSON",
+      "updateTime": "2021-03-16T09:37:43.308Z"
+    },
+    {
+      "createTime": "2018-01-12T01:31:04.273Z",
       "lastModifyUser": {
         "domain": "gmail.com",
         "email": "takashi316@gmail.com",
         "name": "Takashi SASAKI (佐々木隆志)",
         "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
       },
-      "createTime": "1970-01-01T00:00:00Z",
-      "updateTime": "2021-03-16T09:37:43.308Z"
-    },
-    {
       "name": "Code",
       "type": "SERVER_JS",
+      "updateTime": "2021-03-16T09:37:43.308Z"
+    },
+    {
+      "createTime": "2018-01-14T04:54:27.247Z",
       "lastModifyUser": {
         "domain": "gmail.com",
         "email": "takashi316@gmail.com",
         "name": "Takashi SASAKI (佐々木隆志)",
         "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
       },
-      "createTime": "2018-01-12T01:31:04.273Z",
-      "updateTime": "2021-03-16T09:37:43.308Z"
-    },
-    {
       "name": "index",
       "type": "HTML",
-      "lastModifyUser": {
-        "domain": "gmail.com",
-        "email": "takashi316@gmail.com",
-        "name": "Takashi SASAKI (佐々木隆志)",
-        "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
-      },
-      "createTime": "2018-01-14T04:54:27.247Z",
       "updateTime": "2021-03-16T09:37:43.308Z"
     },
     {
-      "name": "test",
-      "type": "SERVER_JS",
+      "createTime": "2021-03-16T08:28:02.563Z",
       "lastModifyUser": {
         "domain": "gmail.com",
         "email": "takashi316@gmail.com",
         "name": "Takashi SASAKI (佐々木隆志)",
         "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocIgvtfj1wOv7-OGf6CK2SVFUODHz8ufqb5iHMyiUWB_JyGzl8rAjg=h128"
       },
-      "createTime": "2021-03-16T08:28:02.563Z",
+      "name": "test",
+      "type": "SERVER_JS",
       "updateTime": "2021-03-16T09:37:43.308Z"
+    }
+  ],
+  "lifecycle": {
+    "driveInventory": "present"
+  },
+  "versions": [
+    {
+      "description": "No description",
+      "version": 1
+    },
+    {
+      "description": "No description",
+      "version": 2
     }
   ]
 }
