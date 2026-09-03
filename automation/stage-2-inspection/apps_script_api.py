@@ -34,6 +34,17 @@ def _request_json(
     return payload
 
 
+def _object_list(payload: dict[str, Any], field: str, url: str) -> list[dict[str, Any]]:
+    values = payload.get(field, [])
+    if not isinstance(values, list):
+        raise AppsScriptApiError(f"Apps Script API response field {field!r} must be a list: {url}")
+    if any(not isinstance(item, dict) for item in values):
+        raise AppsScriptApiError(
+            f"Apps Script API response field {field!r} contains a non-object resource: {url}"
+        )
+    return values
+
+
 def _paged_resources(
     base_url: str,
     access_token: str,
@@ -49,10 +60,7 @@ def _paged_resources(
         if page_token:
             url += "?" + urllib.parse.urlencode({"pageToken": page_token})
         payload = _request_json(url, access_token, opener=opener)
-        page = payload.get(field, [])
-        if not isinstance(page, list):
-            raise AppsScriptApiError(f"Apps Script API response field {field!r} must be a list: {url}")
-        resources.extend(item for item in page if isinstance(item, dict))
+        resources.extend(_object_list(payload, field, url))
         next_token = payload.get("nextPageToken")
         if next_token is None:
             break
@@ -80,14 +88,12 @@ def get_project_files_metadata(
     *,
     opener: Callable[..., Any] = urllib.request.urlopen,
 ) -> list[dict[str, Any]]:
-    payload = _request_json(f"{API_ROOT}/{script_id}/content", access_token, opener=opener)
-    files = payload.get("files", [])
-    if not isinstance(files, list):
-        raise AppsScriptApiError("Apps Script project content field 'files' must be a list")
+    url = f"{API_ROOT}/{script_id}/content"
+    payload = _request_json(url, access_token, opener=opener)
+    files = _object_list(payload, "files", url)
     return [
         {key: value for key, value in item.items() if key not in _EXCLUDED_FILE_FIELDS}
         for item in files
-        if isinstance(item, dict)
     ]
 
 
