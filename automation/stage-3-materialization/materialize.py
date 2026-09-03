@@ -9,7 +9,7 @@ import json
 import shutil
 import sys
 import tempfile
-from pathlib import Path, PurePosixPath
+from pathlib import Path, PurePosixPath, PureWindowsPath
 from types import ModuleType
 from typing import Any, Callable
 
@@ -110,7 +110,9 @@ def _source_relative_path(file_metadata: dict[str, Any], script_id: str) -> Pure
     if not isinstance(name, str) or not name:
         raise PostPullValidationError(f"{script_id}: observed Apps Script file is missing a name")
     if "\\" in name:
-        raise PostPullValidationError(f"{script_id}: observed Apps Script filename contains a backslash: {name!r}")
+        raise PostPullValidationError(
+            f"{script_id}: observed Apps Script filename contains a backslash: {name!r}"
+        )
     relative = PurePosixPath(name)
     if relative.is_absolute() or not relative.parts or any(
         part in {"", ".", ".."} for part in relative.parts
@@ -133,18 +135,114 @@ def _source_root(project_dir: Path, script_id: str) -> Path:
         raise PostPullValidationError(f"{script_id}: invalid .clasp.json: {exc}") from exc
     root_dir = clasp.get("rootDir", ".")
     if not isinstance(root_dir, str) or not root_dir:
-        raise PostPullValidationError(f"{script_id}: .clasp.json rootDir must be a non-empty string")
+        raise PostPullValidationError(
+            f"{script_id}: .clasp.json rootDir must be a non-empty string"
+        )
+
+    windows_path = PureWindowsPath(root_dir)
+    if windows_path.drive:
+        raise PostPullValidationError(
+            f"{script_id}: .clasp.json rootDir must not be drive-qualified: {root_dir!r}"
+        )
     normalized = PurePosixPath(root_dir.replace("\\", "/"))
     if normalized.is_absolute() or any(part == ".." for part in normalized.parts):
-        raise PostPullValidationError(f"{script_id}: .clasp.json rootDir escapes the project: {root_dir!r}")
+        raise PostPullValidationError(
+            f"{script_id}: .clasp.json rootDir escapes the project: {root_dir!r}"
+        )
+
     root = project_dir.joinpath(
         *[part for part in normalized.parts if part not in {"", "."}]
-    ).resolve()
+    )
     try:
-        root.relative_to(project_dir.resolve())
-    except ValueError as exc:
-        raise PostPullValidationError(f"{script_id}: .clasp.json rootDir escapes the project: {root_dir!r}") from exc
+        root.resolve().relative_to(project_dir.resolve())
+    except (OSError, ValueError) as exc:
+        raise PostPullValidationError(
+            f"{script_id}: .clasp.json rootDir escapes the project: {root_dir!r}"
+        ) from exc
     return root
+
+
+def _assert_no_symlink_components(
+    path: Path,
+    boundary: Path,
+    script_id: str,
+    *,
+    allow_leaf_symlink: bool = False,
+) -> None:
+    """Reject existing symlinks that could redirect a project-local operation."""
+    try:
+        relative = path.relative_to(boundary)
+    except ValueError as exc:
+        raise PostPullValidationError(
+            f"{script_id}: source path is outside the canonical project: {path}"
+        ) from exc
+
+    current = boundary
+    parts = relative.parts
+    for index, part in enumerate(parts):
+        current = current / part
+        if current.is_symlink():
+            is_leaf = index == len(parts) - 1
+            if allow_leaf_symlink and is_leaf:
+                return
+            raise PostPullValidationError(
+                f"{script_id}: source path contains a symlink before materialization: {current}"
+            )
+        if not current.exists():
+            break
+
+
+def _tracked_source_paths(files: Any, source_root: Path, script_id: str) -> set[Path]:
+    """Return lexical tracked source paths without dereferencing their leaves."""
+    if not isinstance(files, list):
+        return set()
+    tracked: set[Path] = set()
+    for item in files:
+        if not isinstance(item, dict):
+            continue
+        try:
+            relative = _source_relative_path(item, script_id)
+        except PostPullValidationError:
+            # Historical metadata may be malformed. Never broaden cleanup from
+            # an unprovable historical path.
+            continue
+        tracked.add(source_root.joinpath(*relative.parts))
+    return tracked
+
+
+def _validate_existing_materialization_paths(
+    project_dir: Path,
+    script_id: str,
+    old_metadata: dict[str, Any],
+    observation: dict[str, Any],
+) -> None:
+    """Ensure clasp cannot follow an existing source symlink outside the project."""
+    source_root = _source_root(project_dir, script_id)
+    _assert_no_symlink_components(source_root, project_dir, script_id)
+
+    for destination in _tracked_source_paths(observation.get("files"), source_root, script_id):
+        _assert_no_symlink_components(destination, project_dir, script_id)
+
+    # A stale tracked source may itself be a symlink; cleanup can safely unlink
+    # that lexical leaf, but no parent component may redirect the operation.
+    for destination in _tracked_source_paths(old_metadata.get("files"), source_root, script_id):
+        _assert_no_symlink_components(
+            destination,
+            project_dir,
+            script_id,
+            allow_leaf_symlink=True,
+        )
+
+
+def _expected_materialization_required(
+    checkpoint: str | None,
+    observed_update_time: str | None,
+) -> bool:
+    if checkpoint is None:
+        return True
+    if observed_update_time is None:
+        return True
+    return checkpoint != observed_update_time
 
 
 def _validate_observation(item: dict[str, Any], script_id: str) -> dict[str, Any] | None:
@@ -153,15 +251,22 @@ def _validate_observation(item: dict[str, Any], script_id: str) -> dict[str, Any
     observation = item.get("observation")
     if lifecycle == "absent":
         if required:
-            raise MaterializationPlanError(f"{script_id}: absent project must not require materialization")
+            raise MaterializationPlanError(
+                f"{script_id}: absent project must not require materialization"
+            )
         if observation is not None:
-            raise MaterializationPlanError(f"{script_id}: absent project must not carry an Apps Script observation")
+            raise MaterializationPlanError(
+                f"{script_id}: absent project must not carry an Apps Script observation"
+            )
         return None
+
     if not isinstance(observation, dict):
         raise MaterializationPlanError(f"{script_id}: active project needs a Stage 2 observation")
     apps_script = observation.get("appsScriptApi")
     if not isinstance(apps_script, dict):
-        raise MaterializationPlanError(f"{script_id}: observation.appsScriptApi must be an object")
+        raise MaterializationPlanError(
+            f"{script_id}: observation.appsScriptApi must be an object"
+        )
     files = _validate_object_list(observation.get("files"), "files", script_id)
     _validate_object_list(observation.get("deployments"), "deployments", script_id)
     _validate_object_list(observation.get("versions"), "versions", script_id)
@@ -170,7 +275,9 @@ def _validate_observation(item: dict[str, Any], script_id: str) -> dict[str, Any
         for file_metadata in files:
             _source_relative_path(file_metadata, script_id)
     except (CaseInsensitiveNameConflict, PostPullValidationError) as exc:
-        raise MaterializationPlanError(f"{script_id}: unsafe Stage 2 file observation: {exc}") from exc
+        raise MaterializationPlanError(
+            f"{script_id}: unsafe Stage 2 file observation: {exc}"
+        ) from exc
 
     materialization = item["materialization"]
     planned_observed = _optional_timestamp(
@@ -179,7 +286,9 @@ def _validate_observation(item: dict[str, Any], script_id: str) -> dict[str, Any
         script_id,
     )
     remote_observed = _optional_timestamp(
-        apps_script.get("updateTime"), "observation.appsScriptApi.updateTime", script_id
+        apps_script.get("updateTime"),
+        "observation.appsScriptApi.updateTime",
+        script_id,
     )
     if planned_observed != remote_observed:
         raise MaterializationPlanError(
@@ -198,18 +307,28 @@ def _validate_canonical_project(project_dir: Path, base: Path, script_id: str) -
     try:
         resolved_projects = canonical_projects.resolve()
         if resolved_projects.parent != base.resolve():
-            raise MaterializationPlanError("canonical projects/ directory escapes the repository root")
+            raise MaterializationPlanError(
+                "canonical projects/ directory escapes the repository root"
+            )
     except OSError as exc:
-        raise MaterializationPlanError(f"cannot resolve canonical projects/ directory: {exc}") from exc
+        raise MaterializationPlanError(
+            f"cannot resolve canonical projects/ directory: {exc}"
+        ) from exc
 
     if project_dir.is_symlink():
-        raise MaterializationPlanError(f"{script_id}: canonical project directory must not be a symlink")
+        raise MaterializationPlanError(
+            f"{script_id}: canonical project directory must not be a symlink"
+        )
     if not project_dir.is_dir():
-        raise MaterializationPlanError(f"{script_id}: canonical project directory is missing")
+        raise MaterializationPlanError(
+            f"{script_id}: canonical project directory is missing"
+        )
     try:
         resolved = project_dir.resolve()
     except OSError as exc:
-        raise MaterializationPlanError(f"{script_id}: cannot resolve canonical project directory: {exc}") from exc
+        raise MaterializationPlanError(
+            f"{script_id}: cannot resolve canonical project directory: {exc}"
+        ) from exc
     if resolved.parent != resolved_projects or resolved.name != script_id:
         raise MaterializationPlanError(
             f"{script_id}: canonical project directory resolves outside projects/<SCRIPT_ID>"
@@ -222,17 +341,25 @@ def _plan_projects(plan: dict[str, Any], base: Path) -> list[dict[str, Any]]:
     projects = plan.get("projects")
     if not isinstance(projects, list):
         raise MaterializationPlanError("Stage 2 plan projects must be a list")
+    if not isinstance(plan.get("materializationRequired"), bool):
+        raise MaterializationPlanError(
+            "Stage 2 plan materializationRequired must be a boolean"
+        )
 
     validated: list[dict[str, Any]] = []
     seen: set[str] = set()
     for item in projects:
         if not isinstance(item, dict):
-            raise MaterializationPlanError("each Stage 2 plan project must be an object")
+            raise MaterializationPlanError(
+                "each Stage 2 plan project must be an object"
+            )
         script_id = item.get("scriptId")
         if not isinstance(script_id, str) or not script_id:
             raise MaterializationPlanError("Stage 2 plan project is missing scriptId")
         if script_id in seen:
-            raise MaterializationPlanError(f"duplicate Stage 2 plan project: {script_id}")
+            raise MaterializationPlanError(
+                f"duplicate Stage 2 plan project: {script_id}"
+            )
         seen.add(script_id)
 
         planned_lifecycle = item.get("lifecycle")
@@ -244,7 +371,9 @@ def _plan_projects(plan: dict[str, Any], base: Path) -> list[dict[str, Any]]:
         if not isinstance(materialization, dict) or not isinstance(
             materialization.get("required"), bool
         ):
-            raise MaterializationPlanError(f"{script_id}: materialization.required must be a boolean")
+            raise MaterializationPlanError(
+                f"{script_id}: materialization.required must be a boolean"
+            )
         planned_checkpoint = _optional_timestamp(
             materialization.get("checkpointAppsScriptUpdateTime"),
             "materialization.checkpointAppsScriptUpdateTime",
@@ -275,7 +404,24 @@ def _plan_projects(plan: dict[str, Any], base: Path) -> list[dict[str, Any]]:
                 f"{script_id}: stale Stage 2 plan checkpoint {planned_checkpoint!r}; "
                 f"current repository checkpoint is {current_checkpoint!r}"
             )
-        _validate_observation(item, script_id)
+
+        observation = _validate_observation(item, script_id)
+        if planned_lifecycle != "absent":
+            planned_observed = _optional_timestamp(
+                materialization.get("observedAppsScriptUpdateTime"),
+                "materialization.observedAppsScriptUpdateTime",
+                script_id,
+            )
+            expected_required = _expected_materialization_required(
+                planned_checkpoint,
+                planned_observed,
+            )
+            if materialization["required"] != expected_required:
+                raise MaterializationPlanError(
+                    f"{script_id}: materialization.required={materialization['required']!r} "
+                    f"is inconsistent with checkpoint {planned_checkpoint!r} and "
+                    f"observed updateTime {planned_observed!r}"
+                )
 
         if materialization["required"]:
             try:
@@ -283,31 +429,30 @@ def _plan_projects(plan: dict[str, Any], base: Path) -> list[dict[str, Any]]:
                     raise MaterializationPlanError(
                         f"{script_id}: .clasp.json scriptId does not match the canonical project directory"
                     )
-                _source_root(canonical, script_id)
+                if not isinstance(observation, dict):
+                    raise MaterializationPlanError(
+                        f"{script_id}: required materialization needs an Apps Script observation"
+                    )
+                _validate_existing_materialization_paths(
+                    canonical,
+                    script_id,
+                    metadata,
+                    observation,
+                )
             except (ProjectRegistryError, PostPullValidationError) as exc:
-                raise MaterializationPlanError(f"{script_id}: invalid clasp materialization target: {exc}") from exc
+                raise MaterializationPlanError(
+                    f"{script_id}: invalid clasp materialization target: {exc}"
+                ) from exc
         validated.append(item)
+
+    expected_any = any(
+        item["materialization"]["required"] for item in validated
+    )
+    if plan["materializationRequired"] != expected_any:
+        raise MaterializationPlanError(
+            "Stage 2 plan materializationRequired does not match its project decisions"
+        )
     return validated
-
-
-def _tracked_source_paths(files: Any, source_root: Path, script_id: str) -> set[Path]:
-    if not isinstance(files, list):
-        return set()
-    tracked: set[Path] = set()
-    for item in files:
-        if not isinstance(item, dict):
-            continue
-        try:
-            relative = _source_relative_path(item, script_id)
-        except PostPullValidationError:
-            continue
-        destination = source_root.joinpath(*relative.parts).resolve()
-        try:
-            destination.relative_to(source_root.resolve())
-        except ValueError:
-            continue
-        tracked.add(destination)
-    return tracked
 
 
 def _remove_stale_tracked_sources(
@@ -317,42 +462,61 @@ def _remove_stale_tracked_sources(
     observation: dict[str, Any],
 ) -> None:
     source_root = _source_root(project_dir, script_id)
-    old_paths = _tracked_source_paths(old_metadata.get("files"), source_root, script_id)
-    new_paths = _tracked_source_paths(observation.get("files"), source_root, script_id)
+    _assert_no_symlink_components(source_root, project_dir, script_id)
+    old_paths = _tracked_source_paths(
+        old_metadata.get("files"), source_root, script_id
+    )
+    new_paths = _tracked_source_paths(
+        observation.get("files"), source_root, script_id
+    )
     for stale in sorted(old_paths - new_paths, key=lambda path: str(path)):
-        if stale.is_file() or stale.is_symlink():
+        _assert_no_symlink_components(
+            stale,
+            project_dir,
+            script_id,
+            allow_leaf_symlink=True,
+        )
+        if stale.is_symlink():
+            stale.unlink()
+        elif stale.is_file():
             stale.unlink()
 
 
-def validate_post_pull(project_dir: Path, script_id: str, observation: dict[str, Any]) -> None:
+def validate_post_pull(
+    project_dir: Path,
+    script_id: str,
+    observation: dict[str, Any],
+) -> None:
     try:
         materialized_script_id = get_script_id(project_dir)
     except ProjectRegistryError as exc:
-        raise PostPullValidationError(f"{script_id}: invalid post-pull .clasp.json: {exc}") from exc
+        raise PostPullValidationError(
+            f"{script_id}: invalid post-pull .clasp.json: {exc}"
+        ) from exc
     if materialized_script_id != script_id:
         raise PostPullValidationError(
             f"{script_id}: post-pull .clasp.json scriptId changed to {materialized_script_id!r}"
         )
     files = observation.get("files")
     if not isinstance(files, list) or any(not isinstance(item, dict) for item in files):
-        raise PostPullValidationError(f"{script_id}: Stage 2 observation files must be an object list")
+        raise PostPullValidationError(
+            f"{script_id}: Stage 2 observation files must be an object list"
+        )
     try:
         validate_files(files, script_id)
     except CaseInsensitiveNameConflict as exc:
         raise PostPullValidationError(str(exc)) from exc
 
     source_root = _source_root(project_dir, script_id)
+    _assert_no_symlink_components(source_root, project_dir, script_id)
     if not source_root.is_dir():
-        raise PostPullValidationError(f"{script_id}: clasp rootDir was not materialized: {source_root}")
+        raise PostPullValidationError(
+            f"{script_id}: clasp rootDir was not materialized: {source_root}"
+        )
     for file_metadata in files:
         relative = _source_relative_path(file_metadata, script_id)
-        destination = source_root.joinpath(*relative.parts).resolve()
-        try:
-            destination.relative_to(source_root.resolve())
-        except ValueError as exc:
-            raise PostPullValidationError(
-                f"{script_id}: observed source path escapes clasp rootDir: {relative.as_posix()!r}"
-            ) from exc
+        destination = source_root.joinpath(*relative.parts)
+        _assert_no_symlink_components(destination, project_dir, script_id)
         if not destination.is_file():
             raise PostPullValidationError(
                 f"{script_id}: clasp pull did not materialize observed source file {relative.as_posix()!r}"
@@ -360,18 +524,24 @@ def validate_post_pull(project_dir: Path, script_id: str, observation: dict[str,
 
 
 def _metadata_from_observation(
-    current: dict[str, Any], item: dict[str, Any], script_id: str
+    current: dict[str, Any],
+    item: dict[str, Any],
+    script_id: str,
 ) -> dict[str, Any]:
     observation = item.get("observation")
     if not isinstance(observation, dict):
-        raise MaterializationPlanError(f"{script_id}: cannot finalize without Stage 2 observation")
+        raise MaterializationPlanError(
+            f"{script_id}: cannot finalize without Stage 2 observation"
+        )
     result = dict(current)
     checkpoint = _current_checkpoint(current, script_id)
     sync_state = result.get("syncState")
     if sync_state is None:
         sync_state = {}
     elif not isinstance(sync_state, dict):
-        raise MaterializationPlanError(f"{script_id}: metadata syncState must be an object")
+        raise MaterializationPlanError(
+            f"{script_id}: metadata syncState must be an object"
+        )
     else:
         sync_state = dict(sync_state)
     if checkpoint is not None:
@@ -401,7 +571,9 @@ def _restore_project(project_dir: Path, backup: Path) -> None:
             shutil.rmtree(project_dir)
         shutil.copytree(backup, project_dir, symlinks=True)
     except OSError as exc:
-        raise RuntimeError(f"failed to restore {project_dir} after materialization failure: {exc}") from exc
+        raise RuntimeError(
+            f"failed to restore {project_dir} after materialization failure: {exc}"
+        ) from exc
 
 
 def _result(script_id: str, required: bool) -> dict[str, Any]:
@@ -443,12 +615,18 @@ def materialize_plan(
         observation = item["observation"]
         if not required:
             try:
-                metadata_writer(project_dir, _metadata_from_observation(old_metadata, item, script_id))
+                metadata_writer(
+                    project_dir,
+                    _metadata_from_observation(old_metadata, item, script_id),
+                )
                 result["finalized"] = True
                 result["successful"] = True
             except Exception as exc:
                 result["error"] = str(exc)
-                print(f"Error: projects/{script_id} observation finalization failed: {exc}", file=sys.stderr)
+                print(
+                    f"Error: projects/{script_id} observation finalization failed: {exc}",
+                    file=sys.stderr,
+                )
             results.append(result)
             continue
 
@@ -458,9 +636,19 @@ def materialize_plan(
             shutil.copytree(project_dir, backup, symlinks=True)
             try:
                 clasp.pull(project_dir)
-                _remove_stale_tracked_sources(project_dir, script_id, old_metadata, observation)
+                # Validate the complete observed destination set before stale
+                # cleanup so cleanup cannot hide a malformed pull result.
                 validate_post_pull(project_dir, script_id, observation)
-                metadata_writer(project_dir, _metadata_from_observation(old_metadata, item, script_id))
+                _remove_stale_tracked_sources(
+                    project_dir,
+                    script_id,
+                    old_metadata,
+                    observation,
+                )
+                metadata_writer(
+                    project_dir,
+                    _metadata_from_observation(old_metadata, item, script_id),
+                )
                 result["materialized"] = True
                 result["finalized"] = True
                 result["successful"] = True
@@ -472,7 +660,10 @@ def materialize_plan(
                         f"{script_id}: materialization failed ({exc}) and rollback also failed ({restore_exc})"
                     ) from restore_exc
                 result["error"] = str(exc)
-                print(f"Error: projects/{script_id} transaction rolled back: {exc}", file=sys.stderr)
+                print(
+                    f"Error: projects/{script_id} transaction rolled back: {exc}",
+                    file=sys.stderr,
+                )
         results.append(result)
 
     return {
@@ -501,7 +692,9 @@ def write_json(payload: dict[str, Any], output: Path) -> None:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Transactionally apply a Stage 2 materialization plan.")
+    parser = argparse.ArgumentParser(
+        description="Transactionally apply a Stage 2 materialization plan."
+    )
     parser.add_argument("--plan", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
@@ -513,7 +706,9 @@ def main() -> int:
     write_json(result, args.output)
     attempted = sum(1 for item in result["projects"] if item["attempted"])
     failed = sum(1 for item in result["projects"] if not item["successful"])
-    print(f"Stage 3 attempted {attempted} pull(s); {failed} project transaction(s) failed.")
+    print(
+        f"Stage 3 attempted {attempted} pull(s); {failed} project transaction(s) failed."
+    )
     return 0 if result["allProjectsSuccessful"] else 1
 
 
