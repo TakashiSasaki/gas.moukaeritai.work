@@ -61,6 +61,20 @@ class ThreeStageWorkflowTests(unittest.TestCase):
             step_block(workflow, "Materialize sources and finalize observations"),
         )
 
+    def test_credentials_use_step_environment_not_shell_literal(self):
+        for workflow_path in (STAGE1, STAGE23):
+            workflow = workflow_path.read_text(encoding="utf-8")
+            restore = step_block(workflow, "Restore Google credentials")
+            self.assertIn(
+                "CLASPRC_JSON: ${{ secrets.CLASPRC_JSON }}",
+                restore,
+            )
+            self.assertIn("printf '%s' \"$CLASPRC_JSON\"", restore)
+            self.assertNotIn(
+                "printf '%s' '${{ secrets.CLASPRC_JSON }}'",
+                restore,
+            )
+
     def test_project_state_writers_are_serialized(self):
         stage1 = STAGE1.read_text(encoding="utf-8")
         stage23 = STAGE23.read_text(encoding="utf-8")
