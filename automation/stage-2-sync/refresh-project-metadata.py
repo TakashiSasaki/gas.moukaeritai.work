@@ -61,6 +61,26 @@ def _cleanup_standalone_files(project_dir: Path) -> None:
             pass
 
 
+def _advance_materialization_checkpoint(
+    metadata: dict[str, Any],
+    remote_metadata: dict[str, Any] | None,
+    plan_item: dict[str, Any],
+) -> None:
+    update_time = None
+    if isinstance(remote_metadata, dict) and remote_metadata.get("updateTime"):
+        update_time = str(remote_metadata["updateTime"])
+    elif plan_item.get("remoteUpdateTime"):
+        update_time = str(plan_item["remoteUpdateTime"])
+    if not update_time:
+        return
+
+    sync_state = metadata.get("syncState")
+    if not isinstance(sync_state, dict):
+        sync_state = {}
+        metadata["syncState"] = sync_state
+    sync_state["lastMaterializedAppsScriptUpdateTime"] = update_time
+
+
 def refresh_metadata(
     plan: dict[str, Any],
     sync_result: dict[str, Any],
@@ -70,7 +90,7 @@ def refresh_metadata(
     api: Any = None,
     state_validator: Any = None,
 ) -> int:
-    """Merge remote metadata only for projects whose source sync succeeded."""
+    """Merge remote metadata and advance checkpoints only for successful syncs."""
     clasp = clasp or clasp_client
     api = api or apps_script_api
     state_validator = state_validator or validator
@@ -119,6 +139,7 @@ def refresh_metadata(
         metadata["versions"] = clasp.list_versions(project_dir)
         if files_metadata is not None:
             metadata["files"] = files_metadata
+        _advance_materialization_checkpoint(metadata, remote_metadata, plan_item)
 
         for key in LEGACY_ROOT_KEYS:
             metadata.pop(key, None)
