@@ -10,11 +10,13 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import sys
 from pathlib import Path
 from typing import Any
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
+SNAPSHOT_PATTERN = re.compile(r"^\d{8}-\d{6}\.json$")
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
@@ -30,7 +32,7 @@ def latest_snapshot(root: Path | None = None) -> Path:
     directory = snapshot_directory(root)
     candidates = sorted(
         path for path in directory.iterdir()
-        if path.is_file() and path.name[:1] == "2" and path.suffix == ".json"
+        if path.is_file() and SNAPSHOT_PATTERN.fullmatch(path.name)
     )
     if not candidates:
         raise FileNotFoundError(f"No Drive inventory snapshots found in {directory}")
