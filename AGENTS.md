@@ -17,7 +17,6 @@ This repository stores and synchronizes many Google Apps Script projects in one 
   - `stage-1-inventory/`: Drive inventory acquisition, canonical registry/lifecycle reconciliation, and public project-index generation.
   - `stage-2-inspection/`: read-only Apps Script API inspection and deterministic materialization planning; it must not invoke clasp or mutate project source/state.
   - `stage-3-materialization/`: transactional source materialization and observation finalization; it may use clasp only for `pull`.
-  - `stage-2-sync/`: retired compatibility implementation retained temporarily for explicit post-cutover cleanup; do not wire it back into steady-state orchestration.
   - `shared/`: repository, OAuth, and validation primitives shared by stages.
   - `maintenance/`: explicit historical migrations; these are not part of steady-state synchronization.
 - `data/`: **what was externally observed**. Drive inventory snapshots live under `data/inventory/drive-api/snapshots/`.
