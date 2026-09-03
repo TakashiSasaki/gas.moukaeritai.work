@@ -35,12 +35,31 @@ class ThreeStageWorkflowTests(unittest.TestCase):
         self.assertLess(workflow.index(stage2), workflow.index(stage3))
         self.assertIn('--plan "$RUNNER_TEMP/stage-2-plan.json"', workflow)
 
+    def test_plan_is_checked_before_conditional_clasp_setup(self):
+        workflow = STAGE23.read_text(encoding="utf-8")
+        inspection = step_block(workflow, "Inspect Apps Script state and build materialization plan")
+        self.assertIn('materialization.get("required")', inspection)
+        self.assertIn(
+            'plan.get("materializationRequired") is not required',
+            inspection,
+        )
+        self.assertIn("does not match project decisions", inspection)
+
     def test_clasp_setup_is_conditional_but_stage3_is_not(self):
         workflow = STAGE23.read_text(encoding="utf-8")
         condition = "if: steps.inspection.outputs.materialization_required == 'true'"
-        self.assertIn(condition, step_block(workflow, "Set up Node.js for source materialization"))
-        self.assertIn(condition, step_block(workflow, "Install clasp for source materialization"))
-        self.assertNotIn("if:", step_block(workflow, "Materialize sources and finalize observations"))
+        self.assertIn(
+            condition,
+            step_block(workflow, "Set up Node.js for source materialization"),
+        )
+        self.assertIn(
+            condition,
+            step_block(workflow, "Install clasp for source materialization"),
+        )
+        self.assertNotIn(
+            "if:",
+            step_block(workflow, "Materialize sources and finalize observations"),
+        )
 
     def test_project_state_writers_are_serialized(self):
         stage1 = STAGE1.read_text(encoding="utf-8")
