@@ -1,0 +1,67 @@
+name: stage-2-sync
+
+permissions:
+  contents: write
+
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows: ["stage-1-inventory"]
+    types:
+      - completed
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout default branch
+        uses: actions/checkout@v4
+        with:
+          ref: gas.moukaeritai.work
+          persist-credentials: true
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install clasp
+        run: npm install -g @google/clasp
+
+      - name: Restore clasp credentials
+        run: echo '${{ secrets.CLASPRC_JSON }}' > ~/.clasprc.json
+
+      - name: Detect project changes
+        run: python3 automation/stage-2-sync/detect-project-changes.py --output "$RUNNER_TEMP/stage-2-plan.json"
+
+      - name: Synchronize selected project sources
+        run: |
+          python3 automation/stage-2-sync/sync-project-source.py \
+            --plan "$RUNNER_TEMP/stage-2-plan.json" \
+            --output "$RUNNER_TEMP/stage-2-sync-result.json"
+
+      - name: Refresh synchronized project metadata
+        run: |
+          python3 automation/stage-2-sync/refresh-project-metadata.py \
+            --plan "$RUNNER_TEMP/stage-2-plan.json" \
+            --sync-result "$RUNNER_TEMP/stage-2-sync-result.json"
+
+      - name: Validate project state
+        run: python3 automation/stage-2-sync/validate-project-state.py
+
+      - name: Commit & Push changes if any
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if [ -n "$(git status --porcelain)" ]; then
+            git add .
+            git commit -m "chore: sync GAS projects"
+            git push origin HEAD:gas.moukaeritai.work
+          else
+            echo "No changes detected, skipping commit"
+          fi
