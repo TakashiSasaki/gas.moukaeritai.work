@@ -1,0 +1,61 @@
+name: stage-1-inventory
+
+on:
+  schedule:
+    - cron: '0 */3 * * *' # Every 3 hours
+  workflow_dispatch: # Allow manual triggering
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  inventory:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout default branch
+        uses: actions/checkout@v4
+        with:
+          ref: gas.moukaeritai.work
+
+      - name: Restore clasp credentials
+        run: |
+          echo '${{ secrets.CLASPRC_JSON }}' > ~/.clasprc.json
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Fetch Drive inventory
+        run: python automation/stage-1-inventory/fetch-drive-inventory.py
+
+      - name: Reconcile canonical project registry
+        run: python automation/stage-1-inventory/reconcile-project-registry.py
+
+      - name: Generate public project index
+        run: python automation/stage-1-inventory/generate-public-project-index.py
+
+      - name: Validate generated repository state
+        run: python .github/scripts/validate-automation.py
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          # Preserve the legacy snapshot staging behavior: stage retained/new JSON files,
+          # but do not turn this structural cutover into a historical snapshot purge.
+          git add data/inventory/drive-api/snapshots/*.json
+          git add projects/
+          git add docs/
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: automated project list update and metadata synchronization"
+            git push origin HEAD:gas.moukaeritai.work
+          else
+            echo "No changes to commit"
+          fi
