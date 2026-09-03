@@ -63,13 +63,26 @@ def load_authorized_user_credentials(
                 credential["client_secret"] = settings["clientSecret"]
         return credential
 
-    # Accept an explicit authorized-user object at the root only when it carries
-    # the fields required for direct refresh. This does not guess clasp's
-    # built-in OAuth client for legacy token-only stores.
     if user == "default" and payload.get("refresh_token") and payload.get("client_id"):
         return dict(payload)
 
     raise GoogleOAuthError(f"No Google OAuth credentials found for user {user!r} in {source}")
+
+
+def _safe_error_detail(response: Any) -> str:
+    """Return bounded non-secret OAuth error fields when Google supplies them."""
+    try:
+        payload = response.json()
+    except Exception:
+        return ""
+    if not isinstance(payload, dict):
+        return ""
+    details: list[str] = []
+    for field in ("error", "error_description"):
+        value = payload.get(field)
+        if isinstance(value, str) and value:
+            details.append(f"{field}={value[:500]}")
+    return "; ".join(details)
 
 
 def acquire_access_token(
@@ -105,7 +118,9 @@ def acquire_access_token(
 
     if getattr(response, "status_code", None) != 200:
         status = getattr(response, "status_code", "unknown")
-        raise GoogleOAuthError(f"Google OAuth token refresh failed with HTTP status {status}")
+        detail = _safe_error_detail(response)
+        suffix = f": {detail}" if detail else ""
+        raise GoogleOAuthError(f"Google OAuth token refresh failed with HTTP status {status}{suffix}")
     try:
         payload = response.json()
     except Exception as exc:
