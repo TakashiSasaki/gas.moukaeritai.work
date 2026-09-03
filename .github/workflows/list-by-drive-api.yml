@@ -1,10 +1,8 @@
 name: list-by-drive-api
 
 on:
-  schedule:
-    - cron: '0 */3 * * *' # Every 3 hours
-  workflow_dispatch: # Allow manual triggering
- 
+  workflow_dispatch: # Allow manual triggering while Phase 1 restructuring is in progress
+
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
