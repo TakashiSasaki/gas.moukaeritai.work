@@ -1,0 +1,11 @@
+{
+  "driveApi": {
+    "createdTime": "2026-10-17T09:52:31.353Z",
+    "id": "1AkkiILR0OXC7ZFvoQ1WaINvTpzp7wKW87DhpNvxBrLafle4fQ7JtL__A",
+    "modifiedTime": "2026-10-17T09:54:05.145Z",
+    "name": "Drive Operations Bridge"
+  },
+  "lifecycle": {
+    "driveInventory": "present"
+  }
+}
